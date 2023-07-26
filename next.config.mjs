@@ -25,6 +25,7 @@ const config = withBundleAnalyzer({
 
     return config
   },
+  output: "standalone",
   transpilePackages: ["@bhunter179/chonky"],
   modularizeImports: {
     "@mui-material": {
@@ -58,14 +59,14 @@ const config = withBundleAnalyzer({
       },
     ]
   },
-  async rewrites() {
-    return [
-      {
-        source: '/api/:path*',
-        destination: 'http://localhost:5000/api/:path*'
-      },
-    ]
-  },
+  // async rewrites() {
+  //   return [
+  //     {
+  //       source: '/api/:path*',
+  //       destination: 'http://localhost:5000/api/:path*'
+  //     },
+  //   ]
+  // },
 })
 
 export default isDevelopment ? config : withPWA(config)
