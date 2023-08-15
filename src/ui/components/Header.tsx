@@ -208,7 +208,7 @@ export default function Header({ session }) {
             </Tooltip>
           </Grid>
           <Grid item>
-            <AccountMenu session={session} />
+            <AccountMenu />
           </Grid>
         </Grid>
       </Toolbar>

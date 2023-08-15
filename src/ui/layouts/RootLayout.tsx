@@ -1,7 +1,7 @@
-import FixedBottomNavigation from "@/ui//components/BottomNav"
 import { Box, Container } from "@mui/material"
 
 import { useSession } from "@/ui/hooks/useSession"
+import FixedBottomNavigation from "@/ui/components/BottomNav"
 import NavDrawer from "@/ui/components/Drawer"
 import Header from "@/ui/components/Header"
 

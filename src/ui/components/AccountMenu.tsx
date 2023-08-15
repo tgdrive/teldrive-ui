@@ -1,4 +1,5 @@
 import { MouseEventHandler, useCallback, useState } from "react"
+import { useRouter } from "next/router"
 import { Message } from "@/ui/types"
 import Logout from "@mui/icons-material/Logout"
 import Settings from "@mui/icons-material/Settings"
@@ -8,12 +9,10 @@ import ListItemIcon from "@mui/material/ListItemIcon"
 import Menu from "@mui/material/Menu"
 import MenuItem from "@mui/material/MenuItem"
 
+import { useSession } from "@/ui/hooks/useSession"
 import http from "@/ui/utils/http"
 
-type AccountMenuProps = {
-  session: Record<string, any>
-}
-export default function AccountMenu({ session }: AccountMenuProps) {
+export default function AccountMenu() {
   const [anchorEl, setAnchorEl] = useState<Element | null>(null)
 
   const open = Boolean(anchorEl)
@@ -25,9 +24,14 @@ export default function AccountMenu({ session }: AccountMenuProps) {
     setAnchorEl(null)
   }
 
+  const { data: session, refetch } = useSession()
+
+  const router = useRouter()
+
   const signOut = useCallback(async () => {
-    const res = await http.get("/api/auth/logout").json<Message>()
-    if (res.status) window.location.pathname = "/login"
+    const res = await http.get("api/auth/logout").json<Message>()
+    refetch()
+    if (res.status) router.replace("/login")
   }, [])
 
   return (
@@ -101,7 +105,7 @@ export default function AccountMenu({ session }: AccountMenuProps) {
           transformOrigin={{ horizontal: "right", vertical: "top" }}
           anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
         >
-          <MenuItem onClick={handleClose}>{session?.user?.name}</MenuItem>
+          <MenuItem onClick={handleClose}>{session?.userName}</MenuItem>
           <MenuItem onClick={handleClose}>
             <ListItemIcon>
               <Settings fontSize="small" />

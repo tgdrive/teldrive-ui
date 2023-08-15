@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction } from "react"
 import { NextRouter } from "next/router"
-import { ModalState } from "@/ui/types"
+import { Message, ModalState } from "@/ui/types"
 import {
   ChonkyActions,
   ChonkyActionUnion,
@@ -13,7 +13,6 @@ import {
 import { faArrowsRotate } from "@fortawesome/free-solid-svg-icons/faArrowsRotate"
 import { QueryClient } from "@tanstack/react-query"
 
-import { fetchData } from "@/ui/hooks/queryhooks"
 import { getExtension, getMediaUrl, realPath } from "@/ui/utils/common"
 import { getPreviewType, preview } from "@/ui/utils/getPreviewType"
 
@@ -126,6 +125,7 @@ export const handleAction = (
   queryClient: QueryClient,
   path: string | string[] | undefined,
   openUpload: () => void,
+  openFileDialog: () => void,
   preloadFiles: (path: string) => void
 ) => {
   return async (data: MapFileActionsToData<ChonkyActionUnion>) => {
@@ -140,7 +140,11 @@ export const handleAction = (
       } else {
         let previewType = getPreviewType(getExtension(fileToOpen.name))
         if (!FileHelper.isDirectory(fileToOpen) && previewType in preview) {
-          setModalState({ type: "preview", open: true, file: fileToOpen })
+          setModalState({
+            open: true,
+            file: fileToOpen,
+            operation: ChonkyActions.OpenFiles.id,
+          })
         }
       }
     } else if (data.id == DownloadFile.id) {
@@ -160,27 +164,25 @@ export const handleAction = (
       navigateToExternalUrl(url, false)
     } else if (data.id == RenameFile.id)
       setModalState({
-        type: "file",
         open: true,
         file: data.state.selectedFiles[0],
         operation: RenameFile.id,
       })
     else if (data.id == DeleteFile.id)
       setModalState({
-        type: "file",
-        open: false,
-        file: data.state.selectedFiles[0],
+        open: true,
+        selectedFiles: data.state.selectedFiles.map((item) => item.id),
         operation: DeleteFile.id,
       })
     else if (data.id == ChonkyActions.CreateFolder.id)
       setModalState({
-        type: "file",
         open: true,
-        file: { name: "" },
         operation: ChonkyActions.CreateFolder.id,
       })
-    else if (data.id == ChonkyActions.UploadFiles.id) openUpload()
-    else if (data.id == CopyDownloadLink.id) {
+    else if (data.id == ChonkyActions.UploadFiles.id) {
+      openUpload()
+      openFileDialog()
+    } else if (data.id == CopyDownloadLink.id) {
       let selections = data.state.selectedFilesForAction
       let clipboardText = ""
       selections.forEach((element) => {
@@ -195,13 +197,15 @@ export const handleAction = (
       const destQueryKey = destination.path.split("/")
       const srcQueryKey = router.asPath.split("/").slice(1)
       const dest = realPath(destQueryKey)
-      let res = await http.post("/api/files/movefiles", {
-        json: {
-          files: files.map((file) => file.id),
-          destination: dest,
-        },
-      })
-      if (res.json().status) {
+      let res = await http
+        .post("api/files/movefiles", {
+          json: {
+            files: files.map((file) => file.id),
+            destination: dest,
+          },
+        })
+        .json<Message>()
+      if (res.status) {
         queryClient.invalidateQueries("files")
       }
     } else if (data.id == ChonkyActions.SortFilesByName.id) {
@@ -210,7 +214,5 @@ export const handleAction = (
       const queryKey = ["files", path, getSortOrder()]
       queryClient.invalidateQueries(queryKey)
     }
-    //queryClient.removeQueries('files', { inactive: true })
-    // else if (data.id == ChonkyActions.UploadFiles.id) showOpenFileDialog()
   }
 }

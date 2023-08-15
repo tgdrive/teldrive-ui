@@ -60,6 +60,7 @@ export default memo(function FileModal({
         id: file?.id,
         payload: {
           name: file?.name,
+          type: file?.type,
         },
       })
 

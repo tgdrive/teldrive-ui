@@ -11,7 +11,6 @@ const withPWA = nextPWA({
   dest: "public",
   register: true,
   skipWaiting: true,
-  buildExcludes: [/chunks\/react-syntax-highlighter.*$/],
   swSrc: "service-worker.js",
 })
 
@@ -63,7 +62,7 @@ const config = withBundleAnalyzer({
   //   return [
   //     {
   //       source: '/api/:path*',
-  //       destination: 'http://localhost:5000/api/:path*'
+  //       destination: 'http://localhost:8080/api/:path*'
   //     },
   //   ]
   // },

@@ -18,12 +18,9 @@ import {
   VirtuosoGridHandle,
   VirtuosoHandle,
 } from "react-virtuoso"
+import { useBoolean } from "usehooks-ts"
 
-import {
-  useDeleteFile,
-  useFetchFiles,
-  usePreloadFiles,
-} from "@/ui/hooks/queryhooks"
+import { useFetchFiles, usePreloadFiles } from "@/ui/hooks/queryhooks"
 import { useDevice } from "@/ui/hooks/useDevice"
 import Loader from "@/ui/components/Loader"
 import {
@@ -39,6 +36,7 @@ import {
 } from "@/ui/utils/chonkyactions"
 import { chainLinks, getFiles } from "@/ui/utils/common"
 
+import DeleteDialog from "./DeleteDialog"
 import FileModal from "./FileModal"
 import Upload from "./upload"
 
@@ -83,6 +81,18 @@ const MyFileBrowser = () => {
 
   const [queryEnabled, setqueryEnabled] = useState(false)
 
+  const {
+    value: upload,
+    setTrue: showUpload,
+    setFalse: hideUpload,
+  } = useBoolean(false)
+
+  const {
+    value: fileDialogOpened,
+    setTrue: openFileDialog,
+    setFalse: closeFileDialog,
+  } = useBoolean(false)
+
   const { isMobile } = useDevice()
 
   const router = useRouter()
@@ -94,8 +104,6 @@ const MyFileBrowser = () => {
   const queryClient = useQueryClient()
 
   const isSm = useMediaQuery("(max-width:600px)")
-
-  const uploadRef = useRef<{ openUpload: () => void }>(null)
 
   const listRef = useRef<VirtuosoHandle | VirtuosoGridHandle>(null)
 
@@ -165,16 +173,10 @@ const MyFileBrowser = () => {
 
   const [modalState, setModalState] = useState<Partial<ModalState>>({
     open: false,
-    operation: "rename_file",
+    operation: RenameFile.id,
   })
 
-  const { mutation: deleteMutation } = useDeleteFile(queryParams)
-
-  const { file, open, operation } = modalState
-
-  useEffect(() => {
-    if (operation === DeleteFile.id) deleteMutation.mutate({ id: file?.id })
-  }, [operation, file?.id])
+  const { open, operation } = modalState
 
   const handleFileAction = useCallback(
     () =>
@@ -183,7 +185,8 @@ const MyFileBrowser = () => {
         setModalState,
         queryClient,
         path,
-        uploadRef.current?.openUpload!,
+        showUpload,
+        openFileDialog,
         preloadFiles
       ),
     [router, setModalState, queryClient, preloadFiles]
@@ -234,23 +237,39 @@ const MyFileBrowser = () => {
         />
         <FileContextMenu />
       </FileBrowser>
-      {modalState.type === "file" && open && (
-        <FileModal
-          modalState={modalState}
-          setModalState={setModalState}
-          queryParams={queryParams}
-          path={path}
-        />
-      )}
-
-      {modalState.type === "preview" && open && (
+      {[RenameFile.id, ChonkyActions.CreateFolder.id].find(
+        (val) => val === modalState.operation
+      ) &&
+        open && (
+          <FileModal
+            modalState={modalState}
+            setModalState={setModalState}
+            queryParams={queryParams}
+            path={path}
+          />
+        )}
+      {modalState.operation === ChonkyActions.OpenFiles.id && open && (
         <PreviewModal
           queryParams={queryParams}
           modalState={modalState}
           setModalState={setModalState}
         />
       )}
-      {/* <Upload ref={uploadRef} path={path as string[]} /> */}
+      {modalState.operation === DeleteFile.id && open && (
+        <DeleteDialog
+          queryParams={queryParams}
+          modalState={modalState}
+          setModalState={setModalState}
+        />
+      )}
+      {upload && (
+        <Upload
+          fileDialogOpened={fileDialogOpened}
+          closeFileDialog={closeFileDialog}
+          hideUpload={hideUpload}
+          path={path as string[]}
+        />
+      )}
     </Root>
   )
 }

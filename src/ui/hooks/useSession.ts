@@ -1,9 +1,10 @@
 import { useEffect } from "react"
 import { useQuery } from "@tanstack/react-query"
 
+import http from "@/ui/utils/http"
+
 export async function fetchSession() {
-  const res = await fetch("/api/auth/session")
-  const session = await res.json()
+  const session = await http.get("api/auth/session").json()
   return session
 }
 
@@ -14,7 +15,7 @@ type SessionOptions = {
 export function useSession({
   onUnauthenticated = () => void 0,
 }: SessionOptions = {}) {
-  const { data, status,refetch } = useQuery(["session"], fetchSession, {
+  const { data, status, refetch } = useQuery(["session"], fetchSession, {
     staleTime: 3600,
     refetchOnWindowFocus: false,
   })
@@ -23,5 +24,5 @@ export function useSession({
     if (!data && status == "success") onUnauthenticated()
   }, [data])
 
-  return { data, status,refetch }
+  return { data, status, refetch }
 }

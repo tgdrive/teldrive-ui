@@ -1,7 +1,6 @@
 import { FC, useEffect, useState } from "react"
 import { useRouter } from "next/router"
 import AddToDriveIcon from "@mui/icons-material/AddToDrive"
-import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline"
 import StarBorder from "@mui/icons-material/StarBorder"
 import WatchLaterIcon from "@mui/icons-material/WatchLater"
 import {
@@ -26,7 +25,6 @@ export const categories = [
     active: true,
   },
   { id: "starred", name: "Starred", icon: <StarBorder /> },
-  { id: "trash", name: "Trash", icon: <DeleteOutlineIcon /> },
   { id: "recent", name: "recent", icon: <WatchLaterIcon /> },
 ]
 

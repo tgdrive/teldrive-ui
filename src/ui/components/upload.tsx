@@ -1,14 +1,12 @@
-import React, {
-  forwardRef,
-  memo,
-  useCallback,
-  useEffect,
-  useImperativeHandle,
-  useReducer,
-  useRef,
-} from "react"
+import React, { memo, useCallback, useEffect, useReducer, useRef } from "react"
+import { File as FileRes, QueryParams, UploadPart } from "@/ui/types"
 import { ChonkyIconFA, ColorsLight, useIconData } from "@bhunter179/chonky"
-import { CancelOutlined, Visibility } from "@mui/icons-material"
+import {
+  Cancel,
+  CancelOutlined,
+  CheckCircleOutline,
+  ErrorOutline,
+} from "@mui/icons-material"
 import CloseIcon from "@mui/icons-material/Close"
 import ExpandLess from "@mui/icons-material/ExpandLess"
 import ExpandMore from "@mui/icons-material/ExpandMore"
@@ -21,247 +19,459 @@ import ListItem from "@mui/material/ListItem"
 import ListItemIcon from "@mui/material/ListItemIcon"
 import ListItemText from "@mui/material/ListItemText"
 import ListSubheader from "@mui/material/ListSubheader"
-import { QueryClient, useQueryClient } from "@tanstack/react-query"
 import pLimit from "p-limit"
 
+import { useCreateFile } from "@/ui/hooks/queryhooks"
 import useHover from "@/ui/hooks/useHover"
 import { realPath, zeroPad } from "@/ui/utils/common"
+import { sha1 } from "@/ui/utils/crypto"
 import http from "@/ui/utils/http"
 
-type UploadFile = {
-  name: string
-  size: number
-  type: string
-  progress: number
-  status: "idle" | "running" | "complete"
-  file: File
+enum FileUploadStatus {
+  NOT_STARTED,
+  UPLOADING,
+  UPLOADED,
+  CANCELLED,
+  FAILED,
 }
 
-const modifyFile = (file: File): UploadFile => ({
-  name: file.name,
-  size: file.size,
-  type: file.type,
-  progress: 0,
-  status: "idle",
-  file,
-})
-
-const UploadItemEntry = memo(({ name, progress }) => {
-  const { icon, colorCode } = useIconData({ name, isDir: false, id: "" })
-
-  const [hoverRef, isHovered] = useHover()
-
-  return (
-    <ListItem ref={hoverRef}>
-      <ListItemIcon>
-        <ChonkyIconFA icon={icon} style={{ color: ColorsLight[colorCode] }} />
-      </ListItemIcon>
-      <ListItemText
-        title={name}
-        primaryTypographyProps={{
-          sx: {
-            overflow: "hidden",
-            whiteSpace: "nowrap",
-            textOverflow: "ellipsis",
-          },
-        }}
-        primary={name}
-      />
-      {isHovered ? (
-        <IconButton sx={{ color: "text.primary" }}>
-          <CancelOutlined />
-        </IconButton>
-      ) : (
-        <Box sx={{ height: 40, width: 40, padding: 1 }}>
-          <CircularProgress size={24} variant="determinate" value={progress} />
-        </Box>
-      )}
-    </ListItem>
-  )
-})
-
-enum UploadActionKind {
-  SETFILES = "SET_FILES",
-  ADDFILES = "ADD_FILES",
-  SETINDEX = "SET_INDEX",
-  TOGGLECOLLAPSE = "TOGGLE_COLLAPSE",
-  SETVISIBILITY = "SET_VISIBILITY",
-}
-
-interface UploadAction {
-  type: UploadActionKind
-  payload?: UploadFile[] | boolean | number
-}
-
-interface UploadState {
-  files: UploadFile[]
-  currIndex: number
+interface FileUploadState {
+  files: File[]
+  currentFileIndex: number
+  uploadProgress: number
   collapse: boolean
   visibility: boolean
+  fileUploadStates: FileUploadStatus[]
+  fileAbortControllers: AbortController[]
 }
 
-const uploadState: UploadState = {
+enum ActionTypes {
+  SET_FILES = "SET_FILES",
+  ADD_FILES = "ADD_FILES",
+  SET_FILE_UPLOAD_STATUS = "SET_FILE_UPLOAD_STATUS",
+  SET_UPLOAD_PROGRESS = "SET_UPLOAD_PROGRESS",
+  SET_CURRENT_FILE_INDEX = "SET_CURRENT_FILE_INDEX",
+  SET_UPLOAD_CANCELLED = "SET_UPLOAD_CANCELLED",
+  TOGGLE_COLLAPSE = "TOGGLE_COLLAPSE",
+  SET_VISIBILITY = "SET_VISIBILITY",
+  SET_UPLOAD_STATE = "SET_UPLOAD_STATE",
+}
+
+type Action =
+  | { type: ActionTypes.SET_FILES; payload: File[] }
+  | { type: ActionTypes.ADD_FILES; payload: File[] }
+  | {
+      type: ActionTypes.SET_FILE_UPLOAD_STATUS
+      payload: { fileIndex: number; status: FileUploadStatus }
+    }
+  | { type: ActionTypes.SET_UPLOAD_PROGRESS; payload: number }
+  | { type: ActionTypes.SET_CURRENT_FILE_INDEX; payload: number }
+  | { type: ActionTypes.TOGGLE_COLLAPSE }
+  | { type: ActionTypes.SET_VISIBILITY; payload: boolean }
+
+const initialState: FileUploadState = {
   files: [],
-  currIndex: 0,
+  currentFileIndex: 0,
+  uploadProgress: 0,
   collapse: true,
   visibility: false,
+  fileUploadStates: [],
+  fileAbortControllers: [],
 }
 
-function uploadReducer(state: UploadState, action: UploadAction): UploadState {
-  const { type, payload } = action
-  switch (type) {
-    case UploadActionKind.SETFILES:
+const reducer = (state: FileUploadState, action: Action): FileUploadState => {
+  switch (action.type) {
+    case ActionTypes.SET_FILES:
       return {
         ...state,
-        files: payload as UploadFile[],
+        files: action.payload,
+        fileUploadStates: action.payload.map(
+          () => FileUploadStatus.NOT_STARTED
+        ),
+        fileAbortControllers: action.payload.map(() => new AbortController()),
       }
-    case UploadActionKind.ADDFILES:
+    case ActionTypes.ADD_FILES:
+      const fileUploadStates = action.payload.map(
+        () => FileUploadStatus.NOT_STARTED
+      )
+      const fileAbortControllers = action.payload.map(
+        () => new AbortController()
+      )
       return {
         ...state,
-        files: [...state.files, ...(payload as UploadFile[])],
+        files: [...state.files, ...action.payload],
+        fileUploadStates: [...state.fileUploadStates, ...fileUploadStates],
+        fileAbortControllers: [
+          ...state.fileAbortControllers,
+          ...fileAbortControllers,
+        ],
       }
-    case UploadActionKind.TOGGLECOLLAPSE:
+    case ActionTypes.SET_UPLOAD_PROGRESS:
+      return { ...state, uploadProgress: action.payload }
+    case ActionTypes.SET_CURRENT_FILE_INDEX:
+      return { ...state, currentFileIndex: action.payload }
+    case ActionTypes.TOGGLE_COLLAPSE:
+      return { ...state, collapse: !state.collapse }
+    case ActionTypes.SET_VISIBILITY:
+      return { ...state, visibility: action.payload }
+    case ActionTypes.SET_FILE_UPLOAD_STATUS:
+      const newFileUploadStates = [...state.fileUploadStates]
+      newFileUploadStates[action.payload.fileIndex] = action.payload.status
       return {
         ...state,
-        collapse: !state.collapse,
-      }
-
-    case UploadActionKind.SETVISIBILITY:
-      return {
-        ...state,
-        visibility: payload as boolean,
-      }
-
-    case UploadActionKind.SETINDEX:
-      return {
-        ...state,
-        currIndex: payload as number,
+        fileUploadStates: newFileUploadStates,
       }
     default:
       return state
   }
 }
 
-const uploadFile = async (file: UploadFile, path: string[]) => {
-  const SPLIT_SIZE = 100 * 1024 * 1024
+type UploadEntryProps = {
+  index: number
+  name: string
+  progress: number
+  uploadState: FileUploadStatus
+  handleCancel: (index: number) => void
+}
 
-  const fileParts = Math.ceil(file.size / SPLIT_SIZE)
+const UploadItemEntry = memo(
+  ({ index, name, progress, uploadState, handleCancel }: UploadEntryProps) => {
+    const { icon, colorCode } = useIconData({ name, isDir: false, id: "" })
 
-  const filebuffer = file.file
+    const [hoverRef, isHovered] = useHover()
 
-  const limit = pLimit(8)
+    return (
+      <ListItem ref={hoverRef}>
+        <ListItemIcon>
+          <ChonkyIconFA icon={icon} style={{ color: ColorsLight[colorCode] }} />
+        </ListItemIcon>
+        <ListItemText
+          title={name}
+          primaryTypographyProps={{
+            sx: {
+              overflow: "hidden",
+              whiteSpace: "nowrap",
+              textOverflow: "ellipsis",
+            },
+          }}
+          primary={name}
+        />
+        {isHovered && uploadState === FileUploadStatus.UPLOADING ? (
+          <IconButton
+            sx={{ color: "text.primary" }}
+            onClick={() => handleCancel(index)}
+          >
+            <CancelOutlined />
+          </IconButton>
+        ) : (
+          <Box sx={{ height: 40, width: 40 }}>
+            {uploadState === FileUploadStatus.UPLOADING && (
+              <Box sx={{ height: 40, width: 40, padding: 1 }}>
+                <CircularProgress
+                  size={24}
+                  variant="determinate"
+                  value={progress}
+                />
+              </Box>
+            )}
+            {uploadState === FileUploadStatus.UPLOADED && (
+              <IconButton sx={{ color: "green" }}>
+                <CheckCircleOutline />
+              </IconButton>
+            )}
+            {uploadState === FileUploadStatus.FAILED && (
+              <IconButton sx={{ color: "red" }}>
+                <ErrorOutline />
+              </IconButton>
+            )}
+            {uploadState === FileUploadStatus.CANCELLED && (
+              <IconButton sx={{ color: "gray" }}>
+                <Cancel />
+              </IconButton>
+            )}
+          </Box>
+        )}
+      </ListItem>
+    )
+  }
+)
 
-  const input = Array(fileParts)
-    .fill(0)
-    .map((_, index) =>
+interface UploadProps {
+  path: string[]
+  hideUpload: () => void
+  fileDialogOpened: boolean
+  closeFileDialog: () => void
+  queryParams: Partial<QueryParams>
+}
+
+const uploadPart = async <T extends {}>(
+  url: string,
+  body: Blob,
+  params: Record<string, string>,
+  onProgress: (progress: number) => void,
+  cancelSignal: AbortSignal
+) => {
+  return new Promise<T>((resolve, reject) => {
+    const xhr = new XMLHttpRequest()
+    cancelSignal.addEventListener("abort", () => {
+      xhr.abort()
+      reject(new Error("File upload cancelled"))
+    })
+    xhr.upload.onprogress = (event) => {
+      const partProgress = (event.loaded / event.total) * 100
+      onProgress(partProgress)
+    }
+    xhr.onload = () => {
+      if (xhr.status == 200) {
+        onProgress(100)
+        resolve(JSON.parse(xhr.responseText))
+      } else reject(new Error("File upload failed"))
+    }
+
+    xhr.onerror = () => {
+      reject(new Error("File upload failed"))
+    }
+    const target = new URL(url)
+    target.search = new URLSearchParams(params).toString()
+    xhr.open("POST", target, true)
+    xhr.withCredentials = true
+    xhr.setRequestHeader("Content-Type", "application/octet-stream")
+    xhr.send(body)
+  })
+}
+
+const uploadFile = async (
+  file: File,
+  path: string,
+  onProgress: (progress: number) => void,
+  cancelSignal: AbortSignal
+) => {
+  const SPLIT_SIZE = 1024 * 1024 * 1024
+
+  const totalParts = Math.ceil(file.size / SPLIT_SIZE)
+
+  const limit = pLimit(4)
+
+  const uploadId = await sha1(file.size.toString() + file.name + path)
+
+  const url = `${
+    process.env.NEXT_PUBLIC_API_HOST ?? window.location.origin
+  }/api/uploads/${uploadId}`
+
+  let partProgress: number[] = []
+
+  const partUploadPromises: Promise<UploadPart>[] = []
+
+  const partCancelSignals: AbortController[] = []
+
+  for (let partIndex = 0; partIndex < totalParts; partIndex++) {
+    const controller = new AbortController()
+
+    partCancelSignals.push(controller)
+
+    partUploadPromises.push(
       limit(() =>
-        (async (part: number) => {
-          const start = part * SPLIT_SIZE
+        (async () => {
+          const start = partIndex * SPLIT_SIZE
 
-          const end = Math.min(part * SPLIT_SIZE + SPLIT_SIZE, file.size)
+          const end = Math.min(partIndex * SPLIT_SIZE + SPLIT_SIZE, file.size)
 
-          const fileBlob =
-            fileParts > 1 ? filebuffer.slice(start, end) : filebuffer.slice()
+          const fileBlob = totalParts > 1 ? file.slice(start, end) : file
 
           const fileName =
-            fileParts > 1
-              ? `${file.name}.part.${zeroPad(part + 1, 3)}`
+            totalParts > 1
+              ? `${file.name}.part.${zeroPad(partIndex + 1, 3)}`
               : file.name
 
-          const headers = { "Content-Type": "application/octet-stream" }
+          const params: Record<string, string> = {
+            fileName,
+            partNo: (partIndex + 1).toString(),
+            totalparts: totalParts.toString(),
+          }
 
-          const response = await fetch(
-            `https://gitmedia.bhunter.in/api/releases/upload/109150967?name=${fileName}`,
-            {
-              method: "post",
-              body: fileBlob,
-              headers,
-            }
+          const asset = await uploadPart<UploadPart>(
+            url,
+            fileBlob,
+            params,
+            (progress) => {
+              partProgress[partIndex] = progress
+            },
+            controller.signal
           )
 
-          const asset = await response.json()
-
-          return { id: asset.id, size: end - start, part }
-        })(index)
+          return asset
+        })()
       )
     )
-
-  let parts = await Promise.all(input)
-
-  const uploadParts = parts
-    .sort((a, b) => a.part - b.part)
-    .map((item) => ({ id: item.id, size: item.size }))
-
-  const payload = {
-    name: file.name,
-    mimeType: file.type,
-    type: "file",
-    parts: uploadParts,
-    size: file.size,
-    path: realPath(path),
-    userId: "bhunter17",
   }
 
-  console.log(payload)
-  //let res = await http.post('/api/files', payload)
+  cancelSignal.addEventListener("abort", () => {
+    partCancelSignals.forEach((controller) => {
+      controller.abort()
+    })
+  })
+
+  const timer = setInterval(() => {
+    const totalProgress = partProgress.reduce(
+      (sum, progress) => sum + progress,
+      0
+    )
+    onProgress(totalProgress / totalParts)
+  }, 3000)
+  try {
+    const parts = await Promise.all(partUploadPromises)
+    const uploadParts = parts
+      .sort((a, b) => a.partNo - b.partNo)
+      .map((item) => ({ id: item.partId }))
+
+    const payload = {
+      name: file.name,
+      mimeType: file.type,
+      type: "file",
+      parts: uploadParts,
+      size: file.size,
+      path,
+    }
+
+    const res = await http.post("api/files", { json: payload }).json<FileRes>()
+
+    if (res.id) await http.delete(`api/uploads/${uploadId}`)
+    return res
+  } catch (error) {
+  } finally {
+    clearInterval(timer)
+  }
 }
 
-interface Props {
-  path: string[]
-}
-interface Ref {
-  openUpload: () => void
-}
+const Upload = ({
+  path,
+  hideUpload,
+  fileDialogOpened,
+  closeFileDialog,
+  queryParams,
+}: UploadProps) => {
+  const [state, dispatch] = useReducer(reducer, initialState)
 
-const Upload = forwardRef<Ref, Props>(({ path }, ref) => {
+  const {
+    files,
+    currentFileIndex,
+    uploadProgress,
+    collapse,
+    visibility,
+    fileUploadStates,
+    fileAbortControllers,
+  } = state
+
+  const previndex = useRef(-1)
+
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  const [state, dispatch] = useReducer(uploadReducer, uploadState)
-
-  const { files, currIndex, collapse, visibility } = state
-
-  const openUpload = () => fileInputRef?.current?.click()
-
-  useImperativeHandle(
-    ref,
-    () => {
-      return { openUpload }
-    },
-    []
-  )
-
-  const handleChange = useCallback((event: any) => {
-    dispatch({ type: UploadActionKind.SETVISIBILITY, payload: true })
-    dispatch({
-      type: UploadActionKind.ADDFILES,
-      payload: Array.from(event.target.files).map((file) =>
-        modifyFile(file as File)
-      ),
-    })
+  const openFileSelector = useCallback(() => {
+    fileInputRef?.current?.click()
+    window.addEventListener(
+      "focus",
+      () => {
+        if (fileInputRef.current?.files?.length == 0) closeFileDialog()
+      },
+      { once: true }
+    )
   }, [])
 
   const handleCollapse = useCallback(
-    () => dispatch({ type: UploadActionKind.TOGGLECOLLAPSE }),
+    () => dispatch({ type: ActionTypes.TOGGLE_COLLAPSE }),
     [dispatch]
   )
 
-  const hideUpload = useCallback(() => {
-    dispatch({ type: UploadActionKind.SETVISIBILITY, payload: false })
-    dispatch({ type: UploadActionKind.SETFILES, payload: [] })
-  }, [dispatch])
+  const handleCancel = useCallback(
+    (index: number) => {
+      dispatch({
+        type: ActionTypes.SET_FILE_UPLOAD_STATUS,
+        payload: {
+          fileIndex: index,
+          status: FileUploadStatus.CANCELLED,
+        },
+      })
+      fileAbortControllers[index].abort()
+    },
+    [fileAbortControllers]
+  )
 
   useEffect(() => {
-    if (currIndex == 0 && files.length > 0) {
-      uploadFile(files[currIndex], path).then((res) => console.log(res))
+    if (fileDialogOpened) openFileSelector()
+  }, [fileDialogOpened])
+
+  const handleFileChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const selectedFiles = event.target.files
+      if (selectedFiles) {
+        dispatch({ type: ActionTypes.SET_VISIBILITY, payload: true })
+        dispatch({
+          type: ActionTypes.ADD_FILES,
+          payload: Array.from(selectedFiles),
+        })
+        closeFileDialog()
+      }
+    },
+    []
+  )
+  useEffect(() => {
+    if (
+      fileUploadStates[currentFileIndex] == FileUploadStatus.CANCELLED &&
+      currentFileIndex < files.length
+    ) {
+      dispatch({
+        type: ActionTypes.SET_CURRENT_FILE_INDEX,
+        payload: currentFileIndex + 1,
+      })
     }
-  }, [files])
+  }, [fileUploadStates])
+
+  useEffect(() => {
+    if (files.length > 0 && currentFileIndex < files.length) {
+      if (previndex.current !== currentFileIndex) {
+        dispatch({
+          type: ActionTypes.SET_FILE_UPLOAD_STATUS,
+          payload: {
+            fileIndex: currentFileIndex,
+            status: FileUploadStatus.UPLOADING,
+          },
+        })
+        uploadFile(
+          files[currentFileIndex],
+          realPath(path),
+          (progress) => {
+            dispatch({
+              type: ActionTypes.SET_UPLOAD_PROGRESS,
+              payload: progress,
+            })
+          },
+          fileAbortControllers[currentFileIndex].signal
+        ).then((file) => {
+          dispatch({ type: ActionTypes.SET_UPLOAD_PROGRESS, payload: 100 })
+          dispatch({
+            type: ActionTypes.SET_FILE_UPLOAD_STATUS,
+            payload: {
+              fileIndex: currentFileIndex,
+              status: FileUploadStatus.UPLOADED,
+            },
+          })
+          dispatch({
+            type: ActionTypes.SET_CURRENT_FILE_INDEX,
+            payload: currentFileIndex + 1,
+          })
+          fileAbortControllers[currentFileIndex].abort()
+        })
+        previndex.current = currentFileIndex
+      }
+    }
+  }, [files, currentFileIndex])
 
   return (
     <>
       <Box
         component={"input"}
         ref={fileInputRef}
-        onChange={handleChange}
+        onChange={handleFileChange}
         type="file"
         sx={{ display: "none" }}
         multiple
@@ -274,6 +484,10 @@ const Upload = forwardRef<Ref, Props>(({ path }, ref) => {
             position: "fixed",
             bottom: 0,
             right: 8,
+            zIndex: (theme) => theme.zIndex.drawer + 1,
+            "@media (max-width: 1024px)": {
+              bottom: 56,
+            },
             background: (theme) =>
               theme.palette.mode === "dark"
                 ? lighten(theme.palette.background.paper, 0.08)
@@ -289,7 +503,7 @@ const Upload = forwardRef<Ref, Props>(({ path }, ref) => {
               }}
             >
               <Typography variant="h6" component="h6">
-                Uploading 1 file
+                {`Uploading ${files.length} file`}
               </Typography>
               <Box>
                 <IconButton
@@ -313,13 +527,20 @@ const Upload = forwardRef<Ref, Props>(({ path }, ref) => {
           >
             {files.length > 0 &&
               files.map((file, index) => (
-                <UploadItemEntry key={index} {...file} />
+                <UploadItemEntry
+                  index={index}
+                  key={index}
+                  name={file.name}
+                  uploadState={fileUploadStates[index]}
+                  handleCancel={handleCancel}
+                  progress={index === currentFileIndex ? uploadProgress : 0}
+                />
               ))}
           </Collapse>
         </List>
       )}
     </>
   )
-})
+}
 
 export default Upload

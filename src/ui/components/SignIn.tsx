@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react"
 import { useRouter } from "next/router"
-import { Message } from "@/ui/types"
+import { AuthMessage, Message } from "@/ui/types"
 import { Box, Checkbox, FormControlLabel, TextField } from "@mui/material"
 import Button from "@mui/material/Button"
 import CircularProgress from "@mui/material/CircularProgress"
@@ -8,16 +8,13 @@ import Container from "@mui/material/Container"
 import Grow from "@mui/material/Grow"
 import Paper from "@mui/material/Paper"
 import Typography from "@mui/material/Typography"
-import base64url from "base64url"
 import { matchIsValidTel, MuiTelInput } from "mui-tel-input"
 import { Controller, useForm } from "react-hook-form"
-import { Api, Logger, TelegramClient } from "telegram"
-import { LogLevel } from "telegram/extensions/Logger"
-import { Session, StringSession } from "telegram/sessions"
+import useWebSocket, { ReadyState } from "react-use-websocket"
 
 import { useSession } from "@/ui/hooks/useSession"
-import { apiCredentials, getServerAddress } from "@/ui/utils/common"
 import http from "@/ui/utils/http"
+import {getWebSocketUrl} from "@/ui/utils/common"
 
 import QrCode from "./QRCode"
 import TelegramIcon from "./TelegramIcon"
@@ -27,21 +24,6 @@ type FormState = {
   phoneCode: string
   phoneNumber: string
   remember?: boolean
-}
-
-function getSession(session: Session, user: Api.User): Record<string, any> {
-  const dc_id = session.dcId
-  const auth_key = session.getAuthKey()?.getKey()?.toString("hex")
-
-  return {
-    dc_id,
-    auth_key,
-    tg_id: Number(user.id),
-    bot: user.bot,
-    user_name: user.username,
-    name: `${user.firstName || ""} ${user.lastName || ""}`.trim(),
-    is_premium: user.premium,
-  }
 }
 
 export default function SignIn() {
@@ -62,25 +44,23 @@ export default function SignIn() {
 
   const [loginType, setLoginType] = useState("qr")
 
-  const [isConnected, setIsConnected] = useState(false)
-
   const [qrCode, setqrCode] = useState("")
 
   const { refetch } = useSession()
 
-  const clientRef = useRef<TelegramClient>(null)
+  const { sendJsonMessage, lastJsonMessage, readyState } =
+    useWebSocket<AuthMessage>(`${getWebSocketUrl()}/api/auth/ws`, {
+      onOpen: () => console.log("opened"),
+    })
 
   const router = useRouter()
 
   const { from } = router.query
 
   const postLogin = useCallback(
-    async function postLogin(session: Session, user: Api.User) {
-      let payload = getSession(session, user)
-      const gramjs_session = session.save()
-      payload["gramjs_session"] = gramjs_session
+    async function postLogin(payload: Record<string, any>) {
       const res = await http
-        .post("/api/auth/login", { json: payload })
+        .post("api/auth/login", { json: payload })
         .json<Message>()
       if (res.status) {
         await refetch()
@@ -92,94 +72,58 @@ export default function SignIn() {
   )
 
   async function onSubmit({ phoneNumber, remember, phoneCode }: FormState) {
-    const client = clientRef.current!
-
     if (step === 0) {
       setLoading(true)
-      try {
-        const { phoneCodeHash } = await client.sendCode(
-          apiCredentials,
-          phoneNumber
-        )
-        setFormState((prev) => ({
-          ...prev,
-          phoneCodeHash,
-          phoneNumber,
-          remember,
-        }))
-        setStep(1)
-      } catch (error) {
-        //createToast(error.message, "error")
-      } finally {
-        setLoading(false)
-      }
+      setFormState((prev) => ({
+        ...prev,
+        phoneNumber,
+        remember,
+      }))
+      sendJsonMessage({
+        authType: loginType,
+        message: "sendcode",
+        phoneNo: phoneNumber,
+      })
     }
-
     if (step === 1) {
       setLoading(true)
-      try {
-        let user = await client.invoke(
-          new Api.auth.SignIn({
-            phoneNumber: formState.phoneNumber,
-            phoneCodeHash: formState.phoneCodeHash,
-            phoneCode,
-          })
-        )
-        await postLogin(client.session, user.user)
-      } catch (error) {
-      } finally {
-        setLoading(false)
-      }
+      sendJsonMessage({
+        authType: loginType,
+        message: "signin",
+        phoneNo: phoneNumber,
+        phoneCode,
+        phoneCodeHash: formState.phoneCodeHash,
+      })
     }
   }
 
-  useEffect(() => {
-    if (!clientRef.current) {
-      const session = new StringSession("")
-      const { id, ipAddress, port } = getServerAddress(5)
-      session.setDC(id, ipAddress, port)
-      clientRef.current = new TelegramClient(
-        session,
-        apiCredentials.apiId,
-        apiCredentials.apiHash,
-        {
-          baseLogger: new Logger(LogLevel.NONE),
-          deviceModel: "Desktop",
-          systemVersion: "Windows 10",
-          appVersion: "4.8.1 x64",
-          langCode: "en-US",
-          useWSS: true,
-        }
-      )
-      clientRef.current.connect().then(() => setIsConnected(true))
-    }
-    return () => {
-      clientRef.current?.destroy()
-    }
-  }, [])
+  const firstCall = useRef(false)
 
   useEffect(() => {
-    const client = clientRef.current!
-    async function loginWithQr() {
-      const user = await client.signInUserWithQrCode(apiCredentials, {
-        onError: async function (p1) {
-          console.log("error", p1)
-          return true
-        },
-        qrCode: async (code) => {
-          let qr = `tg://login?token=${base64url(code.token)}`
-          setqrCode(qr)
-        },
-
-        password: async (hint) => {
-          return "1111"
-        },
-      })
-      await postLogin(client.session, user)
+    if (loginType === "qr" && !firstCall.current) {
+      sendJsonMessage({ authType: loginType })
+      firstCall.current = true
     }
+  }, [loginType, router])
 
-    if (loginType === "qr" && isConnected) loginWithQr()
-  }, [loginType, router, isConnected])
+  useEffect(() => {
+    if (lastJsonMessage !== null) {
+      if (lastJsonMessage.message === "success") {
+        postLogin(lastJsonMessage.payload)
+        setLoading(false)
+      }
+
+      if (lastJsonMessage.payload.phoneCodeHash) {
+        const phoneCodeHash = lastJsonMessage.payload.phoneCodeHash as string
+        setFormState((prev) => ({ ...prev, phoneCodeHash }))
+        setStep(1)
+        setLoading(false)
+      }
+      if (lastJsonMessage.payload.token) {
+        setqrCode(lastJsonMessage.payload.token as string)
+      }
+    }
+  }, [lastJsonMessage])
 
   return (
     <Container component="main" maxWidth="sm">

@@ -24,6 +24,7 @@ export type ModalState = {
   operation: string
   type: string
   file: FileData
+  selectedFiles: string[]
   name: string
 }
 
@@ -51,7 +52,20 @@ export type FilePayload = {
   payload?: Record<string, any>
 }
 
+export type UploadPart = {
+  id: string
+  partId: number
+  partNo: number
+  channelId: number
+}
+
+export type AuthMessage = {
+  type: string
+  payload: Record<string, string | number | boolean>
+  message: string
+}
+
 export type Message = {
   status: boolean
-  message?: string
+  message: string
 }
