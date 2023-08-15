@@ -28,14 +28,9 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: copy env file
-        env:
-          ENV: ${{ secrets.ENV }}
-        run: python3 -c "import os;f=open('.env','w');f.write(os.environ['ENV']);"
-
       - name: ${{ matrix.type }} Image Name
         id: imagename
-        run: echo "name=ghcr.io/${GITHUB_REPOSITORY,,}/teldrive_webapp" >> $GITHUB_OUTPUT
+        run: echo "name=ghcr.io/divyam234/teldrive/client" >> $GITHUB_OUTPUT
 
       - name: Build Next Image
         uses: docker/build-push-action@v3
