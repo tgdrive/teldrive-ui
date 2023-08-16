@@ -2,7 +2,7 @@ import { FileData } from "@bhunter179/chonky"
 
 import { Media } from "@/api/schemas/file.schema"
 
-export type FileResponse = { results?: File[]; nextPageToken?: string }
+export type FileResponse = { results: File[]; nextPageToken?: string }
 
 export type File = {
   name: string

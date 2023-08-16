@@ -264,6 +264,7 @@ const MyFileBrowser = () => {
       )}
       {upload && (
         <Upload
+          queryParams={queryParams}
           fileDialogOpened={fileDialogOpened}
           closeFileDialog={closeFileDialog}
           hideUpload={hideUpload}

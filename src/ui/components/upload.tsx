@@ -1,5 +1,17 @@
-import React, { memo, useCallback, useEffect, useReducer, useRef } from "react"
-import { File as FileRes, QueryParams, UploadPart } from "@/ui/types"
+import React, {
+  memo,
+  useCallback,
+  useEffect,
+  useMemo,
+  useReducer,
+  useRef,
+} from "react"
+import {
+  File as FileRes,
+  FileResponse,
+  QueryParams,
+  UploadPart,
+} from "@/ui/types"
 import { ChonkyIconFA, ColorsLight, useIconData } from "@bhunter179/chonky"
 import {
   Cancel,
@@ -19,11 +31,11 @@ import ListItem from "@mui/material/ListItem"
 import ListItemIcon from "@mui/material/ListItemIcon"
 import ListItemText from "@mui/material/ListItemText"
 import ListSubheader from "@mui/material/ListSubheader"
+import { InfiniteData, useQueryClient } from "@tanstack/react-query"
 import pLimit from "p-limit"
 
-import { useCreateFile } from "@/ui/hooks/queryhooks"
 import useHover from "@/ui/hooks/useHover"
-import { realPath, zeroPad } from "@/ui/utils/common"
+import { getSortOrder, realPath, zeroPad } from "@/ui/utils/common"
 import { sha1 } from "@/ui/utils/crypto"
 import http from "@/ui/utils/http"
 
@@ -326,7 +338,7 @@ const uploadFile = async (
 
     const payload = {
       name: file.name,
-      mimeType: file.type,
+      mimeType: file.type ?? "application/octet-stream",
       type: "file",
       parts: uploadParts,
       size: file.size,
@@ -351,6 +363,14 @@ const Upload = ({
   queryParams,
 }: UploadProps) => {
   const [state, dispatch] = useReducer(reducer, initialState)
+  const queryClient = useQueryClient()
+
+  const queryKey = useMemo(() => {
+    const { key, path } = queryParams
+    const sortOrder = getSortOrder()
+    const queryKey = [key, path, sortOrder]
+    return queryKey
+  }, [queryParams])
 
   const {
     files,
@@ -455,6 +475,24 @@ const Upload = ({
               status: FileUploadStatus.UPLOADED,
             },
           })
+          if (file) {
+            queryClient.setQueryData<InfiniteData<FileResponse>>(
+              queryKey,
+              (prev) => {
+                return {
+                  ...prev,
+                  pages: prev?.pages.map((page, index) => {
+                    if (index == 0) {
+                      return {
+                        ...page,
+                        results: [file, page.results],
+                      }
+                    } else return page
+                  }),
+                }
+              }
+            )
+          }
           dispatch({
             type: ActionTypes.SET_CURRENT_FILE_INDEX,
             payload: currentFileIndex + 1,
@@ -463,6 +501,9 @@ const Upload = ({
         })
         previndex.current = currentFileIndex
       }
+    }
+    if (currentFileIndex >= files.length) {
+      queryClient.invalidateQueries({ queryKey })
     }
   }, [files, currentFileIndex])
 

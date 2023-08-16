@@ -1,7 +1,9 @@
 name: Build App
 
 on:
-  workflow_dispatch:
+  push:
+    tags:
+      - "*"
 
 env:
   DOCKER_BUILDKIT: 1
@@ -28,7 +30,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: ${{ matrix.type }} Image Name
+      - name: Image Name
         id: imagename
         run: echo "name=ghcr.io/divyam234/teldrive/client" >> $GITHUB_OUTPUT
 
