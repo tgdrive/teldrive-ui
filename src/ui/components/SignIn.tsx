@@ -13,8 +13,8 @@ import { Controller, useForm } from "react-hook-form"
 import useWebSocket, { ReadyState } from "react-use-websocket"
 
 import { useSession } from "@/ui/hooks/useSession"
+import { getWebSocketUrl } from "@/ui/utils/common"
 import http from "@/ui/utils/http"
-import {getWebSocketUrl} from "@/ui/utils/common"
 
 import QrCode from "./QRCode"
 import TelegramIcon from "./TelegramIcon"
@@ -49,9 +49,7 @@ export default function SignIn() {
   const { refetch } = useSession()
 
   const { sendJsonMessage, lastJsonMessage, readyState } =
-    useWebSocket<AuthMessage>(`${getWebSocketUrl()}/api/auth/ws`, {
-      onOpen: () => console.log("opened"),
-    })
+    useWebSocket<AuthMessage>(`${getWebSocketUrl()}/api/auth/ws`, {})
 
   const router = useRouter()
 
