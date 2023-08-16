@@ -61,9 +61,7 @@ export default function SignIn() {
         .post("api/auth/login", { json: payload })
         .json<Message>()
       if (res.status) {
-        await refetch()
-        const toPath = from ?? "/my-drive"
-        router.replace(toPath as string)
+        window.location.pathname="/my-drive"
       }
     },
     [from]
