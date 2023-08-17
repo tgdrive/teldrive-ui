@@ -36,7 +36,7 @@ import pLimit from "p-limit"
 
 import useHover from "@/ui/hooks/useHover"
 import useSettings from "@/ui/hooks/useSettings"
-import { getSortOrder, realPath, zeroPad } from "@/ui/utils/common"
+import { getApiUrl, getSortOrder, realPath, zeroPad } from "@/ui/utils/common"
 import { sha1 } from "@/ui/utils/crypto"
 import http from "@/ui/utils/http"
 
@@ -266,9 +266,8 @@ const uploadFile = async (
 
   const uploadId = await sha1(file.size.toString() + file.name + path)
 
-  const url = `${
-    process.env.NEXT_PUBLIC_API_HOST ?? window.location.origin
-  }/api/uploads/${uploadId}`
+  const host = getApiUrl() ?? window.location.origin
+  const url = `${host}/api/uploads/${uploadId}`
 
   let partProgress: number[] = []
 
