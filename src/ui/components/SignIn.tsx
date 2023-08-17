@@ -46,8 +46,6 @@ export default function SignIn() {
 
   const [qrCode, setqrCode] = useState("")
 
-  const { refetch } = useSession()
-
   const { sendJsonMessage, lastJsonMessage, readyState } =
     useWebSocket<AuthMessage>(`${getWebSocketUrl()}/api/auth/ws`, {})
 
@@ -61,7 +59,6 @@ export default function SignIn() {
         .post("api/auth/login", { json: payload })
         .json<Message>()
       if (res.status) {
-        console.log(from)
         window.location.href = from as string
       }
     },
