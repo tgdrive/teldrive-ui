@@ -88,7 +88,8 @@ export const getApiUrl = () => {
 }
 
 export const getMediaUrl = (id: string, name: string, download = false) => {
-  const host = getApiUrl() ?? window.location.origin
+  let host = getApiUrl()
+  host = host ? host : window.location.origin
 
   return `${host}/api/files/${id}/${encodeURIComponent(name)}${
     download ? "?d=1" : ""
@@ -96,7 +97,8 @@ export const getMediaUrl = (id: string, name: string, download = false) => {
 }
 
 export const getWebSocketUrl = () => {
-  const host = getApiUrl() ?? window.location.origin
+  let host = getApiUrl()
+  host = host ? host : window.location.origin
   const url = new URL(host)
   return `${url.protocol === "http:" ? "ws" : "wss"}://${url.host}`
 }
