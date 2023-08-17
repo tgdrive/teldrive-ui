@@ -1,13 +1,8 @@
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from "react"
+import React, { useCallback, useContext, useEffect, useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/router"
 import ColorModeContext from "@/ui/contexts/colorModeContext"
+import { Session } from "@/ui/types"
 import CancelIcon from "@mui/icons-material/Cancel"
 import ColorIcon from "@mui/icons-material/ColorLensOutlined"
 import DarkIcon from "@mui/icons-material/DarkModeOutlined"
@@ -22,7 +17,7 @@ import { styled, useTheme } from "@mui/material/styles"
 import Toolbar from "@mui/material/Toolbar"
 import debounce from "lodash.debounce"
 
-import AccountMenu from "./AccountMenu"
+import AccountMenu from "@/ui/components/menus/AccountMenu"
 
 const PREFIX = "AppBar"
 
@@ -74,7 +69,7 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
   },
 }))
 
-export default function Header({ session }) {
+export default function Header({ session }: { session?: Session }) {
   const [query, setQuery] = useState("")
 
   const theme = useTheme()
@@ -142,7 +137,7 @@ export default function Header({ session }) {
                 textDecoration: "none",
               }}
             >
-              Git Drive
+              TelDrive
             </Typography>
           </Grid>
           <Grid item xs sx={{ display: "flex", alignItems: "baseline" }}>

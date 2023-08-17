@@ -1,9 +1,13 @@
 import ky from "ky"
 
+import { getApiUrl } from "@/ui/utils/common"
+
+const baseUrl = getApiUrl()
+
 const http = ky.create({
   timeout: 60000,
-  ...(process.env.NEXT_PUBLIC_API_HOST && {
-    prefixUrl: process.env.NEXT_PUBLIC_API_HOST,
+  ...(baseUrl && {
+    prefixUrl: baseUrl,
     credentials: "include",
   }),
 })

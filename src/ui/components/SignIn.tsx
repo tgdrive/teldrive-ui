@@ -10,7 +10,7 @@ import Paper from "@mui/material/Paper"
 import Typography from "@mui/material/Typography"
 import { matchIsValidTel, MuiTelInput } from "mui-tel-input"
 import { Controller, useForm } from "react-hook-form"
-import useWebSocket, { ReadyState } from "react-use-websocket"
+import useWebSocket from "react-use-websocket"
 
 import { useSession } from "@/ui/hooks/useSession"
 import { getWebSocketUrl } from "@/ui/utils/common"
@@ -61,7 +61,7 @@ export default function SignIn() {
         .post("api/auth/login", { json: payload })
         .json<Message>()
       if (res.status) {
-        window.location.pathname="/my-drive"
+        window.location.pathname = "/my-drive"
       }
     },
     [from]

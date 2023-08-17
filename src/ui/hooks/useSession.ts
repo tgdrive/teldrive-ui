@@ -1,10 +1,11 @@
 import { useEffect } from "react"
+import { Session } from "@/ui/types"
 import { useQuery } from "@tanstack/react-query"
 
 import http from "@/ui/utils/http"
 
 export async function fetchSession() {
-  const session = await http.get("api/auth/session").json()
+  const session = await http.get("api/auth/session").json<Session>()
   return session
 }
 

@@ -35,6 +35,7 @@ import { InfiniteData, useQueryClient } from "@tanstack/react-query"
 import pLimit from "p-limit"
 
 import useHover from "@/ui/hooks/useHover"
+import useSettings from "@/ui/hooks/useSettings"
 import { getSortOrder, realPath, zeroPad } from "@/ui/utils/common"
 import { sha1 } from "@/ui/utils/crypto"
 import http from "@/ui/utils/http"
@@ -255,12 +256,11 @@ const uploadPart = async <T extends {}>(
 const uploadFile = async (
   file: File,
   path: string,
+  splitFileSize: number,
   onProgress: (progress: number) => void,
   cancelSignal: AbortSignal
 ) => {
-  const SPLIT_SIZE = 1024 * 1024 * 1024
-
-  const totalParts = Math.ceil(file.size / SPLIT_SIZE)
+  const totalParts = Math.ceil(file.size / splitFileSize)
 
   const limit = pLimit(4)
 
@@ -284,9 +284,12 @@ const uploadFile = async (
     partUploadPromises.push(
       limit(() =>
         (async () => {
-          const start = partIndex * SPLIT_SIZE
+          const start = partIndex * splitFileSize
 
-          const end = Math.min(partIndex * SPLIT_SIZE + SPLIT_SIZE, file.size)
+          const end = Math.min(
+            partIndex * splitFileSize + splitFileSize,
+            file.size
+          )
 
           const fileBlob = totalParts > 1 ? file.slice(start, end) : file
 
@@ -362,6 +365,8 @@ const Upload = ({
   closeFileDialog,
   queryParams,
 }: UploadProps) => {
+  const { settings } = useSettings()
+
   const [state, dispatch] = useReducer(reducer, initialState)
   const queryClient = useQueryClient()
 
@@ -459,6 +464,7 @@ const Upload = ({
         uploadFile(
           files[currentFileIndex],
           realPath(path),
+          settings.splitFileSize,
           (progress) => {
             dispatch({
               type: ActionTypes.SET_UPLOAD_PROGRESS,

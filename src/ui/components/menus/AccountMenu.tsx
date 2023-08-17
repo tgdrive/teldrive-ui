@@ -10,10 +10,14 @@ import Menu from "@mui/material/Menu"
 import MenuItem from "@mui/material/MenuItem"
 
 import { useSession } from "@/ui/hooks/useSession"
+import SettingsDialog from "@/ui/components/Settings"
+import { getApiUrl } from "@/ui/utils/common"
 import http from "@/ui/utils/http"
 
 export default function AccountMenu() {
   const [anchorEl, setAnchorEl] = useState<Element | null>(null)
+
+  const [settingsOpen, setSettingsOpen] = useState(false)
 
   const open = Boolean(anchorEl)
 
@@ -44,14 +48,14 @@ export default function AccountMenu() {
         aria-haspopup="true"
         aria-expanded={open ? "true" : undefined}
       >
-        {session?.user?.image ? (
+        {session?.name ? (
           <Avatar
             alt="profile"
             sx={{
               width: 28,
               height: 28,
             }}
-            src={session?.user?.image}
+            src={`${getApiUrl()}/api/users/profile?photo=1`}
           />
         ) : (
           <Avatar
@@ -63,62 +67,70 @@ export default function AccountMenu() {
               fontSize: 16,
             }}
           >
-            M
+            U
           </Avatar>
         )}
       </IconButton>
-      {session && (
-        <Menu
-          anchorEl={anchorEl}
-          id="account-menu"
-          open={open}
-          onClose={handleClose}
-          onClick={handleClose}
-          slotProps={{
-            paper: {
-              elevation: 0,
-              sx: {
-                overflow: "visible",
-                filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
-                mt: 1.5,
-                "& .MuiAvatar-root": {
-                  width: 32,
-                  height: 32,
-                  ml: -0.5,
-                  mr: 1,
-                },
-                "&:before": {
-                  content: '""',
-                  display: "block",
-                  position: "absolute",
-                  top: 0,
-                  right: 14,
-                  width: 10,
-                  height: 10,
-                  bgcolor: "background.paper",
-                  transform: "translateY(-50%) rotate(45deg)",
-                  zIndex: 0,
-                },
+      <Menu
+        anchorEl={anchorEl}
+        id="account-menu"
+        open={open}
+        onClose={handleClose}
+        onClick={handleClose}
+        slotProps={{
+          paper: {
+            elevation: 0,
+            sx: {
+              overflow: "visible",
+              filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+              mt: 1.5,
+              "& .MuiAvatar-root": {
+                width: 32,
+                height: 32,
+                ml: -0.5,
+                mr: 1,
+              },
+              "&:before": {
+                content: '""',
+                display: "block",
+                position: "absolute",
+                top: 0,
+                right: 14,
+                width: 10,
+                height: 10,
+                bgcolor: "background.paper",
+                transform: "translateY(-50%) rotate(45deg)",
+                zIndex: 0,
               },
             },
-          }}
-          transformOrigin={{ horizontal: "right", vertical: "top" }}
-          anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
-        >
+          },
+        }}
+        transformOrigin={{ horizontal: "right", vertical: "top" }}
+        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+      >
+        {session && (
           <MenuItem onClick={handleClose}>{session?.userName}</MenuItem>
-          <MenuItem onClick={handleClose}>
-            <ListItemIcon>
-              <Settings fontSize="small" />
-            </ListItemIcon>
-            Settings
-          </MenuItem>
+        )}
+        <MenuItem onClick={() => setSettingsOpen(true)}>
+          <ListItemIcon>
+            <Settings fontSize="small" />
+          </ListItemIcon>
+          Settings
+        </MenuItem>
+        {session && (
           <MenuItem onClick={() => signOut()}>
             <ListItemIcon>
               <Logout fontSize="small" />
             </ListItemIcon>
             Logout
           </MenuItem>
-        </Menu>
+        )}
+      </Menu>
+      {settingsOpen && (
+        <SettingsDialog
+          open={settingsOpen}
+          onClose={() => setSettingsOpen(false)}
+        />
       )}
     </>
   )

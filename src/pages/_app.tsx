@@ -5,7 +5,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 
 import "@/ui/styles/global.css"
 
-import { Router } from "next/router"
 import RootLayout from "@/ui/layouts/RootLayout"
 import { CacheProvider } from "@emotion/react"
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
@@ -15,23 +14,6 @@ import DriveThemeProvider from "@/ui/components/DriveThemeProvider"
 import createEmotionCache from "@/ui/utils/createEmotionCache"
 
 const clientSideEmotionCache = createEmotionCache()
-
-const Transition: React.FC<{
-  children: React.ReactNode
-  router: Router
-}> = ({ children, router }) => {
-  useEffect(() => {
-    if ("scrollRestoration" in window.history) {
-      window.history.scrollRestoration = "manual"
-    }
-    router.beforePopState((state) => {
-      state.options.scroll = false
-      return true
-    })
-  }, [])
-
-  return <>{children}</>
-}
 
 const MyApp = (props: AppProps) => {
   const { Component, pageProps } = props

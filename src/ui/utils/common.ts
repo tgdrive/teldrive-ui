@@ -1,4 +1,4 @@
-import { File } from "@/ui/types"
+import { File, Settings } from "@/ui/types"
 import { FileData } from "@bhunter179/chonky"
 
 export const getFiles = (data: File[]): FileData[] => {
@@ -82,8 +82,21 @@ export const getMediaUrl = (id: string, name: string, download = false) => {
   }`
 }
 
+export const getApiUrl = () => {
+  if (typeof window !== "undefined") {
+    const settings: Settings | null = JSON.parse(
+      localStorage.getItem("settings") as string
+    )
+    if (settings && settings.apiUrl) return settings.apiUrl
+    else
+      return process.env.NEXT_PUBLIC_API_HOST
+        ? process.env.NEXT_PUBLIC_API_HOST
+        : ""
+  }
+}
+
 export const getWebSocketUrl = () => {
-  const host = process.env.NEXT_PUBLIC_API_HOST ?? window.location.origin
+  const host = getApiUrl() ?? window.location.origin
   const url = new URL(host)
   return `${url.protocol === "http:" ? "ws" : "wss"}://${url.host}`
 }
@@ -98,3 +111,9 @@ export default function textToSvgURL(text: string) {
     reader.readAsDataURL(blob)
   })
 }
+
+export const splitFileSizes = [
+  { value: 500 * 1024 * 1024, label: "500MB" },
+  { value: 1024 * 1024 * 1024, label: "1GB" },
+  { value: 2 * 1024 * 1024 * 1024, label: "2GB" },
+]

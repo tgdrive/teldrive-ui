@@ -69,3 +69,15 @@ export type Message = {
   status: boolean
   message: string
 }
+
+export type Settings = {
+  apiUrl: string
+  splitFileSize: number
+}
+
+export type Session = {
+  name: string
+  userName: string
+  isPremium: boolean
+  expires: string
+}
