@@ -61,7 +61,8 @@ export default function SignIn() {
         .post("api/auth/login", { json: payload })
         .json<Message>()
       if (res.status) {
-        window.location.pathname = "/my-drive"
+        console.log(from)
+        window.location.href = from as string
       }
     },
     [from]
