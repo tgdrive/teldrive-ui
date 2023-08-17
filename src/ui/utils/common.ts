@@ -74,14 +74,6 @@ export const zeroPad = (num: number | string, places: number) =>
 export const getSortOrder = () =>
   JSON.parse(localStorage.getItem("sortOrder") as string) || "desc"
 
-export const getMediaUrl = (id: string, name: string, download = false) => {
-  const host = process.env.NEXT_PUBLIC_API_HOST ?? window.location.origin
-
-  return `${host}/api/files/${id}/${encodeURIComponent(name)}${
-    download ? "?d=1" : ""
-  }`
-}
-
 export const getApiUrl = () => {
   if (typeof window !== "undefined") {
     const settings: Settings | null = JSON.parse(
@@ -93,6 +85,14 @@ export const getApiUrl = () => {
         ? process.env.NEXT_PUBLIC_API_HOST
         : ""
   }
+}
+
+export const getMediaUrl = (id: string, name: string, download = false) => {
+  const host = getApiUrl() ?? window.location.origin
+
+  return `${host}/api/files/${id}/${encodeURIComponent(name)}${
+    download ? "?d=1" : ""
+  }`
 }
 
 export const getWebSocketUrl = () => {
