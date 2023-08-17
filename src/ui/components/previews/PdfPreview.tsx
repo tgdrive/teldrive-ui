@@ -2,7 +2,9 @@ import { FC, memo } from "react"
 import { Box } from "@mui/material"
 
 const PDFEmbedPreview: FC<{ id: string; name: string }> = ({ id, name }) => {
-  const pdfPath = encodeURIComponent(`/api/files/${id}/${name}`)
+  const pdfPath = encodeURIComponent(
+    `${window.location.origin}/api/files/${id}/${name}`
+  )
   const url = `https://mozilla.github.io/pdf.js/web/viewer.html?file=${pdfPath}`
 
   return (

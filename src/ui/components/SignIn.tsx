@@ -12,7 +12,6 @@ import { matchIsValidTel, MuiTelInput } from "mui-tel-input"
 import { Controller, useForm } from "react-hook-form"
 import useWebSocket from "react-use-websocket"
 
-import { useSession } from "@/ui/hooks/useSession"
 import { getWebSocketUrl } from "@/ui/utils/common"
 import http from "@/ui/utils/http"
 
@@ -56,7 +55,7 @@ export default function SignIn() {
   const postLogin = useCallback(
     async function postLogin(payload: Record<string, any>) {
       const res = await http
-        .post("api/auth/login", { json: payload })
+        .post("/api/auth/login", { json: payload })
         .json<Message>()
       if (res.status) {
         window.location.href = from as string

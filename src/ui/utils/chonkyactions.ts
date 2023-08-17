@@ -198,7 +198,7 @@ export const handleAction = (
       const srcQueryKey = router.asPath.split("/").slice(1)
       const dest = realPath(destQueryKey)
       let res = await http
-        .post("api/files/movefiles", {
+        .post("/api/files/movefiles", {
           json: {
             files: files.map((file) => file.id),
             destination: dest,

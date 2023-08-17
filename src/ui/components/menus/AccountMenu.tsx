@@ -11,7 +11,6 @@ import MenuItem from "@mui/material/MenuItem"
 
 import { useSession } from "@/ui/hooks/useSession"
 import SettingsDialog from "@/ui/components/Settings"
-import { getApiUrl } from "@/ui/utils/common"
 import http from "@/ui/utils/http"
 
 export default function AccountMenu() {
@@ -33,7 +32,7 @@ export default function AccountMenu() {
   const router = useRouter()
 
   const signOut = useCallback(async () => {
-    const res = await http.get("api/auth/logout").json<Message>()
+    const res = await http.get("/api/auth/logout").json<Message>()
     refetch()
     if (res.status) router.replace("/login")
   }, [])
@@ -55,7 +54,7 @@ export default function AccountMenu() {
               width: 28,
               height: 28,
             }}
-            src={`${getApiUrl()}/api/users/profile?photo=1`}
+            src={`/api/users/profile?photo=1`}
           />
         ) : (
           <Avatar

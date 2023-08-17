@@ -65,7 +65,7 @@ export const fetchData =
   async ({ pageParam = "" }): Promise<FileResponse> => {
     const type = path[0]
 
-    let url = "api/files"
+    let url = "/api/files"
 
     const params: Partial<Params> = {
       nextPageToken: pageParam,
@@ -116,7 +116,7 @@ export const useCreateFile = (queryParams: Partial<QueryParams>) => {
   const queryClient = useQueryClient()
   const mutation = useMutation({
     mutationFn: async (data: FilePayload) => {
-      return (await http.post(`api/files`, { json: data.payload })).json()
+      return (await http.post(`/api/files`, { json: data.payload })).json()
     },
     onSuccess: (data, variables, context) => {
       if (data.id) {
@@ -135,7 +135,7 @@ export const useUpdateFile = (queryParams: Partial<QueryParams>) => {
   const mutation = useMutation({
     mutationFn: async (data: FilePayload) => {
       return (
-        await http.patch(`api/files/${data.id}`, {
+        await http.patch(`/api/files/${data.id}`, {
           json: data.payload,
         })
       ).json()
@@ -179,7 +179,7 @@ export const useDeleteFile = (queryParams: Partial<QueryParams>) => {
   const mutation = useMutation({
     mutationFn: async (data: Record<string, any>) => {
       return (
-        await http.post(`api/files/deletefiles`, {
+        await http.post(`/api/files/deletefiles`, {
           json: { files: data.files },
         })
       ).json()

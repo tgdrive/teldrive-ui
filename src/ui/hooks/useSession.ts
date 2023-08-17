@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query"
 import http from "@/ui/utils/http"
 
 export async function fetchSession() {
-  const session = await http.get("api/auth/session").json<Session>()
+  const session = await http.get("/api/auth/session").json<Session>()
   return session
 }
 

@@ -36,8 +36,8 @@ import pLimit from "p-limit"
 
 import useHover from "@/ui/hooks/useHover"
 import useSettings from "@/ui/hooks/useSettings"
-import { getApiUrl, getSortOrder, realPath, zeroPad } from "@/ui/utils/common"
-import { sha1 } from "@/ui/utils/crypto"
+import { getSortOrder, realPath, zeroPad } from "@/ui/utils/common"
+import { sha256 } from "@/ui/utils/crypto"
 import http from "@/ui/utils/http"
 
 enum FileUploadStatus {
@@ -253,6 +253,19 @@ const uploadPart = async <T extends {}>(
   })
 }
 
+const hashCode = function (s: string) {
+  var hash = 0,
+    i,
+    chr
+  if (s.length === 0) return hash
+  for (i = 0; i < s.length; i++) {
+    chr = s.charCodeAt(i)
+    hash = (hash << 5) - hash + chr
+    hash |= 0
+  }
+  return hash
+}
+
 const uploadFile = async (
   file: File,
   path: string,
@@ -264,10 +277,9 @@ const uploadFile = async (
 
   const limit = pLimit(4)
 
-  const uploadId = await sha1(file.size.toString() + file.name + path)
+  const uploadId = hashCode(file.size.toString() + file.name + path)
 
-  const host = getApiUrl() ?? window.location.origin
-  const url = `${host}/api/uploads/${uploadId}`
+  const url = `${window.location.origin}/api/uploads/${uploadId}`
 
   let partProgress: number[] = []
 
@@ -347,9 +359,9 @@ const uploadFile = async (
       path,
     }
 
-    const res = await http.post("api/files", { json: payload }).json<FileRes>()
+    const res = await http.post("/api/files", { json: payload }).json<FileRes>()
 
-    if (res.id) await http.delete(`api/uploads/${uploadId}`)
+    if (res.id) await http.delete(`/api/uploads/${uploadId}`)
     return res
   } catch (error) {
   } finally {

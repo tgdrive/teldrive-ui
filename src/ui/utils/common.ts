@@ -74,31 +74,14 @@ export const zeroPad = (num: number | string, places: number) =>
 export const getSortOrder = () =>
   JSON.parse(localStorage.getItem("sortOrder") as string) || "desc"
 
-export const getApiUrl = () => {
-  if (typeof window !== "undefined") {
-    const settings: Settings | null = JSON.parse(
-      localStorage.getItem("settings") as string
-    )
-    if (settings && settings.apiUrl) return settings.apiUrl
-    else
-      return process.env.NEXT_PUBLIC_API_HOST
-        ? process.env.NEXT_PUBLIC_API_HOST
-        : ""
-  }
-}
-
 export const getMediaUrl = (id: string, name: string, download = false) => {
-  let host = getApiUrl()
-  host = host ? host : window.location.origin
-
-  return `${host}/api/files/${id}/${encodeURIComponent(name)}${
-    download ? "?d=1" : ""
-  }`
+  return `${window.location.origin}/api/files/${id}/${encodeURIComponent(
+    name
+  )}${download ? "?d=1" : ""}`
 }
 
 export const getWebSocketUrl = () => {
-  let host = getApiUrl()
-  host = host ? host : window.location.origin
+  let host = window.location.origin
   const url = new URL(host)
   return `${url.protocol === "http:" ? "ws" : "wss"}://${url.host}`
 }

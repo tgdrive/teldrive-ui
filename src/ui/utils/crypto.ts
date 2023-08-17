@@ -18,12 +18,6 @@ export const sha256 = async (data: Data) => {
   return hash
 }
 
-export const sha1 = async (data: Data) => {
-  const algorithm: Algorithm = { name: "SHA-1", alias: "sha1" }
-  const hash = await createHash(data, algorithm)
-  return hash
-}
-
 export const createHash = async (
   data: Data,
   algorithm: Algorithm
