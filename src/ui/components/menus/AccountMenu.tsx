@@ -10,10 +10,12 @@ import Menu from "@mui/material/Menu"
 import MenuItem from "@mui/material/MenuItem"
 
 import { useSession } from "@/ui/hooks/useSession"
+import useSettings from "@/ui/hooks/useSettings"
 import SettingsDialog from "@/ui/components/Settings"
 import http from "@/ui/utils/http"
 
 export default function AccountMenu() {
+  const { settings } = useSettings()
   const [anchorEl, setAnchorEl] = useState<Element | null>(null)
 
   const [settingsOpen, setSettingsOpen] = useState(false)
@@ -32,7 +34,7 @@ export default function AccountMenu() {
   const router = useRouter()
 
   const signOut = useCallback(async () => {
-    const res = await http.get("/api/auth/logout").json<Message>()
+    const res = (await http.get<Message>("/api/auth/logout")).data
     refetch()
     if (res.status) router.replace("/login")
   }, [])
@@ -54,7 +56,9 @@ export default function AccountMenu() {
               width: 28,
               height: 28,
             }}
-            src={`/api/users/profile?photo=1`}
+            src={`${
+              settings.apiUrl ?? window.location.origin
+            }/api/users/profile?photo=1`}
           />
         ) : (
           <Avatar

@@ -11,7 +11,6 @@ import {
 } from "plyr-react"
 
 import { useDevice } from "@/ui/hooks/useDevice"
-import { getMediaUrl } from "@/ui/utils/common"
 
 const Plyr = memo(
   forwardRef<APITypes, PlyrProps>((props, ref) => {
@@ -22,8 +21,6 @@ const Plyr = memo(
     useEffect(() => {
       const { current } = ref as React.MutableRefObject<APITypes>
       if (current.plyr.source === null) return
-
-      //const api = current as { plyr: PlyrInstance };
     }, [])
 
     return (
@@ -87,9 +84,10 @@ const VideoPlayer: FC<{
   )
 }
 
-const VideoPreview: FC<{ id: string; name: string }> = ({ id, name }) => {
-  const videoUrl = getMediaUrl(id, name)
-
+const VideoPreview: FC<{ name: string; mediaUrl: string }> = ({
+  name,
+  mediaUrl,
+}) => {
   const { isMobile } = useDevice()
 
   return (
@@ -108,14 +106,14 @@ const VideoPreview: FC<{ id: string; name: string }> = ({ id, name }) => {
               sx={{ borderRadius: "4px" }}
               controls
               autoPlay
-              src={videoUrl}
+              src={mediaUrl}
             />
           </Box>
         ) : (
           <VideoPlayer
             isMobile={isMobile}
             videoName={name}
-            videoUrl={videoUrl}
+            videoUrl={mediaUrl}
           />
         )}
       </Box>

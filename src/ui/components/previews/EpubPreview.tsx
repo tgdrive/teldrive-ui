@@ -1,16 +1,12 @@
-import { FC, memo, SetStateAction, useRef, useState } from "react"
+import { FC, memo, useRef, useState } from "react"
 import { Box } from "@mui/material"
 import { Rendition } from "epubjs"
 import { ReactReader } from "react-reader"
 
-import { getMediaUrl } from "@/ui/utils/common"
-
-const EpubPreview: FC<{ id: string; name: string }> = ({ id, name }) => {
-  const url = getMediaUrl(id, name)
-
+const EpubPreview: FC<{ mediaUrl: string }> = ({ mediaUrl }) => {
   const epubContainer = useRef(null)
 
-  const [location, setLocation] = useState()
+  const [location, setLocation] = useState<string>()
 
   const onLocationChange = (cfiStr: string) => setLocation(cfiStr)
 
@@ -40,7 +36,7 @@ const EpubPreview: FC<{ id: string; name: string }> = ({ id, name }) => {
       }}
     >
       <ReactReader
-        url={url}
+        url={mediaUrl}
         getRendition={(rendition) => fixEpub(rendition)}
         location={location}
         locationChanged={onLocationChange}

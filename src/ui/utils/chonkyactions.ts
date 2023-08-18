@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction } from "react"
 import { NextRouter } from "next/router"
-import { Message, ModalState } from "@/ui/types"
+import { Message, ModalState, Settings } from "@/ui/types"
 import {
   ChonkyActions,
   ChonkyActionUnion,
@@ -121,6 +121,7 @@ export const UploadFiles = (group = "", path = "") =>
 
 export const handleAction = (
   router: NextRouter,
+  settings: Settings,
   setModalState: Dispatch<SetStateAction<Partial<ModalState>>>,
   queryClient: QueryClient,
   path: string | string[] | undefined,
@@ -152,7 +153,7 @@ export const handleAction = (
       for (let file of selectedFiles) {
         if (!FileHelper.isDirectory(file)) {
           let { id, name } = file
-          let url = getMediaUrl(id, name, true)
+          let url = getMediaUrl(settings.apiUrl, id, name, true)
           navigateToExternalUrl(url, false)
         }
       }
@@ -160,7 +161,7 @@ export const handleAction = (
       let { selectedFiles } = data.state
       let fileToOpen = selectedFiles[0]
       let { id, name } = fileToOpen
-      let url = `vlc://${getMediaUrl(id, name)}`
+      let url = `vlc://${getMediaUrl(settings.apiUrl, id, name)}`
       navigateToExternalUrl(url, false)
     } else if (data.id == RenameFile.id)
       setModalState({
@@ -188,7 +189,11 @@ export const handleAction = (
       selections.forEach((element) => {
         if (!FileHelper.isDirectory(element)) {
           const { id, name } = element
-          clipboardText = `${clipboardText}${getMediaUrl(id, name, true)}\n`
+          clipboardText = `${clipboardText}${getMediaUrl(
+            settings.apiUrl,
+            id,
+            name
+          )}\n`
         }
       })
       navigator.clipboard.writeText(clipboardText)
@@ -197,14 +202,12 @@ export const handleAction = (
       const destQueryKey = destination.path.split("/")
       const srcQueryKey = router.asPath.split("/").slice(1)
       const dest = realPath(destQueryKey)
-      let res = await http
-        .post("/api/files/movefiles", {
-          json: {
-            files: files.map((file) => file.id),
-            destination: dest,
-          },
+      let res = (
+        await http.post<Message>("/api/files/movefiles", {
+          files: files.map((file) => file.id),
+          destination: dest,
         })
-        .json<Message>()
+      ).data
       if (res.status) {
         queryClient.invalidateQueries("files")
       }

@@ -74,16 +74,16 @@ export const zeroPad = (num: number | string, places: number) =>
 export const getSortOrder = () =>
   JSON.parse(localStorage.getItem("sortOrder") as string) || "desc"
 
-export const getMediaUrl = (id: string, name: string, download = false) => {
-  return `${window.location.origin}/api/files/${id}/${encodeURIComponent(
-    name
-  )}${download ? "?d=1" : ""}`
-}
-
-export const getWebSocketUrl = () => {
-  let host = window.location.origin
-  const url = new URL(host)
-  return `${url.protocol === "http:" ? "ws" : "wss"}://${url.host}`
+export const getMediaUrl = (
+  apiHost: string,
+  id: string,
+  name: string,
+  download = false
+) => {
+  const host = apiHost ?? window.location.origin
+  return `${host}/api/files/${id}/${encodeURIComponent(name)}${
+    download ? "?d=1" : ""
+  }`
 }
 
 export default function textToSvgURL(text: string) {

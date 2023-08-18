@@ -22,6 +22,7 @@ import { useBoolean } from "usehooks-ts"
 
 import { useFetchFiles, usePreloadFiles } from "@/ui/hooks/queryhooks"
 import { useDevice } from "@/ui/hooks/useDevice"
+import useSettings from "@/ui/hooks/useSettings"
 import Loader from "@/ui/components/Loader"
 import {
   CopyDownloadLink,
@@ -77,6 +78,7 @@ function isVirtuosoList(value: any): value is VirtuosoHandle {
 }
 
 const MyFileBrowser = () => {
+  const { settings } = useSettings()
   const positions = useRef<Map<string, StateSnapshot>>(new Map()).current
 
   const [queryEnabled, setqueryEnabled] = useState(false)
@@ -182,6 +184,7 @@ const MyFileBrowser = () => {
     () =>
       handleAction(
         router,
+        settings,
         setModalState,
         queryClient,
         path,

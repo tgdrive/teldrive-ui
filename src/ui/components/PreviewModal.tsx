@@ -22,6 +22,7 @@ import Modal from "@mui/material/Modal"
 import Typography from "@mui/material/Typography"
 
 import { useFetchFiles, useUpdateFile } from "@/ui/hooks/queryhooks"
+import useSettings from "@/ui/hooks/useSettings"
 import { getExtension, getMediaUrl } from "@/ui/utils/common"
 import { getPreviewType, preview } from "@/ui/utils/getPreviewType"
 
@@ -44,6 +45,8 @@ export default memo(function PreviewModal({
   modalState,
   setModalState,
 }: PreviewModalProps) {
+  const { settings } = useSettings()
+
   const [initialIndex, setInitialIndex] = useState<number>(-1)
 
   const [params] = useState<Partial<QueryParams>>(queryParams)
@@ -68,7 +71,7 @@ export default memo(function PreviewModal({
 
   const { icon, colorCode } = useIconData({ id, name, isDir: false })
 
-  const videoUrl = getMediaUrl(id, name, true)
+  const mediaUrl = getMediaUrl(settings.apiUrl, id, name)
 
   const nextItem = useCallback(() => {
     let index = initialIndex + 1
@@ -107,19 +110,19 @@ export default memo(function PreviewModal({
     if (previewType) {
       switch (previewType) {
         case preview.video:
-          return <VideoPreview id={id} name={name} />
+          return <VideoPreview name={name} mediaUrl={mediaUrl} />
 
         case preview.pdf:
-          return <PDFPreview id={id} name={name} />
+          return <PDFPreview mediaUrl={mediaUrl} />
 
         case preview.code:
-          return <CodePreview id={id} name={name} />
+          return <CodePreview name={name} mediaUrl={mediaUrl} />
 
         case preview.image:
-          return <ImagePreview id={id} name={name} />
+          return <ImagePreview name={name} mediaUrl={mediaUrl} />
 
         case preview.epub:
-          return <EpubPreview id={id} name={name} />
+          return <EpubPreview mediaUrl={mediaUrl} />
 
         default:
           return null
@@ -238,7 +241,10 @@ export default memo(function PreviewModal({
                   transform: "translate(-50%,-50%)",
                 }}
               >
-                <OpenWithMenu videoUrl={videoUrl} previewType={previewType} />
+                <OpenWithMenu
+                  videoUrl={`${mediaUrl}?d=1`}
+                  previewType={previewType}
+                />
               </Box>
               <Box
                 sx={{
@@ -252,7 +258,7 @@ export default memo(function PreviewModal({
                 <IconButton
                   component={Link}
                   rel="noopener noreferrer"
-                  href={videoUrl}
+                  href={`${mediaUrl}?d=1`}
                   color="inherit"
                   edge="start"
                 >

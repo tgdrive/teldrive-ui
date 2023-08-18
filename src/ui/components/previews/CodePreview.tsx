@@ -3,13 +3,13 @@ import Editor from "@monaco-editor/react"
 import { Box } from "@mui/material"
 
 import useFileContent from "@/ui/hooks/useFileContent"
-import { getMediaUrl } from "@/ui/utils/common"
 import { getLanguageByFileName } from "@/ui/utils/getPreviewType"
 
-const CodePreview: FC<{ id: string; name: string }> = ({ id, name }) => {
-  const url = getMediaUrl(id, name)
-
-  const { response: content, error, validating } = useFileContent(url)
+const CodePreview: FC<{ name: string; mediaUrl: string }> = ({
+  name,
+  mediaUrl,
+}) => {
+  const { response: content, error, validating } = useFileContent(mediaUrl)
 
   return (
     <Box

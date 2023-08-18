@@ -32,12 +32,12 @@ import ListItemIcon from "@mui/material/ListItemIcon"
 import ListItemText from "@mui/material/ListItemText"
 import ListSubheader from "@mui/material/ListSubheader"
 import { InfiniteData, useQueryClient } from "@tanstack/react-query"
+import md5 from "md5"
 import pLimit from "p-limit"
 
 import useHover from "@/ui/hooks/useHover"
 import useSettings from "@/ui/hooks/useSettings"
 import { getSortOrder, realPath, zeroPad } from "@/ui/utils/common"
-import { sha256 } from "@/ui/utils/crypto"
 import http from "@/ui/utils/http"
 
 enum FileUploadStatus {
@@ -217,53 +217,69 @@ interface UploadProps {
   queryParams: Partial<QueryParams>
 }
 
+// const uploadPart = async <T extends {}>(
+//   url: string,
+//   body: Blob,
+//   params: Record<string, string>,
+//   onProgress: (progress: number) => void,
+//   cancelSignal: AbortSignal
+// ) => {
+//   return new Promise<T>((resolve, reject) => {
+//     const xhr = new XMLHttpRequest()
+//     cancelSignal.addEventListener("abort", () => {
+//       xhr.abort()
+//       reject(new Error("File upload cancelled"))
+//     })
+//     xhr.upload.onprogress = (event) => {
+//       const partProgress = (event.loaded / event.total) * 100
+//       onProgress(partProgress)
+//     }
+//     xhr.onload = () => {
+//       if (xhr.status == 200) {
+//         onProgress(100)
+//         resolve(JSON.parse(xhr.responseText))
+//       } else reject(new Error("File upload failed"))
+//     }
+
+//     xhr.onerror = () => {
+//       reject(new Error("File upload failed"))
+//     }
+//     const target = new URL(url)
+//     target.search = new URLSearchParams(params).toString()
+//     xhr.open("POST", target, true)
+//     xhr.withCredentials = true
+//     xhr.setRequestHeader("Content-Type", "application/octet-stream")
+//     xhr.send(body)
+//   })
+// }
+
 const uploadPart = async <T extends {}>(
   url: string,
-  body: Blob,
+  data: Blob,
   params: Record<string, string>,
   onProgress: (progress: number) => void,
-  cancelSignal: AbortSignal
+  signal: AbortSignal
 ) => {
-  return new Promise<T>((resolve, reject) => {
-    const xhr = new XMLHttpRequest()
-    cancelSignal.addEventListener("abort", () => {
-      xhr.abort()
-      reject(new Error("File upload cancelled"))
-    })
-    xhr.upload.onprogress = (event) => {
-      const partProgress = (event.loaded / event.total) * 100
-      onProgress(partProgress)
+  return new Promise<T>(async (resolve, reject) => {
+    try {
+      const res = (
+        await http.post<T>(url, data, {
+          timeout: 0,
+          signal,
+          params,
+          headers: { "Content-Type": "application/octet-stream" },
+          onUploadProgress: (e) => {
+            const progress = e.progress ? e.progress : 0
+            onProgress(progress * 100)
+          },
+        })
+      ).data
+      onProgress(100)
+      resolve(res)
+    } catch (error) {
+      reject(error)
     }
-    xhr.onload = () => {
-      if (xhr.status == 200) {
-        onProgress(100)
-        resolve(JSON.parse(xhr.responseText))
-      } else reject(new Error("File upload failed"))
-    }
-
-    xhr.onerror = () => {
-      reject(new Error("File upload failed"))
-    }
-    const target = new URL(url)
-    target.search = new URLSearchParams(params).toString()
-    xhr.open("POST", target, true)
-    xhr.withCredentials = true
-    xhr.setRequestHeader("Content-Type", "application/octet-stream")
-    xhr.send(body)
   })
-}
-
-const hashCode = function (s: string) {
-  var hash = 0,
-    i,
-    chr
-  if (s.length === 0) return hash
-  for (i = 0; i < s.length; i++) {
-    chr = s.charCodeAt(i)
-    hash = (hash << 5) - hash + chr
-    hash |= 0
-  }
-  return hash
 }
 
 const uploadFile = async (
@@ -273,100 +289,103 @@ const uploadFile = async (
   onProgress: (progress: number) => void,
   cancelSignal: AbortSignal
 ) => {
-  const totalParts = Math.ceil(file.size / splitFileSize)
+  return new Promise<FileRes>(async (resolve, reject) => {
+    const totalParts = Math.ceil(file.size / splitFileSize)
 
-  const limit = pLimit(4)
+    const limit = pLimit(4)
 
-  const uploadId = hashCode(file.size.toString() + file.name + path)
+    const uploadId = md5(file.size.toString() + file.name + path)
 
-  const url = `${window.location.origin}/api/uploads/${uploadId}`
+    const url = `/api/uploads/${uploadId}`
 
-  let partProgress: number[] = []
+    let partProgress: number[] = []
 
-  const partUploadPromises: Promise<UploadPart>[] = []
+    const partUploadPromises: Promise<UploadPart>[] = []
 
-  const partCancelSignals: AbortController[] = []
+    const partCancelSignals: AbortController[] = []
 
-  for (let partIndex = 0; partIndex < totalParts; partIndex++) {
-    const controller = new AbortController()
+    for (let partIndex = 0; partIndex < totalParts; partIndex++) {
+      const controller = new AbortController()
 
-    partCancelSignals.push(controller)
+      partCancelSignals.push(controller)
 
-    partUploadPromises.push(
-      limit(() =>
-        (async () => {
-          const start = partIndex * splitFileSize
+      partUploadPromises.push(
+        limit(() =>
+          (async () => {
+            const start = partIndex * splitFileSize
 
-          const end = Math.min(
-            partIndex * splitFileSize + splitFileSize,
-            file.size
-          )
+            const end = Math.min(
+              partIndex * splitFileSize + splitFileSize,
+              file.size
+            )
 
-          const fileBlob = totalParts > 1 ? file.slice(start, end) : file
+            const fileBlob = totalParts > 1 ? file.slice(start, end) : file
 
-          const fileName =
-            totalParts > 1
-              ? `${file.name}.part.${zeroPad(partIndex + 1, 3)}`
-              : file.name
+            const fileName =
+              totalParts > 1
+                ? `${file.name}.part.${zeroPad(partIndex + 1, 3)}`
+                : file.name
 
-          const params: Record<string, string> = {
-            fileName,
-            partNo: (partIndex + 1).toString(),
-            totalparts: totalParts.toString(),
-          }
+            const params: Record<string, string> = {
+              fileName,
+              partNo: (partIndex + 1).toString(),
+              totalparts: totalParts.toString(),
+            }
 
-          const asset = await uploadPart<UploadPart>(
-            url,
-            fileBlob,
-            params,
-            (progress) => {
-              partProgress[partIndex] = progress
-            },
-            controller.signal
-          )
+            const asset = await uploadPart<UploadPart>(
+              url,
+              fileBlob,
+              params,
+              (progress) => {
+                partProgress[partIndex] = progress
+              },
+              controller.signal
+            )
 
-          return asset
-        })()
+            return asset
+          })()
+        )
       )
-    )
-  }
-
-  cancelSignal.addEventListener("abort", () => {
-    partCancelSignals.forEach((controller) => {
-      controller.abort()
-    })
-  })
-
-  const timer = setInterval(() => {
-    const totalProgress = partProgress.reduce(
-      (sum, progress) => sum + progress,
-      0
-    )
-    onProgress(totalProgress / totalParts)
-  }, 3000)
-  try {
-    const parts = await Promise.all(partUploadPromises)
-    const uploadParts = parts
-      .sort((a, b) => a.partNo - b.partNo)
-      .map((item) => ({ id: item.partId }))
-
-    const payload = {
-      name: file.name,
-      mimeType: file.type ?? "application/octet-stream",
-      type: "file",
-      parts: uploadParts,
-      size: file.size,
-      path,
     }
 
-    const res = await http.post("/api/files", { json: payload }).json<FileRes>()
+    cancelSignal.addEventListener("abort", () => {
+      partCancelSignals.forEach((controller) => {
+        controller.abort()
+      })
+    })
 
-    if (res.id) await http.delete(`/api/uploads/${uploadId}`)
-    return res
-  } catch (error) {
-  } finally {
-    clearInterval(timer)
-  }
+    const timer = setInterval(() => {
+      const totalProgress = partProgress.reduce(
+        (sum, progress) => sum + progress,
+        0
+      )
+      onProgress(totalProgress / totalParts)
+    }, 3000)
+    try {
+      const parts = await Promise.all(partUploadPromises)
+      const uploadParts = parts
+        .sort((a, b) => a.partNo - b.partNo)
+        .map((item) => ({ id: item.partId }))
+
+      const payload = {
+        name: file.name,
+        mimeType: file.type ?? "application/octet-stream",
+        type: "file",
+        parts: uploadParts,
+        size: file.size,
+        path,
+      }
+
+      const res = (await http.post<FileRes>("/api/files", payload)).data
+
+      if (res.id) await http.delete(`/api/uploads/${uploadId}`)
+      resolve(res)
+    } catch (error) {
+      reject(error)
+    } finally {
+      clearInterval(timer)
+    }
+  })
 }
 
 const Upload = ({
@@ -483,39 +502,58 @@ const Upload = ({
             })
           },
           fileAbortControllers[currentFileIndex].signal
-        ).then((file) => {
-          dispatch({ type: ActionTypes.SET_UPLOAD_PROGRESS, payload: 100 })
-          dispatch({
-            type: ActionTypes.SET_FILE_UPLOAD_STATUS,
-            payload: {
-              fileIndex: currentFileIndex,
-              status: FileUploadStatus.UPLOADED,
-            },
-          })
-          if (file) {
-            queryClient.setQueryData<InfiniteData<FileResponse>>(
-              queryKey,
-              (prev) => {
-                return {
-                  ...prev,
-                  pages: prev?.pages.map((page, index) => {
-                    if (index == 0) {
-                      return {
-                        ...page,
-                        results: [file, page.results],
-                      }
-                    } else return page
-                  }),
+        )
+          .then((file) => {
+            dispatch({ type: ActionTypes.SET_UPLOAD_PROGRESS, payload: 100 })
+            dispatch({
+              type: ActionTypes.SET_FILE_UPLOAD_STATUS,
+              payload: {
+                fileIndex: currentFileIndex,
+                status: FileUploadStatus.UPLOADED,
+              },
+            })
+            if (file) {
+              queryClient.setQueryData<InfiniteData<FileResponse>>(
+                queryKey,
+                (prev) => {
+                  return {
+                    ...prev,
+                    pages: prev?.pages.map((page, index) => {
+                      if (index == 0) {
+                        return {
+                          ...page,
+                          results: [file, page.results],
+                        }
+                      } else return page
+                    }),
+                  }
                 }
-              }
-            )
-          }
-          dispatch({
-            type: ActionTypes.SET_CURRENT_FILE_INDEX,
-            payload: currentFileIndex + 1,
+              )
+            }
+            dispatch({
+              type: ActionTypes.SET_CURRENT_FILE_INDEX,
+              payload: currentFileIndex + 1,
+            })
+            fileAbortControllers[currentFileIndex].abort()
           })
-          fileAbortControllers[currentFileIndex].abort()
-        })
+          .catch((err) => {
+            if (err.name == "AbortError")
+              dispatch({
+                type: ActionTypes.SET_FILE_UPLOAD_STATUS,
+                payload: {
+                  fileIndex: currentFileIndex,
+                  status: FileUploadStatus.CANCELLED,
+                },
+              })
+            else
+              dispatch({
+                type: ActionTypes.SET_FILE_UPLOAD_STATUS,
+                payload: {
+                  fileIndex: currentFileIndex,
+                  status: FileUploadStatus.FAILED,
+                },
+              })
+          })
         previndex.current = currentFileIndex
       }
     }

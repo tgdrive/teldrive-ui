@@ -12,7 +12,7 @@ import { matchIsValidTel, MuiTelInput } from "mui-tel-input"
 import { Controller, useForm } from "react-hook-form"
 import useWebSocket from "react-use-websocket"
 
-import { getWebSocketUrl } from "@/ui/utils/common"
+import useSettings from "@/ui/hooks/useSettings"
 import http from "@/ui/utils/http"
 
 import QrCode from "./QRCode"
@@ -26,6 +26,8 @@ type FormState = {
 }
 
 export default function SignIn() {
+  const { settings } = useSettings()
+
   const [isLoading, setLoading] = useState(false)
 
   const [formState, setFormState] = useState<FormState>({
@@ -45,8 +47,17 @@ export default function SignIn() {
 
   const [qrCode, setqrCode] = useState("")
 
+  const getWebSocketUrl = useCallback((apiHost: string) => {
+    const host = apiHost ? apiHost : window.location.origin
+    const url = new URL(host)
+    return `${url.protocol === "http:" ? "ws" : "wss"}://${url.host}`
+  }, [])
+
   const { sendJsonMessage, lastJsonMessage, readyState } =
-    useWebSocket<AuthMessage>(`${getWebSocketUrl()}/api/auth/ws`, {})
+    useWebSocket<AuthMessage>(
+      `${getWebSocketUrl(settings.apiUrl)}/api/auth/ws`,
+      {}
+    )
 
   const router = useRouter()
 
@@ -54,11 +65,10 @@ export default function SignIn() {
 
   const postLogin = useCallback(
     async function postLogin(payload: Record<string, any>) {
-      const res = await http
-        .post("/api/auth/login", { json: payload })
-        .json<Message>()
+      const res = (await http.post<Message>("/api/auth/login", payload)).data
       if (res.status) {
-        window.location.href = from as string
+        //@ts-ignore
+        window.location.href = from ? from : "my-drive"
       }
     },
     [from]

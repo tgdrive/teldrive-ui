@@ -1,12 +1,8 @@
 import { FC, memo } from "react"
 import { Box } from "@mui/material"
 
-const PDFEmbedPreview: FC<{ id: string; name: string }> = ({ id, name }) => {
-  const pdfPath = encodeURIComponent(
-    `${window.location.origin}/api/files/${id}/${name}`
-  )
-  const url = `https://mozilla.github.io/pdf.js/web/viewer.html?file=${pdfPath}`
-
+const PDFEmbedPreview: FC<{ mediaUrl: string }> = ({ mediaUrl }) => {
+  const url = `https://mozilla.github.io/pdf.js/web/viewer.html?file=${mediaUrl}`
   return (
     <Box
       sx={{
@@ -18,8 +14,10 @@ const PDFEmbedPreview: FC<{ id: string; name: string }> = ({ id, name }) => {
         height: "90vh",
       }}
     >
-      <iframe
-        style={{ border: "none", borderRadius: 8 }}
+      <Box
+        component={"iframe"}
+        title="PdfView"
+        sx={{ border: "none", borderRadius: 8 }}
         src={url}
         width="100%"
         height="100%"

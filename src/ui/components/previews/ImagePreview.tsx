@@ -1,10 +1,10 @@
 import { FC, memo } from "react"
 import { Box } from "@mui/material"
 
-import { getMediaUrl } from "@/ui/utils/common"
-
-const ImagePreview: FC<{ id: string; name: string }> = ({ id, name }) => {
-  const url = getMediaUrl(id, name)
+const ImagePreview: FC<{ name: string; mediaUrl: string }> = ({
+  name,
+  mediaUrl,
+}) => {
   return (
     <Box
       sx={{
@@ -15,7 +15,12 @@ const ImagePreview: FC<{ id: string; name: string }> = ({ id, name }) => {
         position: "relative",
       }}
     >
-      <img src={url} alt={name} style={{ maxWidth: "100%", height: "auto" }} />
+      <Box
+        component={"img"}
+        src={mediaUrl}
+        alt={name}
+        sx={{ maxWidth: "100%", height: "auto" }}
+      />
     </Box>
   )
 }
