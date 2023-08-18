@@ -6,12 +6,7 @@ import React, {
   useReducer,
   useRef,
 } from "react"
-import {
-  File as FileRes,
-  FileResponse,
-  QueryParams,
-  UploadPart,
-} from "@/ui/types"
+import { QueryParams, UploadPart } from "@/ui/types"
 import {
   ChonkyIconFA,
   ColorsLight,
@@ -36,11 +31,16 @@ import ListItem from "@mui/material/ListItem"
 import ListItemIcon from "@mui/material/ListItemIcon"
 import ListItemText from "@mui/material/ListItemText"
 import ListSubheader from "@mui/material/ListSubheader"
-import { InfiniteData, useQueryClient } from "@tanstack/react-query"
+import {
+  InfiniteData,
+  UseMutationResult,
+  useQueryClient,
+} from "@tanstack/react-query"
 import md5 from "md5"
 import pLimit from "p-limit"
 import { useIntl } from "react-intl"
 
+import { useCreateFile } from "@/ui/hooks/queryhooks"
 import useHover from "@/ui/hooks/useHover"
 import useSettings from "@/ui/hooks/useSettings"
 import { getSortOrder, realPath, zeroPad } from "@/ui/utils/common"
@@ -57,7 +57,7 @@ enum FileUploadStatus {
 interface FileUploadState {
   files: File[]
   currentFileIndex: number
-  uploadProgress: number
+  fileuploadProgress: number[]
   collapse: boolean
   visibility: boolean
   fileUploadStates: FileUploadStatus[]
@@ -83,7 +83,10 @@ type Action =
       type: ActionTypes.SET_FILE_UPLOAD_STATUS
       payload: { fileIndex: number; status: FileUploadStatus }
     }
-  | { type: ActionTypes.SET_UPLOAD_PROGRESS; payload: number }
+  | {
+      type: ActionTypes.SET_UPLOAD_PROGRESS
+      payload: { fileIndex: number; progress: number }
+    }
   | { type: ActionTypes.SET_CURRENT_FILE_INDEX; payload: number }
   | { type: ActionTypes.TOGGLE_COLLAPSE }
   | { type: ActionTypes.SET_VISIBILITY; payload: boolean }
@@ -91,7 +94,7 @@ type Action =
 const initialState: FileUploadState = {
   files: [],
   currentFileIndex: 0,
-  uploadProgress: 0,
+  fileuploadProgress: [],
   collapse: true,
   visibility: false,
   fileUploadStates: [],
@@ -108,6 +111,7 @@ const reducer = (state: FileUploadState, action: Action): FileUploadState => {
           () => FileUploadStatus.NOT_STARTED
         ),
         fileAbortControllers: action.payload.map(() => new AbortController()),
+        fileuploadProgress: action.payload.map(() => 0),
       }
     case ActionTypes.ADD_FILES:
       const fileUploadStates = action.payload.map(
@@ -116,6 +120,7 @@ const reducer = (state: FileUploadState, action: Action): FileUploadState => {
       const fileAbortControllers = action.payload.map(
         () => new AbortController()
       )
+      const fileuploadProgress = action.payload.map(() => 0)
       return {
         ...state,
         files: [...state.files, ...action.payload],
@@ -124,9 +129,18 @@ const reducer = (state: FileUploadState, action: Action): FileUploadState => {
           ...state.fileAbortControllers,
           ...fileAbortControllers,
         ],
+        fileuploadProgress: [
+          ...state.fileuploadProgress,
+          ...fileuploadProgress,
+        ],
       }
     case ActionTypes.SET_UPLOAD_PROGRESS:
-      return { ...state, uploadProgress: action.payload }
+      const newFileUploadProgress = [...state.fileuploadProgress]
+      newFileUploadProgress[action.payload.fileIndex] = action.payload.progress
+      return {
+        ...state,
+        fileuploadProgress: newFileUploadProgress,
+      }
     case ActionTypes.SET_CURRENT_FILE_INDEX:
       return { ...state, currentFileIndex: action.payload }
     case ActionTypes.TOGGLE_COLLAPSE:
@@ -170,11 +184,16 @@ const UploadItemEntry = memo(
     const intl = useIntl()
 
     const getProgress = useMemo(() => {
-      //@ts-ignore
-      return `${defaultFormatters.formatFileSize(intl, {
-        size: (progress / 100) * size,
-      })}/${defaultFormatters.formatFileSize(intl, { size })}`
-    }, [progress, size])
+      if (uploadState == FileUploadStatus.UPLOADING)
+        return `${defaultFormatters.formatFileSize(intl, {
+          size: (progress / 100) * size,
+        })}/${defaultFormatters.formatFileSize(intl, { size })}`
+      else if (uploadState == FileUploadStatus.UPLOADED) {
+        return `${defaultFormatters.formatFileSize(intl, { size })}`
+      } else {
+        return ""
+      }
+    }, [progress, size, uploadState])
 
     return (
       <ListItem ref={hoverRef}>
@@ -191,7 +210,7 @@ const UploadItemEntry = memo(
             },
           }}
           primary={name}
-          secondary={FileUploadStatus.UPLOADING ? getProgress : ""}
+          secondary={getProgress}
         />
         {isHovered && uploadState === FileUploadStatus.UPLOADING ? (
           <IconButton
@@ -273,10 +292,11 @@ const uploadFile = async (
   file: File,
   path: string,
   splitFileSize: number,
+  createMutation: UseMutationResult,
   onProgress: (progress: number) => void,
   cancelSignal: AbortSignal
 ) => {
-  return new Promise<FileRes>(async (resolve, reject) => {
+  return new Promise<boolean>(async (resolve, reject) => {
     const totalParts = Math.ceil(file.size / splitFileSize)
 
     const limit = pLimit(4)
@@ -364,10 +384,15 @@ const uploadFile = async (
         path,
       }
 
-      const res = (await http.post<FileRes>("/api/files", payload)).data
-
-      if (res.id) await http.delete(`/api/uploads/${uploadId}`)
-      resolve(res)
+      createMutation
+        .mutateAsync({ payload })
+        .then(async () => {
+          await http.delete(`/api/uploads/${uploadId}`)
+          resolve(true)
+        })
+        .catch((err) => {
+          reject(err)
+        })
     } catch (error) {
       reject(error)
     } finally {
@@ -398,7 +423,7 @@ const Upload = ({
   const {
     files,
     currentFileIndex,
-    uploadProgress,
+    fileuploadProgress,
     collapse,
     visibility,
     fileUploadStates,
@@ -425,7 +450,10 @@ const Upload = ({
   }, [dispatch])
 
   const handleClose = useCallback(() => {
-    fileAbortControllers[currentFileIndex].abort()
+    if (currentFileIndex < files.length) {
+      if (!fileAbortControllers[currentFileIndex].signal.aborted)
+        fileAbortControllers[currentFileIndex].abort()
+    }
     hideUpload()
   }, [fileAbortControllers, currentFileIndex])
 
@@ -473,6 +501,8 @@ const Upload = ({
     }
   }, [fileUploadStates])
 
+  const { mutation: createMutation } = useCreateFile(queryParams)
+
   useEffect(() => {
     if (files.length > 0 && currentFileIndex < files.length) {
       if (previndex.current !== currentFileIndex) {
@@ -487,16 +517,26 @@ const Upload = ({
           files[currentFileIndex],
           realPath(path),
           settings.splitFileSize,
+          createMutation,
           (progress) => {
             dispatch({
               type: ActionTypes.SET_UPLOAD_PROGRESS,
-              payload: progress,
+              payload: {
+                fileIndex: currentFileIndex,
+                progress,
+              },
             })
           },
           fileAbortControllers[currentFileIndex].signal
         )
-          .then((file) => {
-            //dispatch({ type: ActionTypes.SET_UPLOAD_PROGRESS, payload: 100 })
+          .then(() => {
+            dispatch({
+              type: ActionTypes.SET_UPLOAD_PROGRESS,
+              payload: {
+                fileIndex: currentFileIndex,
+                progress: 100,
+              },
+            })
             dispatch({
               type: ActionTypes.SET_FILE_UPLOAD_STATUS,
               payload: {
@@ -504,24 +544,6 @@ const Upload = ({
                 status: FileUploadStatus.UPLOADED,
               },
             })
-            if (file) {
-              queryClient.setQueryData<InfiniteData<FileResponse>>(
-                queryKey,
-                (prev) => {
-                  return {
-                    ...prev,
-                    pages: prev?.pages.map((page, index) => {
-                      if (index == 0) {
-                        return {
-                          ...page,
-                          results: [file, page.results],
-                        }
-                      } else return page
-                    }),
-                  }
-                }
-              )
-            }
             dispatch({
               type: ActionTypes.SET_CURRENT_FILE_INDEX,
               payload: currentFileIndex + 1,
@@ -625,7 +647,7 @@ const Upload = ({
                   size={file.size}
                   uploadState={fileUploadStates[index]}
                   handleCancel={handleCancel}
-                  progress={index === currentFileIndex ? uploadProgress : 0}
+                  progress={fileuploadProgress[index]}
                 />
               ))}
           </Collapse>
