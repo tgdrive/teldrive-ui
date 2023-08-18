@@ -12,7 +12,12 @@ import {
   QueryParams,
   UploadPart,
 } from "@/ui/types"
-import { ChonkyIconFA, ColorsLight, useIconData } from "@bhunter179/chonky"
+import {
+  ChonkyIconFA,
+  ColorsLight,
+  defaultFormatters,
+  useIconData,
+} from "@bhunter179/chonky"
 import {
   Cancel,
   CancelOutlined,
@@ -34,6 +39,7 @@ import ListSubheader from "@mui/material/ListSubheader"
 import { InfiniteData, useQueryClient } from "@tanstack/react-query"
 import md5 from "md5"
 import pLimit from "p-limit"
+import { useIntl } from "react-intl"
 
 import useHover from "@/ui/hooks/useHover"
 import useSettings from "@/ui/hooks/useSettings"
@@ -144,14 +150,31 @@ type UploadEntryProps = {
   name: string
   progress: number
   uploadState: FileUploadStatus
+  size: number
   handleCancel: (index: number) => void
 }
 
 const UploadItemEntry = memo(
-  ({ index, name, progress, uploadState, handleCancel }: UploadEntryProps) => {
+  ({
+    index,
+    name,
+    progress,
+    size,
+    uploadState,
+    handleCancel,
+  }: UploadEntryProps) => {
     const { icon, colorCode } = useIconData({ name, isDir: false, id: "" })
 
     const [hoverRef, isHovered] = useHover()
+
+    const intl = useIntl()
+
+    const getProgress = useMemo(() => {
+      //@ts-ignore
+      return `${defaultFormatters.formatFileSize(intl, {
+        size: (progress / 100) * size,
+      })}/${defaultFormatters.formatFileSize(intl, { size })}`
+    }, [progress, size])
 
     return (
       <ListItem ref={hoverRef}>
@@ -168,6 +191,7 @@ const UploadItemEntry = memo(
             },
           }}
           primary={name}
+          secondary={FileUploadStatus.UPLOADING ? getProgress : ""}
         />
         {isHovered && uploadState === FileUploadStatus.UPLOADING ? (
           <IconButton
@@ -217,42 +241,6 @@ interface UploadProps {
   queryParams: Partial<QueryParams>
 }
 
-// const uploadPart = async <T extends {}>(
-//   url: string,
-//   body: Blob,
-//   params: Record<string, string>,
-//   onProgress: (progress: number) => void,
-//   cancelSignal: AbortSignal
-// ) => {
-//   return new Promise<T>((resolve, reject) => {
-//     const xhr = new XMLHttpRequest()
-//     cancelSignal.addEventListener("abort", () => {
-//       xhr.abort()
-//       reject(new Error("File upload cancelled"))
-//     })
-//     xhr.upload.onprogress = (event) => {
-//       const partProgress = (event.loaded / event.total) * 100
-//       onProgress(partProgress)
-//     }
-//     xhr.onload = () => {
-//       if (xhr.status == 200) {
-//         onProgress(100)
-//         resolve(JSON.parse(xhr.responseText))
-//       } else reject(new Error("File upload failed"))
-//     }
-
-//     xhr.onerror = () => {
-//       reject(new Error("File upload failed"))
-//     }
-//     const target = new URL(url)
-//     target.search = new URLSearchParams(params).toString()
-//     xhr.open("POST", target, true)
-//     xhr.withCredentials = true
-//     xhr.setRequestHeader("Content-Type", "application/octet-stream")
-//     xhr.send(body)
-//   })
-// }
-
 const uploadPart = async <T extends {}>(
   url: string,
   data: Blob,
@@ -274,7 +262,6 @@ const uploadPart = async <T extends {}>(
           },
         })
       ).data
-      onProgress(100)
       resolve(res)
     } catch (error) {
       reject(error)
@@ -361,6 +348,7 @@ const uploadFile = async (
       )
       onProgress(totalProgress / totalParts)
     }, 3000)
+
     try {
       const parts = await Promise.all(partUploadPromises)
       const uploadParts = parts
@@ -432,10 +420,14 @@ const Upload = ({
     )
   }, [])
 
-  const handleCollapse = useCallback(
-    () => dispatch({ type: ActionTypes.TOGGLE_COLLAPSE }),
-    [dispatch]
-  )
+  const handleCollapse = useCallback(() => {
+    dispatch({ type: ActionTypes.TOGGLE_COLLAPSE })
+  }, [dispatch])
+
+  const handleClose = useCallback(() => {
+    fileAbortControllers[currentFileIndex].abort()
+    hideUpload()
+  }, [fileAbortControllers, currentFileIndex])
 
   const handleCancel = useCallback(
     (index: number) => {
@@ -504,7 +496,7 @@ const Upload = ({
           fileAbortControllers[currentFileIndex].signal
         )
           .then((file) => {
-            dispatch({ type: ActionTypes.SET_UPLOAD_PROGRESS, payload: 100 })
+            //dispatch({ type: ActionTypes.SET_UPLOAD_PROGRESS, payload: 100 })
             dispatch({
               type: ActionTypes.SET_FILE_UPLOAD_STATUS,
               payload: {
@@ -557,7 +549,7 @@ const Upload = ({
         previndex.current = currentFileIndex
       }
     }
-    if (currentFileIndex >= files.length) {
+    if (currentFileIndex !== 0 && currentFileIndex >= files.length) {
       queryClient.invalidateQueries({ queryKey })
     }
   }, [files, currentFileIndex])
@@ -608,7 +600,10 @@ const Upload = ({
                 >
                   {collapse ? <ExpandLess /> : <ExpandMore />}
                 </IconButton>
-                <IconButton sx={{ color: "text.primary" }} onClick={hideUpload}>
+                <IconButton
+                  sx={{ color: "text.primary" }}
+                  onClick={handleClose}
+                >
                   <CloseIcon />
                 </IconButton>
               </Box>
@@ -627,6 +622,7 @@ const Upload = ({
                   index={index}
                   key={index}
                   name={file.name}
+                  size={file.size}
                   uploadState={fileUploadStates[index]}
                   handleCancel={handleCancel}
                   progress={index === currentFileIndex ? uploadProgress : 0}

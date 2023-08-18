@@ -16,6 +16,7 @@ import {
   PaletteMode,
   Theme,
 } from "@mui/material"
+import { IntlProvider } from "react-intl"
 import { useLocalStorage } from "usehooks-ts"
 
 import { ProgressProvider } from "./TopProgress"
@@ -106,7 +107,9 @@ const DriveThemeProvider: FC<{
     <ColorModeContext.Provider value={colorMode}>
       <MuiThemeProvider theme={theme}>
         <CssBaseline enableColorScheme />
-        <ProgressProvider>{children}</ProgressProvider>
+        <IntlProvider locale="en">
+          <ProgressProvider>{children}</ProgressProvider>
+        </IntlProvider>
       </MuiThemeProvider>
     </ColorModeContext.Provider>
   )
