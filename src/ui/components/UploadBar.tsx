@@ -315,10 +315,10 @@ const uploadFile = async (
       partUploadPromises.push(
         limit(() =>
           (async () => {
-            const start = partIndex * splitFileSize
+            const start = partIndex * settings.splitFileSize
 
             const end = Math.min(
-              partIndex * splitFileSize + splitFileSize,
+              partIndex * settings.splitFileSize + settings.splitFileSize,
               file.size
             )
 
