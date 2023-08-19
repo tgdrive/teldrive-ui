@@ -39,7 +39,7 @@ import { chainLinks, getFiles } from "@/ui/utils/common"
 
 import DeleteDialog from "./DeleteDialog"
 import FileModal from "./FileModal"
-import Upload from "./upload"
+import Upload from "./Upload"
 
 const PreviewModal = dynamic(() => import("./PreviewModal"), {
   ssr: false,

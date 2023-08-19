@@ -6,7 +6,7 @@ import React, {
   useReducer,
   useRef,
 } from "react"
-import { QueryParams, UploadPart } from "@/ui/types"
+import { QueryParams, Settings, UploadPart } from "@/ui/types"
 import {
   ChonkyIconFA,
   ColorsLight,
@@ -31,11 +31,7 @@ import ListItem from "@mui/material/ListItem"
 import ListItemIcon from "@mui/material/ListItemIcon"
 import ListItemText from "@mui/material/ListItemText"
 import ListSubheader from "@mui/material/ListSubheader"
-import {
-  InfiniteData,
-  UseMutationResult,
-  useQueryClient,
-} from "@tanstack/react-query"
+import { UseMutationResult, useQueryClient } from "@tanstack/react-query"
 import md5 from "md5"
 import pLimit from "p-limit"
 import { useIntl } from "react-intl"
@@ -293,13 +289,14 @@ const uploadFile = async (
   path: string,
   splitFileSize: number,
   createMutation: UseMutationResult,
+  settings: Settings,
   onProgress: (progress: number) => void,
   cancelSignal: AbortSignal
 ) => {
   return new Promise<boolean>(async (resolve, reject) => {
     const totalParts = Math.ceil(file.size / splitFileSize)
 
-    const limit = pLimit(4)
+    const limit = pLimit(settings.uploadConcurrency)
 
     const uploadId = md5(file.size.toString() + file.name + path)
 
@@ -518,6 +515,7 @@ const Upload = ({
           realPath(path),
           settings.splitFileSize,
           createMutation,
+          settings,
           (progress) => {
             dispatch({
               type: ActionTypes.SET_UPLOAD_PROGRESS,

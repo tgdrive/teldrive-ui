@@ -73,6 +73,7 @@ export type Message = {
 export type Settings = {
   apiUrl: string
   splitFileSize: number
+  uploadConcurrency: number
 }
 
 export type Session = {

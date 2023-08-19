@@ -57,6 +57,21 @@ function SettingsDialog({ open, onClose }: SettingsProps) {
           )}
         />
         <Controller
+          name="uploadConcurrency"
+          control={control}
+          render={({ field, fieldState: { error } }) => (
+            <TextField
+              {...field}
+              margin="normal"
+              fullWidth
+              error={!!error}
+              type="text"
+              label="Upload Concurrency"
+              helperText={error ? error.message : ""}
+            />
+          )}
+        />
+        <Controller
           name="splitFileSize"
           control={control}
           render={({ field, fieldState: { error } }) => (
