@@ -287,16 +287,15 @@ const uploadPart = async <T extends {}>(
 const uploadFile = async (
   file: File,
   path: string,
-  splitFileSize: number,
   createMutation: UseMutationResult,
   settings: Settings,
   onProgress: (progress: number) => void,
   cancelSignal: AbortSignal
 ) => {
   return new Promise<boolean>(async (resolve, reject) => {
-    const totalParts = Math.ceil(file.size / splitFileSize)
+    const totalParts = Math.ceil(file.size / settings.splitFileSize)
 
-    const limit = pLimit(settings.uploadConcurrency)
+    const limit = pLimit(Number(settings.uploadConcurrency))
 
     const uploadId = md5(file.size.toString() + file.name + path)
 
@@ -513,7 +512,6 @@ const Upload = ({
         uploadFile(
           files[currentFileIndex],
           realPath(path),
-          settings.splitFileSize,
           createMutation,
           settings,
           (progress) => {
