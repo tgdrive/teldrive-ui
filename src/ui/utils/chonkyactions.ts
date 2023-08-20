@@ -20,7 +20,7 @@ import { getSortOrder, navigateToExternalUrl } from "./common"
 import http from "./http"
 
 export const DownloadFile = defineFileAction({
-  id: "download_file",
+  id: "download_file" as const,
   requiresSelection: true,
   fileFilter: (file) => (file && "isDir" in file ? false : true),
   button: {
@@ -31,7 +31,7 @@ export const DownloadFile = defineFileAction({
 })
 
 export const RenameFile = defineFileAction({
-  id: "rename_file",
+  id: "rename_file" as const,
   requiresSelection: true,
   button: {
     name: "Rename",
@@ -41,7 +41,7 @@ export const RenameFile = defineFileAction({
 })
 
 export const DeleteFile = defineFileAction({
-  id: "delete_file",
+  id: "delete_file" as const,
   requiresSelection: true,
   button: {
     name: "Delete",
@@ -51,7 +51,7 @@ export const DeleteFile = defineFileAction({
 })
 
 export const SyncFiles = defineFileAction({
-  id: "sync_files",
+  id: "sync_files" as const,
   button: {
     name: "Sync Files",
     toolbar: true,
@@ -61,7 +61,7 @@ export const SyncFiles = defineFileAction({
 })
 
 export const OpenInVLCPlayer = defineFileAction({
-  id: "open_vlc_player",
+  id: "open_vlc_player" as const,
   requiresSelection: true,
   fileFilter: (file) =>
     file &&
@@ -77,7 +77,7 @@ export const OpenInVLCPlayer = defineFileAction({
 })
 
 export const CopyDownloadLink = defineFileAction({
-  id: "copy_link",
+  id: "copy_link" as const,
   requiresSelection: true,
   fileFilter: (file) => (file && "isDir" in file ? false : true),
   button: {
@@ -89,7 +89,7 @@ export const CopyDownloadLink = defineFileAction({
 
 export const CreateFolder = (group = "", path = "") =>
   defineFileAction({
-    id: "create_folder",
+    id: "create_folder" as const,
     button: {
       name: "Create folder",
       tooltip: "Create a folder",
@@ -105,7 +105,7 @@ export const CreateFolder = (group = "", path = "") =>
 
 export const UploadFiles = (group = "", path = "") =>
   defineFileAction({
-    id: "upload_files",
+    id: "upload_files" as const,
     button: {
       name: "Upload files",
       tooltip: "Upload files",

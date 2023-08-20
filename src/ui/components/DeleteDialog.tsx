@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useCallback } from "react"
+import React, { Dispatch, SetStateAction, useCallback, useMemo } from "react"
 import { ModalState, QueryParams } from "@/ui/types"
 import Button from "@mui/material/Button"
 import Dialog from "@mui/material/Dialog"
@@ -22,8 +22,12 @@ export default function DeleteDialog({
   const { mutation: deleteMutation } = useDeleteFile(queryParams)
 
   const handleClose = useCallback((denyDelete = true) => {
-    if (!denyDelete) deleteMutation.mutate({ files: modalState.selectedFiles })
-    setModalState((prev) => ({ ...prev, open: false }))
+    if (!denyDelete) {
+      deleteMutation.mutate({ files: modalState.selectedFiles });
+      setModalState((prev) => ({ ...prev, open: false, successful: true, }))
+    } else {
+      setModalState((prev) => ({ ...prev, open: false }))
+    }
   }, [])
 
   return (

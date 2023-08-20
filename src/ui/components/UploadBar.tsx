@@ -6,7 +6,7 @@ import React, {
   useReducer,
   useRef,
 } from "react"
-import { QueryParams, Settings, UploadPart } from "@/ui/types"
+import { FilePayload, QueryParams, Settings, UploadPart } from "@/ui/types"
 import {
   ChonkyIconFA,
   ColorsLight,
@@ -176,7 +176,7 @@ const UploadItemEntry = memo(
   }: UploadEntryProps) => {
     const { icon, colorCode } = useIconData({ name, isDir: false, id: "" })
 
-    const [hoverRef, isHovered] = useHover()
+    const [hoverRef, isHovered] = useHover<HTMLLIElement>()
 
     const intl = useIntl()
 
@@ -290,7 +290,7 @@ const uploadPart = async <T extends {}>(
 const uploadFile = async (
   file: File,
   path: string,
-  createMutation: UseMutationResult,
+  createMutation: UseMutationResult<any, unknown, FilePayload, unknown>,
   settings: Settings,
   onProgress: (progress: number) => void,
   cancelSignal: AbortSignal
@@ -571,7 +571,12 @@ const Upload = ({
       }
     }
     if (currentFileIndex !== 0 && currentFileIndex >= files.length) {
-      queryClient.invalidateQueries({ queryKey })
+      const path = queryParams.path as string[];
+      for (let i = path.length; i > 0; i--) {
+        const partialPath = path.slice(0, i);
+        const updatedQueryKey = ["files", partialPath, queryKey[2]];
+        queryClient.invalidateQueries(updatedQueryKey);
+      }
     }
   }, [files, currentFileIndex])
 

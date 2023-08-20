@@ -35,7 +35,7 @@ import {
   SyncFiles,
   UploadFiles,
 } from "@/ui/utils/chonkyactions"
-import { chainLinks, getFiles } from "@/ui/utils/common"
+import { chainLinks, getFiles, getSortOrder } from "@/ui/utils/common"
 
 import DeleteDialog from "./DeleteDialog"
 import ErrorView from "./ErrorView"
@@ -219,6 +219,24 @@ const MyFileBrowser = () => {
         )
     }
   }, [router.asPath])
+
+  const queryKey = useMemo(() => {
+    const { key, path } = queryParams
+    const sortOrder = getSortOrder()
+    const queryKey = [key, path, sortOrder]
+    return queryKey
+  }, [queryParams])
+
+  useEffect(()=>{
+    if (modalState.operation === "delete_file" && modalState.successful) {
+      const path = queryParams.path as string[];
+      for (let i = path.length; i > 0; i--) {
+        const partialPath = path.slice(0, i);
+        const updatedQueryKey = ["files", partialPath, queryKey[2]];
+        queryClient.invalidateQueries(updatedQueryKey);
+      }
+    }
+  }, [modalState.operation, modalState.successful])
 
   if (error) {
     return <ErrorView error={error as Error} />
