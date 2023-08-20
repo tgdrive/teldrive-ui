@@ -53,10 +53,14 @@ export default memo(function PreviewModal({
 
   const { data } = useFetchFiles(params)
 
-  const files = useMemo(
-    () => data?.pages?.flatMap((page) => page?.results ?? []),
-    [data]
-  )
+  //filter files which can be previewed
+  const files = useMemo(() => {
+    const flatFiles = data?.pages?.flatMap((page) => page?.results ?? [])
+    return flatFiles?.filter((item) => {
+      const previewType = getPreviewType(getExtension(item.name))
+      if (previewType! && previewType! in preview) return true
+    })
+  }, [data])
 
   useEffect(
     () =>
@@ -81,7 +85,7 @@ export default memo(function PreviewModal({
 
   const prevItem = useCallback(() => {
     let index = initialIndex - 1
-    if (index < 0) index = 0
+    if (index < 0) index = files!?.length - 1
     setInitialIndex(index)
   }, [initialIndex])
 
@@ -102,7 +106,12 @@ export default memo(function PreviewModal({
   }, [id, starred])
 
   const previewType = useMemo(
-    () => (name ? getPreviewType(getExtension(name), {video: mimeType.includes("video")}) : ""),
+    () =>
+      name
+        ? getPreviewType(getExtension(name), {
+            video: mimeType.includes("video"),
+          })
+        : "",
     [name]
   )
   const renderPreview = useCallback(() => {
