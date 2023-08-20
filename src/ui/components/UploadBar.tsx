@@ -575,7 +575,7 @@ const Upload = ({
       for (let i = path.length; i > 0; i--) {
         const partialPath = path.slice(0, i);
         const updatedQueryKey = ["files", partialPath, queryKey[2]];
-        queryClient.refetchQueries(updatedQueryKey);
+        queryClient.invalidateQueries(updatedQueryKey);
       }
     }
   }, [files, currentFileIndex])

@@ -233,9 +233,7 @@ const MyFileBrowser = () => {
       for (let i = path.length; i > 0; i--) {
         const partialPath = path.slice(0, i);
         const updatedQueryKey = ["files", partialPath, queryKey[2]];
-        setTimeout(()=> {
-          queryClient.refetchQueries(updatedQueryKey);
-        }, 100)
+        queryClient.invalidateQueries(updatedQueryKey);
       }
     }
   }, [modalState.operation, modalState.successful])
