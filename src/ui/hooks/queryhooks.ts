@@ -51,17 +51,24 @@ export const useFetchFiles = (queryParams: Partial<QueryParams>) => {
   const { key, path, enabled } = queryParams
   const sortOrder = getSortOrder()
   const queryKey = [key, path, sortOrder]
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, error } =
-    useInfiniteQuery(queryKey, fetchData(path as string[], sortOrder), {
-      getNextPageParam: (lastPage, allPages) =>
-        lastPage.nextPageToken ? lastPage?.nextPageToken : undefined,
-      enabled,
-      refetchOnWindowFocus: false,
-    })
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    error,
+    isInitialLoading,
+  } = useInfiniteQuery(queryKey, fetchData(path as string[], sortOrder), {
+    getNextPageParam: (lastPage, allPages) =>
+      lastPage.nextPageToken ? lastPage?.nextPageToken : undefined,
+    enabled,
+    refetchOnWindowFocus: false,
+  })
 
   return {
     data,
     error,
+    isInitialLoading,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,

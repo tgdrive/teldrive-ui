@@ -147,8 +147,14 @@ const MyFileBrowser = () => {
     }
   }, [queryEnabled, path])
 
-  const { data, error, fetchNextPage, hasNextPage, isFetchingNextPage } =
-    useFetchFiles(queryParams)
+  const {
+    data,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isInitialLoading,
+  } = useFetchFiles(queryParams)
 
   const files = useMemo(() => {
     if (data)
@@ -216,6 +222,10 @@ const MyFileBrowser = () => {
 
   if (error) {
     return <ErrorView error={error as Error} />
+  }
+
+  if (isInitialLoading) {
+    return <Loader />
   }
 
   return (
