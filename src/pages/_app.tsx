@@ -12,6 +12,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
 import ClientOnly from "@/ui/components/ClientOnly"
 import DriveThemeProvider from "@/ui/components/DriveThemeProvider"
 import createEmotionCache from "@/ui/utils/createEmotionCache"
+import { QueryBoundaries } from "@/ui/components/QueryBoundaries"
 
 const clientSideEmotionCache = createEmotionCache()
 
@@ -24,6 +25,7 @@ const MyApp = (props: AppProps) => {
           queries: {
             staleTime: 5 * (60 * 1000),
             cacheTime: 10 * (60 * 1000),
+            suspense: true,
           },
         },
       })
@@ -39,7 +41,9 @@ const MyApp = (props: AppProps) => {
           <CacheProvider value={clientSideEmotionCache}>
             <DriveThemeProvider>
               <RootLayout>
-                <Component {...pageProps} />
+                <QueryBoundaries>
+                  <Component {...pageProps} />
+                </QueryBoundaries>
               </RootLayout>
             </DriveThemeProvider>
           </CacheProvider>
