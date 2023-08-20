@@ -571,7 +571,7 @@ const Upload = ({
       }
     }
     if (currentFileIndex !== 0 && currentFileIndex >= files.length) {
-      const path = queryKey[1];
+      const path = queryParams.path as string[];
       for (let i = path.length; i > 0; i--) {
         const partialPath = path.slice(0, i);
         const updatedQueryKey = ["files", partialPath, queryKey[2]];

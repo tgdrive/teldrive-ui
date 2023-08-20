@@ -35,12 +35,12 @@ export default function DeleteDialog({
     if (!denyDelete) deleteMutation.mutate({ files: modalState.selectedFiles })
     setModalState((prev) => ({ ...prev, open: false }))
 
-    const path = queryKey[1];
-      for (let i = path.length; i > 0; i--) {
-        const partialPath = path.slice(0, i);
-        const updatedQueryKey = ["files", partialPath, queryKey[2]];
-        queryClient.refetchQueries(updatedQueryKey);
-      }
+    const path = queryParams.path as string[];
+    for (let i = path.length; i > 0; i--) {
+      const partialPath = path.slice(0, i);
+      const updatedQueryKey = ["files", partialPath, queryKey[2]];
+      queryClient.refetchQueries(updatedQueryKey);
+    }
   }, [])
 
   return (
