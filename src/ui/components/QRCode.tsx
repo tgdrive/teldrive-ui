@@ -7,7 +7,7 @@ import textToSvgURL from "@/ui/utils/common"
 
 const QR_SIZE = 280
 
-export default function QrCode({ qrCode }) {
+export default function QrCode({ qrCode }: { qrCode: string }) {
   const ref = useRef(null)
 
   const theme = useTheme()

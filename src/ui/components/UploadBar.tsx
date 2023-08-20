@@ -11,6 +11,7 @@ import {
   ChonkyIconFA,
   ColorsLight,
   defaultFormatters,
+  FileData,
   useIconData,
 } from "@bhunter179/chonky"
 import {
@@ -183,9 +184,11 @@ const UploadItemEntry = memo(
       if (uploadState == FileUploadStatus.UPLOADING)
         return `${defaultFormatters.formatFileSize(intl, {
           size: (progress / 100) * size,
-        })}/${defaultFormatters.formatFileSize(intl, { size })}`
+        } as FileData)}/${defaultFormatters.formatFileSize(intl, {
+          size,
+        } as FileData)}`
       else if (uploadState == FileUploadStatus.UPLOADED) {
-        return `${defaultFormatters.formatFileSize(intl, { size })}`
+        return `${defaultFormatters.formatFileSize(intl, { size } as FileData)}`
       } else {
         return ""
       }

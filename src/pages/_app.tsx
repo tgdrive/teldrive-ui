@@ -8,12 +8,11 @@ import "@/ui/styles/global.css"
 import RootLayout from "@/ui/layouts/RootLayout"
 import { CacheProvider } from "@emotion/react"
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
+import { AxiosError } from "axios"
 
 import ClientOnly from "@/ui/components/ClientOnly"
 import DriveThemeProvider from "@/ui/components/DriveThemeProvider"
 import createEmotionCache from "@/ui/utils/createEmotionCache"
-import { QueryBoundaries } from "@/ui/components/QueryBoundaries"
-import { AxiosError } from "axios"
 
 const clientSideEmotionCache = createEmotionCache()
 
@@ -26,10 +25,9 @@ const MyApp = (props: AppProps) => {
           queries: {
             staleTime: 5 * (60 * 1000),
             cacheTime: 10 * (60 * 1000),
-            suspense: true,
             retry(_, error) {
               if ((error as AxiosError).response?.status === 404) {
-                return false;
+                return false
               }
               return true
             },
@@ -48,9 +46,7 @@ const MyApp = (props: AppProps) => {
           <CacheProvider value={clientSideEmotionCache}>
             <DriveThemeProvider>
               <RootLayout>
-                <QueryBoundaries>
-                  <Component {...pageProps} />
-                </QueryBoundaries>
+                <Component {...pageProps} />
               </RootLayout>
             </DriveThemeProvider>
           </CacheProvider>

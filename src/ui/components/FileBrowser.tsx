@@ -38,6 +38,7 @@ import {
 import { chainLinks, getFiles } from "@/ui/utils/common"
 
 import DeleteDialog from "./DeleteDialog"
+import ErrorView from "./ErrorView"
 import FileModal from "./FileModal"
 import Upload from "./UploadBar"
 
@@ -146,18 +147,15 @@ const MyFileBrowser = () => {
     }
   }, [queryEnabled, path])
 
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
+  const { data, error, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useFetchFiles(queryParams)
 
-  const files = useMemo(
-    () =>
-      data
-        ? data?.pages?.flatMap((page) =>
-            page?.results ? getFiles(page?.results) : []
-          )
-        : [],
-    [data]
-  )
+  const files = useMemo(() => {
+    if (data)
+      return data?.pages?.flatMap((page) =>
+        page?.results ? getFiles(page?.results) : []
+      )
+  }, [data])
 
   const folderChain = useMemo(() => {
     if (type == "my-drive") {
@@ -216,65 +214,71 @@ const MyFileBrowser = () => {
     }
   }, [router.asPath])
 
-  if (!data) return;
+  if (error) {
+    return <ErrorView error={error as Error} />
+  }
 
   return (
     <Root className={classes.root}>
-      <FileBrowser
-        files={files as any}
-        folderChain={folderChain}
-        onFileAction={handleFileAction()}
-        fileActions={fileActions}
-        disableDragAndDropProvider={isMobile ? true : false}
-        defaultFileViewActionId={ChonkyActions.EnableListView.id}
-        useStoreProvider={true}
-        useThemeProvider={false}
-        defaultSortActionId={null}
-      >
-        <FileNavbar />
+      {files && (
+        <>
+          <FileBrowser
+            files={files as any}
+            folderChain={folderChain}
+            onFileAction={handleFileAction()}
+            fileActions={fileActions}
+            disableDragAndDropProvider={isMobile ? true : false}
+            defaultFileViewActionId={ChonkyActions.EnableListView.id}
+            useStoreProvider={true}
+            useThemeProvider={false}
+            defaultSortActionId={null}
+          >
+            <FileNavbar />
 
-        <FileToolbar hideSearchBar={true} />
-        <FileList
-          hasNextPage={hasNextPage}
-          isNextPageLoading={isFetchingNextPage}
-          loadNextPage={fetchNextPage}
-          ref={listRef}
-        />
-        <FileContextMenu />
-      </FileBrowser>
-      {[RenameFile.id, ChonkyActions.CreateFolder.id].find(
-        (val) => val === modalState.operation
-      ) &&
-        open && (
-          <FileModal
-            modalState={modalState}
-            setModalState={setModalState}
-            queryParams={queryParams}
-            path={path}
-          />
-        )}
-      {modalState.operation === ChonkyActions.OpenFiles.id && open && (
-        <PreviewModal
-          queryParams={queryParams}
-          modalState={modalState}
-          setModalState={setModalState}
-        />
-      )}
-      {modalState.operation === DeleteFile.id && open && (
-        <DeleteDialog
-          queryParams={queryParams}
-          modalState={modalState}
-          setModalState={setModalState}
-        />
-      )}
-      {upload && (
-        <Upload
-          queryParams={queryParams}
-          fileDialogOpened={fileDialogOpened}
-          closeFileDialog={closeFileDialog}
-          hideUpload={hideUpload}
-          path={path as string[]}
-        />
+            <FileToolbar hideSearchBar={true} />
+            <FileList
+              hasNextPage={hasNextPage}
+              isNextPageLoading={isFetchingNextPage}
+              loadNextPage={fetchNextPage}
+              ref={listRef}
+            />
+            <FileContextMenu />
+          </FileBrowser>
+          {[RenameFile.id, ChonkyActions.CreateFolder.id].find(
+            (val) => val === modalState.operation
+          ) &&
+            open && (
+              <FileModal
+                modalState={modalState}
+                setModalState={setModalState}
+                queryParams={queryParams}
+                path={path}
+              />
+            )}
+          {modalState.operation === ChonkyActions.OpenFiles.id && open && (
+            <PreviewModal
+              queryParams={queryParams}
+              modalState={modalState}
+              setModalState={setModalState}
+            />
+          )}
+          {modalState.operation === DeleteFile.id && open && (
+            <DeleteDialog
+              queryParams={queryParams}
+              modalState={modalState}
+              setModalState={setModalState}
+            />
+          )}
+          {upload && (
+            <Upload
+              queryParams={queryParams}
+              fileDialogOpened={fileDialogOpened}
+              closeFileDialog={closeFileDialog}
+              hideUpload={hideUpload}
+              path={path as string[]}
+            />
+          )}
+        </>
       )}
     </Root>
   )
