@@ -366,7 +366,7 @@ const uploadFile = async (
         0
       )
       onProgress(totalProgress / totalParts)
-    }, 3000)
+    }, 1000)
 
     try {
       const parts = await Promise.all(partUploadPromises)
