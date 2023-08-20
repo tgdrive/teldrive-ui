@@ -10,7 +10,10 @@ export default function useFileContent(url: string) {
   useEffect(() => {
     http
       .get(url)
-      .then(async (res) => setResponse(await res.text()))
+      .then(async (res) => {
+        console.log({ res })
+        setResponse(await res.data)
+      })
       .catch((e) => setError(e.message))
       .finally(() => setValidating(false))
   }, [url])

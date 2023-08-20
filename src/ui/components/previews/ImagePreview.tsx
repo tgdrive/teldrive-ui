@@ -9,10 +9,12 @@ const ImagePreview: FC<{ name: string; mediaUrl: string }> = ({
     <Box
       sx={{
         maxWidth: "70%",
-        width: "100%",
+        width: "auto",
         margin: "auto",
         padding: "1rem",
         position: "relative",
+        display: "grid",
+        placeContent: "center",
       }}
     >
       <Box
