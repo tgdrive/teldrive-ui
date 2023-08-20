@@ -26,7 +26,7 @@ const ErrorView = ({ error, resetErrorBoundary }: FallbackProps) => {
   const axiosError = error as AxiosError<{error: string}>
   const router = useRouter();
   return (
-    <Box display="flex" flexDirection="column" alignItems="center" >
+    <Box display="flex" flexDirection="column" alignItems="center" gap="10px" >
       <Typography>{axiosError.response?.data.error || error.message}</Typography>
       <Button title="Retry" onClick={resetErrorBoundary}>Retry</Button>
       <Button title="Or go to main directory" onClick={()=> {

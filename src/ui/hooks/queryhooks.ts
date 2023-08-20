@@ -1,6 +1,12 @@
 import { useCallback } from "react"
 import { useRouter } from "next/router"
-import { FilePayload, FileResponse, Params, QueryParams } from "@/ui/types"
+import {
+  FilePayload,
+  FileResponse,
+  PaginatedQueryData,
+  Params,
+  QueryParams,
+} from "@/ui/types"
 import {
   useInfiniteQuery,
   useMutation,
@@ -86,7 +92,7 @@ export const fetchData =
       params.view = "search"
     }
 
-    if (type === "search" && !params.search) return {}
+    if (type === "search" && !params.search) return { results: [] }
 
     if (type === "starred") {
       params.op = "find"
@@ -134,26 +140,29 @@ export const useUpdateFile = (queryParams: Partial<QueryParams>) => {
   const queryClient = useQueryClient()
   const mutation = useMutation({
     mutationFn: async (data: FilePayload) => {
-      return (
-        await http.patch(`/api/files/${data.id}`,data.payload)
-      ).data
+      return (await http.patch(`/api/files/${data.id}`, data.payload)).data
     },
     onMutate: async (variables) => {
       await queryClient.cancelQueries({ queryKey })
       const previousFiles = queryClient.getQueryData<FileResponse>(queryKey)
 
       if (previousFiles) {
-        queryClient.setQueryData<FileResponse>(queryKey, (prev) => {
-          return {
-            ...prev,
-            pages: prev?.pages.map((page) => ({
-              ...page,
-              results: page.results.map((val) =>
-                val.id === variables.id ? { ...val, ...variables.payload } : val
-              ),
-            })),
+        queryClient.setQueryData<PaginatedQueryData<FileResponse>>(
+          queryKey,
+          (prev) => {
+            return <PaginatedQueryData<FileResponse>>{
+              ...prev,
+              pages: prev?.pages.map((page) => ({
+                ...page,
+                results: page.results.map((val) =>
+                  val.id === variables.id
+                    ? { ...val, ...variables.payload }
+                    : val
+                ),
+              })),
+            }
           }
-        })
+        )
       }
       return { previousFiles }
     },
@@ -182,19 +191,22 @@ export const useDeleteFile = (queryParams: Partial<QueryParams>) => {
     onMutate: async (variables) => {
       await queryClient.cancelQueries({ queryKey })
       const previousFiles = queryClient.getQueryData(queryKey)
-      queryClient.setQueryData(queryKey, (prev) => {
-        return {
-          ...prev,
-          pages: prev.pages.map((page) => ({
-            ...page,
-            results: page.results.filter((val) => val.id !== variables.id),
-          })),
+      queryClient.setQueryData<PaginatedQueryData<FileResponse>>(
+        queryKey,
+        (prev) => {
+          return <PaginatedQueryData<FileResponse>>{
+            ...prev,
+            pages: prev?.pages.map((page) => ({
+              ...page,
+              results: page.results.filter((val) => val.id !== variables.id),
+            })),
+          }
         }
-      })
+      )
       return { previousFiles }
     },
     onError: (err, variables, context) => {
-      queryClient.setQueryData(queryKey, context.previousFiles)
+      queryClient.setQueryData(queryKey, context?.previousFiles)
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey })

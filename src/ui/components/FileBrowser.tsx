@@ -216,6 +216,8 @@ const MyFileBrowser = () => {
     }
   }, [router.asPath])
 
+  if (!data) return;
+
   return (
     <Root className={classes.root}>
       <FileBrowser
