@@ -82,3 +82,8 @@ export type Session = {
   isPremium: boolean
   expires: string
 }
+
+export type PaginatedQueryData<T> = {
+  pages: T[]
+  pageParams: any[]
+}
