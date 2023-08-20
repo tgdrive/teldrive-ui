@@ -13,6 +13,8 @@ const ImagePreview: FC<{ name: string; mediaUrl: string }> = ({
         margin: "auto",
         padding: "1rem",
         position: "relative",
+        display: "grid",
+        placeContent: "center",
       }}
     >
       <Box
