@@ -8,8 +8,6 @@ import DialogContentText from "@mui/material/DialogContentText"
 import DialogTitle from "@mui/material/DialogTitle"
 
 import { useDeleteFile } from "@/ui/hooks/queryhooks"
-import { useQueryClient } from "@tanstack/react-query"
-import { getSortOrder } from "../utils/common"
 
 type DeleteDialogProps = {
   modalState: Partial<ModalState>
@@ -23,23 +21,12 @@ export default function DeleteDialog({
 }: DeleteDialogProps) {
   const { mutation: deleteMutation } = useDeleteFile(queryParams)
 
-  const queryClient = useQueryClient();
-  const queryKey = useMemo(() => {
-    const { key, path } = queryParams
-    const sortOrder = getSortOrder()
-    const queryKey = [key, path, sortOrder]
-    return queryKey
-  }, [queryParams])
-
   const handleClose = useCallback((denyDelete = true) => {
-    if (!denyDelete) deleteMutation.mutate({ files: modalState.selectedFiles })
-    setModalState((prev) => ({ ...prev, open: false }))
-
-    const path = queryParams.path as string[];
-    for (let i = path.length; i > 0; i--) {
-      const partialPath = path.slice(0, i);
-      const updatedQueryKey = ["files", partialPath, queryKey[2]];
-      queryClient.refetchQueries(updatedQueryKey);
+    if (!denyDelete) {
+      deleteMutation.mutate({ files: modalState.selectedFiles });
+      setModalState((prev) => ({ ...prev, open: false, successful: true, }))
+    } else {
+      setModalState((prev) => ({ ...prev, open: false }))
     }
   }, [])
 
