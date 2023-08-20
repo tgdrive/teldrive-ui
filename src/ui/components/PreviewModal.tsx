@@ -64,10 +64,10 @@ export default memo(function PreviewModal({
     []
   )
 
-  const { id, name, starred } =
+  const { id, name, starred, mimeType } =
     initialIndex >= 0
       ? files!?.[initialIndex]
-      : { id: "", name: "", starred: "" }
+      : { id: "", name: "", starred: "", mimeType: "" }
 
   const { icon, colorCode } = useIconData({ id, name, isDir: false })
 
@@ -102,10 +102,9 @@ export default memo(function PreviewModal({
   }, [id, starred])
 
   const previewType = useMemo(
-    () => (name ? getPreviewType(getExtension(name)) : ""),
+    () => (name ? getPreviewType(getExtension(name), {video: mimeType.includes("video")}) : ""),
     [name]
   )
-
   const renderPreview = useCallback(() => {
     if (previewType) {
       switch (previewType) {
