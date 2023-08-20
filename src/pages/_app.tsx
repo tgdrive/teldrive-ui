@@ -13,6 +13,7 @@ import ClientOnly from "@/ui/components/ClientOnly"
 import DriveThemeProvider from "@/ui/components/DriveThemeProvider"
 import createEmotionCache from "@/ui/utils/createEmotionCache"
 import { QueryBoundaries } from "@/ui/components/QueryBoundaries"
+import { AxiosError } from "axios"
 
 const clientSideEmotionCache = createEmotionCache()
 
@@ -26,6 +27,12 @@ const MyApp = (props: AppProps) => {
             staleTime: 5 * (60 * 1000),
             cacheTime: 10 * (60 * 1000),
             suspense: true,
+            retry(_, error) {
+              if ((error as AxiosError).response?.status === 404) {
+                return false;
+              }
+              return true
+            },
           },
         },
       })
