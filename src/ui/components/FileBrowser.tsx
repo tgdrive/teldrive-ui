@@ -227,13 +227,13 @@ const MyFileBrowser = () => {
     return queryKey
   }, [queryParams])
 
-  useEffect(()=>{
+  useEffect(() => {
     if (modalState.operation === "delete_file" && modalState.successful) {
-      const path = queryParams.path as string[];
+      const path = queryParams.path as string[]
       for (let i = path.length; i > 0; i--) {
-        const partialPath = path.slice(0, i);
-        const updatedQueryKey = ["files", partialPath, queryKey[2]];
-        queryClient.invalidateQueries(updatedQueryKey);
+        const partialPath = path.slice(0, i)
+        const updatedQueryKey = ["files", partialPath, queryKey[2]]
+        queryClient.invalidateQueries(updatedQueryKey)
       }
     }
   }, [modalState.operation, modalState.successful])
@@ -242,7 +242,7 @@ const MyFileBrowser = () => {
     return <ErrorView error={error as Error} />
   }
 
-  if (isInitialLoading) {
+  if (isInitialLoading && type !== "search") {
     return <Loader />
   }
 
