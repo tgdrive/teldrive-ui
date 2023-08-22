@@ -66,7 +66,7 @@ function SettingsDialog({ open, onClose }: SettingsProps) {
               fullWidth
               error={!!error}
               type="text"
-              label="Upload Concurrency"
+              label="Concurrent Part Uploads"
               helperText={error ? error.message : ""}
             />
           )}

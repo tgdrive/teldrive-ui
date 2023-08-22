@@ -16,6 +16,7 @@ import {
   PaletteMode,
   Theme,
 } from "@mui/material"
+import { Toaster } from "react-hot-toast"
 import { IntlProvider } from "react-intl"
 import { useLocalStorage } from "usehooks-ts"
 
@@ -108,6 +109,7 @@ const DriveThemeProvider: FC<{
       <MuiThemeProvider theme={theme}>
         <CssBaseline enableColorScheme />
         <IntlProvider locale="en">
+          <Toaster position="bottom-right" />
           <ProgressProvider>{children}</ProgressProvider>
         </IntlProvider>
       </MuiThemeProvider>
