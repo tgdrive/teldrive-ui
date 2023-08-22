@@ -570,14 +570,14 @@ const Upload = ({
         previndex.current = currentFileIndex
       }
     }
-    if (currentFileIndex !== 0 && currentFileIndex >= files.length) {
-      const path = queryParams.path as string[];
-      for (let i = path.length; i > 0; i--) {
-        const partialPath = path.slice(0, i);
-        const updatedQueryKey = ["files", partialPath, queryKey[2]];
-        queryClient.invalidateQueries(updatedQueryKey);
-      }
-    }
+    // if (currentFileIndex !== 0 && currentFileIndex >= files.length) {
+    //   const path = queryParams.path as string[];
+    //   for (let i = path.length; i > 0; i--) {
+    //     const partialPath = path.slice(0, i);
+    //     const updatedQueryKey = ["files", partialPath, queryKey[2]];
+    //     queryClient.invalidateQueries(updatedQueryKey);
+    //   }
+    // }
   }, [files, currentFileIndex])
 
   return (
