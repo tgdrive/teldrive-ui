@@ -1,6 +1,6 @@
 {
-  "name": "Git Drive",
-  "short_name": "GitHub Drive",
+  "name": "Tel Drive",
+  "short_name": "Telegram Drive",
   "start_url": ".",
   "display": "minimal-ui",
   "icons": [
