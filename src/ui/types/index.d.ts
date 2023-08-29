@@ -21,16 +21,7 @@ export type File = {
 
 export type ModalState = {
   open: boolean
-  operation:
-    | "download_file"
-    | "rename_file"
-    | "delete_file"
-    | "sync_files"
-    | "open_vlc_player"
-    | "copy_link"
-    | "create_folder"
-    | "upload_files"
-    | "open_files"
+  operation: string
   type: string
   file: FileData
   selectedFiles: string[]

@@ -75,7 +75,7 @@ export default memo(function PreviewModal({
 
   const { icon, colorCode } = useIconData({ id, name, isDir: false })
 
-  const mediaUrl = getMediaUrl(settings.apiUrl, id, name)
+  const mediaUrl = getMediaUrl(id, name, settings.apiUrl)
 
   const nextItem = useCallback(() => {
     let index = initialIndex + 1

@@ -10,6 +10,7 @@ import {
   FileHelper,
   MapFileActionsToData,
 } from "@bhunter179/chonky"
+import { FileAction } from "@bhunter179/chonky/dist/types/action.types"
 import { faArrowsRotate } from "@fortawesome/free-solid-svg-icons/faArrowsRotate"
 import { QueryClient } from "@tanstack/react-query"
 
@@ -18,6 +19,16 @@ import { getPreviewType, preview } from "@/ui/utils/getPreviewType"
 
 import { getSortOrder, navigateToExternalUrl } from "./common"
 import http from "./http"
+
+export const ShareFile = defineFileAction({
+  id: "share_file" as const,
+  requiresSelection: true,
+  button: {
+    name: "Share",
+    contextMenu: true,
+    icon: ChonkyIconName.share,
+  },
+}) as FileAction
 
 export const DownloadFile = defineFileAction({
   id: "download_file" as const,
@@ -28,7 +39,7 @@ export const DownloadFile = defineFileAction({
     contextMenu: true,
     icon: ChonkyIconName.download,
   },
-})
+}) as FileAction
 
 export const RenameFile = defineFileAction({
   id: "rename_file" as const,
@@ -38,7 +49,7 @@ export const RenameFile = defineFileAction({
     contextMenu: true,
     icon: ChonkyIconName.rename,
   },
-})
+}) as FileAction
 
 export const DeleteFile = defineFileAction({
   id: "delete_file" as const,
@@ -48,7 +59,7 @@ export const DeleteFile = defineFileAction({
     contextMenu: true,
     icon: ChonkyIconName.trash,
   },
-})
+}) as FileAction
 
 export const SyncFiles = defineFileAction({
   id: "sync_files" as const,
@@ -58,7 +69,7 @@ export const SyncFiles = defineFileAction({
     iconOnly: true,
     icon: faArrowsRotate,
   },
-})
+}) as FileAction
 
 export const OpenInVLCPlayer = defineFileAction({
   id: "open_vlc_player" as const,
@@ -74,7 +85,7 @@ export const OpenInVLCPlayer = defineFileAction({
     contextMenu: true,
     icon: ChonkyIconName.play,
   },
-})
+}) as FileAction
 
 export const CopyDownloadLink = defineFileAction({
   id: "copy_link" as const,
@@ -85,7 +96,7 @@ export const CopyDownloadLink = defineFileAction({
     contextMenu: true,
     icon: ChonkyIconName.copy,
   },
-})
+}) as FileAction
 
 export const CreateFolder = (group = "", path = "") =>
   defineFileAction({
@@ -101,7 +112,7 @@ export const CreateFolder = (group = "", path = "") =>
       path !== "my-drive"
         ? CustomVisibilityState.Hidden
         : CustomVisibilityState.Default,
-  })
+  }) as FileAction
 
 export const UploadFiles = (group = "", path = "") =>
   defineFileAction({
@@ -117,7 +128,7 @@ export const UploadFiles = (group = "", path = "") =>
       path !== "my-drive"
         ? CustomVisibilityState.Hidden
         : CustomVisibilityState.Default,
-  })
+  }) as FileAction
 
 export const handleAction = (
   router: NextRouter,
@@ -135,11 +146,11 @@ export const handleAction = (
 
       let fileToOpen = targetFile ?? files[0]
 
-      if (fileToOpen && FileHelper.isDirectory(fileToOpen)) {
+      if (fileToOpen.isDir) {
         //prefetch Query Here
         preloadFiles(fileToOpen.path)
       } else {
-        let previewType = getPreviewType(getExtension(fileToOpen.name))
+        let previewType = getPreviewType(getExtension(fileToOpen.name)) || ""
         if (!FileHelper.isDirectory(fileToOpen) && previewType in preview) {
           setModalState({
             open: true,
@@ -153,7 +164,7 @@ export const handleAction = (
       for (let file of selectedFiles) {
         if (!FileHelper.isDirectory(file)) {
           let { id, name } = file
-          let url = getMediaUrl(settings.apiUrl, id, name, true)
+          let url = getMediaUrl(id, name, settings.apiUrl, true)
           navigateToExternalUrl(url, false)
         }
       }
@@ -161,7 +172,7 @@ export const handleAction = (
       let { selectedFiles } = data.state
       let fileToOpen = selectedFiles[0]
       let { id, name } = fileToOpen
-      let url = `vlc://${getMediaUrl(settings.apiUrl, id, name)}`
+      let url = `vlc://${getMediaUrl(id, name, settings.apiUrl)}`
       navigateToExternalUrl(url, false)
     } else if (data.id == RenameFile.id)
       setModalState({
@@ -175,7 +186,13 @@ export const handleAction = (
         selectedFiles: data.state.selectedFiles.map((item) => item.id),
         operation: DeleteFile.id,
       })
-    else if (data.id == ChonkyActions.CreateFolder.id)
+    else if (data.id == ShareFile.id) {
+      setModalState({
+        open: true,
+        file: data.state.selectedFiles[0],
+        operation: ShareFile.id,
+      })
+    } else if (data.id == ChonkyActions.CreateFolder.id)
       setModalState({
         open: true,
         operation: ChonkyActions.CreateFolder.id,
@@ -190,9 +207,9 @@ export const handleAction = (
         if (!FileHelper.isDirectory(element)) {
           const { id, name } = element
           clipboardText = `${clipboardText}${getMediaUrl(
-            settings.apiUrl,
             id,
-            name
+            name,
+            settings.apiUrl
           )}\n`
         }
       })
@@ -209,7 +226,7 @@ export const handleAction = (
         })
       ).data
       if (res.status) {
-        queryClient.invalidateQueries("files")
+        queryClient.invalidateQueries(["files"])
       }
     } else if (data.id == ChonkyActions.SortFilesByName.id) {
       //queryClient.invalidateQueries('files')

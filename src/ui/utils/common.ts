@@ -61,7 +61,7 @@ export const realPath = (path: string[]) =>
     ? path.slice(1).reduce((acc: any, val: any) => `${acc}/${val}`, "")
     : "/"
 
-export function getRawExtension(fileName: string | string[]) {
+export function getRawExtension(fileName: string) {
   return fileName.slice(((fileName.lastIndexOf(".") - 1) >>> 0) + 2)
 }
 export function getExtension(fileName: string) {
@@ -75,15 +75,19 @@ export const getSortOrder = () =>
   JSON.parse(localStorage.getItem("sortOrder") as string) || "desc"
 
 export const getMediaUrl = (
-  apiHost: string,
   id: string,
   name: string,
+  apiHost?: string,
   download = false
 ) => {
-  const host = apiHost ?? window.location.origin
+  const host = apiHost || window.location.origin
   return `${host}/api/files/${id}/${encodeURIComponent(name)}${
     download ? "?d=1" : ""
   }`
+}
+export const getShareableUrl = (id: string) => {
+  const host = window.location.origin
+  return `${host}/shared/${id}`
 }
 
 export default function textToSvgURL(text: string) {

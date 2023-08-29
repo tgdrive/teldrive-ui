@@ -32,6 +32,7 @@ import {
   handleAction,
   OpenInVLCPlayer,
   RenameFile,
+  ShareFile,
   SyncFiles,
   UploadFiles,
 } from "@/ui/utils/chonkyactions"
@@ -40,6 +41,7 @@ import { chainLinks, getFiles, getSortOrder } from "@/ui/utils/common"
 import DeleteDialog from "./DeleteDialog"
 import ErrorView from "./ErrorView"
 import FileModal from "./FileModal"
+import ShareModal from "./ShareModal"
 import Upload from "./UploadBar"
 
 const PreviewModal = dynamic(() => import("./PreviewModal"), {
@@ -119,6 +121,7 @@ const MyFileBrowser = () => {
       DeleteFile,
       CopyDownloadLink,
       OpenInVLCPlayer,
+      ShareFile,
       SyncFiles,
       CreateFolder(isSm ? "Actions" : "", type),
       UploadFiles(isSm ? "Actions" : "", type),
@@ -278,6 +281,14 @@ const MyFileBrowser = () => {
             path={path}
           />
         )}
+      {modalState.operation === ShareFile.id &&
+        <ShareModal
+          modalState={modalState}
+          setModalState={setModalState}
+          queryParams={queryParams}
+          path={path}
+        />
+      }
       {modalState.operation === ChonkyActions.OpenFiles.id && open && (
         <PreviewModal
           queryParams={queryParams}
