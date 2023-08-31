@@ -78,7 +78,12 @@ export const useFetchFiles = (queryParams: Partial<QueryParams>) => {
 export const fetchData =
   (path: string[], order: string) =>
   async ({ pageParam = "" }): Promise<FileResponse> => {
-    const type = path[0]
+    const type = path[0] as
+      | "my-drive"
+      | "search"
+      | "starred"
+      | "shared"
+      | "recent"
 
     let url = "/api/files"
 
@@ -109,6 +114,13 @@ export const fetchData =
       params.starred = true
       params.order = "desc"
       params.view = "starred"
+    }
+    if (type === "shared") {
+      params.op = "shared"
+      params.path = realPath(path)
+      params.sort = "updatedAt"
+      params.view = "shared"
+      params.sharedUsername = "pepe"
     }
 
     if (type === "recent") {

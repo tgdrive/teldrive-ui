@@ -1,7 +1,10 @@
 import { File, Settings } from "@/ui/types"
 import { FileData } from "@bhunter179/chonky"
 
-export const getFiles = (data: File[]): FileData[] => {
+export const getFiles = (
+  data: File[],
+  rootDir: "my-drive" | "shared"
+): FileData[] => {
   return data.map((item): FileData => {
     if (item.mimeType === "drive/folder")
       return {
@@ -11,7 +14,7 @@ export const getFiles = (data: File[]): FileData[] => {
         size: item.size ? Number(item.size) : 0,
         visibility: item.visibility,
         modDate: item.updatedAt,
-        path: `my-drive${item.path}`,
+        path: `${rootDir}${item.path}`,
         isDir: true,
         color: "#FAD165",
       }
@@ -51,8 +54,13 @@ export const chainLinks = (paths: string[]) => {
   let pathsoFar = ""
   for (let path of paths) {
     let decodedPath = decodeURIComponent(path)
-    obj[decodedPath === "my-drive" ? "My drive" : decodedPath] =
-      pathsoFar + decodedPath
+    obj[
+      decodedPath === "my-drive"
+        ? "My drive"
+        : decodedPath === "shared"
+        ? "Shared"
+        : decodedPath
+    ] = pathsoFar + decodedPath
     pathsoFar = pathsoFar + decodedPath + "/"
   }
   return obj

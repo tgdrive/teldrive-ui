@@ -109,7 +109,12 @@ const MyFileBrowser = () => {
 
   const { path } = router.query
 
-  const type = path?.[0]
+  const type = path?.[0] as
+    | "my-drive"
+    | "search"
+    | "starred"
+    | "shared"
+    | "recent"
 
   const queryClient = useQueryClient()
 
@@ -119,23 +124,23 @@ const MyFileBrowser = () => {
 
   const { preloadFiles } = usePreloadFiles()
 
-  const fileActions = useMemo(
-    () => [
-      DownloadFile,
-      RenameFile,
-      DeleteFile,
+  const fileActions = useMemo(() => {
+    const actions = [DownloadFile]
+    if (type !== "shared") {
+      actions.push(RenameFile, DeleteFile, ShareFile)
+    }
+    actions.push(
       CopyDownloadLink,
       OpenInVLCPlayer,
-      ShareFile,
       SyncFiles,
       CreateFolder(isSm ? "Actions" : "", type),
-      UploadFiles(isSm ? "Actions" : "", type),
-    ],
-    [isSm, type]
-  )
+      UploadFiles(isSm ? "Actions" : "", type)
+    )
+    return actions
+  }, [isSm, type])
 
   useEffect(() => {
-    if (type === "my-drive") setqueryEnabled(true)
+    if (type === "my-drive" || type === "shared") setqueryEnabled(true)
     else if (type === "search" && path!.length > 1) {
       setqueryEnabled(true)
     } else if (type === "starred") {
@@ -166,21 +171,39 @@ const MyFileBrowser = () => {
 
   const files = useMemo(() => {
     if (data)
-      return data?.pages?.flatMap((page) =>
-        page?.results ? getFiles(page?.results) : []
-      )
+      return data?.pages?.flatMap((page) => {
+        if (type === "my-drive") {
+          return page?.results ? getFiles(page?.results, type) : []
+        } else if (type === "shared") {
+          return page?.results
+            ? getFiles(
+                page?.results.map((res) => {
+                  return {
+                    ...res,
+                    sharedPath: "/" + res.path?.split("/").pop(),
+                  }
+                }),
+                type
+              )
+            : []
+        } else {
+          return page?.results ? getFiles(page?.results, "my-drive") : []
+        }
+      })
   }, [data])
 
   const folderChain = useMemo(() => {
-    if (type == "my-drive") {
+    if (type === "my-drive" || type === "shared") {
       return Object.entries(chainLinks(path as string[])).map(
-        ([key, value]) => ({
-          id: key,
-          name: key,
-          path: value,
-          isDir: true,
-          chain: true,
-        })
+        ([key, value]) => {
+          return {
+            id: key,
+            name: key,
+            path: value,
+            isDir: true,
+            chain: true,
+          }
+        }
       )
     }
   }, [path])
@@ -245,10 +268,10 @@ const MyFileBrowser = () => {
             ...prev,
             file: {
               ...prev.file,
-              visibility: sharedFileUpdated?.pages?.[0].results.find(
+              visibility: sharedFileUpdated?.pages?.[0]?.results?.find(
                 (res) => res.id === modalState.file?.id
               )?.visibility,
-              usernames: sharedFileUpdated?.pages?.[0].results.find(
+              usernames: sharedFileUpdated?.pages?.[0]?.results?.find(
                 (res) => res.id === modalState.file?.id
               )?.usernames,
             },

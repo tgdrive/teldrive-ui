@@ -42,6 +42,7 @@ export type Params = {
   type: string
   op: string
   view: string
+  sharedUsername: string
 }
 
 export type QueryParams = {

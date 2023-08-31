@@ -173,30 +173,30 @@ export const handleAction = (
       let { id, name } = fileToOpen
       let url = `vlc://${getMediaUrl(id, name, settings.apiUrl)}`
       navigateToExternalUrl(url, false)
-    } else if (data.id == RenameFile.id)
+    } else if (data.id == RenameFile.id) {
       setModalState({
         open: true,
         file: data.state.selectedFiles[0],
         operation: RenameFile.id,
       })
-    else if (data.id == DeleteFile.id)
+    } else if (data.id == DeleteFile.id) {
       setModalState({
         open: true,
         selectedFiles: data.state.selectedFiles.map((item) => item.id),
         operation: DeleteFile.id,
       })
-    else if (data.id == ShareFile.id) {
+    } else if (data.id == ShareFile.id) {
       setModalState({
         open: true,
         file: data.state.selectedFiles[0],
         operation: ShareFile.id,
       })
-    } else if (data.id == ChonkyActions.CreateFolder.id)
+    } else if (data.id == ChonkyActions.CreateFolder.id) {
       setModalState({
         open: true,
         operation: ChonkyActions.CreateFolder.id,
       })
-    else if (data.id == ChonkyActions.UploadFiles.id) {
+    } else if (data.id == ChonkyActions.UploadFiles.id) {
       openUpload()
       openFileDialog()
     } else if (data.id == CopyDownloadLink.id) {
