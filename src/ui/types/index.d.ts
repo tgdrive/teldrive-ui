@@ -15,6 +15,7 @@ export type File = {
   updatedAt: string
   userId: string
   parentId: string
+  visibility: "public" | "private" | "limited"
   id: string
   starred: boolean
 }

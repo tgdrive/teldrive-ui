@@ -143,7 +143,6 @@ export const handleAction = (
   return async (data: MapFileActionsToData<ChonkyActionUnion>) => {
     if (data.id == ChonkyActions.OpenFiles.id) {
       let { targetFile, files } = data.payload
-
       let fileToOpen = targetFile ?? files[0]
 
       if (fileToOpen.isDir) {

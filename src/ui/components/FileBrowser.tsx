@@ -1,7 +1,12 @@
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react"
 import dynamic from "next/dynamic"
 import { useRouter } from "next/router"
-import { ModalState, QueryParams } from "@/ui/types"
+import {
+  FileResponse,
+  ModalState,
+  PaginatedQueryData,
+  QueryParams,
+} from "@/ui/types"
 import {
   ChonkyActions,
   FileBrowser,
@@ -12,7 +17,7 @@ import {
 } from "@bhunter179/chonky"
 import { styled } from "@mui/material/styles"
 import useMediaQuery from "@mui/material/useMediaQuery"
-import { useQueryClient } from "@tanstack/react-query"
+import { QueryClient, useQueryClient } from "@tanstack/react-query"
 import {
   StateSnapshot,
   VirtuosoGridHandle,
@@ -185,7 +190,7 @@ const MyFileBrowser = () => {
     operation: RenameFile.id,
   })
 
-  const { open, operation } = modalState
+  const { open } = modalState
 
   const handleFileAction = useCallback(
     () =>
@@ -229,6 +234,25 @@ const MyFileBrowser = () => {
     const queryKey = [key, path, sortOrder]
     return queryKey
   }, [queryParams])
+
+  const sharedFileUpdated =
+    queryClient.getQueryData<PaginatedQueryData<FileResponse>>(queryKey)
+  useEffect(() => {
+    if (modalState.operation === ShareFile.id) {
+      setModalState(
+        (prev) =>
+          ({
+            ...prev,
+            file: {
+              ...prev.file,
+              visibility: sharedFileUpdated?.pages?.[0].results.find(
+                (res) => res.id === modalState.file?.id
+              )?.visibility,
+            },
+          }) as Partial<ModalState>
+      )
+    }
+  }, [sharedFileUpdated, modalState.open, modalState.file?.id])
 
   // useEffect(() => {
   //   if (modalState.operation === "delete_file" && modalState.successful) {
@@ -281,14 +305,13 @@ const MyFileBrowser = () => {
             path={path}
           />
         )}
-      {modalState.operation === ShareFile.id &&
+      {modalState.operation === ShareFile.id && open && (
         <ShareModal
           modalState={modalState}
           setModalState={setModalState}
           queryParams={queryParams}
-          path={path}
         />
-      }
+      )}
       {modalState.operation === ChonkyActions.OpenFiles.id && open && (
         <PreviewModal
           queryParams={queryParams}

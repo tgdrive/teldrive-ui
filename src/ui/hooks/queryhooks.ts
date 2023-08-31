@@ -142,6 +142,25 @@ export const useCreateFile = (queryParams: Partial<QueryParams>) => {
   return { mutation }
 }
 
+export const useShareFile = (queryParams: Partial<QueryParams>) => {
+  const { key, path } = queryParams
+  const sortOrder = getSortOrder()
+  const queryKey = [key, path, sortOrder]
+  const queryClient = useQueryClient()
+  const mutation = useMutation({
+    mutationFn: async (data: FilePayload) => {
+      return (await http.post(`/api/files/sharefile/${data.id}`, data.payload))
+        .data
+    },
+    onSettled: (data, variables, context) => {
+      if (data) {
+        queryClient.invalidateQueries({ queryKey })
+      }
+    },
+  })
+  return { mutation }
+}
+
 export const useUpdateFile = (queryParams: Partial<QueryParams>) => {
   const { key, path } = queryParams
   const sortOrder = getSortOrder()

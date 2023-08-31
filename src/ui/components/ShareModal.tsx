@@ -1,29 +1,34 @@
-import React, { Dispatch, memo, SetStateAction, useCallback, useRef, useState } from "react"
+import React, {
+  Dispatch,
+  memo,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react"
 import { ModalState, QueryParams, Settings } from "@/ui/types"
-import { ChonkyActions, FileData } from "@bhunter179/chonky"
+import ContentCopyIcon from "@mui/icons-material/ContentCopy"
 import Backdrop from "@mui/material/Backdrop"
 import Box from "@mui/material/Box"
 import Button from "@mui/material/Button"
+import Divider from "@mui/material/Divider"
 import Fade from "@mui/material/Fade"
+import FormControlLabel from "@mui/material/FormControlLabel"
+import FormGroup from "@mui/material/FormGroup"
+import IconButton from "@mui/material/IconButton"
+import InputAdornment from "@mui/material/InputAdornment"
 import Modal from "@mui/material/Modal"
 import Paper from "@mui/material/Paper"
+import Switch from "@mui/material/Switch"
 import TextField from "@mui/material/TextField"
 import Typography from "@mui/material/Typography"
 import { styled } from "@mui/system"
 
-import InputAdornment from "@mui/material/InputAdornment";
-import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-import IconButton from "@mui/material/IconButton";
-
-import FormGroup from '@mui/material/FormGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Switch from '@mui/material/Switch';
-
-import Divider from '@mui/material/Divider';
-
-import { useCreateFile, useUpdateFile } from "@/ui/hooks/queryhooks"
-import { ShareFile } from "@/ui/utils/chonkyactions"
+import { useShareFile, useUpdateFile } from "@/ui/hooks/queryhooks"
 import { getShareableUrl, realPath } from "@/ui/utils/common"
+
+import SwitchLoader from "./SwitchLoader"
 
 const StyledPaper = styled(Paper)({
   position: "absolute",
@@ -45,49 +50,72 @@ type FileModalProps = {
   modalState: Partial<ModalState>
   setModalState: Dispatch<SetStateAction<Partial<ModalState>>>
   queryParams: Partial<QueryParams>
-  path?: string | string[]
 }
 
 export default memo(function ShareModal({
   modalState,
   setModalState,
   queryParams,
-  path,
 }: FileModalProps) {
   const inputRef = useRef<HTMLInputElement>(null)
-  const [isShareEnabled, setIsShareEnabled] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
-  const handleSwitchChange = () => {
-    console.log("Changed")
-    if (isShareEnabled) {
-      setIsShareEnabled(false)
+  const { mutation: shareMutation } = useShareFile(queryParams)
+  const { mutation: updateMutation } = useUpdateFile(queryParams)
+
+  const { open, file } = modalState
+  const [isSharingEnabled, setIsSharingEnabled] = useState(
+    file?.visibility === "public"
+  )
+
+  const handleFileSharingState = () => {
+    if (file?.visibility === "public") {
+      setIsSharingEnabled(false)
+      setIsLoading(true)
+      disableFileSharing()
+      setIsLoading(false)
     } else {
-      setIsShareEnabled(true)
+      setIsSharingEnabled(true)
+      setIsLoading(true)
+      enableFileSharing()
+      setIsLoading(false)
     }
   }
 
   const handleCopyClick = () => {
     if (inputRef.current) {
-      inputRef.current.select();
-      document.execCommand("copy");
+      inputRef.current.select()
+      document.execCommand("copy")
     }
-  };
+  }
 
   const handleClose = useCallback(
     () => setModalState((prev) => ({ ...prev, open: false })),
     []
   )
 
-  const { mutation: updateMutation } = useUpdateFile(queryParams)
+  const disableFileSharing = useCallback(() => {
+    if (file?.visibility === "public") {
+      shareMutation.mutate({
+        id: file?.id,
+        payload: {
+          visibility: "private",
+        },
+      })
+    }
+  }, [file?.visibility, updateMutation, shareMutation])
 
-  const { mutation: createMutation } = useCreateFile(queryParams)
-
-  const { file, open, operation } = modalState
-
-  const onUpdate = useCallback(() => {
-    handleClose()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [file, operation, updateMutation, handleClose, createMutation])
+  const enableFileSharing = useCallback(() => {
+    if (file?.visibility !== "public") {
+      shareMutation.mutate({
+        id: file?.id,
+        payload: {
+          visibility: "public",
+          usernames: ["pepe"],
+        },
+      })
+    }
+  }, [file?.visibility, updateMutation, shareMutation])
 
   return (
     <Modal
@@ -106,28 +134,51 @@ export default memo(function ShareModal({
       <Fade in={open}>
         <StyledPaper elevation={3}>
           <Box sx={{ width: 1 }}>
-            <Typography className="transition-modal-title" variant="h6" component="h2" fontWeight={600} sx={{ mb: 2 }}>
+            <Typography
+              className="transition-modal-title"
+              variant="h6"
+              component="h2"
+              fontWeight={600}
+              sx={{ mb: 2 }}
+            >
               Share: {file?.name}
             </Typography>
             <Divider flexItem role="presentation" />
           </Box>
-          <FormGroup >
-            <FormControlLabel sx={{m:0}} control={<Switch checked={isShareEnabled} onChange={handleSwitchChange} />} label="Make public" labelPlacement="start" />
+          <FormGroup>
+            <FormControlLabel
+              sx={{ m: 0 }}
+              control={
+                <SwitchLoader
+                  checked={isSharingEnabled}
+                  onChange={handleFileSharingState}
+                  loading={isLoading}
+                />
+              }
+              label="Make public"
+              labelPlacement="start"
+            />
           </FormGroup>
-          {isShareEnabled && <TextField
-            fullWidth
-            focused
-            inputRef={inputRef}
-            label="Share URL"
-            value={getShareableUrl(file?.id || "")}
-            variant="outlined"
-            inputProps={{ autoComplete: "off" }}
-            InputProps={{endAdornment:<InputAdornment position="end">
-              <IconButton onClick={handleCopyClick}>
-                <ContentCopyIcon />
-              </IconButton>
-            </InputAdornment>}}
-          />}
+          {file?.visibility === "public" && (
+            <TextField
+              fullWidth
+              focused
+              inputRef={inputRef}
+              label="Share URL"
+              value={getShareableUrl(file?.id || "")}
+              variant="outlined"
+              inputProps={{ autoComplete: "off" }}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton onClick={handleCopyClick}>
+                      <ContentCopyIcon />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
+          )}
           <Box
             sx={{
               width: 1,
@@ -140,7 +191,7 @@ export default memo(function ShareModal({
               disabled={!file?.name}
               sx={{ fontWeight: "normal" }}
               variant="contained"
-              onClick={onUpdate}
+              onClick={handleClose}
               disableElevation
             >
               Cerrar

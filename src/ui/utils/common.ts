@@ -9,6 +9,7 @@ export const getFiles = (data: File[]): FileData[] => {
         name: item.name,
         type: item.type,
         size: item.size ? Number(item.size) : 0,
+        visibility: item.visibility,
         modDate: item.updatedAt,
         path: `my-drive${item.path}`,
         isDir: true,
@@ -21,6 +22,7 @@ export const getFiles = (data: File[]): FileData[] => {
       type: item.type,
       size: Number(item.size),
       starred: item.starred,
+      visibility: item.visibility,
       modDate: item.updatedAt,
     }
   })
