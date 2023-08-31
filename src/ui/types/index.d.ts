@@ -16,6 +16,7 @@ export type File = {
   userId: string
   parentId: string
   visibility: "public" | "private" | "limited"
+  usernames: string[]
   id: string
   starred: boolean
 }

@@ -248,6 +248,9 @@ const MyFileBrowser = () => {
               visibility: sharedFileUpdated?.pages?.[0].results.find(
                 (res) => res.id === modalState.file?.id
               )?.visibility,
+              usernames: sharedFileUpdated?.pages?.[0].results.find(
+                (res) => res.id === modalState.file?.id
+              )?.usernames,
             },
           }) as Partial<ModalState>
       )

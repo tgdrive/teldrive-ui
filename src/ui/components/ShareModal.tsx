@@ -9,6 +9,7 @@ import React, {
 } from "react"
 import { ModalState, QueryParams, Settings } from "@/ui/types"
 import ContentCopyIcon from "@mui/icons-material/ContentCopy"
+import { Autocomplete } from "@mui/material"
 import Backdrop from "@mui/material/Backdrop"
 import Box from "@mui/material/Box"
 import Button from "@mui/material/Button"
@@ -68,6 +69,16 @@ export default memo(function ShareModal({
     file?.visibility === "public"
   )
 
+  console.log({ file: file?.visibility, usernames: file?.usernames })
+
+  const handleUsernamesChange = (
+    _: React.SyntheticEvent<Element, Event>,
+    value: string[]
+  ) => {
+    console.log({ value })
+    enableFileSharing(value.length === 0 ? "private" : "limited", value)
+  }
+
   const handleFileSharingState = () => {
     if (file?.visibility === "public") {
       setIsSharingEnabled(false)
@@ -77,7 +88,7 @@ export default memo(function ShareModal({
     } else {
       setIsSharingEnabled(true)
       setIsLoading(true)
-      enableFileSharing()
+      enableFileSharing("public")
       setIsLoading(false)
     }
   }
@@ -96,26 +107,32 @@ export default memo(function ShareModal({
 
   const disableFileSharing = useCallback(() => {
     if (file?.visibility === "public") {
+      console.log("entraaaaaaaa")
       shareMutation.mutate({
         id: file?.id,
         payload: {
-          visibility: "private",
+          visibility: (file.usernames?.length || 0) > 0 ? "limited" : "private",
+          usernames: file.usernames,
         },
       })
     }
-  }, [file?.visibility, updateMutation, shareMutation])
+  }, [file?.visibility, file?.usernames, updateMutation, shareMutation])
 
-  const enableFileSharing = useCallback(() => {
-    if (file?.visibility !== "public") {
+  const enableFileSharing = useCallback(
+    (
+      visibility: "public" | "private" | "limited",
+      usernames: string[] = file?.usernames || []
+    ) => {
       shareMutation.mutate({
         id: file?.id,
         payload: {
-          visibility: "public",
-          usernames: ["pepe"],
+          visibility,
+          usernames,
         },
       })
-    }
-  }, [file?.visibility, updateMutation, shareMutation])
+    },
+    [file?.visibility, file?.usernames, updateMutation, shareMutation]
+  )
 
   return (
     <Modal
@@ -155,11 +172,33 @@ export default memo(function ShareModal({
                   loading={isLoading}
                 />
               }
-              label="Make public"
+              label="Make public:"
               labelPlacement="start"
             />
           </FormGroup>
-          {file?.visibility === "public" && (
+          {file?.visibility !== "public" && (
+            <Autocomplete
+              multiple
+              fullWidth
+              id="tags-outlined"
+              options={[] as string[]}
+              getOptionLabel={(option) => option}
+              defaultValue={[]}
+              value={file?.usernames || []}
+              filterSelectedOptions
+              freeSolo
+              onChange={handleUsernamesChange}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Add user"
+                  placeholder="telegram username"
+                />
+              )}
+            />
+          )}
+          {(file?.visibility === "public" ||
+            file?.visibility === "limited") && (
             <TextField
               fullWidth
               focused
