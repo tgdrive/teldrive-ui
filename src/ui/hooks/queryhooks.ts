@@ -1,6 +1,7 @@
 import { useCallback } from "react"
 import { useRouter } from "next/router"
 import {
+  DriveCategory,
   FilePayload,
   FileResponse,
   PaginatedQueryData,
@@ -16,6 +17,8 @@ import {
 import { useProgress } from "@/ui/components/TopProgress"
 import { getSortOrder, realPath } from "@/ui/utils/common"
 import http from "@/ui/utils/http"
+
+import { TELDRIVE_OPTIONS } from "../const"
 
 export const usePreloadFiles = () => {
   const queryClient = useQueryClient()
@@ -43,7 +46,6 @@ export const usePreloadFiles = () => {
     },
     [queryClient, router]
   )
-
   return { preloadFiles }
 }
 
@@ -78,12 +80,7 @@ export const useFetchFiles = (queryParams: Partial<QueryParams>) => {
 export const fetchData =
   (path: string[], order: string) =>
   async ({ pageParam = "" }): Promise<FileResponse> => {
-    const type = path[0] as
-      | "my-drive"
-      | "search"
-      | "starred"
-      | "shared"
-      | "recent"
+    const type = path[0] as DriveCategory
 
     let url = "/api/files"
 
@@ -93,37 +90,39 @@ export const fetchData =
       order,
     }
 
-    if (type === "my-drive") {
+    if (type === TELDRIVE_OPTIONS.myDrive.id) {
       params.path = realPath(path)
       params.sort = "name"
       params.view = "my-drive"
     }
 
-    if (type === "search") {
+    if (type === TELDRIVE_OPTIONS.search.id) {
       params.op = "search"
       params.sort = "updatedAt"
       params.search = path?.[1] ?? ""
       params.view = "search"
     }
 
-    if (type === "search" && !params.search) return { results: [] }
+    if (type === TELDRIVE_OPTIONS.search.id && !params.search)
+      return { results: [] }
 
-    if (type === "starred") {
+    if (type === TELDRIVE_OPTIONS.starred.id) {
       params.op = "find"
       params.sort = "updatedAt"
       params.starred = true
       params.order = "desc"
       params.view = "starred"
     }
-    if (type === "shared") {
+    if (type === TELDRIVE_OPTIONS.shared.id) {
       params.op = "shared"
+      params.fileId = path[1]
       params.path = realPath(path)
       params.sort = "updatedAt"
       params.view = "shared"
-      params.sharedUsername = "pepe"
+      params.sharedWithUsername = "pepe"
     }
 
-    if (type === "recent") {
+    if (type === TELDRIVE_OPTIONS.recent.id) {
       params.op = "find"
       params.sort = "updatedAt"
       params.order = "desc"

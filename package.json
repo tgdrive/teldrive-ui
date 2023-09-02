@@ -41,6 +41,7 @@
     "@next/bundle-analyzer": "^13.4.16",
     "@svgr/webpack": "^8.1.0",
     "@tanstack/react-query-devtools": "^4.32.6",
+    "@types/lodash.debounce": "^4.0.7",
     "@types/md5": "^2.3.2",
     "@types/node": "20.5.0",
     "@types/react": "18.2.20",

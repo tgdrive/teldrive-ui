@@ -19,6 +19,8 @@ import debounce from "lodash.debounce"
 
 import AccountMenu from "@/ui/components/menus/AccountMenu"
 
+import { TELDRIVE_OPTIONS } from "../const"
+
 const PREFIX = "AppBar"
 
 const classes = {
@@ -86,14 +88,20 @@ export default function Header({ session }: { session?: Session }) {
     useContext(ColorModeContext)
 
   const onSearchFocus = useCallback(() => {
-    if (!asPath.includes("search"))
-      router.push("/search", undefined, { scroll: false })
+    if (!asPath.includes(TELDRIVE_OPTIONS.search.id))
+      router.push(`/${TELDRIVE_OPTIONS.search.id}`, undefined, {
+        scroll: false,
+      })
   }, [asPath, router])
 
   const debouncedSave = useCallback(
     debounce(
       (newValue: string) =>
-        router.replace(`/search/${newValue}`, undefined, { scroll: false }),
+        router.replace(
+          `/${TELDRIVE_OPTIONS.search.id}/${newValue}`,
+          undefined,
+          { scroll: false }
+        ),
       500
     ),
     []
@@ -105,7 +113,7 @@ export default function Header({ session }: { session?: Session }) {
   }, [])
 
   useEffect(() => {
-    if (!asPath.includes("search")) setQuery("")
+    if (!asPath.includes(TELDRIVE_OPTIONS.search.id)) setQuery("")
 
     // if (asPath.includes('search')) {
     //    setQuery(path?.[1] ?? '')
@@ -129,7 +137,7 @@ export default function Header({ session }: { session?: Session }) {
             <Typography
               component={Link}
               color="inherit"
-              href={"/my-drive"}
+              href={`/${TELDRIVE_OPTIONS.myDrive.id}`}
               sx={{
                 fontWeight: 500,
                 letterSpacing: 0.5,

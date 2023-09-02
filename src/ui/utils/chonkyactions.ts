@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction } from "react"
 import { NextRouter } from "next/router"
-import { Message, ModalState, Settings } from "@/ui/types"
+import { DriveCategory, Message, ModalState, Settings } from "@/ui/types"
 import {
   ChonkyActions,
   ChonkyActionUnion,
@@ -17,18 +17,24 @@ import { QueryClient } from "@tanstack/react-query"
 import { getExtension, getMediaUrl, realPath } from "@/ui/utils/common"
 import { getPreviewType, preview } from "@/ui/utils/getPreviewType"
 
+import { TELDRIVE_OPTIONS } from "../const"
 import { getSortOrder, navigateToExternalUrl } from "./common"
 import http from "./http"
 
-export const ShareFile = defineFileAction({
-  id: "share_file" as const,
-  requiresSelection: true,
-  button: {
-    name: "Share",
-    contextMenu: true,
-    icon: ChonkyIconName.share,
-  },
-}) as FileAction
+export const ShareFile = (path = "") =>
+  defineFileAction({
+    id: "share_file" as const,
+    requiresSelection: true,
+    button: {
+      name: "Share",
+      contextMenu: true,
+      icon: ChonkyIconName.share,
+    },
+    customVisibility: () =>
+      path !== TELDRIVE_OPTIONS.myDrive.id
+        ? CustomVisibilityState.Hidden
+        : CustomVisibilityState.Default,
+  }) as FileAction
 
 export const DownloadFile = defineFileAction({
   id: "download_file" as const,
@@ -41,25 +47,35 @@ export const DownloadFile = defineFileAction({
   },
 }) as FileAction
 
-export const RenameFile = defineFileAction({
-  id: "rename_file" as const,
-  requiresSelection: true,
-  button: {
-    name: "Rename",
-    contextMenu: true,
-    icon: ChonkyIconName.rename,
-  },
-}) as FileAction
+export const RenameFile = (path = "") =>
+  defineFileAction({
+    id: "rename_file" as const,
+    requiresSelection: true,
+    button: {
+      name: "Rename",
+      contextMenu: true,
+      icon: ChonkyIconName.rename,
+    },
+    customVisibility: () =>
+      path !== TELDRIVE_OPTIONS.myDrive.id
+        ? CustomVisibilityState.Hidden
+        : CustomVisibilityState.Default,
+  }) as FileAction
 
-export const DeleteFile = defineFileAction({
-  id: "delete_file" as const,
-  requiresSelection: true,
-  button: {
-    name: "Delete",
-    contextMenu: true,
-    icon: ChonkyIconName.trash,
-  },
-}) as FileAction
+export const DeleteFile = (path = "") =>
+  defineFileAction({
+    id: "delete_file" as const,
+    requiresSelection: true,
+    button: {
+      name: "Delete",
+      contextMenu: true,
+      icon: ChonkyIconName.trash,
+    },
+    customVisibility: () =>
+      path !== TELDRIVE_OPTIONS.myDrive.id
+        ? CustomVisibilityState.Hidden
+        : CustomVisibilityState.Default,
+  }) as FileAction
 
 export const SyncFiles = defineFileAction({
   id: "sync_files" as const,
@@ -109,7 +125,7 @@ export const CreateFolder = (group = "", path = "") =>
       icon: ChonkyIconName.folderCreate,
     },
     customVisibility: () =>
-      path !== "my-drive"
+      path !== TELDRIVE_OPTIONS.myDrive.id
         ? CustomVisibilityState.Hidden
         : CustomVisibilityState.Default,
   }) as FileAction
@@ -138,16 +154,23 @@ export const handleAction = (
   path: string | string[] | undefined,
   openUpload: () => void,
   openFileDialog: () => void,
-  preloadFiles: (path: string) => void
+  preloadFiles: (path: string) => void,
+  type: DriveCategory
 ) => {
   return async (data: MapFileActionsToData<ChonkyActionUnion>) => {
     if (data.id == ChonkyActions.OpenFiles.id) {
       let { targetFile, files } = data.payload
       let fileToOpen = targetFile ?? files[0]
-
       if (fileToOpen.isDir) {
+        let path = fileToOpen.path
+        if (
+          type === TELDRIVE_OPTIONS.shared.id &&
+          fileToOpen.id !== TELDRIVE_OPTIONS.shared.name
+        ) {
+          path = `${type}/${fileToOpen.id}`
+        }
         //prefetch Query Here
-        preloadFiles(fileToOpen.path)
+        preloadFiles(path)
       } else {
         let previewType = getPreviewType(getExtension(fileToOpen.name)) || ""
         if (!FileHelper.isDirectory(fileToOpen) && previewType in preview) {
@@ -173,23 +196,23 @@ export const handleAction = (
       let { id, name } = fileToOpen
       let url = `vlc://${getMediaUrl(id, name, settings.apiUrl)}`
       navigateToExternalUrl(url, false)
-    } else if (data.id == RenameFile.id) {
+    } else if (data.id == RenameFile().id) {
       setModalState({
         open: true,
         file: data.state.selectedFiles[0],
-        operation: RenameFile.id,
+        operation: RenameFile().id,
       })
-    } else if (data.id == DeleteFile.id) {
+    } else if (data.id == DeleteFile().id) {
       setModalState({
         open: true,
         selectedFiles: data.state.selectedFiles.map((item) => item.id),
-        operation: DeleteFile.id,
+        operation: DeleteFile().id,
       })
-    } else if (data.id == ShareFile.id) {
+    } else if (data.id == ShareFile().id) {
       setModalState({
         open: true,
         file: data.state.selectedFiles[0],
-        operation: ShareFile.id,
+        operation: ShareFile().id,
       })
     } else if (data.id == ChonkyActions.CreateFolder.id) {
       setModalState({

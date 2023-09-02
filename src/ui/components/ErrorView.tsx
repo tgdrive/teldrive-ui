@@ -4,6 +4,8 @@ import { ErrorOutline } from "@mui/icons-material"
 import { Box, Button, Container, Typography } from "@mui/material"
 import { AxiosError } from "axios"
 
+import { TELDRIVE_OPTIONS } from "../const"
+
 const ErrorView = ({ error }: { error: Error }) => {
   const axiosError = error as AxiosError<{ error: string }>
   const router = useRouter()
@@ -19,7 +21,7 @@ const ErrorView = ({ error }: { error: Error }) => {
           color="primary"
           title="Go to main directory"
           onClick={() => {
-            router.replace("/my-drive")
+            router.replace(`/${TELDRIVE_OPTIONS.myDrive.id}`)
           }}
         >
           Go to main directory

@@ -1,8 +1,17 @@
-import { FileData } from "@bhunter179/chonky"
+import { FileData as _FileData } from "@bhunter179/chonky"
 
 import { Media } from "@/api/schemas/file.schema"
 
+import { TELDRIVE_OPTIONS } from "../const"
+
 export type FileResponse = { results: File[]; nextPageToken?: string }
+
+export type FileVisibility = "public" | "private" | "limited"
+
+export type FileData = _FileData & {
+  visibility?: FileVisibility
+  sharedWithUsernames?: string[]
+}
 
 export type File = {
   name: string
@@ -15,8 +24,9 @@ export type File = {
   updatedAt: string
   userId: string
   parentId: string
-  visibility: "public" | "private" | "limited"
-  usernames: string[]
+  visibility: FileVisibility
+  sharedWithUsernames?: string[]
+  pathChain?: { path: string; id: string }[]
   id: string
   starred: boolean
 }
@@ -32,6 +42,7 @@ export type ModalState = {
 }
 
 export type Params = {
+  fileId: string
   nextPageToken: string
   perPage: number
   order: string
@@ -42,7 +53,7 @@ export type Params = {
   type: string
   op: string
   view: string
-  sharedUsername: string
+  sharedWithUsername: string
 }
 
 export type QueryParams = {
@@ -91,3 +102,6 @@ export type PaginatedQueryData<T> = {
   pages: T[]
   pageParams: any[]
 }
+
+export type DriveCategory =
+  (typeof TELDRIVE_OPTIONS)[keyof typeof TELDRIVE_OPTIONS]["id"]

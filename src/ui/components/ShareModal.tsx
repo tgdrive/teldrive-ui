@@ -7,7 +7,7 @@ import React, {
   useRef,
   useState,
 } from "react"
-import { ModalState, QueryParams, Settings } from "@/ui/types"
+import { FileVisibility, ModalState, QueryParams, Settings } from "@/ui/types"
 import ContentCopyIcon from "@mui/icons-material/ContentCopy"
 import { Autocomplete } from "@mui/material"
 import Backdrop from "@mui/material/Backdrop"
@@ -65,7 +65,6 @@ export default memo(function ShareModal({
   const [isLoading, setIsLoading] = useState(false)
 
   const { mutation: shareMutation } = useShareFile(queryParams)
-  const { mutation: updateMutation } = useUpdateFile(queryParams)
 
   const { open, file } = modalState
   const [isSharingEnabled, setIsSharingEnabled] = useState(
@@ -96,7 +95,7 @@ export default memo(function ShareModal({
   const handleCopyClick = () => {
     if (inputRef.current) {
       inputRef.current.select()
-      document.execCommand("copy")
+      navigator.clipboard.writeText(inputRef.current.value)
     }
   }
 
@@ -110,27 +109,28 @@ export default memo(function ShareModal({
       shareMutation.mutate({
         id: file?.id,
         payload: {
-          visibility: (file.usernames?.length || 0) > 0 ? "limited" : "private",
-          usernames: file.usernames,
+          visibility:
+            (file.sharedWithUsernames?.length || 0) > 0 ? "limited" : "private",
+          sharedWithUsername: file.sharedWithUsernames,
         },
       })
     }
-  }, [file?.visibility, file?.usernames, updateMutation, shareMutation])
+  }, [file?.visibility, file?.sharedWithUsernames, shareMutation])
 
   const enableFileSharing = useCallback(
     (
-      visibility: "public" | "private" | "limited",
-      usernames: string[] = file?.usernames || []
+      visibility: FileVisibility,
+      sharedWithUsername: string[] = file?.sharedWithUsernames || []
     ) => {
       shareMutation.mutate({
         id: file?.id,
         payload: {
           visibility,
-          usernames,
+          sharedWithUsername,
         },
       })
     },
-    [file?.visibility, file?.usernames, updateMutation, shareMutation]
+    [file?.visibility, file?.sharedWithUsernames, shareMutation]
   )
 
   return (
@@ -183,7 +183,7 @@ export default memo(function ShareModal({
               options={[] as string[]}
               getOptionLabel={(option) => option}
               defaultValue={[]}
-              value={file?.usernames || []}
+              value={file?.sharedWithUsernames || []}
               filterSelectedOptions
               freeSolo
               onChange={handleUsernamesChange}

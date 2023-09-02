@@ -1,9 +1,12 @@
-import { File, Settings } from "@/ui/types"
-import { FileData } from "@bhunter179/chonky"
+import { File, FileData, Settings } from "@/ui/types"
+
+import { TELDRIVE_OPTIONS } from "../const"
 
 export const getFiles = (
   data: File[],
-  rootDir: "my-drive" | "shared"
+  rootDir:
+    | typeof TELDRIVE_OPTIONS.myDrive.id
+    | typeof TELDRIVE_OPTIONS.shared.id
 ): FileData[] => {
   return data.map((item): FileData => {
     if (item.mimeType === "drive/folder")
@@ -55,10 +58,10 @@ export const chainLinks = (paths: string[]) => {
   for (let path of paths) {
     let decodedPath = decodeURIComponent(path)
     obj[
-      decodedPath === "my-drive"
-        ? "My drive"
-        : decodedPath === "shared"
-        ? "Shared"
+      decodedPath === TELDRIVE_OPTIONS.myDrive.id
+        ? TELDRIVE_OPTIONS.myDrive.name
+        : decodedPath === TELDRIVE_OPTIONS.shared.id
+        ? TELDRIVE_OPTIONS.shared.name
         : decodedPath
     ] = pathsoFar + decodedPath
     pathsoFar = pathsoFar + decodedPath + "/"

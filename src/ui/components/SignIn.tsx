@@ -16,6 +16,7 @@ import useWebSocket from "react-use-websocket"
 import useSettings from "@/ui/hooks/useSettings"
 import http from "@/ui/utils/http"
 
+import { TELDRIVE_OPTIONS } from "../const"
 import QrCode from "./QRCode"
 import TelegramIcon from "./TelegramIcon"
 
@@ -73,7 +74,7 @@ export default function SignIn() {
       const res = (await http.post<Message>("/api/auth/login", payload)).data
       if (res.status) {
         //@ts-ignore
-        window.location.href = from ? from : "/my-drive"
+        window.location.href = from ? from : `/${TELDRIVE_OPTIONS.myDrive.id}`
       }
     },
     [from]
@@ -200,7 +201,7 @@ export default function SignIn() {
                   <Controller
                     name="phoneNumber"
                     control={control}
-                    rules={{ validate: matchIsValidTel }}
+                    rules={{ validate: matchIsValidTel as any }}
                     render={({ field, fieldState }) => (
                       <MuiTelInput
                         {...field}

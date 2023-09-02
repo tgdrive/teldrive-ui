@@ -18,16 +18,30 @@ import {
 
 import { usePreloadFiles } from "@/ui/hooks/queryhooks"
 
+import { TELDRIVE_OPTIONS } from "../const"
+
 export const categories = [
   {
-    id: "my-drive",
-    name: "My Drive",
+    id: TELDRIVE_OPTIONS.myDrive.id,
+    name: TELDRIVE_OPTIONS.myDrive.name,
     icon: <AddToDriveIcon />,
     active: true,
   },
-  { id: "starred", name: "Starred", icon: <StarBorder /> },
-  { id: "shared", name: "Shared with me", icon: <FolderSharedOutlinedIcon /> },
-  { id: "recent", name: "Recent", icon: <WatchLaterIcon /> },
+  {
+    id: TELDRIVE_OPTIONS.starred.id,
+    name: TELDRIVE_OPTIONS.starred.name,
+    icon: <StarBorder />,
+  },
+  {
+    id: TELDRIVE_OPTIONS.shared.id,
+    name: TELDRIVE_OPTIONS.shared.name,
+    icon: <FolderSharedOutlinedIcon />,
+  },
+  {
+    id: TELDRIVE_OPTIONS.recent.id,
+    name: TELDRIVE_OPTIONS.recent.name,
+    icon: <WatchLaterIcon />,
+  },
 ]
 
 const NavDrawer: FC<DrawerProps> = (props) => {
