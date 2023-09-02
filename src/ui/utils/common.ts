@@ -119,3 +119,14 @@ export const splitFileSizes = [
   { value: 1000 * 1024 * 1024, label: "1GB" },
   { value: 2 * 1000 * 1024 * 1024, label: "2GB" },
 ]
+
+export const capitalize = (text: string) => {
+  if (text.length === 0) {
+    return text
+  }
+
+  const firstLetter = text[0].toUpperCase()
+  const restOfText = text.slice(1)
+
+  return `${firstLetter}${restOfText}`
+}

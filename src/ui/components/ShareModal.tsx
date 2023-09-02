@@ -3,11 +3,10 @@ import React, {
   memo,
   SetStateAction,
   useCallback,
-  useEffect,
   useRef,
   useState,
 } from "react"
-import { FileVisibility, ModalState, QueryParams, Settings } from "@/ui/types"
+import { FileVisibility, ModalState, QueryParams } from "@/ui/types"
 import ContentCopyIcon from "@mui/icons-material/ContentCopy"
 import { Autocomplete } from "@mui/material"
 import Backdrop from "@mui/material/Backdrop"
@@ -21,13 +20,14 @@ import IconButton from "@mui/material/IconButton"
 import InputAdornment from "@mui/material/InputAdornment"
 import Modal from "@mui/material/Modal"
 import Paper from "@mui/material/Paper"
-import Switch from "@mui/material/Switch"
+import Stack from "@mui/material/Stack"
 import TextField from "@mui/material/TextField"
 import Typography from "@mui/material/Typography"
+import { capitalize } from "@mui/material/utils"
 import { styled } from "@mui/system"
 
-import { useShareFile, useUpdateFile } from "@/ui/hooks/queryhooks"
-import { getShareableUrl, realPath } from "@/ui/utils/common"
+import { useShareFile } from "@/ui/hooks/queryhooks"
+import { getShareableUrl } from "@/ui/utils/common"
 
 import SwitchLoader from "./SwitchLoader"
 
@@ -217,14 +217,23 @@ export default memo(function ShareModal({
               }}
             />
           )}
-          <Box
+          <Stack
             sx={{
               width: 1,
-              display: "inline-flex",
-              justifyContent: "flex-end",
+              display: "flex",
+              flexDirection: "row",
+              flexWrap: "nowrap",
+              justifyContent: file?.visibility ? "space-between" : "flex-end",
+              alignItems: "center",
               gap: "1.2rem",
             }}
           >
+            {file?.visibility && (
+              <Typography>
+                Share status: {capitalize(file.visibility)}
+              </Typography>
+            )}
+
             <Button
               disabled={!file?.name}
               sx={{ fontWeight: "normal" }}
@@ -234,7 +243,7 @@ export default memo(function ShareModal({
             >
               Cerrar
             </Button>
-          </Box>
+          </Stack>
         </StyledPaper>
       </Fade>
     </Modal>
