@@ -45,6 +45,7 @@ import {
 import { chainLinks, getFiles, getSortOrder } from "@/ui/utils/common"
 
 import { TELDRIVE_OPTIONS } from "../const"
+import { useSession } from "../hooks/useSession"
 import DeleteDialog from "./DeleteDialog"
 import ErrorView from "./ErrorView"
 import FileModal from "./FileModal"
@@ -92,6 +93,7 @@ const MyFileBrowser = () => {
   const positions = useRef<Map<string, StateSnapshot>>(new Map()).current
 
   const [queryEnabled, setqueryEnabled] = useState(false)
+  const { data: sessionData } = useSession()
 
   const {
     value: upload,
@@ -222,26 +224,19 @@ const MyFileBrowser = () => {
           }
         })
 
-      if (pathChain) {
-        pathChain?.unshift({
-          id: TELDRIVE_OPTIONS.shared.name,
-          name: TELDRIVE_OPTIONS.shared.name,
-          path: TELDRIVE_OPTIONS.shared.id,
-          isDir: true,
-          chain: true,
-        })
-        return pathChain
-      }
+      const sharedOption = sessionData?.userName
+        ? [
+            {
+              id: TELDRIVE_OPTIONS.shared.name,
+              name: TELDRIVE_OPTIONS.shared.name,
+              path: TELDRIVE_OPTIONS.shared.id,
+              isDir: true,
+              chain: true,
+            },
+          ]
+        : []
 
-      return [
-        {
-          id: TELDRIVE_OPTIONS.shared.name,
-          name: TELDRIVE_OPTIONS.shared.name,
-          path: TELDRIVE_OPTIONS.shared.id,
-          isDir: true,
-          chain: true,
-        },
-      ]
+      return pathChain ? [...sharedOption, ...pathChain] : sharedOption
     }
 
     if (type === TELDRIVE_OPTIONS.myDrive.id) {

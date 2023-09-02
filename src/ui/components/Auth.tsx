@@ -7,7 +7,7 @@ export default function withAuth(Component: FC<any>) {
   return function AuthComponent() {
     const router = useRouter()
 
-    const { status, data } = useSession({
+    const { status, data, fileVisibility } = useSession({
       onUnauthenticated() {
         router.replace(
           `/login?from=${encodeURIComponent(window.location.pathname)}`,
@@ -21,6 +21,6 @@ export default function withAuth(Component: FC<any>) {
 
     if (status === "loading") return null
 
-    if (data) return <Component />
+    if (data || fileVisibility === "public") return <Component />
   }
 }

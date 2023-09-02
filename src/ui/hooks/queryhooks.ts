@@ -19,6 +19,7 @@ import { getSortOrder, realPath } from "@/ui/utils/common"
 import http from "@/ui/utils/http"
 
 import { TELDRIVE_OPTIONS } from "../const"
+import { useSession } from "./useSession"
 
 export const usePreloadFiles = () => {
   const queryClient = useQueryClient()
@@ -26,6 +27,7 @@ export const usePreloadFiles = () => {
   const router = useRouter()
 
   const { startProgress, stopProgress } = useProgress()
+  const { data: sessionData } = useSession()
 
   const preloadFiles = useCallback(
     (path: string) => {
@@ -36,7 +38,10 @@ export const usePreloadFiles = () => {
       if (!queryState?.data) {
         startProgress()
         queryClient
-          .prefetchInfiniteQuery(queryKey, fetchData(splitPath, order))
+          .prefetchInfiniteQuery(
+            queryKey,
+            fetchData(splitPath, order, sessionData?.userName || "")
+          )
           .then(() => {
             stopProgress()
             router.push(path, undefined, { scroll: false })
@@ -51,6 +56,9 @@ export const usePreloadFiles = () => {
 
 export const useFetchFiles = (queryParams: Partial<QueryParams>) => {
   const { key, path, enabled } = queryParams
+
+  const { data: sessionData } = useSession()
+
   const sortOrder = getSortOrder()
   const queryKey = [key, path, sortOrder]
   const {
@@ -60,12 +68,16 @@ export const useFetchFiles = (queryParams: Partial<QueryParams>) => {
     isFetchingNextPage,
     error,
     isInitialLoading,
-  } = useInfiniteQuery(queryKey, fetchData(path as string[], sortOrder), {
-    getNextPageParam: (lastPage, allPages) =>
-      lastPage.nextPageToken ? lastPage?.nextPageToken : undefined,
-    enabled,
-    refetchOnWindowFocus: false,
-  })
+  } = useInfiniteQuery(
+    queryKey,
+    fetchData(path as string[], sortOrder, sessionData?.userName || ""),
+    {
+      getNextPageParam: (lastPage, allPages) =>
+        lastPage.nextPageToken ? lastPage?.nextPageToken : undefined,
+      enabled,
+      refetchOnWindowFocus: false,
+    }
+  )
 
   return {
     data,
@@ -78,7 +90,7 @@ export const useFetchFiles = (queryParams: Partial<QueryParams>) => {
 }
 
 export const fetchData =
-  (path: string[], order: string) =>
+  (path: string[], order: string, username: string) =>
   async ({ pageParam = "" }): Promise<FileResponse> => {
     const type = path[0] as DriveCategory
 
@@ -89,6 +101,8 @@ export const fetchData =
       perPage: 200,
       order,
     }
+
+    params.accessFromPublic = !Boolean(username)
 
     if (type === TELDRIVE_OPTIONS.myDrive.id) {
       params.path = realPath(path)
@@ -119,7 +133,7 @@ export const fetchData =
       params.path = realPath(path)
       params.sort = "updatedAt"
       params.view = "shared"
-      params.sharedWithUsername = "pepe"
+      params.sharedWithUsername = username
     }
 
     if (type === TELDRIVE_OPTIONS.recent.id) {

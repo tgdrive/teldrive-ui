@@ -55,7 +55,7 @@ export default memo(function FileModal({
   const { file, open, operation } = modalState
 
   const onUpdate = useCallback(() => {
-    if (operation === RenameFile.id)
+    if (operation === RenameFile().id)
       updateMutation.mutate({
         id: file?.id,
         payload: {
@@ -94,7 +94,7 @@ export default memo(function FileModal({
       <Fade in={open}>
         <StyledPaper elevation={3}>
           <Typography id="transition-modal-title" variant="h6" component="h2">
-            {operation == RenameFile.id && "Rename"}
+            {operation == RenameFile().id && "Rename"}
             {operation == ChonkyActions.CreateFolder.id &&
               ChonkyActions.CreateFolder.button.name}
           </Typography>

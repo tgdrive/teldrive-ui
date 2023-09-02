@@ -54,6 +54,7 @@ export type Params = {
   op: string
   view: string
   sharedWithUsername: string
+  accessFromPublic: boolean
 }
 
 export type QueryParams = {
