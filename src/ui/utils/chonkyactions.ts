@@ -172,8 +172,8 @@ export const handleAction = (
         //prefetch Query Here
         preloadFiles(path)
       } else {
-        let previewType = getPreviewType(getExtension(fileToOpen.name)) || ""
-        if (!FileHelper.isDirectory(fileToOpen) && previewType in preview) {
+        // let previewType = getPreviewType(getExtension(fileToOpen.name)) || ""
+        if (!FileHelper.isDirectory(fileToOpen)) {
           setModalState({
             open: true,
             file: fileToOpen,

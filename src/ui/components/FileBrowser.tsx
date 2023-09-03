@@ -333,7 +333,10 @@ const MyFileBrowser = () => {
         folderChain={folderChain}
         onFileAction={handleFileAction()}
         fileActions={fileActions}
-        disableDragAndDropProvider={isMobile ? true : false}
+        disableDragAndDropProvider={(() => {
+          if (isMobile || type === TELDRIVE_OPTIONS.shared.id) return true
+          return false
+        })()}
         defaultFileViewActionId={ChonkyActions.EnableListView.id}
         useStoreProvider={true}
         useThemeProvider={false}

@@ -1,9 +1,9 @@
 import { FC, useEffect, useState } from "react"
 import { useRouter } from "next/router"
 import AddToDriveIcon from "@mui/icons-material/AddToDrive"
-import FolderSharedOutlinedIcon from "@mui/icons-material/FolderSharedOutlined"
+import PeopleAltOutlinedIcon from "@mui/icons-material/PeopleAltOutlined"
 import StarBorder from "@mui/icons-material/StarBorder"
-import WatchLaterIcon from "@mui/icons-material/WatchLater"
+import WatchLaterOutlinedIcon from "@mui/icons-material/WatchLaterOutlined"
 import {
   Box,
   Drawer,
@@ -35,12 +35,12 @@ export const categories = [
   {
     id: TELDRIVE_OPTIONS.shared.id,
     name: TELDRIVE_OPTIONS.shared.name,
-    icon: <FolderSharedOutlinedIcon />,
+    icon: <PeopleAltOutlinedIcon />,
   },
   {
     id: TELDRIVE_OPTIONS.recent.id,
     name: TELDRIVE_OPTIONS.recent.name,
-    icon: <WatchLaterIcon />,
+    icon: <WatchLaterOutlinedIcon />,
   },
 ]
 

@@ -17,6 +17,7 @@ import NavigateNextIcon from "@mui/icons-material/NavigateNext"
 import { alpha } from "@mui/material"
 import Backdrop from "@mui/material/Backdrop"
 import Box from "@mui/material/Box"
+import Button from "@mui/material/Button"
 import IconButton from "@mui/material/IconButton"
 import Modal from "@mui/material/Modal"
 import Typography from "@mui/material/Typography"
@@ -29,6 +30,7 @@ import { getPreviewType, preview } from "@/ui/utils/getPreviewType"
 import ControlsMenu from "./menus/ControlsMenu"
 import OpenWithMenu from "./menus/OpenWithlMenu"
 import CodePreview from "./previews/CodePreview"
+import DefaultPreview from "./previews/DefaultPreview"
 import EpubPreview from "./previews/EpubPreview"
 import ImagePreview from "./previews/ImagePreview"
 import PDFPreview from "./previews/PdfPreview"
@@ -56,10 +58,11 @@ export default memo(function PreviewModal({
   //filter files which can be previewed
   const files = useMemo(() => {
     const flatFiles = data?.pages?.flatMap((page) => page?.results ?? [])
-    return flatFiles?.filter((item) => {
-      const previewType = getPreviewType(getExtension(item.name))
-      if (previewType! && previewType! in preview) return true
-    })
+    return flatFiles
+    // return flatFiles?.filter((item) => {
+    //   const previewType = getPreviewType(getExtension(item.name))
+    //   if (previewType! && previewType! in preview) return true
+    // })
   }, [data])
 
   useEffect(
@@ -133,9 +136,10 @@ export default memo(function PreviewModal({
           return <EpubPreview mediaUrl={mediaUrl} />
 
         default:
-          return null
+          return <DefaultPreview mediaUrl={`${mediaUrl}?d=1`} />
       }
     }
+    return <DefaultPreview mediaUrl={`${mediaUrl}?d=1`} />
   }, [id, name])
 
   return (
