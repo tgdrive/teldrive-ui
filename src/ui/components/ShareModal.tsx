@@ -65,7 +65,7 @@ export default memo(function ShareModal({
   const [isLoading, setIsLoading] = useState(false)
 
   const { mutation: shareMutation } = useShareFile(queryParams)
-
+  console.log({ isLoading: shareMutation.isLoading })
   const { open, file } = modalState
   const [isSharingEnabled, setIsSharingEnabled] = useState(
     file?.visibility === "public"
@@ -177,6 +177,7 @@ export default memo(function ShareModal({
           </FormGroup>
           {file?.visibility !== "public" && (
             <Autocomplete
+              disabled={shareMutation.isLoading}
               multiple
               fullWidth
               id="tags-outlined"
@@ -199,6 +200,7 @@ export default memo(function ShareModal({
           {(file?.visibility === "public" ||
             file?.visibility === "limited") && (
             <TextField
+              disabled={shareMutation.isLoading}
               fullWidth
               focused
               inputRef={inputRef}

@@ -57,7 +57,10 @@ export function useSession({
   }, [path])
 
   useEffect(() => {
-    if (path && fileVisibility !== "public" && fileVisibility != undefined) {
+    if (
+      (path && fileVisibility !== "public" && fileVisibility != undefined) ||
+      (path?.[0] !== TELDRIVE_OPTIONS.shared.id && path !== undefined)
+    ) {
       if (!data && status == "success") onUnauthenticated()
     }
   }, [data, path, fileVisibility])
