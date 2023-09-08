@@ -379,7 +379,7 @@ const uploadFile = async (
         type: "file",
         parts: uploadParts,
         size: file.size,
-        path,
+        path: path ? path : "/",
       }
 
       createMutation
