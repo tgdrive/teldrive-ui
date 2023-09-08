@@ -82,7 +82,7 @@ export const getMediaUrl = (
   name: string,
   download = false
 ) => {
-  const host = apiHost ?? window.location.origin
+  const host = apiHost ? apiHost : window.location.origin
   return `${host}/api/files/${id}/${encodeURIComponent(name)}${
     download ? "?d=1" : ""
   }`
