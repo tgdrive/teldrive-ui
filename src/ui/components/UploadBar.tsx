@@ -6,7 +6,7 @@ import React, {
   useReducer,
   useRef,
 } from "react"
-import { FilePayload, QueryParams, Settings, UploadPart } from "@/ui/types"
+import { FilePayload, Settings, UploadPart } from "@/ui/types"
 import {
   ChonkyIconFA,
   ColorsLight,
@@ -36,11 +36,12 @@ import { UseMutationResult, useQueryClient } from "@tanstack/react-query"
 import md5 from "md5"
 import pLimit from "p-limit"
 import { useIntl } from "react-intl"
+import { useParams } from "react-router-dom"
 
 import { useCreateFile } from "@/ui/hooks/queryhooks"
 import useHover from "@/ui/hooks/useHover"
 import useSettings from "@/ui/hooks/useSettings"
-import { getSortOrder, realPath, zeroPad } from "@/ui/utils/common"
+import { getParams, getSortOrder, realPath, zeroPad } from "@/ui/utils/common"
 import http from "@/ui/utils/http"
 
 enum FileUploadStatus {
@@ -252,11 +253,9 @@ const UploadItemEntry = memo(
 )
 
 interface UploadProps {
-  path: string[]
   hideUpload: () => void
   fileDialogOpened: boolean
   closeFileDialog: () => void
-  queryParams: Partial<QueryParams>
 }
 
 const uploadPart = async <T extends {}>(
@@ -401,23 +400,14 @@ const uploadFile = async (
 }
 
 const Upload = ({
-  path,
   hideUpload,
   fileDialogOpened,
   closeFileDialog,
-  queryParams,
 }: UploadProps) => {
   const { settings } = useSettings()
 
   const [state, dispatch] = useReducer(reducer, initialState)
   const queryClient = useQueryClient()
-
-  const queryKey = useMemo(() => {
-    const { key, path } = queryParams
-    const sortOrder = getSortOrder()
-    const queryKey = [key, path, sortOrder]
-    return queryKey
-  }, [queryParams])
 
   const {
     files,
@@ -500,7 +490,10 @@ const Upload = ({
     }
   }, [fileUploadStates])
 
-  const { mutation: createMutation } = useCreateFile(queryParams)
+  const params = getParams(useParams())
+  const { path } = params
+
+  const { mutation: createMutation } = useCreateFile(params)
 
   useEffect(() => {
     if (files.length > 0 && currentFileIndex < files.length) {
@@ -514,7 +507,7 @@ const Upload = ({
         })
         uploadFile(
           files[currentFileIndex],
-          realPath(path),
+          path,
           createMutation,
           settings,
           (progress) => {
@@ -570,14 +563,6 @@ const Upload = ({
         previndex.current = currentFileIndex
       }
     }
-    // if (currentFileIndex !== 0 && currentFileIndex >= files.length) {
-    //   const path = queryParams.path as string[];
-    //   for (let i = path.length; i > 0; i--) {
-    //     const partialPath = path.slice(0, i);
-    //     const updatedQueryKey = ["files", partialPath, queryKey[2]];
-    //     queryClient.invalidateQueries(updatedQueryKey);
-    //   }
-    // }
   }, [files, currentFileIndex])
 
   return (

@@ -51,12 +51,6 @@ export type Params = {
   view: string
 }
 
-export type QueryParams = {
-  key: string
-  path: string | string[] | undefined
-  enabled: boolean
-}
-
 export type FilePayload = {
   id?: string
   payload?: Record<string, any>
@@ -93,7 +87,7 @@ export type Session = {
   expires: string
 }
 
-export type PaginatedQueryData<T> = {
-  pages: T[]
-  pageParams: any[]
+export type QueryParams = {
+  type: string
+  path: string
 }

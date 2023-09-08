@@ -8,7 +8,15 @@ import MenuItem from "@mui/material/MenuItem"
 
 import FileMenu from "./FileMenu"
 
-export default function ControlsMenu({ starred, toggleStarred }) {
+interface ControlsMenuProps {
+  starred: boolean
+  toggleStarred: () => void
+}
+
+export default function ControlsMenu({
+  starred,
+  toggleStarred,
+}: ControlsMenuProps) {
   const [anchorEl, setAnchorEl] = React.useState<Element | null>(null)
 
   const open = Boolean(anchorEl)

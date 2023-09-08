@@ -1,6 +1,4 @@
 import React, { useCallback, useContext, useEffect, useState } from "react"
-import Link from "next/link"
-import { useRouter } from "next/router"
 import ColorModeContext from "@/ui/contexts/colorModeContext"
 import { Session } from "@/ui/types"
 import CancelIcon from "@mui/icons-material/Cancel"
@@ -16,6 +14,7 @@ import InputBase from "@mui/material/InputBase"
 import { styled, useTheme } from "@mui/material/styles"
 import Toolbar from "@mui/material/Toolbar"
 import debounce from "lodash.debounce"
+import { Link, useNavigate, useParams } from "react-router-dom"
 
 import AccountMenu from "@/ui/components/menus/AccountMenu"
 
@@ -69,31 +68,27 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
   },
 }))
 
-export default function Header({ session }: { session?: Session }) {
+export default function Header({ session }: { session?: Session | null }) {
   const [query, setQuery] = useState("")
 
   const theme = useTheme()
 
   const { palette } = theme
 
-  const router = useRouter()
+  const navigate = useNavigate()
 
-  const { path } = router.query
-
-  const { asPath } = router
+  const { type } = useParams()
 
   const { toggleColorMode, randomColorScheme, resetTheme } =
     useContext(ColorModeContext)
 
   const onSearchFocus = useCallback(() => {
-    if (!asPath.includes("search"))
-      router.push("/search", undefined, { scroll: false })
-  }, [asPath, router])
+    if (type !== "search") navigate("/search", { replace: true })
+  }, [type, navigate])
 
   const debouncedSave = useCallback(
     debounce(
-      (newValue: string) =>
-        router.replace(`/search/${newValue}`, undefined, { scroll: false }),
+      (newValue: string) => navigate(`/search/${newValue}`, { replace: true }),
       500
     ),
     []
@@ -105,12 +100,8 @@ export default function Header({ session }: { session?: Session }) {
   }, [])
 
   useEffect(() => {
-    if (!asPath.includes("search")) setQuery("")
-
-    // if (asPath.includes('search')) {
-    //    setQuery(path?.[1] ?? '')
-    // }
-  }, [asPath, path])
+    if (type !== "search") setQuery("")
+  }, [type])
 
   return (
     <StyledAppBar
@@ -129,7 +120,7 @@ export default function Header({ session }: { session?: Session }) {
             <Typography
               component={Link}
               color="inherit"
-              href={"/my-drive"}
+              to={"/my-drive"}
               sx={{
                 fontWeight: 500,
                 letterSpacing: 0.5,

@@ -1,5 +1,4 @@
 import { MouseEventHandler, useCallback, useState } from "react"
-import { useRouter } from "next/router"
 import { Message } from "@/ui/types"
 import Logout from "@mui/icons-material/Logout"
 import Settings from "@mui/icons-material/Settings"
@@ -8,6 +7,7 @@ import IconButton from "@mui/material/IconButton"
 import ListItemIcon from "@mui/material/ListItemIcon"
 import Menu from "@mui/material/Menu"
 import MenuItem from "@mui/material/MenuItem"
+import { useNavigate } from "react-router-dom"
 
 import { useSession } from "@/ui/hooks/useSession"
 import useSettings from "@/ui/hooks/useSettings"
@@ -31,12 +31,12 @@ export default function AccountMenu() {
 
   const { data: session, refetch } = useSession()
 
-  const router = useRouter()
+  const navigate = useNavigate()
 
   const signOut = useCallback(async () => {
     const res = (await http.get<Message>("/api/auth/logout")).data
     refetch()
-    if (res.status) router.replace("/login")
+    if (res.status) navigate("/login", { replace: true })
   }, [])
 
   return (

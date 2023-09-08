@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useRef, useState } from "react"
-import { useRouter } from "next/router"
 import { AuthMessage, Message } from "@/ui/types"
 import { Box, Checkbox, FormControlLabel, TextField } from "@mui/material"
 import Button from "@mui/material/Button"
@@ -8,9 +7,11 @@ import Container from "@mui/material/Container"
 import Grow from "@mui/material/Grow"
 import Paper from "@mui/material/Paper"
 import Typography from "@mui/material/Typography"
+import { useQueryClient } from "@tanstack/react-query"
 import { matchIsValidTel, MuiTelInput } from "mui-tel-input"
 import { Controller, useForm } from "react-hook-form"
 import { toast } from "react-hot-toast"
+import { useLocation, useNavigate } from "react-router-dom"
 import useWebSocket from "react-use-websocket"
 
 import useSettings from "@/ui/hooks/useSettings"
@@ -64,16 +65,20 @@ export default function SignIn() {
       {}
     )
 
-  const router = useRouter()
+  const location = useLocation()
 
-  const { from } = router.query
+  const navigate = useNavigate()
+
+  const from = location.state?.from?.pathname || "/"
+
+  const queryClient = useQueryClient()
 
   const postLogin = useCallback(
     async function postLogin(payload: Record<string, any>) {
       const res = (await http.post<Message>("/api/auth/login", payload)).data
       if (res.status) {
-        //@ts-ignore
-        window.location.href = from ? from : "/my-drive"
+        await queryClient.invalidateQueries(["session"])
+        navigate(from ? from : "/my-drive", { replace: true })
       }
     },
     [from]
@@ -122,7 +127,7 @@ export default function SignIn() {
       sendJsonMessage({ authType: loginType })
       firstCall.current = true
     }
-  }, [loginType, router])
+  }, [loginType])
 
   useEffect(() => {
     if (lastJsonMessage !== null) {
@@ -200,7 +205,7 @@ export default function SignIn() {
                   <Controller
                     name="phoneNumber"
                     control={control}
-                    rules={{ validate: matchIsValidTel }}
+                    rules={{ validate: matchIsValidTel as any }}
                     render={({ field, fieldState }) => (
                       <MuiTelInput
                         {...field}

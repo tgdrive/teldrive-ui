@@ -1,7 +1,14 @@
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react"
-import dynamic from "next/dynamic"
-import { useRouter } from "next/router"
-import { ModalState, QueryParams } from "@/ui/types"
+import {
+  lazy,
+  memo,
+  Suspense,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react"
+import { ModalState } from "@/ui/types"
 import {
   ChonkyActions,
   FileBrowser,
@@ -13,6 +20,7 @@ import {
 import { styled } from "@mui/material/styles"
 import useMediaQuery from "@mui/material/useMediaQuery"
 import { useQueryClient } from "@tanstack/react-query"
+import { useNavigate, useParams } from "react-router-dom"
 import {
   StateSnapshot,
   VirtuosoGridHandle,
@@ -35,17 +43,14 @@ import {
   SyncFiles,
   UploadFiles,
 } from "@/ui/utils/chonkyactions"
-import { chainLinks, getFiles, getSortOrder } from "@/ui/utils/common"
+import { chainLinks, getFiles, getParams } from "@/ui/utils/common"
 
 import DeleteDialog from "./DeleteDialog"
 import ErrorView from "./ErrorView"
 import FileModal from "./FileModal"
 import Upload from "./UploadBar"
 
-const PreviewModal = dynamic(() => import("./PreviewModal"), {
-  ssr: false,
-  loading: () => <Loader />,
-})
+const PreviewModal = lazy(() => import("./PreviewModal"))
 
 const PREFIX = "MyFileBrowser"
 
@@ -80,9 +85,11 @@ function isVirtuosoList(value: any): value is VirtuosoHandle {
 
 const MyFileBrowser = () => {
   const { settings } = useSettings()
+
   const positions = useRef<Map<string, StateSnapshot>>(new Map()).current
 
-  const [queryEnabled, setqueryEnabled] = useState(false)
+  const params = getParams(useParams())
+  const { type, path } = params
 
   const {
     value: upload,
@@ -98,18 +105,13 @@ const MyFileBrowser = () => {
 
   const { isMobile } = useDevice()
 
-  const router = useRouter()
-
-  const { path } = router.query
-
-  const type = path?.[0]
-
   const queryClient = useQueryClient()
 
   const isSm = useMediaQuery("(max-width:600px)")
 
   const listRef = useRef<VirtuosoHandle | VirtuosoGridHandle>(null)
 
+  const navigate = useNavigate()
   const { preloadFiles } = usePreloadFiles()
 
   const fileActions = useMemo(
@@ -126,27 +128,6 @@ const MyFileBrowser = () => {
     [isSm, type]
   )
 
-  useEffect(() => {
-    if (type === "my-drive") setqueryEnabled(true)
-    else if (type === "search" && path!.length > 1) {
-      setqueryEnabled(true)
-    } else if (type === "starred") {
-      setqueryEnabled(true)
-    } else if (type === "recent") {
-      setqueryEnabled(true)
-    } else {
-      setqueryEnabled(false)
-    }
-  }, [path])
-
-  const queryParams: Partial<QueryParams> = useMemo(() => {
-    return {
-      key: "files",
-      path,
-      enabled: queryEnabled,
-    }
-  }, [queryEnabled, path])
-
   const {
     data,
     error,
@@ -154,7 +135,7 @@ const MyFileBrowser = () => {
     hasNextPage,
     isFetchingNextPage,
     isInitialLoading,
-  } = useFetchFiles(queryParams)
+  } = useFetchFiles(params)
 
   const files = useMemo(() => {
     if (data)
@@ -165,29 +146,27 @@ const MyFileBrowser = () => {
 
   const folderChain = useMemo(() => {
     if (type == "my-drive") {
-      return Object.entries(chainLinks(path as string[])).map(
-        ([key, value]) => ({
-          id: key,
-          name: key,
-          path: value,
-          isDir: true,
-          chain: true,
-        })
-      )
+      return Object.entries(chainLinks(path)).map(([key, value]) => ({
+        id: key,
+        name: key,
+        path: value,
+        isDir: true,
+        chain: true,
+      }))
     }
-  }, [path])
+  }, [type, path])
 
   const [modalState, setModalState] = useState<Partial<ModalState>>({
     open: false,
     operation: RenameFile.id,
   })
 
-  const { open, operation } = modalState
+  const { open } = modalState
 
   const handleFileAction = useCallback(
     () =>
       handleAction(
-        router,
+        params,
         settings,
         setModalState,
         queryClient,
@@ -196,7 +175,7 @@ const MyFileBrowser = () => {
         openFileDialog,
         preloadFiles
       ),
-    [router, setModalState, queryClient, preloadFiles]
+    [navigate, setModalState, queryClient, preloadFiles]
   )
 
   useEffect(() => {
@@ -207,36 +186,16 @@ const MyFileBrowser = () => {
 
     setTimeout(() => {
       listRef.current?.scrollTo({
-        top: positions.get(router.asPath)?.scrollTop ?? 0,
+        top: positions.get(type + path!)?.scrollTop ?? 0,
         left: 0,
       })
     }, 0)
 
     return () => {
       if (listRef.current && isVirtuosoList(listRef.current))
-        listRef.current?.getState((state) =>
-          positions.set(router.asPath, state)
-        )
+        listRef.current?.getState((state) => positions.set(type + path!, state))
     }
-  }, [router.asPath])
-
-  const queryKey = useMemo(() => {
-    const { key, path } = queryParams
-    const sortOrder = getSortOrder()
-    const queryKey = [key, path, sortOrder]
-    return queryKey
-  }, [queryParams])
-
-  // useEffect(() => {
-  //   if (modalState.operation === "delete_file" && modalState.successful) {
-  //     const path = queryParams.path as string[]
-  //     for (let i = path.length; i > 0; i--) {
-  //       const partialPath = path.slice(0, i)
-  //       const updatedQueryKey = ["files", partialPath, queryKey[2]]
-  //       queryClient.invalidateQueries(updatedQueryKey)
-  //     }
-  //   }
-  // }, [modalState.operation, modalState.successful])
+  }, [type, path])
 
   if (error) {
     return <ErrorView error={error as Error} />
@@ -271,34 +230,21 @@ const MyFileBrowser = () => {
         (val) => val === modalState.operation
       ) &&
         open && (
-          <FileModal
-            modalState={modalState}
-            setModalState={setModalState}
-            queryParams={queryParams}
-            path={path}
-          />
+          <FileModal modalState={modalState} setModalState={setModalState} />
         )}
       {modalState.operation === ChonkyActions.OpenFiles.id && open && (
-        <PreviewModal
-          queryParams={queryParams}
-          modalState={modalState}
-          setModalState={setModalState}
-        />
+        <Suspense fallback={<Loader />}>
+          <PreviewModal modalState={modalState} setModalState={setModalState} />
+        </Suspense>
       )}
       {modalState.operation === DeleteFile.id && open && (
-        <DeleteDialog
-          queryParams={queryParams}
-          modalState={modalState}
-          setModalState={setModalState}
-        />
+        <DeleteDialog modalState={modalState} setModalState={setModalState} />
       )}
       {upload && (
         <Upload
-          queryParams={queryParams}
           fileDialogOpened={fileDialogOpened}
           closeFileDialog={closeFileDialog}
           hideUpload={hideUpload}
-          path={path as string[]}
         />
       )}
     </Root>

@@ -1,5 +1,6 @@
-import { File, Settings } from "@/ui/types"
+import { File, QueryParams, Settings } from "@/ui/types"
 import { FileData } from "@bhunter179/chonky"
+import { Params } from "react-router-dom"
 
 export const getFiles = (data: File[]): FileData[] => {
   return data.map((item): FileData => {
@@ -10,7 +11,7 @@ export const getFiles = (data: File[]): FileData[] => {
         type: item.type,
         size: item.size ? Number(item.size) : 0,
         modDate: item.updatedAt,
-        path: `my-drive${item.path}`,
+        path: item.path,
         isDir: true,
         color: "#FAD165",
       }
@@ -44,28 +45,29 @@ export const isMobileDevice = () => {
   })
 }
 
-export const chainLinks = (paths: string[]) => {
-  let obj: Record<string, string> = {}
-  let pathsoFar = ""
+export const chainLinks = (path: string) => {
+  const paths = path?.split("/").slice(1)
+  const obj: Record<string, string> = {}
+  let pathsoFar = "/"
+  obj["My Drive"] = ""
   for (let path of paths) {
     let decodedPath = decodeURIComponent(path)
-    obj[decodedPath === "my-drive" ? "My drive" : decodedPath] =
-      pathsoFar + decodedPath
+    obj[decodedPath] = pathsoFar + decodedPath
     pathsoFar = pathsoFar + decodedPath + "/"
   }
   return obj
 }
 
-export const realPath = (path: string[]) =>
-  path && path.length > 1
-    ? path.slice(1).reduce((acc: any, val: any) => `${acc}/${val}`, "")
+export const realPath = (parts: string[]) =>
+  parts.length > 1
+    ? parts.slice(1).reduce((acc: any, val: any) => `${acc}/${val}`, "")
     : "/"
 
 export function getRawExtension(fileName: string | string[]) {
   return fileName.slice(((fileName.lastIndexOf(".") - 1) >>> 0) + 2)
 }
 export function getExtension(fileName: string) {
-  return getRawExtension(fileName).toLowerCase()
+  return (getRawExtension(fileName) as string).toLowerCase()
 }
 
 export const zeroPad = (num: number | string, places: number) =>
@@ -102,3 +104,12 @@ export const splitFileSizes = [
   { value: 1000 * 1024 * 1024, label: "1GB" },
   { value: 2 * 1000 * 1024 * 1024, label: "2GB" },
 ]
+
+export const getParams = (params: Params<string>): QueryParams => {
+  const { type } = params
+  let path = params["*"]
+  if (path && !path.startsWith("/")) {
+    path = "/" + path
+  }
+  return { type: type!, path: path! }
+}

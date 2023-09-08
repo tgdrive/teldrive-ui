@@ -1,25 +1,21 @@
 import { useEffect, useState } from "react"
-import { useRouter } from "next/router"
 import BottomNavigation from "@mui/material/BottomNavigation"
 import BottomNavigationAction from "@mui/material/BottomNavigationAction"
 import Paper from "@mui/material/Paper"
-
-import { usePreloadFiles } from "@/ui/hooks/queryhooks"
+import { useNavigate, useParams } from "react-router-dom"
 
 import { categories } from "./Drawer"
 
 export default function FixedBottomNavigation() {
   const [value, setValue] = useState("")
 
-  const router = useRouter()
+  const navigate = useNavigate()
 
-  const { path } = router.query
-
-  const { preloadFiles } = usePreloadFiles()
+  const { type } = useParams()
 
   useEffect(() => {
-    if (path && path.length > 0) setValue(path[0])
-  }, [path])
+    if (type) setValue(type)
+  }, [type])
 
   return (
     <Paper
@@ -49,7 +45,7 @@ export default function FixedBottomNavigation() {
             value={id}
             label={name}
             icon={icon}
-            onClick={() => preloadFiles(id)}
+            onClick={() => navigate(id)}
           />
         ))}
       </BottomNavigation>

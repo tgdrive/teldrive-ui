@@ -1,4 +1,5 @@
 import { Box, Container } from "@mui/material"
+import { Outlet } from "react-router-dom"
 
 import { useSession } from "@/ui/hooks/useSession"
 import FixedBottomNavigation from "@/ui/components/BottomNav"
@@ -7,8 +8,9 @@ import Header from "@/ui/components/Header"
 
 const drawerWidth = 250
 
-const RootLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+const Root = () => {
   const { data: session } = useSession()
+
   return (
     <>
       <Box sx={{ position: "fixed", inset: 0, display: "flex" }}>
@@ -52,7 +54,7 @@ const RootLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               },
             }}
           >
-            {children}
+            <Outlet />
           </Container>
         </Box>
       </Box>
@@ -60,4 +62,4 @@ const RootLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   )
 }
 
-export default RootLayout
+export default Root

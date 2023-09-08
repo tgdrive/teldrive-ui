@@ -1,5 +1,4 @@
 import { FC, useEffect, useState } from "react"
-import { useRouter } from "next/router"
 import AddToDriveIcon from "@mui/icons-material/AddToDrive"
 import StarBorder from "@mui/icons-material/StarBorder"
 import WatchLaterIcon from "@mui/icons-material/WatchLater"
@@ -14,8 +13,10 @@ import {
   ListItemText,
   Toolbar,
 } from "@mui/material"
+import { useNavigate, useParams } from "react-router-dom"
 
 import { usePreloadFiles } from "@/ui/hooks/queryhooks"
+import { getParams } from "@/ui/utils/common"
 
 export const categories = [
   {
@@ -31,21 +32,20 @@ export const categories = [
 const NavDrawer: FC<DrawerProps> = (props) => {
   const { ...others } = props
 
-  const router = useRouter()
-
-  const { path } = router.query
-
-  const [selectedIndex, setSelectedIndex] = useState("")
+  const params = getParams(useParams())
+  const { type } = params
 
   const { preloadFiles } = usePreloadFiles()
 
+  const [selectedIndex, setSelectedIndex] = useState("")
+
   useEffect(() => {
-    if (path && path.length > 0) setSelectedIndex(path[0])
-  }, [path])
+    if (type) setSelectedIndex(type)
+  }, [type])
 
   const handleListItemClick = (_: any, index: string) => {
     setSelectedIndex(index)
-    preloadFiles(index)
+    preloadFiles({ type: index, path: "" })
   }
 
   return (
