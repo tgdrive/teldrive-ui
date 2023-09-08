@@ -6,7 +6,6 @@ import React, {
   useRef,
   useState,
 } from "react"
-import { Poppins } from "next/font/google"
 import ColorModeContext from "@/ui/contexts/colorModeContext"
 import { useChonkyTheme } from "@bhunter179/chonky"
 import {
@@ -26,34 +25,11 @@ const materialColors = Object.keys(colors)
   .filter((x) => x !== "common")
   .map((color) => (colors as Record<string, any>)[color].A100)
 
-const poppins = Poppins({
-  adjustFontFallback: true,
-  weight: ["300", "400", "500"],
-  subsets: ["latin"],
-  preload: true,
-  fallback: [
-    "ui-sans-serif",
-    "system-ui",
-    "-apple-system",
-    "BlinkMacSystemFont",
-    '"Segoe UI"',
-    "Roboto",
-    '"Helvetica Neue"',
-    "Arial",
-    '"Noto Sans"',
-    "sans-serif",
-    '"Apple Color Emoji"',
-    '"Segoe UI Emoji"',
-    '"Segoe UI Symbol"',
-    '"Noto Color Emoji"',
-  ],
-})
-
 const muiThemeOverride = {
   typography: {
-    fontFamily: poppins.style.fontFamily,
+    fontFamily: "'Poppins', sans-seriff",
     body1: {
-      fontFamily: poppins.style.fontFamily,
+      fontFamily: "'Poppins', sans-seriff",
     },
   },
 }

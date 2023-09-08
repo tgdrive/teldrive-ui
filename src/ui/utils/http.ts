@@ -7,7 +7,9 @@ const http = axios.create({
 })
 
 http.interceptors.request.use(function (config) {
-  const settings = JSON.parse(localStorage.getItem("settings")) as Settings
+  const settings = JSON.parse(
+    localStorage.getItem("settings") as string
+  ) as Settings
   if (settings && settings.apiUrl) {
     config.baseURL = settings.apiUrl
   }

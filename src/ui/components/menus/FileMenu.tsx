@@ -1,8 +1,8 @@
 import * as React from "react"
-import Menu from "@mui/material/Menu"
+import Menu, { MenuProps } from "@mui/material/Menu"
 import { styled } from "@mui/material/styles"
 
-const FileMenu = styled((props) => (
+const FileMenu = styled((props: MenuProps) => (
   <Menu
     elevation={0}
     anchorOrigin={{

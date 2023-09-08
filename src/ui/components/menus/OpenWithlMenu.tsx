@@ -10,7 +10,15 @@ import { preview } from "@/ui/utils/getPreviewType"
 
 import FileMenu from "./FileMenu"
 
-export default function OpenWithMenu({ previewType, videoUrl }) {
+interface OpenWithMenuProps {
+  previewType: string
+  videoUrl: string
+}
+
+export default function OpenWithMenu({
+  previewType,
+  videoUrl,
+}: OpenWithMenuProps) {
   const [anchorEl, setAnchorEl] = React.useState<Element | null>(null)
   const open = Boolean(anchorEl)
 
@@ -53,30 +61,32 @@ export default function OpenWithMenu({ previewType, videoUrl }) {
         open={open}
         onClose={handleClose}
       >
-        {previewType === preview.video && (
-          <Box>
-            <MenuItem
-              onClick={() => {
-                navigateToExternalUrl(`vlc://${videoUrl}`, false)
-                handleClose()
-              }}
-              disableRipple
-            >
-              <FileCopyIcon />
-              Open In VLC
-            </MenuItem>
-            <MenuItem
-              onClick={() => {
-                navigateToExternalUrl(`potplayer://${videoUrl}`, false)
-                handleClose()
-              }}
-              disableRipple
-            >
-              <FileCopyIcon />
-              Open In PotPlayer
-            </MenuItem>
-          </Box>
-        )}
+        <>
+          {previewType === preview.video && (
+            <Box>
+              <MenuItem
+                onClick={() => {
+                  navigateToExternalUrl(`vlc://${videoUrl}`, false)
+                  handleClose()
+                }}
+                disableRipple
+              >
+                <FileCopyIcon />
+                Open In VLC
+              </MenuItem>
+              <MenuItem
+                onClick={() => {
+                  navigateToExternalUrl(`potplayer://${videoUrl}`, false)
+                  handleClose()
+                }}
+                disableRipple
+              >
+                <FileCopyIcon />
+                Open In PotPlayer
+              </MenuItem>
+            </Box>
+          )}
+        </>
       </FileMenu>
     </>
   )

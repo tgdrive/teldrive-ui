@@ -1,30 +1,31 @@
 import React, { Dispatch, SetStateAction, useCallback, useMemo } from "react"
-import { ModalState, QueryParams } from "@/ui/types"
+import { ModalState } from "@/ui/types"
 import Button from "@mui/material/Button"
 import Dialog from "@mui/material/Dialog"
 import DialogActions from "@mui/material/DialogActions"
 import DialogContent from "@mui/material/DialogContent"
 import DialogContentText from "@mui/material/DialogContentText"
 import DialogTitle from "@mui/material/DialogTitle"
+import { useParams } from "react-router-dom"
 
 import { useDeleteFile } from "@/ui/hooks/queryhooks"
+import { getParams } from "@/ui/utils/common"
 
 type DeleteDialogProps = {
   modalState: Partial<ModalState>
   setModalState: Dispatch<SetStateAction<Partial<ModalState>>>
-  queryParams: Partial<QueryParams>
 }
 export default function DeleteDialog({
   modalState,
   setModalState,
-  queryParams,
 }: DeleteDialogProps) {
-  const { mutation: deleteMutation } = useDeleteFile(queryParams)
+  const params = getParams(useParams())
+  const { mutation: deleteMutation } = useDeleteFile(params)
 
   const handleClose = useCallback((denyDelete = true) => {
     if (!denyDelete) {
-      deleteMutation.mutate({ files: modalState.selectedFiles });
-      setModalState((prev) => ({ ...prev, open: false, successful: true, }))
+      deleteMutation.mutate({ files: modalState.selectedFiles })
+      setModalState((prev) => ({ ...prev, open: false, successful: true }))
     } else {
       setModalState((prev) => ({ ...prev, open: false }))
     }

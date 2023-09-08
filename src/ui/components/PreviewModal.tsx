@@ -7,8 +7,7 @@ import React, {
   useMemo,
   useState,
 } from "react"
-import Link from "next/link"
-import { ModalState, QueryParams } from "@/ui/types"
+import { ModalState } from "@/ui/types"
 import { ChonkyIconFA, ColorsLight, useIconData } from "@bhunter179/chonky"
 import ArrowBackIcon from "@mui/icons-material/ArrowBack"
 import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined"
@@ -20,10 +19,11 @@ import Box from "@mui/material/Box"
 import IconButton from "@mui/material/IconButton"
 import Modal from "@mui/material/Modal"
 import Typography from "@mui/material/Typography"
+import { Link, useParams } from "react-router-dom"
 
 import { useFetchFiles, useUpdateFile } from "@/ui/hooks/queryhooks"
 import useSettings from "@/ui/hooks/useSettings"
-import { getExtension, getMediaUrl } from "@/ui/utils/common"
+import { getExtension, getMediaUrl, getParams } from "@/ui/utils/common"
 import { getPreviewType, preview } from "@/ui/utils/getPreviewType"
 
 import ControlsMenu from "./menus/ControlsMenu"
@@ -35,13 +35,11 @@ import PDFPreview from "./previews/PdfPreview"
 import VideoPreview from "./previews/VideoPreview"
 
 type PreviewModalProps = {
-  queryParams: Partial<QueryParams>
   modalState: Partial<ModalState>
   setModalState: Dispatch<SetStateAction<Partial<ModalState>>>
 }
 
 export default memo(function PreviewModal({
-  queryParams,
   modalState,
   setModalState,
 }: PreviewModalProps) {
@@ -49,11 +47,12 @@ export default memo(function PreviewModal({
 
   const [initialIndex, setInitialIndex] = useState<number>(-1)
 
-  const [params] = useState<Partial<QueryParams>>(queryParams)
+  const params = getParams(useParams())
+
+  const { type } = params
 
   const { data } = useFetchFiles(params)
 
-  //filter files which can be previewed
   const files = useMemo(() => {
     const flatFiles = data?.pages?.flatMap((page) => page?.results ?? [])
     return flatFiles?.filter((item) => {
@@ -71,7 +70,7 @@ export default memo(function PreviewModal({
   const { id, name, starred, mimeType } =
     initialIndex >= 0
       ? files!?.[initialIndex]
-      : { id: "", name: "", starred: "", mimeType: "" }
+      : { id: "", name: "", starred: false, mimeType: "" }
 
   const { icon, colorCode } = useIconData({ id, name, isDir: false })
 
@@ -251,7 +250,7 @@ export default memo(function PreviewModal({
               >
                 <OpenWithMenu
                   videoUrl={`${mediaUrl}?d=1`}
-                  previewType={previewType}
+                  previewType={previewType!}
                 />
               </Box>
               <Box
@@ -266,7 +265,7 @@ export default memo(function PreviewModal({
                 <IconButton
                   component={Link}
                   rel="noopener noreferrer"
-                  href={`${mediaUrl}?d=1`}
+                  to={`${mediaUrl}?d=1`}
                   color="inherit"
                   edge="start"
                 >
