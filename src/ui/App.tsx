@@ -3,7 +3,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 
 import "@/ui/styles/global.css"
 
-import Root from "@/ui/routes/root"
+import RootLayout from "@/ui/layouts/RootLayout"
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
 import { AxiosError } from "axios"
 import {
@@ -33,7 +33,7 @@ const queryClient = new QueryClient({
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Root />,
+    element: <RootLayout />,
     children: [
       {
         path: "login",
@@ -61,15 +61,12 @@ function RequireAuth({ children }: { children: JSX.Element }) {
 
   const location = useLocation()
 
-  if (status === "loading") {
+  if (status === "loading" || status == "error") {
     return null
   }
 
   if (!data && status === "success") {
     return <Navigate to="/login" state={{ from: location }} replace />
-  }
-  if (data && status === "success" && location.pathname == "/") {
-    return <Navigate to="/my-drive" replace />
   }
   return children
 }

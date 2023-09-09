@@ -1,5 +1,5 @@
 import { Box, Container } from "@mui/material"
-import { Outlet } from "react-router-dom"
+import { Navigate, Outlet, useLocation } from "react-router-dom"
 
 import { useSession } from "@/ui/hooks/useSession"
 import FixedBottomNavigation from "@/ui/components/BottomNav"
@@ -10,6 +10,11 @@ const drawerWidth = 250
 
 const Root = () => {
   const { data: session } = useSession()
+
+  const location = useLocation()
+  if (session && location.pathname === "/") {
+    return <Navigate to="/my-drive" replace />
+  }
 
   return (
     <>
