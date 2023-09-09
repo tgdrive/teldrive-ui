@@ -57,9 +57,9 @@ const router = createBrowserRouter([
 ])
 
 function RequireAuth({ children }: { children: JSX.Element }) {
-  let { data, status } = useSession()
+  const { data, status } = useSession()
 
-  let location = useLocation()
+  const location = useLocation()
 
   if (status === "loading") {
     return null
@@ -67,6 +67,9 @@ function RequireAuth({ children }: { children: JSX.Element }) {
 
   if (!data && status === "success") {
     return <Navigate to="/login" state={{ from: location }} replace />
+  }
+  if (data && status === "success" && location.pathname == "/") {
+    return <Navigate to="/my-drive" replace />
   }
   return children
 }
