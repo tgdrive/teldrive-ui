@@ -136,7 +136,7 @@ export const handleAction = (
         const fileToOpen = targetFile ?? files[0]
 
         if (fileToOpen && FileHelper.isDirectory(fileToOpen)) {
-          preloadFiles({ ...params, path: fileToOpen.path })
+          preloadFiles({ type: "my-drive", path: fileToOpen.path })
         } else {
           const previewType = getPreviewType(getExtension(fileToOpen.name))
           if (!FileHelper.isDirectory(fileToOpen) && previewType in preview) {
