@@ -32,7 +32,7 @@ import CodePreview from "./previews/CodePreview"
 import EpubPreview from "./previews/EpubPreview"
 import ImagePreview from "./previews/ImagePreview"
 import PDFPreview from "./previews/PdfPreview"
-import VideoPreview from "./previews/VideoPreview"
+import VideoPreview from "./previews/video/VideoPreview"
 
 type PreviewModalProps = {
   modalState: Partial<ModalState>

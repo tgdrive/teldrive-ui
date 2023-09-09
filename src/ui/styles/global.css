@@ -6,14 +6,6 @@ body {
   font-weight: 500;
 }
 
-video {
-  object-fit: fill;
-}
-
-.plyr {
-  border-radius: 4px;
-}
-
 pre::-webkit-scrollbar {
   background: transparent;
   width: 10px;
@@ -22,7 +14,7 @@ pre::-webkit-scrollbar {
 pre::-webkit-scrollbar-thumb {
   background: white;
   border-radius: 8px;
-  border-width: '1px 1px 1px 6px',
+  border-width: "1px 1px 1px 6px";
 }
 
 pre::-webkit-scrollbar-corner {

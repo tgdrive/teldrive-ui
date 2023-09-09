@@ -61,32 +61,30 @@ export default function OpenWithMenu({
         open={open}
         onClose={handleClose}
       >
-        <>
-          {previewType === preview.video && (
-            <Box>
-              <MenuItem
-                onClick={() => {
-                  navigateToExternalUrl(`vlc://${videoUrl}`, false)
-                  handleClose()
-                }}
-                disableRipple
-              >
-                <FileCopyIcon />
-                Open In VLC
-              </MenuItem>
-              <MenuItem
-                onClick={() => {
-                  navigateToExternalUrl(`potplayer://${videoUrl}`, false)
-                  handleClose()
-                }}
-                disableRipple
-              >
-                <FileCopyIcon />
-                Open In PotPlayer
-              </MenuItem>
-            </Box>
-          )}
-        </>
+        {previewType === preview.video && (
+          <Box>
+            <MenuItem
+              onClick={() => {
+                navigateToExternalUrl(`vlc://${videoUrl}`, false)
+                handleClose()
+              }}
+              disableRipple
+            >
+              <FileCopyIcon />
+              Open In VLC
+            </MenuItem>
+            <MenuItem
+              onClick={() => {
+                navigateToExternalUrl(`potplayer://${videoUrl}`, false)
+                handleClose()
+              }}
+              disableRipple
+            >
+              <FileCopyIcon />
+              Open In PotPlayer
+            </MenuItem>
+          </Box>
+        )}
       </FileMenu>
     </>
   )
