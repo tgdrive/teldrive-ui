@@ -296,9 +296,9 @@ export default memo(function PreviewModal({
                 }}
               >
                 <IconButton
-                  component={Link}
+                  component={"a"}
                   rel="noopener noreferrer"
-                  to={`${mediaUrl}?d=1`}
+                  href={`${mediaUrl}?d=1`}
                   color="inherit"
                   edge="start"
                 >
