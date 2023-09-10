@@ -48,9 +48,8 @@ import { chainLinks, getFiles, getParams } from "@/ui/utils/common"
 import DeleteDialog from "./DeleteDialog"
 import ErrorView from "./ErrorView"
 import FileModal from "./FileModal"
+import PreviewModal from "./PreviewModal"
 import Upload from "./UploadBar"
-
-const PreviewModal = lazy(() => import("./PreviewModal"))
 
 const PREFIX = "MyFileBrowser"
 
@@ -233,9 +232,7 @@ const MyFileBrowser = () => {
           <FileModal modalState={modalState} setModalState={setModalState} />
         )}
       {modalState.operation === ChonkyActions.OpenFiles.id && open && (
-        <Suspense fallback={<Loader />}>
-          <PreviewModal modalState={modalState} setModalState={setModalState} />
-        </Suspense>
+        <PreviewModal modalState={modalState} setModalState={setModalState} />
       )}
       {modalState.operation === DeleteFile.id && open && (
         <DeleteDialog modalState={modalState} setModalState={setModalState} />

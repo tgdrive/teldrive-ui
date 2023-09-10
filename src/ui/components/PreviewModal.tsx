@@ -1,7 +1,9 @@
 import React, {
   Dispatch,
+  lazy,
   memo,
   SetStateAction,
+  Suspense,
   useCallback,
   useEffect,
   useMemo,
@@ -26,13 +28,17 @@ import useSettings from "@/ui/hooks/useSettings"
 import { getExtension, getMediaUrl, getParams } from "@/ui/utils/common"
 import { getPreviewType, preview } from "@/ui/utils/getPreviewType"
 
+import Loader from "./Loader"
 import ControlsMenu from "./menus/ControlsMenu"
 import OpenWithMenu from "./menus/OpenWithlMenu"
-import CodePreview from "./previews/CodePreview"
-import EpubPreview from "./previews/EpubPreview"
 import ImagePreview from "./previews/ImagePreview"
 import PDFPreview from "./previews/PdfPreview"
-import VideoPreview from "./previews/video/VideoPreview"
+
+const VideoPreview = lazy(() => import("./previews/video/VideoPreview"))
+
+const CodePreview = lazy(() => import("./previews/CodePreview"))
+
+const EpubPreview = lazy(() => import("./previews/EpubPreview"))
 
 type PreviewModalProps = {
   modalState: Partial<ModalState>
@@ -117,19 +123,31 @@ export default memo(function PreviewModal({
     if (previewType) {
       switch (previewType) {
         case preview.video:
-          return <VideoPreview name={name} mediaUrl={mediaUrl} />
+          return (
+            <Suspense fallback={<Loader />}>
+              <VideoPreview name={name} mediaUrl={mediaUrl} />
+            </Suspense>
+          )
 
         case preview.pdf:
           return <PDFPreview mediaUrl={mediaUrl} />
 
         case preview.code:
-          return <CodePreview name={name} mediaUrl={mediaUrl} />
+          return (
+            <Suspense fallback={<Loader />}>
+              <CodePreview name={name} mediaUrl={mediaUrl} />
+            </Suspense>
+          )
 
         case preview.image:
           return <ImagePreview name={name} mediaUrl={mediaUrl} />
 
         case preview.epub:
-          return <EpubPreview mediaUrl={mediaUrl} />
+          return (
+            <Suspense fallback={<Loader />}>
+              <EpubPreview mediaUrl={mediaUrl} />
+            </Suspense>
+          )
 
         default:
           return null
@@ -169,7 +187,6 @@ export default memo(function PreviewModal({
                 left: 32,
                 color: "white",
                 top: "50%",
-                zIndex: 100,
                 background: "#1F1F1F",
               }}
               color="inherit"
@@ -185,7 +202,6 @@ export default memo(function PreviewModal({
                 right: 32,
                 color: "white",
                 top: "50%",
-                zIndex: 100,
                 background: "#1F1F1F",
               }}
               color="inherit"
