@@ -1,12 +1,13 @@
 import { FC, memo } from "react"
 import { Box } from "@mui/material"
 
-const PDFEmbedPreview: FC<{ mediaUrl: string }> = ({ mediaUrl }) => {
-  const url = `https://alist-org.github.io/pdf.js/web/viewer.html?file=${mediaUrl}`
+const DocPreview: FC<{ mediaUrl: string }> = ({ mediaUrl }) => {
+  const url = `https://view.officeapps.live.com/op/view.aspx?src=${mediaUrl}`
+
   return (
     <Box
       component={"iframe"}
-      title="PdfView"
+      title="DocView"
       sx={{
         position: "relative",
         border: "none",
@@ -20,4 +21,4 @@ const PDFEmbedPreview: FC<{ mediaUrl: string }> = ({ mediaUrl }) => {
   )
 }
 
-export default memo(PDFEmbedPreview)
+export default memo(DocPreview)

@@ -8,9 +8,8 @@ export const preview = {
   code: "code",
   video: "video",
   audio: "audio",
-  office: "ms-office",
+  office: "office",
   epub: "epub",
-  url: "url",
 }
 
 export const extensions = {
@@ -77,8 +76,6 @@ export const extensions = {
   flac: preview.audio,
 
   epub: preview.epub,
-
-  url: preview.url,
 }
 
 export function getPreviewType(

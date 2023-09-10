@@ -31,6 +31,8 @@ import { getPreviewType, preview } from "@/ui/utils/getPreviewType"
 import Loader from "./Loader"
 import ControlsMenu from "./menus/ControlsMenu"
 import OpenWithMenu from "./menus/OpenWithlMenu"
+import DocPreview from "./previews/DocPreview"
+import FullScreenIFrame from "./previews/FullScreenIFrame"
 import ImagePreview from "./previews/ImagePreview"
 import PDFPreview from "./previews/PdfPreview"
 
@@ -54,8 +56,6 @@ export default memo(function PreviewModal({
   const [initialIndex, setInitialIndex] = useState<number>(-1)
 
   const params = getParams(useParams())
-
-  const { type } = params
 
   const { data } = useFetchFiles(params)
 
@@ -130,12 +130,25 @@ export default memo(function PreviewModal({
           )
 
         case preview.pdf:
-          return <PDFPreview mediaUrl={mediaUrl} />
+          return (
+            <FullScreenIFrame>
+              <PDFPreview mediaUrl={mediaUrl} />
+            </FullScreenIFrame>
+          )
+
+        case preview.office:
+          return (
+            <FullScreenIFrame>
+              <DocPreview mediaUrl={mediaUrl} />
+            </FullScreenIFrame>
+          )
 
         case preview.code:
           return (
             <Suspense fallback={<Loader />}>
-              <CodePreview name={name} mediaUrl={mediaUrl} />
+              <FullScreenIFrame>
+                <CodePreview name={name} mediaUrl={mediaUrl} />
+              </FullScreenIFrame>
             </Suspense>
           )
 
@@ -145,7 +158,9 @@ export default memo(function PreviewModal({
         case preview.epub:
           return (
             <Suspense fallback={<Loader />}>
-              <EpubPreview mediaUrl={mediaUrl} />
+              <FullScreenIFrame>
+                <EpubPreview mediaUrl={mediaUrl} />
+              </FullScreenIFrame>
             </Suspense>
           )
 

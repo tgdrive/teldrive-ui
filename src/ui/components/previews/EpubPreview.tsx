@@ -1,11 +1,8 @@
-import { FC, memo, useRef, useState } from "react"
-import { Box } from "@mui/material"
+import { FC, memo, useState } from "react"
 import { Rendition } from "epubjs"
 import { ReactReader } from "react-reader"
 
 const EpubPreview: FC<{ mediaUrl: string }> = ({ mediaUrl }) => {
-  const epubContainer = useRef(null)
-
   const [location, setLocation] = useState<string>()
 
   const onLocationChange = (cfiStr: string) => setLocation(cfiStr)
@@ -24,26 +21,14 @@ const EpubPreview: FC<{ mediaUrl: string }> = ({ mediaUrl }) => {
   }
 
   return (
-    <Box
-      ref={epubContainer}
-      sx={{
-        maxWidth: "70%",
-        width: "100%",
-        margin: "auto",
-        padding: "1rem",
-        position: "relative",
-        height: "90vh",
-      }}
-    >
-      <ReactReader
-        url={mediaUrl}
-        getRendition={(rendition) => fixEpub(rendition)}
-        location={location}
-        locationChanged={onLocationChange}
-        epubInitOptions={{ openAs: "epub" }}
-        epubOptions={{ flow: "scrolled", allowPopups: true }}
-      />
-    </Box>
+    <ReactReader
+      url={mediaUrl}
+      getRendition={(rendition) => fixEpub(rendition)}
+      location={location}
+      locationChanged={onLocationChange}
+      epubInitOptions={{ openAs: "epub" }}
+      epubOptions={{ flow: "scrolled", allowPopups: true }}
+    />
   )
 }
 

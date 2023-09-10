@@ -12,16 +12,7 @@ const CodePreview: FC<{ name: string; mediaUrl: string }> = ({
   const { response: content, error, validating } = useFileContent(mediaUrl)
 
   return (
-    <Box
-      sx={{
-        maxWidth: "80%",
-        width: "100%",
-        margin: "auto",
-        padding: "1rem",
-        position: "relative",
-        height: "100vh",
-      }}
-    >
+    <>
       {validating ? null : (
         <Editor
           options={{
@@ -33,7 +24,7 @@ const CodePreview: FC<{ name: string; mediaUrl: string }> = ({
           value={content}
         />
       )}
-    </Box>
+    </>
   )
 }
 
