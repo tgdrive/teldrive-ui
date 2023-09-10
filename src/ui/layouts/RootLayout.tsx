@@ -12,7 +12,8 @@ const Root = () => {
   const { data: session } = useSession()
 
   const location = useLocation()
-  if (session && location.pathname === "/") {
+
+  if (location.pathname === "/") {
     return <Navigate to="/my-drive" replace />
   }
 
