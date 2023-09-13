@@ -5,8 +5,13 @@ import { useQuery } from "@tanstack/react-query"
 import http from "@/ui/utils/http"
 
 export async function fetchSession() {
-  const res = await http.get<Session | null>("/api/auth/session")
-  return res.data
+  const res = await http.get<Session>("/api/auth/session")
+  const contentType = res.headers["content-type"]
+  if (contentType && contentType.includes("application/json")) {
+    return res.data
+  } else {
+    return null
+  }
 }
 
 type SessionOptions = {
