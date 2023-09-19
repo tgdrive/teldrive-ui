@@ -79,7 +79,6 @@ const DriveThemeProvider: FC<{
     materialColors[colorIndex],
     muiThemeOverride as Theme
   )
-
   return (
     <ColorModeContext.Provider value={colorMode}>
       <MuiThemeProvider theme={theme}>

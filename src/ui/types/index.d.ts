@@ -1,6 +1,5 @@
-import { FileData } from "@bhunter179/chonky"
-
 import { Media } from "@/api/schemas/file.schema"
+import { FileData } from "@bhunter179/chonky"
 
 export type FileResponse = { results: File[]; nextPageToken?: string }
 
@@ -72,13 +71,15 @@ export type AuthMessage = {
 export type Message = {
   status: boolean
   message: string
-  error?:string
+  error?: string
 }
 
 export type Settings = {
   apiUrl: string
   splitFileSize: number
   uploadConcurrency: number
+  channel?: Channel
+  bots?: string
 }
 
 export type Session = {
@@ -91,4 +92,16 @@ export type Session = {
 export type QueryParams = {
   type: string
   path: string
+}
+
+export type AccountStats = {
+  totalSize: number
+  totalFiles: number
+  channelId: number
+  channelName: string
+  [key: string]: number
+}
+export type Channel = {
+  channelName: string
+  channelId: number
 }

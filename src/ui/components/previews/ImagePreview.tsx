@@ -10,7 +10,6 @@ const ImagePreview: FC<{ name: string; mediaUrl: string }> = ({
     setIsLoaded(true)
   }
 
-  console.log(isLoaded)
   return (
     <Box
       sx={{
