@@ -376,7 +376,7 @@ function SettingsDialog({ open, onClose }: SettingsProps) {
           try {
             await http.patch("/api/users/channels", settings.channel)
             toast.success("channel updated")
-            queryClient.invalidateQueries(["accountstats"])
+            queryClient.invalidateQueries({ queryKey: ["user", "stats"] })
           } catch (err) {
             const error = err as AxiosError<Message>
             if (error.response) toast.error(error.response.data.error!)
@@ -391,6 +391,7 @@ function SettingsDialog({ open, onClose }: SettingsProps) {
             try {
               await http.post("/api/users/bots", bots)
               toast.success("bots added")
+              queryClient.invalidateQueries({ queryKey: ["user", "bots"] })
             } catch (err) {
               const error = err as AxiosError<Message>
               if (error.response) toast.error(error.response.data.error!)

@@ -7,6 +7,7 @@ import IconButton from "@mui/material/IconButton"
 import ListItemIcon from "@mui/material/ListItemIcon"
 import Menu from "@mui/material/Menu"
 import MenuItem from "@mui/material/MenuItem"
+import { useQueryClient } from "@tanstack/react-query"
 import { useNavigate } from "react-router-dom"
 
 import { useSession } from "@/ui/hooks/useSession"
@@ -33,10 +34,15 @@ export default function AccountMenu() {
 
   const navigate = useNavigate()
 
+  const queryClient = useQueryClient()
+
   const signOut = useCallback(async () => {
     const res = (await http.get<Message>("/api/auth/logout")).data
     refetch()
-    if (res.status) navigate("/login", { replace: true })
+    if (res.status) {
+      queryClient.invalidateQueries({ queryKey: ["user"] })
+      navigate("/login", { replace: true })
+    }
   }, [])
 
   return (
