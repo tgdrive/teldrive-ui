@@ -35,6 +35,7 @@ import toast from "react-hot-toast"
 import { useIntl } from "react-intl"
 import { useBoolean } from "usehooks-ts"
 
+import { useSession } from "@/ui/hooks/useSession"
 import useSettings from "@/ui/hooks/useSettings"
 import { splitFileSizes } from "@/ui/utils/common"
 import http from "@/ui/utils/http"
@@ -68,6 +69,34 @@ const validateBots = (value?: string) => {
   }
 }
 
+const RevokeButton = memo(() => {
+  const [isRevoking, setIsRevoking] = useState<boolean>(false)
+
+  const revoke = useCallback(() => {
+    setIsRevoking(true)
+    http
+      .get("/api/users/bots/revoke")
+      .then(() => {
+        toast.success("session revoked")
+      })
+      .finally(() => {
+        setIsRevoking(false)
+      })
+  }, [])
+
+  return (
+    <Button
+      sx={{ marginTop: "1rem" }}
+      variant="contained"
+      color="primary"
+      disabled={isRevoking}
+      onClick={revoke}
+    >
+      Revoke Bots
+    </Button>
+  )
+})
+
 const AccountTab: React.FC<{ control: Control<Settings, any> }> = memo(
   ({ control }) => {
     const intl = useIntl()
@@ -89,13 +118,15 @@ const AccountTab: React.FC<{ control: Control<Settings, any> }> = memo(
 
     const { value, setTrue } = useBoolean(false)
 
+    const { data: session } = useSession()
+
     const { data, isInitialLoading } = useQuery(
-      ["accountstats"],
+      ["user", "stats", session?.userName],
       async () => (await http.get<AccountStats>("/api/users/stats")).data
     )
 
     const { data: channelData, isInitialLoading: channelLoading } = useQuery(
-      ["channels"],
+      ["user", "channels", session?.userName],
       async () => (await http.get<Channel[]>("/api/users/channels")).data,
       {
         enabled: value,
@@ -153,6 +184,7 @@ const AccountTab: React.FC<{ control: Control<Settings, any> }> = memo(
           <Controller
             name="channel"
             control={control}
+            rules={{ required: true }}
             render={({ field: { onChange } }) => (
               <Autocomplete
                 onOpen={setTrue}
@@ -204,6 +236,7 @@ const BotTab: React.FC<{ control: Control<Settings, any> }> = memo(
   ({ control }) => {
     return (
       <>
+        <Typography component="p">{"Enter bots here  1 per line:"}</Typography>
         <Controller
           name="bots"
           control={control}
@@ -222,9 +255,7 @@ const BotTab: React.FC<{ control: Control<Settings, any> }> = memo(
             />
           )}
         />
-        <FormGroup>
-          <FormControlLabel control={<Switch />} label="Revoke Bots Session" />
-        </FormGroup>
+        <RevokeButton />
       </>
     )
   }
