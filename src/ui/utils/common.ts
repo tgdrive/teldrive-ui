@@ -113,3 +113,20 @@ export const getParams = (params: Params<string>): QueryParams => {
   }
   return { type: type!, path: path! }
 }
+
+export const copyDataToClipboard = (data: string[]) => {
+  return new Promise((resolve, reject) => {
+    const textToCopy = data.join("\n")
+
+    navigator.clipboard
+      .writeText(textToCopy)
+      .then(() => {
+        resolve("copy success")
+      })
+      .catch((err) => {
+        const errorMessage = "Unable to copy array to clipboard: " + err
+        console.error(errorMessage)
+        reject(errorMessage)
+      })
+  })
+}

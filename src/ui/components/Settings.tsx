@@ -37,7 +37,7 @@ import { useBoolean } from "usehooks-ts"
 
 import { useSession } from "@/ui/hooks/useSession"
 import useSettings from "@/ui/hooks/useSettings"
-import { splitFileSizes } from "@/ui/utils/common"
+import { copyDataToClipboard, splitFileSizes } from "@/ui/utils/common"
 import http from "@/ui/utils/http"
 
 type SettingsProps = {
@@ -234,6 +234,21 @@ const AccountTab: React.FC<{ control: Control<Settings, any> }> = memo(
 
 const BotTab: React.FC<{ control: Control<Settings, any> }> = memo(
   ({ control }) => {
+    const { data: session } = useSession()
+
+    const { data } = useQuery(
+      ["user", "bots", session?.userName],
+      async () => (await http.get<string[]>("/api/users/bots")).data
+    )
+
+    const copyTokens = useCallback(() => {
+      if (data && data.length > 0) {
+        copyDataToClipboard(data).then(() => {
+          toast.success("Tokens Copied")
+        })
+      }
+    }, [data])
+
     return (
       <>
         <Typography component="p">{"Enter bots here  1 per line:"}</Typography>
@@ -255,7 +270,24 @@ const BotTab: React.FC<{ control: Control<Settings, any> }> = memo(
             />
           )}
         />
-        <RevokeButton />
+        {data && (
+          <>
+            <Typography sx={{ marginTop: "1rem" }} component="h6">
+              {`Current Bots : ${data.length}`}
+            </Typography>
+            <Box sx={{ display: "flex", gap: "1rem" }}>
+              <RevokeButton />
+              <Button
+                sx={{ marginTop: "1rem" }}
+                variant="contained"
+                color="primary"
+                onClick={copyTokens}
+              >
+                Copy Bot Tokens
+              </Button>
+            </Box>
+          </>
+        )}
       </>
     )
   }
@@ -330,7 +362,7 @@ function SettingsDialog({ open, onClose }: SettingsProps) {
 
   const [isSaving, setIsSaving] = useState(false)
 
-  const { control, handleSubmit, formState, reset } = useForm<Settings>({
+  const { control, handleSubmit } = useForm<Settings>({
     defaultValues: settings,
   })
 

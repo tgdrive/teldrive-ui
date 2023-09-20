@@ -2,7 +2,7 @@ import { Settings } from "@/ui/types"
 import axios from "axios"
 
 const http = axios.create({
-  timeout: 60000,
+  timeout: 120 * 1000,
   withCredentials: true,
 })
 
