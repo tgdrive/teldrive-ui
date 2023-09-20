@@ -385,7 +385,7 @@ function SettingsDialog({ open, onClose }: SettingsProps) {
           }
 
         case SettingsSection.Bots:
-          const bots = settings.bots?.split("\n")
+          const bots = settings.bots?.trim().split("\n")
           if (bots?.length! > 0) {
             setIsSaving(true)
             try {
