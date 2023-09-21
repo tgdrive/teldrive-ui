@@ -205,7 +205,8 @@ export const handleAction = (
             clipboardText = `${clipboardText}${getMediaUrl(
               settings.apiUrl,
               id,
-              name
+              name,
+              authHash
             )}\n`
           }
         })
