@@ -64,7 +64,7 @@ export default function AccountMenu() {
             }}
             src={`${
               settings.apiUrl ?? window.location.origin
-            }/api/users/profile?photo=1`}
+            }/api/users/profile?photo=1&hash=${session.hash}`}
           />
         ) : (
           <Avatar
