@@ -22,7 +22,8 @@ export function useSession({
   onUnauthenticated = () => void 0,
 }: SessionOptions = {}) {
   const { data, status, refetch } = useQuery(["session"], fetchSession, {
-    staleTime: 3600,
+    staleTime: 30 * (60 * 1000),
+    cacheTime: 35 * (60 * 1000),
     refetchOnWindowFocus: false,
   })
 
