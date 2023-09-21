@@ -124,7 +124,7 @@ export const handleAction = (
   settings: Settings,
   setModalState: Dispatch<SetStateAction<Partial<ModalState>>>,
   queryClient: QueryClient,
-  path: string | string[] | undefined,
+  authHash: string,
   openUpload: () => void,
   openFileDialog: () => void,
   preloadFiles: (params: QueryParams) => void
@@ -154,7 +154,7 @@ export const handleAction = (
         for (const file of selectedFiles) {
           if (!FileHelper.isDirectory(file)) {
             const { id, name } = file
-            const url = getMediaUrl(settings.apiUrl, id, name, true)
+            const url = getMediaUrl(settings.apiUrl, id, name, authHash, true)
             navigateToExternalUrl(url, false)
           }
         }
@@ -164,7 +164,7 @@ export const handleAction = (
         const { selectedFiles } = data.state
         const fileToOpen = selectedFiles[0]
         const { id, name } = fileToOpen
-        const url = `vlc://${getMediaUrl(settings.apiUrl, id, name)}`
+        const url = `vlc://${getMediaUrl(settings.apiUrl, id, name, authHash)}`
         navigateToExternalUrl(url, false)
         break
       }

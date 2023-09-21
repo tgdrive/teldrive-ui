@@ -24,6 +24,7 @@ import Typography from "@mui/material/Typography"
 import { Link, useParams } from "react-router-dom"
 
 import { useFetchFiles, useUpdateFile } from "@/ui/hooks/queryhooks"
+import { useSession } from "@/ui/hooks/useSession"
 import useSettings from "@/ui/hooks/useSettings"
 import { getExtension, getMediaUrl, getParams } from "@/ui/utils/common"
 import { getPreviewType, preview } from "@/ui/utils/getPreviewType"
@@ -59,6 +60,8 @@ export default memo(function PreviewModal({
 
   const { data } = useFetchFiles(params)
 
+  const { data: session } = useSession()
+
   const files = useMemo(() => {
     const flatFiles = data?.pages?.flatMap((page) => page?.results ?? [])
     return flatFiles?.filter((item) => {
@@ -80,7 +83,7 @@ export default memo(function PreviewModal({
 
   const { icon, colorCode } = useIconData({ id, name, isDir: false })
 
-  const mediaUrl = getMediaUrl(settings.apiUrl, id, name)
+  const mediaUrl = getMediaUrl(settings.apiUrl, id, name, session?.hash!)
 
   const nextItem = useCallback(() => {
     let index = initialIndex + 1

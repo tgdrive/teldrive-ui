@@ -30,6 +30,7 @@ import { useBoolean } from "usehooks-ts"
 
 import { useFetchFiles, usePreloadFiles } from "@/ui/hooks/queryhooks"
 import { useDevice } from "@/ui/hooks/useDevice"
+import { useSession } from "@/ui/hooks/useSession"
 import useSettings from "@/ui/hooks/useSettings"
 import Loader from "@/ui/components/Loader"
 import {
@@ -113,6 +114,8 @@ const MyFileBrowser = () => {
   const navigate = useNavigate()
   const { preloadFiles } = usePreloadFiles()
 
+  const { data: session } = useSession()
+
   const fileActions = useMemo(
     () => [
       DownloadFile,
@@ -169,7 +172,7 @@ const MyFileBrowser = () => {
         settings,
         setModalState,
         queryClient,
-        path,
+        session?.hash!,
         showUpload,
         openFileDialog,
         preloadFiles

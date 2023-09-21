@@ -86,6 +86,7 @@ export type Session = {
   name: string
   userName: string
   isPremium: boolean
+  hash: string
   expires: string
 }
 
