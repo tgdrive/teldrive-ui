@@ -1,4 +1,5 @@
 import { Media } from "@/api/schemas/file.schema"
+import { AudioMetadata } from "@/ui/types"
 import { FileData } from "@bhunter179/chonky"
 
 export type FileResponse = { results: File[]; nextPageToken?: string }
@@ -76,6 +77,7 @@ export type Message = {
 
 export type Settings = {
   apiUrl: string
+  accessToken: string
   splitFileSize: number
   uploadConcurrency: number
   channel?: Channel
@@ -105,4 +107,14 @@ export type AccountStats = {
 export type Channel = {
   channelName: string
   channelId: number
+}
+
+export type Tags = {
+  [key: string]: any
+}
+
+export type AudioMetadata = {
+  artist: string
+  title: sting
+  cover: string
 }

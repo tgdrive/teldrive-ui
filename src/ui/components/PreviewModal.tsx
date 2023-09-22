@@ -43,6 +43,8 @@ const CodePreview = lazy(() => import("./previews/CodePreview"))
 
 const EpubPreview = lazy(() => import("./previews/EpubPreview"))
 
+const AudioPreview = lazy(() => import("./previews/audio/AudioPreview"))
+
 type PreviewModalProps = {
   modalState: Partial<ModalState>
   setModalState: Dispatch<SetStateAction<Partial<ModalState>>>
@@ -164,6 +166,13 @@ export default memo(function PreviewModal({
               <FullScreenIFrame>
                 <EpubPreview mediaUrl={mediaUrl} />
               </FullScreenIFrame>
+            </Suspense>
+          )
+
+        case preview.audio:
+          return (
+            <Suspense fallback={<Loader />}>
+              <AudioPreview name={name} mediaUrl={mediaUrl} />
             </Suspense>
           )
 

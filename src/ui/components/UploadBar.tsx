@@ -6,7 +6,13 @@ import React, {
   useReducer,
   useRef,
 } from "react"
-import { FilePayload, FileResponse, Message, Settings, UploadPart } from "@/ui/types"
+import {
+  FilePayload,
+  FileResponse,
+  Message,
+  Settings,
+  UploadPart,
+} from "@/ui/types"
 import {
   ChonkyIconFA,
   ColorsLight,
@@ -32,9 +38,11 @@ import ListItem from "@mui/material/ListItem"
 import ListItemIcon from "@mui/material/ListItemIcon"
 import ListItemText from "@mui/material/ListItemText"
 import ListSubheader from "@mui/material/ListSubheader"
-import { UseMutationResult} from "@tanstack/react-query"
+import { UseMutationResult } from "@tanstack/react-query"
+import { AxiosError } from "axios"
 import md5 from "md5"
 import pLimit from "p-limit"
+import toast from "react-hot-toast"
 import { useIntl } from "react-intl"
 import { useParams } from "react-router-dom"
 
@@ -43,8 +51,6 @@ import useHover from "@/ui/hooks/useHover"
 import useSettings from "@/ui/hooks/useSettings"
 import { getParams, getSortOrder, realPath, zeroPad } from "@/ui/utils/common"
 import http from "@/ui/utils/http"
-import { AxiosError } from "axios"
-import toast from "react-hot-toast"
 
 enum FileUploadStatus {
   NOT_STARTED,
@@ -289,7 +295,7 @@ const uploadPart = async <T extends {}>(
 }
 
 const uploadFile = async (
-  file: File,
+  file: Blob,
   path: string,
   createMutation: UseMutationResult<any, unknown, FilePayload, unknown>,
   settings: Settings,
@@ -297,12 +303,15 @@ const uploadFile = async (
   cancelSignal: AbortSignal
 ) => {
   return new Promise<boolean>(async (resolve, reject) => {
-    
     //check if file exists
 
-    const res= (await http.get<FileResponse>("/api/files",{params:{path,name:file.name,op:"find"}})).data
+    const res = (
+      await http.get<FileResponse>("/api/files", {
+        params: { path, name: file.name, op: "find" },
+      })
+    ).data
 
-    if(res.results.length >0) {
+    if (res.results.length > 0) {
       reject(new Error("duplicate file chnage name"))
       return
     }
@@ -400,8 +409,10 @@ const uploadFile = async (
           await http.delete(`/api/uploads/${uploadId}`)
           resolve(true)
         })
-        .catch(async(err) => {
-          if ((err as AxiosError<Message>).response?.data?.error=="file exists") {
+        .catch(async (err) => {
+          if (
+            (err as AxiosError<Message>).response?.data?.error == "file exists"
+          ) {
             await http.delete(`/api/uploads/${uploadId}`)
           }
           reject(err)
@@ -573,7 +584,7 @@ const Upload = ({
                   status: FileUploadStatus.FAILED,
                 },
               })
-             toast.error(err.message)
+            toast.error(err.message)
           })
         previndex.current = currentFileIndex
       }

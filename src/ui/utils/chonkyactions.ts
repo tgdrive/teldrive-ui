@@ -13,7 +13,7 @@ import {
 import { faArrowsRotate } from "@fortawesome/free-solid-svg-icons/faArrowsRotate"
 import { QueryClient } from "@tanstack/react-query"
 
-import { getExtension, getMediaUrl, realPath } from "@/ui/utils/common"
+import { getExtension, getMediaUrl } from "@/ui/utils/common"
 import { getPreviewType, preview } from "@/ui/utils/getPreviewType"
 
 import { getSortOrder, navigateToExternalUrl } from "./common"

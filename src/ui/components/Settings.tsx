@@ -314,6 +314,22 @@ const OtherTab: React.FC<{ control: Control<Settings, any> }> = memo(
           )}
         />
         <Controller
+          name="accessToken"
+          control={control}
+          render={({ field, fieldState: { error } }) => (
+            <TextField
+              {...field}
+              margin="normal"
+              id="accessToken"
+              fullWidth
+              error={!!error}
+              type="text"
+              label="Access Token"
+              helperText={error ? error.message : ""}
+            />
+          )}
+        />
+        <Controller
           name="uploadConcurrency"
           control={control}
           render={({ field, fieldState: { error } }) => (
@@ -400,8 +416,9 @@ function SettingsDialog({ open, onClose }: SettingsProps) {
             }
           }
         case SettingsSection.Other:
-          const { uploadConcurrency, splitFileSize, apiUrl } = settings
-          setSettings({ uploadConcurrency, splitFileSize, apiUrl })
+          const { uploadConcurrency, splitFileSize, apiUrl, accessToken } =
+            settings
+          setSettings({ uploadConcurrency, splitFileSize, apiUrl, accessToken })
         default:
       }
     },
