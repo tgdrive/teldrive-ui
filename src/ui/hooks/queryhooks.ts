@@ -1,5 +1,11 @@
 import { useCallback } from "react"
-import { FilePayload, FileResponse, Params, QueryParams } from "@/ui/types"
+import {
+  FilePayload,
+  FileResponse,
+  Params,
+  QueryParams,
+  SortState,
+} from "@/ui/types"
 import {
   InfiniteData,
   useInfiniteQuery,
@@ -9,8 +15,9 @@ import {
 import { useNavigate } from "react-router-dom"
 
 import { useProgress } from "@/ui/components/TopProgress"
-import { getSortOrder } from "@/ui/utils/common"
 import http from "@/ui/utils/http"
+
+import { useSortFilter } from "./useSortFilter"
 
 export const usePreloadFiles = () => {
   const queryClient = useQueryClient()
@@ -19,17 +26,24 @@ export const usePreloadFiles = () => {
 
   const { startProgress, stopProgress } = useProgress()
 
+  const { sortFilter } = useSortFilter()
+
   const preloadFiles = useCallback(
     (params: QueryParams) => {
-      const order = getSortOrder()
-      const queryKey = ["files", params.type, params.path, order]
+      const queryKey = [
+        "files",
+        params.type,
+        params.path,
+        sortFilter[params.type].sort,
+        sortFilter[params.type].order,
+      ]
       const queryState = queryClient.getQueryState(queryKey)
       if (!queryState?.data) {
         startProgress()
         queryClient
           .prefetchInfiniteQuery(
             queryKey,
-            fetchData(params.type, params.path, order)
+            fetchData(params.type, params.path, sortFilter)
           )
           .then(() => {
             navigate(`/${params.type}${params.path}`)
@@ -45,8 +59,15 @@ export const usePreloadFiles = () => {
 }
 
 export const useFetchFiles = (params: QueryParams) => {
-  const order = getSortOrder()
-  const queryKey = ["files", params.type, params.path, order]
+  const { sortFilter } = useSortFilter()
+
+  const queryKey = [
+    "files",
+    params.type,
+    params.path,
+    sortFilter[params.type].sort,
+    sortFilter[params.type].order,
+  ]
 
   const {
     data,
@@ -55,11 +76,15 @@ export const useFetchFiles = (params: QueryParams) => {
     isFetchingNextPage,
     error,
     isInitialLoading,
-  } = useInfiniteQuery(queryKey, fetchData(params.type, params.path, order), {
-    getNextPageParam: (lastPage, allPages) =>
-      lastPage.nextPageToken ? lastPage?.nextPageToken : undefined,
-    refetchOnWindowFocus: false,
-  })
+  } = useInfiniteQuery(
+    queryKey,
+    fetchData(params.type, params.path, sortFilter),
+    {
+      getNextPageParam: (lastPage, allPages) =>
+        lastPage.nextPageToken ? lastPage?.nextPageToken : undefined,
+      refetchOnWindowFocus: false,
+    }
+  )
 
   return {
     data,
@@ -72,24 +97,23 @@ export const useFetchFiles = (params: QueryParams) => {
 }
 
 export const fetchData =
-  (type: string, path: string, order: string) =>
+  (type: string, path: string, sortFilter: SortState) =>
   async ({ pageParam = "" }): Promise<FileResponse> => {
     const url = "/api/files"
 
     const params: Partial<Params> = {
       nextPageToken: pageParam,
       perPage: 200,
-      order,
+      order: sortFilter[type].order,
+      sort: sortFilter[type].sort,
     }
 
     if (type === "my-drive") {
       params.path = path ? path : "/"
-      params.sort = "name"
     }
 
     if (type === "search") {
       params.op = "search"
-      params.sort = "updatedAt"
       params.search = path.split("/")?.[1] ?? ""
     }
 
@@ -97,15 +121,11 @@ export const fetchData =
 
     if (type === "starred") {
       params.op = "find"
-      params.sort = "updatedAt"
       params.starred = true
-      params.order = "desc"
     }
 
     if (type === "recent") {
       params.op = "find"
-      params.sort = "updatedAt"
-      params.order = "desc"
       params.type = "file"
     }
 
@@ -115,8 +135,15 @@ export const fetchData =
   }
 
 export const useCreateFile = (params: QueryParams) => {
-  const order = getSortOrder()
-  const queryKey = ["files", params.type, params.path, order]
+  const { sortFilter } = useSortFilter()
+
+  const queryKey = [
+    "files",
+    params.type,
+    params.path,
+    sortFilter[params.type].sort,
+    sortFilter[params.type].order,
+  ]
   const queryClient = useQueryClient()
   const mutation = useMutation({
     mutationFn: async (data: FilePayload) => {
@@ -132,8 +159,15 @@ export const useCreateFile = (params: QueryParams) => {
 }
 
 export const useUpdateFile = (params: QueryParams) => {
-  const order = getSortOrder()
-  const queryKey = ["files", params.type, params.path, order]
+  const { sortFilter } = useSortFilter()
+
+  const queryKey = [
+    "files",
+    params.type,
+    params.path,
+    sortFilter[params.type].sort,
+    sortFilter[params.type].order,
+  ]
   const queryClient = useQueryClient()
   const mutation = useMutation({
     mutationFn: async (data: FilePayload) => {
@@ -176,8 +210,15 @@ export const useUpdateFile = (params: QueryParams) => {
 }
 
 export const useDeleteFile = (params: QueryParams) => {
-  const order = getSortOrder()
-  const queryKey = ["files", params.type, params.path, order]
+  const { sortFilter } = useSortFilter()
+
+  const queryKey = [
+    "files",
+    params.type,
+    params.path,
+    sortFilter[params.type].sort,
+    sortFilter[params.type].order,
+  ]
   const queryClient = useQueryClient()
   const mutation = useMutation({
     mutationFn: async (data: Record<string, any>) => {

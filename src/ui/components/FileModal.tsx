@@ -13,7 +13,7 @@ import { styled } from "@mui/system"
 import { useParams } from "react-router-dom"
 
 import { useCreateFile, useUpdateFile } from "@/ui/hooks/queryhooks"
-import { RenameFile } from "@/ui/utils/chonkyactions"
+import { CustomActions } from "@/ui/hooks/useFileAction"
 import { getParams } from "@/ui/utils/common"
 
 const StyledPaper = styled(Paper)({
@@ -55,7 +55,7 @@ export default memo(function FileModal({
   const { file, open, operation } = modalState
 
   const onUpdate = useCallback(() => {
-    if (operation === RenameFile.id)
+    if (operation === CustomActions.RenameFile.id)
       updateMutation.mutate({
         id: file?.id,
         payload: {
@@ -93,7 +93,7 @@ export default memo(function FileModal({
       <Fade in={open}>
         <StyledPaper elevation={3}>
           <Typography id="transition-modal-title" variant="h6" component="h2">
-            {operation == RenameFile.id && "Rename"}
+            {operation == CustomActions.RenameFile.id && "Rename"}
             {operation == ChonkyActions.CreateFolder.id &&
               ChonkyActions.CreateFolder.button.name}
           </Typography>

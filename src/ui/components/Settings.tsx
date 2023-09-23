@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useState } from "react"
+import React, { memo, useCallback, useEffect, useState } from "react"
 import { AccountStats, Channel, Message, Settings } from "@/ui/types"
 import { defaultFormatters, FileData } from "@bhunter179/chonky"
 import { AccountCircle, SmartToy, WatchLater } from "@mui/icons-material"
@@ -14,8 +14,6 @@ import {
   DialogContent,
   DialogTitle,
   Divider,
-  FormControlLabel,
-  FormGroup,
   LinearProgress,
   List,
   ListItem,
@@ -56,7 +54,6 @@ const categories = [
     id: "account",
     name: "Account",
     icon: <AccountCircle />,
-    active: true,
   },
   { id: "bots", name: "Bots", icon: <SmartToy /> },
   { id: "other", name: "Other", icon: <WatchLater /> },
@@ -382,6 +379,12 @@ function SettingsDialog({ open, onClose }: SettingsProps) {
     defaultValues: settings,
   })
 
+  const { data: session } = useSession()
+
+  useEffect(() => {
+    if (!session) setTabID(SettingsSection.Other)
+  }, [session])
+
   const queryClient = useQueryClient()
 
   const onSubmit: SubmitHandler<Settings> = useCallback(
@@ -427,10 +430,10 @@ function SettingsDialog({ open, onClose }: SettingsProps) {
   const renderTabSection = useCallback(() => {
     switch (tabId) {
       case SettingsSection.Account:
-        return <AccountTab control={control} />
+        return <>{session && <AccountTab control={control} />}</>
 
       case SettingsSection.Bots:
-        return <BotTab control={control} />
+        return <>{session && <BotTab control={control} />}</>
 
       case SettingsSection.Other:
         return <OtherTab control={control} />
@@ -460,17 +463,27 @@ function SettingsDialog({ open, onClose }: SettingsProps) {
           }}
         >
           <List sx={{ width: "25%" }}>
-            {categories.map(({ id: childId, name, icon }) => (
-              <ListItem sx={{ paddingLeft: 0, paddingRight: 2 }} key={childId}>
-                <ListItemButton
-                  selected={tabId == childId}
-                  onClick={() => setTabID(childId)}
+            {categories
+              .filter((item) => {
+                if (item.id !== "other" && !session) {
+                  return false
+                }
+                return true
+              })
+              .map(({ id: childId, name, icon }) => (
+                <ListItem
+                  sx={{ paddingLeft: 0, paddingRight: 2 }}
+                  key={childId}
                 >
-                  <ListItemIcon>{icon}</ListItemIcon>
-                  <ListItemText>{name}</ListItemText>
-                </ListItemButton>
-              </ListItem>
-            ))}
+                  <ListItemButton
+                    selected={tabId == childId}
+                    onClick={() => setTabID(childId)}
+                  >
+                    <ListItemIcon>{icon}</ListItemIcon>
+                    <ListItemText>{name}</ListItemText>
+                  </ListItemButton>
+                </ListItem>
+              ))}
           </List>
           <Divider orientation="vertical" variant="middle" flexItem />
           <Box

@@ -1,13 +1,4 @@
-import {
-  lazy,
-  memo,
-  Suspense,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react"
+import { memo, useEffect, useMemo, useRef, useState } from "react"
 import { ModalState } from "@/ui/types"
 import {
   ChonkyActions,
@@ -16,11 +7,10 @@ import {
   FileList,
   FileNavbar,
   FileToolbar,
+  SortOrder,
 } from "@bhunter179/chonky"
 import { styled } from "@mui/material/styles"
-import useMediaQuery from "@mui/material/useMediaQuery"
-import { useQueryClient } from "@tanstack/react-query"
-import { useNavigate, useParams } from "react-router-dom"
+import { useParams } from "react-router-dom"
 import {
   StateSnapshot,
   VirtuosoGridHandle,
@@ -28,22 +18,11 @@ import {
 } from "react-virtuoso"
 import { useBoolean } from "usehooks-ts"
 
-import { useFetchFiles, usePreloadFiles } from "@/ui/hooks/queryhooks"
+import { useFetchFiles } from "@/ui/hooks/queryhooks"
 import { useDevice } from "@/ui/hooks/useDevice"
-import { useSession } from "@/ui/hooks/useSession"
-import useSettings from "@/ui/hooks/useSettings"
+import { CustomActions, useFileAction } from "@/ui/hooks/useFileAction"
+import { useSortFilter } from "@/ui/hooks/useSortFilter"
 import Loader from "@/ui/components/Loader"
-import {
-  CopyDownloadLink,
-  CreateFolder,
-  DeleteFile,
-  DownloadFile,
-  handleAction,
-  OpenInVLCPlayer,
-  RenameFile,
-  SyncFiles,
-  UploadFiles,
-} from "@/ui/utils/chonkyactions"
 import { chainLinks, getFiles, getParams } from "@/ui/utils/common"
 
 import DeleteDialog from "./DeleteDialog"
@@ -83,12 +62,16 @@ function isVirtuosoList(value: any): value is VirtuosoHandle {
   return (value as VirtuosoHandle).getState !== undefined
 }
 
+const sortMap = {
+  name: ChonkyActions.SortFilesByName.id,
+  updatedAt: ChonkyActions.SortFilesByDate.id,
+  size: ChonkyActions.SortFilesBySize.id,
+}
 const MyFileBrowser = () => {
-  const { settings } = useSettings()
-
   const positions = useRef<Map<string, StateSnapshot>>(new Map()).current
 
   const params = getParams(useParams())
+
   const { type, path } = params
 
   const {
@@ -105,30 +88,16 @@ const MyFileBrowser = () => {
 
   const { isMobile } = useDevice()
 
-  const queryClient = useQueryClient()
-
-  const isSm = useMediaQuery("(max-width:600px)")
-
   const listRef = useRef<VirtuosoHandle | VirtuosoGridHandle>(null)
 
-  const navigate = useNavigate()
-  const { preloadFiles } = usePreloadFiles()
+  const { sortFilter } = useSortFilter()
 
-  const { data: session } = useSession()
+  const order = useMemo(() => {
+    const defaultSortOrder = sortFilter[type].order
+    const defaultSortActionId = sortMap[sortFilter[type].sort]
 
-  const fileActions = useMemo(
-    () => [
-      DownloadFile,
-      RenameFile,
-      DeleteFile,
-      CopyDownloadLink,
-      OpenInVLCPlayer,
-      SyncFiles,
-      CreateFolder(isSm ? "Actions" : "", type),
-      UploadFiles(isSm ? "Actions" : "", type),
-    ],
-    [isSm, type]
-  )
+    return { defaultSortOrder, defaultSortActionId }
+  }, [type])
 
   const {
     data,
@@ -160,25 +129,16 @@ const MyFileBrowser = () => {
 
   const [modalState, setModalState] = useState<Partial<ModalState>>({
     open: false,
-    operation: RenameFile.id,
+    operation: CustomActions.RenameFile.id,
   })
 
-  const { open } = modalState
-
-  const handleFileAction = useCallback(
-    () =>
-      handleAction(
-        params,
-        settings,
-        setModalState,
-        queryClient,
-        session?.hash!,
-        showUpload,
-        openFileDialog,
-        preloadFiles
-      ),
-    [navigate, setModalState, queryClient, preloadFiles]
+  const { fileActions, chonkyActionHandler } = useFileAction(
+    setModalState,
+    showUpload,
+    openFileDialog
   )
+
+  const { open } = modalState
 
   useEffect(() => {
     if (firstRender) {
@@ -209,13 +169,14 @@ const MyFileBrowser = () => {
       <FileBrowser
         files={files as any}
         folderChain={folderChain}
-        onFileAction={handleFileAction()}
+        onFileAction={chonkyActionHandler()}
         fileActions={fileActions}
         disableDragAndDropProvider={isMobile ? true : false}
         defaultFileViewActionId={ChonkyActions.EnableListView.id}
         useStoreProvider={true}
         useThemeProvider={false}
-        defaultSortActionId={null}
+        defaultSortActionId={order.defaultSortActionId}
+        defaultSortOrder={order.defaultSortOrder}
       >
         <FileNavbar />
 
@@ -228,7 +189,7 @@ const MyFileBrowser = () => {
         />
         <FileContextMenu />
       </FileBrowser>
-      {[RenameFile.id, ChonkyActions.CreateFolder.id].find(
+      {[CustomActions.RenameFile.id, ChonkyActions.CreateFolder.id].find(
         (val) => val === modalState.operation
       ) &&
         open && (
@@ -237,7 +198,7 @@ const MyFileBrowser = () => {
       {modalState.operation === ChonkyActions.OpenFiles.id && open && (
         <PreviewModal modalState={modalState} setModalState={setModalState} />
       )}
-      {modalState.operation === DeleteFile.id && open && (
+      {modalState.operation === CustomActions.DeleteFile.id && open && (
         <DeleteDialog modalState={modalState} setModalState={setModalState} />
       )}
       {upload && (

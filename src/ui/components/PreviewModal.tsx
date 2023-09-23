@@ -9,7 +9,7 @@ import React, {
   useMemo,
   useState,
 } from "react"
-import { ModalState } from "@/ui/types"
+import { ModalState, SetValue } from "@/ui/types"
 import { ChonkyIconFA, ColorsLight, useIconData } from "@bhunter179/chonky"
 import ArrowBackIcon from "@mui/icons-material/ArrowBack"
 import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined"
@@ -47,7 +47,7 @@ const AudioPreview = lazy(() => import("./previews/audio/AudioPreview"))
 
 type PreviewModalProps = {
   modalState: Partial<ModalState>
-  setModalState: Dispatch<SetStateAction<Partial<ModalState>>>
+  setModalState: SetValue<Partial<ModalState>>
 }
 
 export default memo(function PreviewModal({

@@ -64,7 +64,6 @@ const VideoPlayer: FC<{
       style={{ aspectRatio: "16 /9" }}
       getInstance={(art) => {
         artInstance.current = art
-        art.aspectRatio = "16:9"
         art.hotkey.add(65, (_: Event) => {
           art.aspectRatio = aspectRatioes[
             (aspectRatioes.findIndex((val) => val === art.aspectRatio) + 1) %

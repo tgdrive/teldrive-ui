@@ -49,7 +49,7 @@ import { useParams } from "react-router-dom"
 import { useCreateFile } from "@/ui/hooks/queryhooks"
 import useHover from "@/ui/hooks/useHover"
 import useSettings from "@/ui/hooks/useSettings"
-import { getParams, getSortOrder, realPath, zeroPad } from "@/ui/utils/common"
+import { getParams, zeroPad } from "@/ui/utils/common"
 import http from "@/ui/utils/http"
 
 enum FileUploadStatus {

@@ -7,13 +7,6 @@ import parseAudioMetadata from "@/ui/utils/tagparser"
 
 import AudioPlayer from "./AudioPlayer"
 
-function coverBlobUrl(data: number[], format: string): string {
-  const uint8Array = new Uint8Array(data)
-  const blob = new Blob([uint8Array], { type: format })
-
-  return URL.createObjectURL(blob)
-}
-
 const defaultCover =
   "https://player.listenlive.co/templates/StandardPlayerV4/webroot/img/default-cover-art.png"
 

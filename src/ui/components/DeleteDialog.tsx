@@ -1,5 +1,5 @@
 import React, { Dispatch, SetStateAction, useCallback, useMemo } from "react"
-import { ModalState } from "@/ui/types"
+import { ModalState, SetValue } from "@/ui/types"
 import Button from "@mui/material/Button"
 import Dialog from "@mui/material/Dialog"
 import DialogActions from "@mui/material/DialogActions"
@@ -13,7 +13,7 @@ import { getParams } from "@/ui/utils/common"
 
 type DeleteDialogProps = {
   modalState: Partial<ModalState>
-  setModalState: Dispatch<SetStateAction<Partial<ModalState>>>
+  setModalState: SetValue<Partial<ModalState>>
 }
 export default function DeleteDialog({
   modalState,

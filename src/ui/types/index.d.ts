@@ -1,6 +1,9 @@
+import { Dispatch, SetStateAction } from "react"
 import { Media } from "@/api/schemas/file.schema"
 import { AudioMetadata } from "@/ui/types"
-import { FileData } from "@bhunter179/chonky"
+import { FileData, MapFileActionsToData, SortOrder } from "@bhunter179/chonky"
+
+import { ActionUnion, CustomActions } from "@/ui/hooks/useFileAction"
 
 export type FileResponse = { results: File[]; nextPageToken?: string }
 
@@ -21,21 +24,12 @@ export type File = {
 
 export type ModalState = {
   open: boolean
-  operation:
-    | "download_file"
-    | "rename_file"
-    | "delete_file"
-    | "sync_files"
-    | "open_vlc_player"
-    | "copy_link"
-    | "create_folder"
-    | "upload_files"
-    | "open_files"
+  operation: string
   type: string
   file: FileData
   selectedFiles: string[]
   name: string
-  successful?: boolean
+  successful: boolean
 }
 
 export type Params = {
@@ -118,3 +112,11 @@ export type AudioMetadata = {
   title: sting
   cover: string
 }
+
+export type SortField = "name" | "size" | "updatedAt"
+
+export type SortState = {
+  [key: string]: { sort: SortField; order: SortOrder }
+}
+
+export type SetValue<T> = Dispatch<SetStateAction<T>>
