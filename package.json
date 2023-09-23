@@ -4,7 +4,6 @@
   "private": true,
   "dependencies": {
     "@bhunter179/chonky": "^0.2.36",
-    "@bhunter179/jsmediatags": "^3.9.9",
     "@bhunter179/react-material-you-theme": "^0.1.19",
     "@emotion/cache": "^11.11.0",
     "@emotion/react": "^11.11.1",
