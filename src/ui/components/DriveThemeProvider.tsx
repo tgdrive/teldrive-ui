@@ -60,7 +60,7 @@ const DriveThemeProvider: FC<{
         setColorIndex(materialColors.findIndex((x) => x === colors.indigo.A100))
       },
     }),
-    []
+    [setMode]
   )
 
   const firstUpdate = useRef(true)
@@ -72,7 +72,7 @@ const DriveThemeProvider: FC<{
     }
     setMode(mode)
     setSchemeColor(materialColors[colorIndex])
-  }, [mode, materialColors[colorIndex]])
+  }, [colorIndex, mode, setMode, setSchemeColor])
 
   const theme = useChonkyTheme(
     mode as PaletteMode,

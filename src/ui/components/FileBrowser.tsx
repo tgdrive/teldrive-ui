@@ -7,7 +7,6 @@ import {
   FileList,
   FileNavbar,
   FileToolbar,
-  SortOrder,
 } from "@bhunter179/chonky"
 import { styled } from "@mui/material/styles"
 import { useParams } from "react-router-dom"
@@ -116,7 +115,7 @@ const MyFileBrowser = () => {
   }, [data])
 
   const folderChain = useMemo(() => {
-    if (type == "my-drive") {
+    if (type === "my-drive") {
       return Object.entries(chainLinks(path)).map(([key, value]) => ({
         id: key,
         name: key,

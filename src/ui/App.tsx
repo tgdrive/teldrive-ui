@@ -61,7 +61,7 @@ function RequireAuth({ children }: { children: JSX.Element }) {
 
   const location = useLocation()
 
-  if (status === "loading" || status == "error") {
+  if (status === "loading" || status === "error") {
     return null
   }
 

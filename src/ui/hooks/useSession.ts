@@ -28,8 +28,8 @@ export function useSession({
   })
 
   useEffect(() => {
-    if (!data && status == "success") onUnauthenticated()
-  }, [data])
+    if (!data && status === "success") onUnauthenticated()
+  }, [data, onUnauthenticated, status])
 
   return { data, status, refetch }
 }

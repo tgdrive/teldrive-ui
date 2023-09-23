@@ -52,7 +52,7 @@ export const usePreloadFiles = () => {
           .catch(() => stopProgress())
       } else navigate(`/${params.type}${params.path}`)
     },
-    [queryClient]
+    [queryClient, sortFilter]
   )
 
   return { preloadFiles }

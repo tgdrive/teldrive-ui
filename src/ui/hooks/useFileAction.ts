@@ -13,7 +13,7 @@ import {
 import { faArrowsRotate } from "@fortawesome/free-solid-svg-icons/faArrowsRotate"
 import useMediaQuery from "@mui/material/useMediaQuery"
 import { useQueryClient } from "@tanstack/react-query"
-import { useNavigate, useParams } from "react-router-dom"
+import { useParams } from "react-router-dom"
 
 import { usePreloadFiles } from "@/ui/hooks/queryhooks"
 import { useSession } from "@/ui/hooks/useSession"
@@ -136,8 +136,6 @@ export const useFileAction = (
 
   const isSm = useMediaQuery("(max-width:600px)")
 
-  const navigate = useNavigate()
-
   const { preloadFiles } = usePreloadFiles()
 
   const { sortFilter, setSortFilter } = useSortFilter()
@@ -171,7 +169,7 @@ export const useFileAction = (
           if (fileToOpen && FileHelper.isDirectory(fileToOpen)) {
             preloadFiles({ type: "my-drive", path: fileToOpen.path })
           }
-          if (fileToOpen && fileToOpen.type == "file") {
+          if (fileToOpen && fileToOpen.type === "file") {
             const previewType = getPreviewType(
               getExtension(fileToOpen.name)
             ) as string
@@ -336,7 +334,7 @@ export const useFileAction = (
           break
       }
     }
-  }, [navigate, setModalState, queryClient, preloadFiles])
+  }, [sortFilter, type])
 
   return { fileActions, chonkyActionHandler }
 }

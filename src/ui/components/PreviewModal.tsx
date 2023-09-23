@@ -1,8 +1,6 @@
 import React, {
-  Dispatch,
   lazy,
   memo,
-  SetStateAction,
   Suspense,
   useCallback,
   useEffect,
@@ -21,7 +19,7 @@ import Box from "@mui/material/Box"
 import IconButton from "@mui/material/IconButton"
 import Modal from "@mui/material/Modal"
 import Typography from "@mui/material/Typography"
-import { Link, useParams } from "react-router-dom"
+import { useParams } from "react-router-dom"
 
 import { useFetchFiles, useUpdateFile } from "@/ui/hooks/queryhooks"
 import { useSession } from "@/ui/hooks/useSession"
@@ -122,7 +120,7 @@ export default memo(function PreviewModal({
             video: mimeType.includes("video"),
           })
         : "",
-    [name]
+    [mimeType, name]
   )
   const renderPreview = useCallback(() => {
     if (previewType) {
@@ -180,7 +178,7 @@ export default memo(function PreviewModal({
           return null
       }
     }
-  }, [id, name])
+  }, [mediaUrl, name, previewType])
 
   return (
     <Modal
