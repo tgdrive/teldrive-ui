@@ -21,7 +21,6 @@ async function parseFile(file: string, buffer: ArrayBuffer) {
     }
     // +10 to skip tag header
     const size = getID3TagSize(buffer) + 10
-    buffer = await getBuffer(file, buffer.byteLength + size + 1024)
     const string = decode(getBytes(buffer, size, 4))
 
     // Edge case when there is ID3 tag embedded in .flac file.
@@ -45,7 +44,7 @@ async function parseFile(file: string, buffer: ArrayBuffer) {
 }
 
 async function parseAudioMetadata(url: string) {
-  const buffer = await getBuffer(url, 1024 * 1024 - 1)
+  const buffer = await getBuffer(url, 512 * 1024 - 1)
 
   return parseFile(url, buffer)
 }
