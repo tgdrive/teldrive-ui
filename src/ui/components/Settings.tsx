@@ -22,7 +22,6 @@ import {
   ListItemText,
   MenuItem,
   Skeleton,
-  Switch,
   TextField,
   Typography,
 } from "@mui/material"
@@ -89,7 +88,26 @@ const RevokeButton = memo(() => {
       disabled={isRevoking}
       onClick={revoke}
     >
-      Revoke Bots
+      Revoke Bots Session
+    </Button>
+  )
+})
+
+type RemoveButtonProps = {
+  isRemoving: boolean
+  onClick: () => void
+}
+
+const RemoveButton = memo(({ isRemoving, onClick }: RemoveButtonProps) => {
+  return (
+    <Button
+      sx={{ marginTop: "1rem" }}
+      variant="contained"
+      color="primary"
+      disabled={isRemoving}
+      onClick={onClick}
+    >
+      Remove Bots
     </Button>
   )
 })
@@ -233,10 +251,26 @@ const BotTab: React.FC<{ control: Control<Settings, any> }> = memo(
   ({ control }) => {
     const { data: session } = useSession()
 
-    const { data } = useQuery(
+    const { data, refetch } = useQuery(
       ["user", "bots", session?.userName],
       async () => (await http.get<string[]>("/api/users/bots")).data
     )
+
+    const [isRemoving, setIsRemoving] = useState<boolean>(false)
+
+    const removeBots = useCallback(() => {
+      setIsRemoving(true)
+      http
+        .delete("/api/users/bots")
+        .then(() => {
+          toast.success("bots removed")
+        })
+        .finally(() => {
+          refetch().finally(() => {
+            setIsRemoving(false)
+          })
+        })
+    }, [])
 
     const copyTokens = useCallback(() => {
       if (data && data.length > 0) {
@@ -273,6 +307,9 @@ const BotTab: React.FC<{ control: Control<Settings, any> }> = memo(
               {`Current Bots : ${data.length}`}
             </Typography>
             <Box sx={{ display: "flex", gap: "1rem" }}>
+              {data.length > 0 && (
+                <RemoveButton isRemoving={isRemoving} onClick={removeBots} />
+              )}
               <RevokeButton />
               <Button
                 sx={{ marginTop: "1rem" }}
@@ -396,12 +433,14 @@ function SettingsDialog({ open, onClose }: SettingsProps) {
             await http.patch("/api/users/channels", settings.channel)
             toast.success("channel updated")
             queryClient.invalidateQueries({ queryKey: ["user", "stats"] })
+            queryClient.invalidateQueries({ queryKey: ["user", "bots"] })
           } catch (err) {
             const error = err as AxiosError<Message>
             if (error.response) toast.error(error.response.data.error!)
           } finally {
             setIsSaving(false)
           }
+          break
 
         case SettingsSection.Bots:
           const bots = settings.bots?.trim().split("\n")
@@ -418,11 +457,14 @@ function SettingsDialog({ open, onClose }: SettingsProps) {
               setIsSaving(false)
             }
           }
+          break
         case SettingsSection.Other:
           const { uploadConcurrency, splitFileSize, apiUrl, accessToken } =
             settings
           setSettings({ uploadConcurrency, splitFileSize, apiUrl, accessToken })
+          break
         default:
+          break
       }
     },
     [tabId]
@@ -476,7 +518,7 @@ function SettingsDialog({ open, onClose }: SettingsProps) {
                   key={childId}
                 >
                   <ListItemButton
-                    selected={tabId == childId}
+                    selected={tabId === childId}
                     onClick={() => setTabID(childId)}
                   >
                     <ListItemIcon>{icon}</ListItemIcon>

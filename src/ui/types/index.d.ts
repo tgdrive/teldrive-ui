@@ -1,9 +1,5 @@
 import { Dispatch, SetStateAction } from "react"
-import { Media } from "@/api/schemas/file.schema"
-import { AudioMetadata } from "@/ui/types"
-import { FileData, MapFileActionsToData, SortOrder } from "@bhunter179/chonky"
-
-import { ActionUnion, CustomActions } from "@/ui/hooks/useFileAction"
+import { FileData, SortOrder } from "@bhunter179/chonky"
 
 export type FileResponse = { results: File[]; nextPageToken?: string }
 

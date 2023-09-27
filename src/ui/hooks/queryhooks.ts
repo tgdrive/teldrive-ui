@@ -181,7 +181,7 @@ export const useUpdateFile = (params: QueryParams) => {
         queryClient.setQueryData<InfiniteData<FileResponse>>(
           queryKey,
           (prev) => {
-            return <InfiniteData<FileResponse>>{
+            return {
               ...prev,
               pages: prev?.pages.map((page) => ({
                 ...page,
@@ -191,7 +191,7 @@ export const useUpdateFile = (params: QueryParams) => {
                     : val
                 ),
               })),
-            }
+            } as InfiniteData<FileResponse>
           }
         )
       }
@@ -229,13 +229,13 @@ export const useDeleteFile = (params: QueryParams) => {
       await queryClient.cancelQueries({ queryKey })
       const previousFiles = queryClient.getQueryData(queryKey)
       queryClient.setQueryData<InfiniteData<FileResponse>>(queryKey, (prev) => {
-        return <InfiniteData<FileResponse>>{
+        return {
           ...prev,
           pages: prev?.pages.map((page) => ({
             ...page,
             results: page.results.filter((val) => val.id !== variables.id),
           })),
-        }
+        } as InfiniteData<FileResponse>
       })
       return { previousFiles }
     },
