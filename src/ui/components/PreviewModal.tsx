@@ -291,7 +291,7 @@ export default memo(function PreviewModal({
                   }}
                 >
                   <OpenWithMenu
-                    videoUrl={`${mediaUrl}?d=1`}
+                    videoUrl={`${mediaUrl}`}
                     previewType={previewType!}
                   />
                 </Box>
@@ -308,7 +308,7 @@ export default memo(function PreviewModal({
                 <IconButton
                   component={"a"}
                   rel="noopener noreferrer"
-                  href={`${mediaUrl}?d=1`}
+                  href={`${mediaUrl}&d=1`}
                   color="inherit"
                   edge="start"
                 >
