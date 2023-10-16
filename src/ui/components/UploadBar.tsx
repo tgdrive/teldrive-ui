@@ -492,11 +492,14 @@ const Upload = ({
   const handleFileChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       const selectedFiles = event.target.files
-      if (selectedFiles) {
+      const files = selectedFiles
+        ? Array.from(selectedFiles).filter((f) => f.size > 0)
+        : []
+      if (files.length > 0) {
         dispatch({ type: ActionTypes.SET_VISIBILITY, payload: true })
         dispatch({
           type: ActionTypes.ADD_FILES,
-          payload: Array.from(selectedFiles).filter((f) => f.size > 0),
+          payload: files,
         })
         closeFileDialog()
       }
