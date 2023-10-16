@@ -496,7 +496,7 @@ const Upload = ({
         dispatch({ type: ActionTypes.SET_VISIBILITY, payload: true })
         dispatch({
           type: ActionTypes.ADD_FILES,
-          payload: Array.from(selectedFiles),
+          payload: Array.from(selectedFiles).filter((f) => f.size > 0),
         })
         closeFileDialog()
       }
