@@ -67,7 +67,6 @@ export type Message = {
 
 export type Settings = {
   apiUrl: string
-  accessToken: string
   splitFileSize: number
   uploadConcurrency: number
   channel?: Channel
@@ -92,8 +91,9 @@ export type AccountStats = {
   totalFiles: number
   channelId: number
   channelName: string
-  [key: string]: number
+  [key: string]: number | string
 }
+
 export type Channel = {
   channelName: string
   channelId: number
@@ -105,7 +105,7 @@ export type Tags = {
 
 export type AudioMetadata = {
   artist: string
-  title: sting
+  title: string
   cover: string
 }
 

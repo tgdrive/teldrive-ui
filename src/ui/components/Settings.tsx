@@ -191,7 +191,7 @@ const AccountTab: React.FC<{ control: Control<Settings, any> }> = memo(
                     </Typography>
                     <Typography variant="h4" component="div">
                       {card.formatter
-                        ? card.formatter(data?.[card.dataKey]!)
+                        ? card.formatter(data?.[card.dataKey] as number)
                         : data?.[card.dataKey]}
                     </Typography>
                   </CardContent>
@@ -350,22 +350,6 @@ const OtherTab: React.FC<{ control: Control<Settings, any> }> = memo(
           )}
         />
         <Controller
-          name="accessToken"
-          control={control}
-          render={({ field, fieldState: { error } }) => (
-            <TextField
-              {...field}
-              margin="normal"
-              id="accessToken"
-              fullWidth
-              error={!!error}
-              type="text"
-              label="Access Token"
-              helperText={error ? error.message : ""}
-            />
-          )}
-        />
-        <Controller
           name="uploadConcurrency"
           control={control}
           render={({ field, fieldState: { error } }) => (
@@ -461,9 +445,8 @@ function SettingsDialog({ open, onClose }: SettingsProps) {
           }
           break
         case SettingsSection.Other:
-          const { uploadConcurrency, splitFileSize, apiUrl, accessToken } =
-            settings
-          setSettings({ uploadConcurrency, splitFileSize, apiUrl, accessToken })
+          const { uploadConcurrency, splitFileSize, apiUrl } = settings
+          setSettings({ uploadConcurrency, splitFileSize, apiUrl })
           break
         default:
           break
