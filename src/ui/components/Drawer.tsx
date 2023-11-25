@@ -3,7 +3,6 @@ import AddToDriveIcon from "@mui/icons-material/AddToDrive"
 import StarBorder from "@mui/icons-material/StarBorder"
 import WatchLaterIcon from "@mui/icons-material/WatchLater"
 import {
-  Box,
   Drawer,
   DrawerProps,
   List,
@@ -13,7 +12,7 @@ import {
   ListItemText,
   Toolbar,
 } from "@mui/material"
-import { useNavigate, useParams } from "react-router-dom"
+import { useParams } from "react-router-dom"
 
 import { usePreloadFiles } from "@/ui/hooks/queryhooks"
 import { getParams } from "@/ui/utils/common"
@@ -55,7 +54,7 @@ const NavDrawer: FC<DrawerProps> = (props) => {
         {categories.map(({ id: childId, name, icon }) => (
           <ListItem key={childId}>
             <ListItemButton
-              selected={selectedIndex == childId}
+              selected={selectedIndex === childId}
               onClick={(event) => handleListItemClick(event, childId)}
             >
               <ListItemIcon>{icon}</ListItemIcon>

@@ -1,7 +1,6 @@
-import { FC, useEffect, useState } from "react"
+import { FC } from "react"
 import { AudioMetadata } from "@/ui/types"
 import { Box, Typography } from "@mui/material"
-import Skeleton from "@mui/material/Skeleton"
 import useMediaQuery from "@mui/material/useMediaQuery"
 
 import CoverArt from "./CoverArt"

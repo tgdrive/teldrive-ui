@@ -182,7 +182,7 @@ export default function Header({ session }: { session?: Session | null }) {
                 color="inherit"
                 onClick={toggleColorMode}
               >
-                {palette.mode == "light" ? <DarkIcon /> : <LightIcon />}
+                {palette.mode === "light" ? <DarkIcon /> : <LightIcon />}
               </IconButton>
             </Tooltip>
           </Grid>

@@ -5,8 +5,8 @@ import { useSession } from "@/ui/hooks/useSession"
 import Signin from "@/ui/components/SignIn"
 
 export function Component() {
-  const { data: session, status } = useSession()
-  if (status === "loading") {
+  const { data: session, status, isLoading } = useSession()
+  if (isLoading) {
     return null
   }
   if (session && status === "success") {

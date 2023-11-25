@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useCallback } from "react"
 import {
   FilePayload,
@@ -41,10 +42,14 @@ export const usePreloadFiles = () => {
       if (!queryState?.data) {
         startProgress()
         queryClient
-          .prefetchInfiniteQuery(
+          .prefetchInfiniteQuery({
             queryKey,
-            fetchData(params.type, params.path, sortFilter)
-          )
+            queryFn: fetchData(params.type, params.path, sortFilter),
+            initialPageParam: "",
+            getNextPageParam: (lastPage, allPages) =>
+              lastPage.nextPageToken ? lastPage?.nextPageToken : undefined,
+            pages: 2,
+          })
           .then(() => {
             navigate(`/${params.type}${params.path}`)
             stopProgress()
@@ -71,34 +76,34 @@ export const useFetchFiles = (params: QueryParams) => {
 
   const {
     data,
+    isLoading,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
     error,
-    isInitialLoading,
-  } = useInfiniteQuery(
+    ...rest
+  } = useInfiniteQuery({
     queryKey,
-    fetchData(params.type, params.path, sortFilter),
-    {
-      getNextPageParam: (lastPage, allPages) =>
-        lastPage.nextPageToken ? lastPage?.nextPageToken : undefined,
-      refetchOnWindowFocus: false,
-    }
-  )
+    queryFn: fetchData(params.type, params.path, sortFilter),
+    initialPageParam: "",
+    getNextPageParam: (lastPage, allPages) =>
+      lastPage.nextPageToken ? lastPage?.nextPageToken : undefined,
+  })
 
   return {
     data,
+    isLoading,
     error,
-    isInitialLoading,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
+    rest,
   }
 }
 
 export const fetchData =
   (type: string, path: string, sortFilter: SortState) =>
-  async ({ pageParam = "" }): Promise<FileResponse> => {
+  async ({ pageParam }: { pageParam: string }): Promise<FileResponse> => {
     const url = "/api/files"
 
     const params: Partial<Params> = {

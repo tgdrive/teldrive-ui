@@ -24,7 +24,7 @@ const EpubPreview: FC<{ mediaUrl: string }> = ({ mediaUrl }) => {
     <ReactReader
       url={mediaUrl}
       getRendition={(rendition) => fixEpub(rendition)}
-      location={location}
+      location={location as string}
       locationChanged={onLocationChange}
       epubInitOptions={{ openAs: "epub" }}
       epubOptions={{ flow: "scrolled", allowPopups: true }}

@@ -135,18 +135,19 @@ const AccountTab: React.FC<{ control: Control<Settings, any> }> = memo(
 
     const { data: session } = useSession()
 
-    const { data, isInitialLoading } = useQuery(
-      ["user", "stats", session?.userName],
-      async () => (await http.get<AccountStats>("/api/users/stats")).data
-    )
+    const { data, isLoading } = useQuery({
+      queryKey: ["user", "stats", session?.userName],
+      queryFn: async () =>
+        (await http.get<AccountStats>("/api/users/stats")).data,
+      enabled: value,
+    })
 
-    const { data: channelData, isInitialLoading: channelLoading } = useQuery(
-      ["user", "channels", session?.userName],
-      async () => (await http.get<Channel[]>("/api/users/channels")).data,
-      {
-        enabled: value,
-      }
-    )
+    const { data: channelData, isLoading: channelLoading } = useQuery({
+      queryKey: ["user", "channels", session?.userName],
+      queryFn: async () =>
+        (await http.get<Channel[]>("/api/users/channels")).data,
+      enabled: value,
+    })
 
     return (
       <>
@@ -159,7 +160,7 @@ const AccountTab: React.FC<{ control: Control<Settings, any> }> = memo(
         >
           {accountCards.map((card, index) => (
             <Box key={card.dataKey}>
-              {isInitialLoading ? (
+              {isLoading ? (
                 <Skeleton
                   sx={{
                     height: 140,
@@ -251,10 +252,10 @@ const BotTab: React.FC<{ control: Control<Settings, any> }> = memo(
   ({ control }) => {
     const { data: session } = useSession()
 
-    const { data, refetch } = useQuery(
-      ["user", "bots", session?.userName],
-      async () => (await http.get<string[]>("/api/users/bots")).data
-    )
+    const { data, refetch } = useQuery({
+      queryKey: ["user", "bots", session?.userName],
+      queryFn: async () => (await http.get<string[]>("/api/users/bots")).data,
+    })
 
     const [isRemoving, setIsRemoving] = useState<boolean>(false)
 

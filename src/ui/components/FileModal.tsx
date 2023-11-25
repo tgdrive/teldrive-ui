@@ -93,8 +93,8 @@ export default memo(function FileModal({
       <Fade in={open}>
         <StyledPaper elevation={3}>
           <Typography id="transition-modal-title" variant="h6" component="h2">
-            {operation == CustomActions.RenameFile.id && "Rename"}
-            {operation == ChonkyActions.CreateFolder.id &&
+            {operation === CustomActions.RenameFile.id && "Rename"}
+            {operation === ChonkyActions.CreateFolder.id &&
               ChonkyActions.CreateFolder.button.name}
           </Typography>
           <TextField

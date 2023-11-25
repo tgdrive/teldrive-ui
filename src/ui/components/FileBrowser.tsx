@@ -104,7 +104,7 @@ const MyFileBrowser = () => {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-    isInitialLoading,
+    isLoading,
   } = useFetchFiles(params)
 
   const files = useMemo(() => {
@@ -164,7 +164,7 @@ const MyFileBrowser = () => {
 
   return (
     <Root className={classes.root}>
-      {isInitialLoading && type !== "search" && <Loader />}
+      {isLoading && type !== "search" && <Loader />}
       <FileBrowser
         files={files as any}
         folderChain={folderChain}

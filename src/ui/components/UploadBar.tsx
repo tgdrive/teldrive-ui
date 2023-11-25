@@ -190,13 +190,13 @@ const UploadItemEntry = memo(
     const intl = useIntl()
 
     const getProgress = useMemo(() => {
-      if (uploadState == FileUploadStatus.UPLOADING)
+      if (uploadState === FileUploadStatus.UPLOADING)
         return `${defaultFormatters.formatFileSize(intl, {
           size: (progress / 100) * size,
         } as FileData)}/${defaultFormatters.formatFileSize(intl, {
           size,
         } as FileData)}`
-      else if (uploadState == FileUploadStatus.UPLOADED) {
+      else if (uploadState === FileUploadStatus.UPLOADED) {
         return `${defaultFormatters.formatFileSize(intl, { size } as FileData)}`
       } else {
         return ""
@@ -295,7 +295,7 @@ const uploadPart = async <T extends {}>(
 }
 
 const uploadFile = async (
-  file: Blob,
+  file: File,
   path: string,
   createMutation: UseMutationResult<any, unknown, FilePayload, unknown>,
   settings: Settings,
@@ -411,7 +411,7 @@ const uploadFile = async (
         })
         .catch(async (err) => {
           if (
-            (err as AxiosError<Message>).response?.data?.error == "file exists"
+            (err as AxiosError<Message>).response?.data?.error === "file exists"
           ) {
             await http.delete(`/api/uploads/${uploadId}`)
           }
@@ -453,7 +453,7 @@ const Upload = ({
     window.addEventListener(
       "focus",
       () => {
-        if (fileInputRef.current?.files?.length == 0) closeFileDialog()
+        if (fileInputRef.current?.files?.length === 0) closeFileDialog()
       },
       { once: true }
     )
@@ -508,7 +508,7 @@ const Upload = ({
   )
   useEffect(() => {
     if (
-      fileUploadStates[currentFileIndex] == FileUploadStatus.CANCELLED &&
+      fileUploadStates[currentFileIndex] === FileUploadStatus.CANCELLED &&
       currentFileIndex < files.length
     ) {
       dispatch({
@@ -571,7 +571,7 @@ const Upload = ({
             fileAbortControllers[currentFileIndex].abort()
           })
           .catch((err) => {
-            if (err.name == "AbortError")
+            if (err.name === "AbortError")
               dispatch({
                 type: ActionTypes.SET_FILE_UPLOAD_STATUS,
                 payload: {

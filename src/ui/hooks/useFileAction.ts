@@ -327,7 +327,7 @@ export const useFileAction = (
             sortFilter[params.type].sort,
             sortFilter[params.type].order,
           ]
-          queryClient.invalidateQueries(queryKey)
+          queryClient.invalidateQueries({ queryKey })
           break
         }
         default:

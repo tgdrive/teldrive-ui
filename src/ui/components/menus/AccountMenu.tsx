@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { MouseEventHandler, useCallback, useState } from "react"
 import { Message } from "@/ui/types"
 import Logout from "@mui/icons-material/Logout"

@@ -20,7 +20,7 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       staleTime: 10 * (60 * 1000),
-      cacheTime: 5 * (60 * 1000),
+      gcTime: 5 * (60 * 1000),
       retry(_, error) {
         if ((error as AxiosError).response?.status === 404) {
           return false
@@ -57,11 +57,11 @@ const router = createBrowserRouter([
 ])
 
 function RequireAuth({ children }: { children: JSX.Element }) {
-  const { data, status } = useSession()
+  const { data, status, isLoading } = useSession()
 
   const location = useLocation()
 
-  if (status === "loading" || status === "error") {
+  if (isLoading || status === "error") {
     return null
   }
 

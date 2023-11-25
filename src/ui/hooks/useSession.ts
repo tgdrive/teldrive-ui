@@ -21,9 +21,11 @@ type SessionOptions = {
 export function useSession({
   onUnauthenticated = () => void 0,
 }: SessionOptions = {}) {
-  const { data, status, refetch } = useQuery(["session"], fetchSession, {
+  const { data, status, isLoading, refetch } = useQuery({
+    queryKey: ["session"],
+    queryFn: fetchSession,
     staleTime: 30 * (60 * 1000),
-    cacheTime: 35 * (60 * 1000),
+    gcTime: 35 * (60 * 1000),
     refetchOnWindowFocus: false,
   })
 
@@ -31,5 +33,5 @@ export function useSession({
     if (!data && status === "success") onUnauthenticated()
   }, [data, onUnauthenticated, status])
 
-  return { data, status, refetch }
+  return { data, status, isLoading, refetch }
 }

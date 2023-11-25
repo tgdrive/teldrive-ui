@@ -1,4 +1,4 @@
-import { File, QueryParams, Settings } from "@/ui/types"
+import { File, QueryParams } from "@/ui/types"
 import { FileData } from "@bhunter179/chonky"
 import { Params } from "react-router-dom"
 

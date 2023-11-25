@@ -59,11 +59,10 @@ export default function SignIn() {
     return `${url.protocol === "http:" ? "ws" : "wss"}://${url.host}`
   }, [])
 
-  const { sendJsonMessage, lastJsonMessage, readyState } =
-    useWebSocket<AuthMessage>(
-      `${getWebSocketUrl(settings.apiUrl)}/api/auth/ws`,
-      {}
-    )
+  const { sendJsonMessage, lastJsonMessage } = useWebSocket<AuthMessage>(
+    `${getWebSocketUrl(settings.apiUrl)}/api/auth/ws`,
+    {}
+  )
 
   const location = useLocation()
 
@@ -77,7 +76,7 @@ export default function SignIn() {
     async function postLogin(payload: Record<string, any>) {
       const res = (await http.post<Message>("/api/auth/login", payload)).data
       if (res.status) {
-        await queryClient.invalidateQueries(["session"])
+        await queryClient.invalidateQueries({ queryKey: ["session"] })
         navigate(from ? from : "/my-drive", { replace: true })
       }
     },
@@ -86,7 +85,7 @@ export default function SignIn() {
 
   const onSubmit = useCallback(
     ({ phoneNumber, remember, phoneCode, password }: FormState) => {
-      if (step === 1 && loginType == "phone") {
+      if (step === 1 && loginType === "phone") {
         setLoading(true)
         setFormState((prev) => ({
           ...prev,
@@ -99,7 +98,7 @@ export default function SignIn() {
           phoneNo: phoneNumber,
         })
       }
-      if (step === 2 && loginType == "phone") {
+      if (step === 2 && loginType === "phone") {
         setLoading(true)
         sendJsonMessage({
           authType: loginType,
@@ -172,7 +171,7 @@ export default function SignIn() {
         }}
       >
         <Typography component="h1" variant="h5">
-          {loginType == "qr" ? "Login By QR code" : "Login By Phone"}
+          {loginType === "qr" ? "Login By QR code" : "Login By Phone"}
         </Typography>
         <Box
           component="form"
@@ -186,7 +185,7 @@ export default function SignIn() {
             flexDirection: "column",
           }}
         >
-          {loginType == "phone" && step !== 3 && (
+          {loginType === "phone" && step !== 3 && (
             <>
               <Grow in={true}>
                 <Box
@@ -255,7 +254,7 @@ export default function SignIn() {
               )}
             </>
           )}
-          {loginType == "qr" && step !== 3 && (
+          {loginType === "qr" && step !== 3 && (
             <>
               <Box
                 sx={{
@@ -305,7 +304,7 @@ export default function SignIn() {
               />
             </>
           )}
-          {(loginType == "phone" || step == 3) && (
+          {(loginType === "phone" || step === 3) && (
             <Button
               type="submit"
               fullWidth
