@@ -5,7 +5,6 @@ import { splitFileSizes } from "@/ui/utils/common"
 
 const defaultSettings: Settings = {
   apiUrl: "",
-  accessToken: "",
   splitFileSize: splitFileSizes[1].value,
   uploadConcurrency: 4,
 }

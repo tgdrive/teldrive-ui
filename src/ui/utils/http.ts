@@ -13,9 +13,6 @@ http.interceptors.request.use(function (config) {
   if (settings && settings.apiUrl) {
     config.baseURL = settings.apiUrl
   }
-  if (settings && settings.accessToken) {
-    config.headers.Authorization = `Bearer ${settings.accessToken}`
-  }
   return config
 })
 
