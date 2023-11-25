@@ -2,6 +2,9 @@ import React, { memo, useCallback, useEffect, useState } from "react"
 import { AccountStats, Channel, Message, Settings } from "@/ui/types"
 import { defaultFormatters, FileData } from "@bhunter179/chonky"
 import { AccountCircle, SmartToy, WatchLater } from "@mui/icons-material"
+import CancelPresentationIcon from "@mui/icons-material/CancelPresentation"
+import ContentCopyIcon from "@mui/icons-material/ContentCopy"
+import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline"
 import {
   Autocomplete,
   Box,
@@ -14,6 +17,7 @@ import {
   DialogContent,
   DialogTitle,
   Divider,
+  IconButton,
   LinearProgress,
   List,
   ListItem,
@@ -23,6 +27,7 @@ import {
   MenuItem,
   Skeleton,
   TextField,
+  Tooltip,
   Typography,
 } from "@mui/material"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
@@ -81,15 +86,15 @@ const RevokeButton = memo(() => {
   }, [])
 
   return (
-    <Button
-      sx={{ marginTop: "1rem" }}
-      variant="contained"
-      color="primary"
-      disabled={isRevoking}
-      onClick={revoke}
-    >
-      Revoke Bots Session
-    </Button>
+    <Tooltip title="Revoke Bot Session">
+      <IconButton
+        sx={{ marginTop: "1rem" }}
+        disabled={isRevoking}
+        onClick={revoke}
+      >
+        <CancelPresentationIcon />
+      </IconButton>
+    </Tooltip>
   )
 })
 
@@ -100,15 +105,15 @@ type RemoveButtonProps = {
 
 const RemoveButton = memo(({ isRemoving, onClick }: RemoveButtonProps) => {
   return (
-    <Button
-      sx={{ marginTop: "1rem" }}
-      variant="contained"
-      color="primary"
-      disabled={isRemoving}
-      onClick={onClick}
-    >
-      Remove Bots
-    </Button>
+    <Tooltip title="Remove Bots">
+      <IconButton
+        sx={{ marginTop: "1rem" }}
+        disabled={isRemoving}
+        onClick={onClick}
+      >
+        <RemoveCircleOutlineIcon />
+      </IconButton>
+    </Tooltip>
   )
 })
 
@@ -139,7 +144,6 @@ const AccountTab: React.FC<{ control: Control<Settings, any> }> = memo(
       queryKey: ["user", "stats", session?.userName],
       queryFn: async () =>
         (await http.get<AccountStats>("/api/users/stats")).data,
-      enabled: value,
     })
 
     const { data: channelData, isLoading: channelLoading } = useQuery({
@@ -312,14 +316,11 @@ const BotTab: React.FC<{ control: Control<Settings, any> }> = memo(
                 <RemoveButton isRemoving={isRemoving} onClick={removeBots} />
               )}
               <RevokeButton />
-              <Button
-                sx={{ marginTop: "1rem" }}
-                variant="contained"
-                color="primary"
-                onClick={copyTokens}
-              >
-                Copy Bot Tokens
-              </Button>
+              <Tooltip title="Copy Tokens">
+                <IconButton sx={{ marginTop: "1rem" }} onClick={copyTokens}>
+                  <ContentCopyIcon />
+                </IconButton>
+              </Tooltip>
             </Box>
           </>
         )}
@@ -505,7 +506,7 @@ function SettingsDialog({ open, onClose }: SettingsProps) {
             height: "100%",
           }}
         >
-          <List sx={{ width: "25%" }}>
+          <List sx={{ minWidth: "160px", width: "25%" }}>
             {categories
               .filter((item) => {
                 if (item.id !== "other" && !session) {
