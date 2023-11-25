@@ -56,6 +56,13 @@ const VideoPlayer: FC<{
       artInstance.current.switchUrl(videoUrl)
       artInstance.current.title = videoName
     }
+    return () => {
+      if (artInstance.current) {
+        artInstance.current.video.pause()
+        artInstance.current.video.removeAttribute("src")
+        artInstance.current.video.load()
+      }
+    }
   }, [videoName, videoUrl])
 
   return (
