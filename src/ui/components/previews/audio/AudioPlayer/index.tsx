@@ -10,9 +10,11 @@ import TimeScaleBar from "./TimeScaleBar"
 
 interface PlayerProps {
   metadata: AudioMetadata
+  playPrev: () => void
+  playNext: () => void
 }
 
-const AudioPlayer: FC<PlayerProps> = ({ metadata }) => {
+const AudioPlayer: FC<PlayerProps> = ({ metadata, playNext, playPrev }) => {
   const isM = useMediaQuery("(max-width:900px)")
   const isSm = useMediaQuery("(max-width:500px)")
 
@@ -46,7 +48,7 @@ const AudioPlayer: FC<PlayerProps> = ({ metadata }) => {
           {metadata.artist}
         </Typography>
         <TimeScaleBar />
-        <MediaControlButtons />
+        <MediaControlButtons playNext={playNext} playPrev={playPrev} />
         <MediaFunctionButtons />
       </Box>
     </Box>

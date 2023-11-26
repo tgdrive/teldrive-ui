@@ -116,3 +116,11 @@ export type SortState = {
 }
 
 export type SetValue<T> = Dispatch<SetStateAction<T>>
+
+export type PreviewFile = {
+  id: string
+  name: string
+  mimeType: string
+  previewType: string
+  starred: boolean
+}

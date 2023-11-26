@@ -158,12 +158,12 @@ const AccountTab: React.FC<{ control: Control<Settings, any> }> = memo(
         <Box
           sx={{
             display: "flex",
-            flexDirection: { xs: "column", md: "row" },
+            flexWrap: "wrap",
             gap: "1rem",
           }}
         >
           {accountCards.map((card, index) => (
-            <Box key={card.dataKey}>
+            <Box key={card.dataKey} sx={{ margin: "auto" }}>
               {isLoading ? (
                 <Skeleton
                   sx={{
@@ -171,6 +171,7 @@ const AccountTab: React.FC<{ control: Control<Settings, any> }> = memo(
                     width: "50%",
                     maxHeight: 140,
                     minWidth: 200,
+                    borderRadius: "20px",
                   }}
                   animation="wave"
                   variant="rectangular"

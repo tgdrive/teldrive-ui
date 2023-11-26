@@ -1,5 +1,13 @@
-import { FC, memo, useEffect, useState } from "react"
-import { AudioMetadata, Tags } from "@/ui/types"
+import {
+  Dispatch,
+  FC,
+  memo,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useState,
+} from "react"
+import { AudioMetadata, PreviewFile, Tags } from "@/ui/types"
 import { Paper } from "@mui/material"
 import { useGlobalAudioPlayer } from "react-use-audio-player"
 
@@ -7,14 +15,18 @@ import parseAudioMetadata from "@/ui/utils/tagparser"
 
 import AudioPlayer from "./AudioPlayer"
 
-const defaultCover =
-  "https://player.listenlive.co/templates/StandardPlayerV4/webroot/img/default-cover-art.png"
+const defaultCover = "/img/cover.png"
 
-const AudioPreview: FC<{ mediaUrl: string; name: string }> = ({
-  mediaUrl,
-  name,
-}) => {
+const AudioPreview: FC<{
+  setCurrIndex: Dispatch<SetStateAction<number>>
+  previews?: PreviewFile[]
+  currIndex: number
+  mediaUrl: string
+  name: string
+}> = ({ setCurrIndex, currIndex, previews, mediaUrl, name }) => {
   const player = useGlobalAudioPlayer()
+
+  const [end, setEnd] = useState(false)
 
   const [metadata, setMetadata] = useState<AudioMetadata>({
     artist: "Unkown artist",
@@ -45,11 +57,39 @@ const AudioPreview: FC<{ mediaUrl: string; name: string }> = ({
         html5: true,
         autoplay: true,
         initialVolume: 0.6,
+        onend: () => setEnd(true),
       })
     }
 
     return () => player.stop()
   }, [mediaUrl, name])
+
+  const playNext = useCallback(() => {
+    let index = currIndex + 1
+    if (index >= previews!?.length) index = 0
+    index =
+      previews!.slice(index).findIndex((x) => x.previewType === "audio") + index
+
+    setCurrIndex(index)
+  }, [currIndex])
+
+  const playPrev = useCallback(() => {
+    let index = currIndex - 1
+    if (index < 0) index = previews!?.length - 1
+
+    index = previews!
+      .slice(0, index + 1)
+      .findLastIndex((x) => x.previewType === "audio")
+    setCurrIndex(index)
+  }, [currIndex])
+
+  useEffect(() => {
+    if (end && !player.looping) {
+      playNext()
+      setEnd(false)
+    }
+  }, [end, player.looping])
+
   return (
     <Paper
       sx={{
@@ -62,7 +102,11 @@ const AudioPreview: FC<{ mediaUrl: string; name: string }> = ({
       }}
       elevation={10}
     >
-      <AudioPlayer metadata={metadata} />
+      <AudioPlayer
+        playNext={playNext}
+        playPrev={playPrev}
+        metadata={metadata}
+      />
     </Paper>
   )
 }

@@ -7,7 +7,7 @@ import React, {
   useMemo,
   useState,
 } from "react"
-import { ModalState, SetValue } from "@/ui/types"
+import { ModalState, PreviewFile, SetValue } from "@/ui/types"
 import { ChonkyIconFA, ColorsLight, useIconData } from "@bhunter179/chonky"
 import ArrowBackIcon from "@mui/icons-material/ArrowBack"
 import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined"
@@ -64,10 +64,20 @@ export default memo(function PreviewModal({
 
   const files = useMemo(() => {
     const flatFiles = data?.pages?.flatMap((page) => page?.results ?? [])
-    return flatFiles?.filter((item) => {
-      const previewType = getPreviewType(getExtension(item.name))
-      if (previewType! && previewType! in preview) return true
-    })
+    return flatFiles?.reduce<PreviewFile[]>((previews, item, index) => {
+      const { id, name, starred, mimeType } = item
+      const previewType = getPreviewType(getExtension(name))
+      if (previewType) {
+        previews.push({
+          id,
+          name,
+          mimeType,
+          previewType,
+          starred,
+        })
+      }
+      return previews
+    }, [])
   }, [data])
 
   useEffect(
@@ -111,7 +121,7 @@ export default memo(function PreviewModal({
         starred: !starred,
       },
     })
-  }, [id, starred])
+  }, [id, starred, updateMutation])
 
   const previewType = useMemo(
     () =>
@@ -170,7 +180,13 @@ export default memo(function PreviewModal({
         case preview.audio:
           return (
             <Suspense fallback={<Loader />}>
-              <AudioPreview name={name} mediaUrl={mediaUrl} />
+              <AudioPreview
+                setCurrIndex={setInitialIndex}
+                currIndex={initialIndex}
+                previews={files}
+                name={name}
+                mediaUrl={mediaUrl}
+              />
             </Suspense>
           )
 
