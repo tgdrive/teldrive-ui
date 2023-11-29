@@ -45,9 +45,6 @@ export const usePreloadFiles = () => {
             queryKey,
             queryFn: fetchData(params.type, params.path, sortFilter),
             initialPageParam: "",
-            getNextPageParam: (lastPage, allPages) =>
-              lastPage.nextPageToken ? lastPage?.nextPageToken : undefined,
-            pages: 2,
           })
           .then(() => {
             navigate(`/${params.type}${params.path}`)
