@@ -476,7 +476,7 @@ function SettingsDialog({ open, onClose }: SettingsProps) {
       open={open}
       onClose={onClose}
       PaperProps={{
-        sx: { boxShadow: "none", width: "75vw", maxWidth: 800, height: "70vh" },
+        sx: { width: "75vw", maxWidth: 800, height: "70vh" },
       }}
     >
       <DialogTitle>Settings</DialogTitle>
@@ -526,13 +526,7 @@ function SettingsDialog({ open, onClose }: SettingsProps) {
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
-        <Button
-          variant="contained"
-          color="primary"
-          disabled={isSaving}
-          type="submit"
-          form="hook-form"
-        >
+        <Button disabled={isSaving} type="submit" form="hook-form">
           Save
         </Button>
       </DialogActions>

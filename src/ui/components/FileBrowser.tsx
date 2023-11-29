@@ -96,7 +96,7 @@ const MyFileBrowser = () => {
     const defaultSortActionId = sortMap[sortFilter[type].sort]
 
     return { defaultSortOrder, defaultSortActionId }
-  }, [type])
+  }, [sortFilter, type])
 
   const {
     data,

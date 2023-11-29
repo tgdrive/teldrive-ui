@@ -2,7 +2,6 @@ import React, { useCallback, useContext, useEffect, useState } from "react"
 import ColorModeContext from "@/ui/contexts/colorModeContext"
 import { Session } from "@/ui/types"
 import CancelIcon from "@mui/icons-material/Cancel"
-import ColorIcon from "@mui/icons-material/ColorLensOutlined"
 import DarkIcon from "@mui/icons-material/DarkModeOutlined"
 import LightIcon from "@mui/icons-material/LightModeOutlined"
 import RestartIcon from "@mui/icons-material/RefreshOutlined"
@@ -17,6 +16,8 @@ import debounce from "lodash.debounce"
 import { Link, useNavigate, useParams } from "react-router-dom"
 
 import AccountMenu from "@/ui/components/menus/AccountMenu"
+
+import ColorMenu from "./menus/ColorMenu"
 
 const PREFIX = "AppBar"
 
@@ -79,8 +80,7 @@ export default function Header({ session }: { session?: Session | null }) {
 
   const { type } = useParams()
 
-  const { toggleColorMode, randomColorScheme, resetTheme } =
-    useContext(ColorModeContext)
+  const { toggleColorMode, resetTheme } = useContext(ColorModeContext)
 
   const onSearchFocus = useCallback(() => {
     if (type !== "search") navigate("/search", { replace: true })
@@ -165,15 +165,7 @@ export default function Header({ session }: { session?: Session | null }) {
             )}
           </Grid>
           <Grid item>
-            <Tooltip title="Change Color">
-              <IconButton
-                size="large"
-                color="inherit"
-                onClick={randomColorScheme}
-              >
-                <ColorIcon />
-              </IconButton>
-            </Tooltip>
+            <ColorMenu />
           </Grid>
           <Grid item>
             <Tooltip title="Switch Theme">

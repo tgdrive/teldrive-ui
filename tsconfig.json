@@ -22,7 +22,6 @@
     "paths": {
       "@/*": ["./src/*"]
     },
-    "types": ["vite-plugin-pwa/client"],
     "noEmit": true
   },
   "include": ["**/*.ts", "**/*.tsx", "vite.config.mts"],

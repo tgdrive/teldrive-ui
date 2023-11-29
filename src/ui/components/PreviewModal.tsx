@@ -214,7 +214,7 @@ export default memo(function PreviewModal({
         backdrop: {
           timeout: 500,
           sx: {
-            bgcolor: (theme) => alpha(theme.palette.shadow, 0.7),
+            bgcolor: (theme) => alpha(theme.palette.shadow.main, 0.7),
           },
         },
       }}

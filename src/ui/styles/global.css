@@ -2,10 +2,6 @@ body {
   overflow: hidden;
 }
 
-.chonky-chonkyRoot {
-  font-weight: 500;
-}
-
 pre::-webkit-scrollbar {
   background: transparent;
   width: 10px;

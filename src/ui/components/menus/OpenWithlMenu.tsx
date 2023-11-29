@@ -41,13 +41,18 @@ export default function OpenWithMenu({
         onClick={handleClick}
         endIcon={<KeyboardArrowDownIcon />}
         sx={{
-          backgroundColor: alpha("#121212", 0.75),
+          background: alpha("#121212", 0.75),
           border: `2px solid ${alpha("#FFFFFF", 0.52)} !important`,
           color: "#C4C7C5",
           "&:hover": {
-            backgroundColor: alpha("#121212", 0.45),
+            background: alpha("#121212", 0.45),
           },
-          transition: "none",
+          "&:focus": {
+            background: alpha("#121212", 0.45),
+          },
+          "&:active": {
+            background: alpha("#121212", 0.45),
+          },
         }}
       >
         Open With

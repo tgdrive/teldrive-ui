@@ -1,11 +1,4 @@
-import React, {
-  FC,
-  ReactNode,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react"
+import React, { FC, ReactNode, useMemo } from "react"
 import ColorModeContext from "@/ui/contexts/colorModeContext"
 import { useChonkyTheme } from "@bhunter179/chonky"
 import {
@@ -13,7 +6,7 @@ import {
   CssBaseline,
   ThemeProvider as MuiThemeProvider,
   PaletteMode,
-  Theme,
+  ThemeOptions,
 } from "@mui/material"
 import { Toaster } from "react-hot-toast"
 import { IntlProvider } from "react-intl"
@@ -21,15 +14,23 @@ import { useLocalStorage } from "usehooks-ts"
 
 import { ProgressProvider } from "./TopProgress"
 
-const materialColors = Object.keys(colors)
-  .filter((x) => x !== "common")
-  .map((color) => (colors as Record<string, any>)[color].A100)
-
-const muiThemeOverride = {
+const muiThemeOverrides: Partial<ThemeOptions> = {
   typography: {
     fontFamily: "'Poppins', sans-seriff",
     body1: {
       fontFamily: "'Poppins', sans-seriff",
+    },
+    button: {
+      fontFamily: "'Poppins', sans-seriff",
+    },
+  },
+  components: {
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          backgroundImage: "none",
+        },
+      },
     },
   },
 }
@@ -39,13 +40,9 @@ const DriveThemeProvider: FC<{
 }> = ({ children }) => {
   const [mode, setMode] = useLocalStorage("themeMode", "light")
 
-  const [schemeColor, setSchemeColor] = useLocalStorage(
+  const [schemeColor, setSchemeColor] = useLocalStorage<string>(
     "schemeColor",
     colors.indigo.A100
-  )
-
-  const [colorIndex, setColorIndex] = useState<number>(
-    materialColors.findIndex((x) => x === schemeColor)
   )
 
   const colorMode = useMemo(
@@ -53,32 +50,22 @@ const DriveThemeProvider: FC<{
       toggleColorMode: () => {
         setMode((prevMode) => (prevMode === "light" ? "dark" : "light"))
       },
-      randomColorScheme: () =>
-        setColorIndex((prev) => (prev >= materialColors.length ? 0 : prev + 1)),
       resetTheme: () => {
         setMode("light")
-        setColorIndex(materialColors.findIndex((x) => x === colors.indigo.A100))
+        setSchemeColor(colors.indigo.A100)
       },
+      setSchemeColor: setSchemeColor,
+      schemeColor: schemeColor,
     }),
-    [setMode]
+    []
   )
-
-  const firstUpdate = useRef(true)
-
-  useEffect(() => {
-    if (firstUpdate.current) {
-      firstUpdate.current = false
-      return
-    }
-    setMode(mode)
-    setSchemeColor(materialColors[colorIndex])
-  }, [colorIndex, mode, setMode, setSchemeColor])
 
   const theme = useChonkyTheme(
     mode as PaletteMode,
-    materialColors[colorIndex],
-    muiThemeOverride as Theme
+    schemeColor,
+    muiThemeOverrides as any
   )
+
   return (
     <ColorModeContext.Provider value={colorMode}>
       <MuiThemeProvider theme={theme}>
