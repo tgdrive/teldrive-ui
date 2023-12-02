@@ -60,7 +60,6 @@ export type AuthMessage = {
 }
 
 export type Message = {
-  status: boolean
   message: string
   error?: string
 }

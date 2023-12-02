@@ -74,8 +74,8 @@ export default function SignIn() {
 
   const postLogin = useCallback(
     async function postLogin(payload: Record<string, any>) {
-      const res = (await http.post<Message>("/api/auth/login", payload)).data
-      if (res.status) {
+      const res = await http.post<Message>("/api/auth/login", payload)
+      if (res.status === 200) {
         await queryClient.invalidateQueries({ queryKey: ["session"] })
         navigate(from ? from : "/my-drive", { replace: true })
       }

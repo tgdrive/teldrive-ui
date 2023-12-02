@@ -84,9 +84,9 @@ export const getMediaUrl = (
   download = false
 ) => {
   const host = apiHost ? apiHost : window.location.origin
-  return `${host}/api/files/${id}/${encodeURIComponent(name)}?hash=${hash}${
-    download ? "&d=1" : ""
-  }`
+  return `${host}/api/files/${id}/stream/${encodeURIComponent(
+    name
+  )}?hash=${hash}${download ? "&d=1" : ""}`
 }
 
 export default function textToSvgURL(text: string) {

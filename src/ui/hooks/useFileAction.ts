@@ -260,13 +260,11 @@ export const useFileAction = (
         }
         case ChonkyActions.MoveFiles.id: {
           const { files, destination } = data.payload
-          let res = (
-            await http.post<Message>("/api/files/movefiles", {
-              files: files.map((file) => file.id),
-              destination: destination.path ? destination.path : "/",
-            })
-          ).data
-          if (res.status) {
+          let res = await http.post<Message>("/api/files/move", {
+            files: files.map((file) => file.id),
+            destination: destination.path ? destination.path : "/",
+          })
+          if (res.status === 200) {
             queryClient.invalidateQueries({
               queryKey: ["files", { active: true }],
             })

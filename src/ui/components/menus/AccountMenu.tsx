@@ -37,9 +37,9 @@ export default function AccountMenu() {
   const queryClient = useQueryClient()
 
   const signOut = useCallback(async () => {
-    const res = (await http.get<Message>("/api/auth/logout")).data
+    const res = await http.post<Message>("/api/auth/logout")
     refetch()
-    if (res.status) {
+    if (res.status === 200) {
       queryClient.invalidateQueries({ queryKey: ["user"] })
       navigate("/login", { replace: true })
     }

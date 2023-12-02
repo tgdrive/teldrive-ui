@@ -223,8 +223,7 @@ export const useDeleteFile = (params: QueryParams) => {
   const queryClient = useQueryClient()
   const mutation = useMutation({
     mutationFn: async (data: Record<string, any>) => {
-      return (await http.post(`/api/files/deletefiles`, { files: data.files }))
-        .data
+      return (await http.post(`/api/files/delete`, { files: data.files })).data
     },
     onMutate: async (variables) => {
       await queryClient.cancelQueries({ queryKey })
