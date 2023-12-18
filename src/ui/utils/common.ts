@@ -137,3 +137,13 @@ export function formatDuration(value: number) {
   const secondLeft = Math.floor(value - minute * 60)
   return `${minute}:${secondLeft < 10 ? `0${secondLeft}` : secondLeft}`
 }
+
+export function formatTime(epochTime: number): string {
+  const milliseconds = epochTime * 1000
+
+  const date = new Date(milliseconds)
+
+  const formattedDate = date.toISOString()
+
+  return formattedDate
+}

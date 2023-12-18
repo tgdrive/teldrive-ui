@@ -6,13 +6,7 @@ import React, {
   useReducer,
   useRef,
 } from "react"
-import {
-  FilePayload,
-  FileResponse,
-  Message,
-  Settings,
-  UploadPart,
-} from "@/ui/types"
+import { FilePayload, FileResponse, Settings, UploadPart } from "@/ui/types"
 import {
   ChonkyIconFA,
   ColorsLight,
@@ -39,7 +33,6 @@ import ListItemIcon from "@mui/material/ListItemIcon"
 import ListItemText from "@mui/material/ListItemText"
 import ListSubheader from "@mui/material/ListSubheader"
 import { UseMutationResult } from "@tanstack/react-query"
-import { AxiosError } from "axios"
 import md5 from "md5"
 import pLimit from "p-limit"
 import toast from "react-hot-toast"
@@ -49,7 +42,7 @@ import { useParams } from "react-router-dom"
 import { useCreateFile } from "@/ui/hooks/queryhooks"
 import useHover from "@/ui/hooks/useHover"
 import useSettings from "@/ui/hooks/useSettings"
-import { getParams, zeroPad } from "@/ui/utils/common"
+import { formatTime, getParams, zeroPad } from "@/ui/utils/common"
 import http from "@/ui/utils/http"
 
 enum FileUploadStatus {
@@ -96,6 +89,8 @@ type Action =
   | { type: ActionTypes.SET_CURRENT_FILE_INDEX; payload: number }
   | { type: ActionTypes.TOGGLE_COLLAPSE }
   | { type: ActionTypes.SET_VISIBILITY; payload: boolean }
+
+type UploadParams = Record<string, string | number | boolean | undefined>
 
 const initialState: FileUploadState = {
   files: [],
@@ -269,29 +264,21 @@ interface UploadProps {
 const uploadPart = async <T extends {}>(
   url: string,
   data: Blob,
-  params: Record<string, string>,
+  params: UploadParams,
   onProgress: (progress: number) => void,
   signal: AbortSignal
 ) => {
-  return new Promise<T>(async (resolve, reject) => {
-    try {
-      const res = (
-        await http.post<T>(url, data, {
-          timeout: 0,
-          signal,
-          params,
-          headers: { "Content-Type": "application/octet-stream" },
-          onUploadProgress: (e) => {
-            const progress = e.progress ? e.progress : 0
-            onProgress(progress * 100)
-          },
-        })
-      ).data
-      resolve(res)
-    } catch (error) {
-      reject(error)
-    }
+  const res = await http.post<T>(url, data, {
+    timeout: 0,
+    signal,
+    params,
+    onUploadProgress: (e) => {
+      const progress = e.progress ? e.progress : 0
+      onProgress(progress * 100)
+    },
   })
+
+  return res.data
 }
 
 const uploadFile = async (
@@ -304,7 +291,6 @@ const uploadFile = async (
 ) => {
   return new Promise<boolean>(async (resolve, reject) => {
     //check if file exists
-
     const res = (
       await http.get<FileResponse>("/api/files", {
         params: { path, name: file.name, op: "find" },
@@ -312,7 +298,7 @@ const uploadFile = async (
     ).data
 
     if (res.results.length > 0) {
-      reject(new Error("duplicate file chnage name"))
+      reject(new Error("duplicate file change name"))
       return
     }
 
@@ -320,9 +306,24 @@ const uploadFile = async (
 
     const limit = pLimit(Number(settings.uploadConcurrency))
 
-    const uploadId = md5(file.size.toString() + file.name + path)
+    const uploadId = md5(
+      path +
+        "/" +
+        file.name +
+        file.size.toString() +
+        formatTime(file.lastModified)
+    )
 
     const url = `/api/uploads/${uploadId}`
+
+    const uploadedParts = (await http.get<{ parts: UploadPart[] }>(url)).data
+      .parts
+
+    let channelId: number | undefined = undefined
+
+    if (uploadedParts.length > 0) {
+      channelId = uploadedParts[0].channelId
+    }
 
     let partProgress: number[] = []
 
@@ -331,46 +332,50 @@ const uploadFile = async (
     const partCancelSignals: AbortController[] = []
 
     for (let partIndex = 0; partIndex < totalParts; partIndex++) {
+      if (uploadedParts.findIndex((item) => item.partNo === partIndex + 1) > -1)
+        continue
+
       const controller = new AbortController()
 
       partCancelSignals.push(controller)
 
       partUploadPromises.push(
-        limit(() =>
-          (async () => {
-            const start = partIndex * settings.splitFileSize
+        (async () => {
+          const start = partIndex * settings.splitFileSize
 
-            const end = Math.min(
-              partIndex * settings.splitFileSize + settings.splitFileSize,
-              file.size
-            )
+          const end = Math.min(
+            partIndex * settings.splitFileSize + settings.splitFileSize,
+            file.size
+          )
 
-            const fileBlob = totalParts > 1 ? file.slice(start, end) : file
+          const fileBlob = totalParts > 1 ? file.slice(start, end) : file
 
-            const fileName =
-              totalParts > 1
-                ? `${file.name}.part.${zeroPad(partIndex + 1, 3)}`
-                : file.name
+          const partName =
+            totalParts > 1
+              ? `${file.name}.part.${zeroPad(partIndex + 1, 3)}`
+              : file.name
 
-            const params: Record<string, string> = {
-              fileName,
-              partNo: (partIndex + 1).toString(),
-              totalparts: totalParts.toString(),
+          const params: Record<string, string | number | boolean | undefined> =
+            {
+              partName,
+              fileName: file.name,
+              partNo: partIndex + 1,
+              encrypted: settings.encryptFiles === "yes" ? true : false,
+              channelId,
             }
 
-            const asset = await uploadPart<UploadPart>(
-              url,
-              fileBlob,
-              params,
-              (progress) => {
-                partProgress[partIndex] = progress
-              },
-              controller.signal
-            )
+          const asset = await uploadPart<UploadPart>(
+            url,
+            fileBlob,
+            params,
+            (progress) => {
+              partProgress[partIndex] = progress
+            },
+            controller.signal
+          )
 
-            return asset
-          })()
-        )
+          return asset
+        })()
       )
     }
 
@@ -390,7 +395,10 @@ const uploadFile = async (
 
     try {
       const parts = await Promise.all(partUploadPromises)
-      const uploadParts = parts
+
+      uploadedParts.concat(parts)
+
+      const uploadParts = uploadedParts
         .sort((a, b) => a.partNo - b.partNo)
         .map((item) => ({ id: item.partId }))
 
@@ -401,22 +409,13 @@ const uploadFile = async (
         parts: uploadParts,
         size: file.size,
         path: path ? path : "/",
+        encrypted: settings.encryptFiles === "yes" ? true : false,
+        channelId,
       }
 
-      createMutation
-        .mutateAsync({ payload })
-        .then(async () => {
-          await http.delete(`/api/uploads/${uploadId}`)
-          resolve(true)
-        })
-        .catch(async (err) => {
-          if (
-            (err as AxiosError<Message>).response?.data?.error === "file exists"
-          ) {
-            await http.delete(`/api/uploads/${uploadId}`)
-          }
-          reject(err)
-        })
+      await createMutation.mutateAsync({ payload })
+      await http.delete(`/api/uploads/${uploadId}`)
+      resolve(true)
     } catch (error) {
       reject(error)
     } finally {
@@ -587,6 +586,7 @@ const Upload = ({
                   status: FileUploadStatus.FAILED,
                 },
               })
+
             toast.error(err.message)
           })
         previndex.current = currentFileIndex

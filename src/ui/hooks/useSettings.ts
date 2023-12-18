@@ -7,6 +7,7 @@ const defaultSettings: Settings = {
   apiUrl: "",
   splitFileSize: splitFileSizes[1].value,
   uploadConcurrency: 4,
+  encryptFiles: "no",
 }
 
 export default function useSettings() {

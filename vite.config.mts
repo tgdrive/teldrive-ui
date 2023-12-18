@@ -8,5 +8,8 @@ export default defineConfig(({ mode }) => {
     esbuild: {
       drop: ["console", "debugger"],
     },
+    preview: {
+      port: 5173,
+    },
   }
 })

@@ -47,10 +47,13 @@ export type FilePayload = {
 }
 
 export type UploadPart = {
-  id: string
+  name: string
   partId: number
   partNo: number
+  size: number
   channelId: number
+  encrypted?: boolean
+  salt?: string
 }
 
 export type AuthMessage = {
@@ -62,12 +65,14 @@ export type AuthMessage = {
 export type Message = {
   message: string
   error?: string
+  code?: number
 }
 
 export type Settings = {
   apiUrl: string
   splitFileSize: number
   uploadConcurrency: number
+  encryptFiles: string
   channel?: Channel
   bots?: string
 }

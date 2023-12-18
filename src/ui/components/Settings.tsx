@@ -387,6 +387,27 @@ const OtherTab: React.FC<{ control: Control<Settings, any> }> = memo(
             </TextField>
           )}
         />
+        <Controller
+          name="encryptFiles"
+          control={control}
+          render={({ field, fieldState: { error } }) => (
+            <TextField
+              {...field}
+              select
+              label="Encrypt Files"
+              fullWidth
+              id="encryptFiles"
+              margin="normal"
+              helperText={error ? error.message : ""}
+            >
+              {["yes", "no"].map((val, index) => (
+                <MenuItem key={index} value={val}>
+                  {val}
+                </MenuItem>
+              ))}
+            </TextField>
+          )}
+        />
       </>
     )
   }
@@ -446,8 +467,14 @@ function SettingsDialog({ open, onClose }: SettingsProps) {
           }
           break
         case SettingsSection.Other:
-          const { uploadConcurrency, splitFileSize, apiUrl } = settings
-          setSettings({ uploadConcurrency, splitFileSize, apiUrl })
+          const { uploadConcurrency, splitFileSize, apiUrl, encryptFiles } =
+            settings
+          setSettings({
+            uploadConcurrency,
+            splitFileSize,
+            apiUrl,
+            encryptFiles,
+          })
           break
         default:
           break
