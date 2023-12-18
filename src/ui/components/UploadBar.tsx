@@ -340,23 +340,26 @@ const uploadFile = async (
       partCancelSignals.push(controller)
 
       partUploadPromises.push(
-        (async () => {
-          const start = partIndex * settings.splitFileSize
+        limit(() =>
+          (async () => {
+            const start = partIndex * settings.splitFileSize
 
-          const end = Math.min(
-            partIndex * settings.splitFileSize + settings.splitFileSize,
-            file.size
-          )
+            const end = Math.min(
+              partIndex * settings.splitFileSize + settings.splitFileSize,
+              file.size
+            )
 
-          const fileBlob = totalParts > 1 ? file.slice(start, end) : file
+            const fileBlob = totalParts > 1 ? file.slice(start, end) : file
 
-          const partName =
-            totalParts > 1
-              ? `${file.name}.part.${zeroPad(partIndex + 1, 3)}`
-              : file.name
+            const partName =
+              totalParts > 1
+                ? `${file.name}.part.${zeroPad(partIndex + 1, 3)}`
+                : file.name
 
-          const params: Record<string, string | number | boolean | undefined> =
-            {
+            const params: Record<
+              string,
+              string | number | boolean | undefined
+            > = {
               partName,
               fileName: file.name,
               partNo: partIndex + 1,
@@ -364,18 +367,19 @@ const uploadFile = async (
               channelId,
             }
 
-          const asset = await uploadPart<UploadPart>(
-            url,
-            fileBlob,
-            params,
-            (progress) => {
-              partProgress[partIndex] = progress
-            },
-            controller.signal
-          )
+            const asset = await uploadPart<UploadPart>(
+              url,
+              fileBlob,
+              params,
+              (progress) => {
+                partProgress[partIndex] = progress
+              },
+              controller.signal
+            )
 
-          return asset
-        })()
+            return asset
+          })()
+        )
       )
     }
 
