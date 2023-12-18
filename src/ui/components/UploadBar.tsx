@@ -400,11 +400,10 @@ const uploadFile = async (
     try {
       const parts = await Promise.all(partUploadPromises)
 
-      uploadedParts.concat(parts)
-
       const uploadParts = uploadedParts
+        .concat(parts)
         .sort((a, b) => a.partNo - b.partNo)
-        .map((item) => ({ id: item.partId }))
+        .map((item) => ({ id: item.partId, salt: item.salt }))
 
       const payload = {
         name: file.name,
