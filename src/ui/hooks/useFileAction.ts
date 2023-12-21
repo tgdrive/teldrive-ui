@@ -28,6 +28,16 @@ import {
 import { getPreviewType, preview } from "@/ui/utils/getPreviewType"
 import http from "@/ui/utils/http"
 
+const toggleSort = (sort: SortOrder) => {
+  return sort === SortOrder.ASC ? SortOrder.DESC : SortOrder.ASC
+}
+
+const sortMap = {
+  [ChonkyActions.SortFilesByName.id]: "name",
+  [ChonkyActions.SortFilesByDate.id]: "updatedAt",
+  [ChonkyActions.SortFilesBySize.id]: "size",
+} as const
+
 export const CustomActions = {
   DownloadFile: defineFileAction({
     id: "download_file",
@@ -266,55 +276,29 @@ export const useFileAction = (
           })
           if (res.status === 200) {
             queryClient.invalidateQueries({
-              queryKey: ["files", { active: true }],
+              queryKey: ["files"],
             })
           }
           break
         }
+        case ChonkyActions.SortFilesBySize.id:
+        case ChonkyActions.SortFilesByDate.id:
         case ChonkyActions.SortFilesByName.id: {
-          setSortFilter({
-            ...sortFilter,
-            ...{
-              [type]: {
-                sort: "name",
-                order:
-                  sortFilter[type].order === SortOrder.ASC
-                    ? SortOrder.DESC
-                    : SortOrder.ASC,
-              },
-            },
-          })
-          break
-        }
+          const order =
+            sortFilter[type].sort !== sortMap[data.id]
+              ? SortOrder.ASC
+              : toggleSort(sortFilter[type].order)
 
-        case ChonkyActions.SortFilesByDate.id: {
           setSortFilter({
             ...sortFilter,
             ...{
               [type]: {
-                sort: "updatedAt",
-                order:
-                  sortFilter[type].order === SortOrder.ASC
-                    ? SortOrder.DESC
-                    : SortOrder.ASC,
+                sort: sortMap[data.id],
+                order,
               },
             },
           })
-          break
-        }
-        case ChonkyActions.SortFilesBySize.id: {
-          setSortFilter({
-            ...sortFilter,
-            ...{
-              [type]: {
-                sort: "size",
-                order:
-                  sortFilter[type].order === SortOrder.ASC
-                    ? SortOrder.DESC
-                    : SortOrder.ASC,
-              },
-            },
-          })
+
           break
         }
         case CustomActions.SyncFiles.id: {
