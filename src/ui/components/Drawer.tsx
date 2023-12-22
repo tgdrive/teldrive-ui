@@ -11,11 +11,14 @@ import {
   ListItemIcon,
   ListItemText,
   Toolbar,
+  Typography,
 } from "@mui/material"
 import { useParams } from "react-router-dom"
 
 import { usePreloadFiles } from "@/ui/hooks/queryhooks"
 import { getParams } from "@/ui/utils/common"
+
+import version from "../../../version.json"
 
 export const categories = [
   {
@@ -63,6 +66,24 @@ const NavDrawer: FC<DrawerProps> = (props) => {
           </ListItem>
         ))}
       </List>
+      <Typography
+        sx={{
+          position: "fixed",
+          bottom: 10,
+          left: 0,
+          padding: 2,
+          cursor: "pointer",
+          textDecoration: "none",
+          color: "inherit",
+        }}
+        component="a"
+        href={version.link}
+        target="_blank"
+        rel="noopener noreferrer"
+        gutterBottom
+      >
+        Build: {version.version}-{version.commit}
+      </Typography>
     </Drawer>
   )
 }
