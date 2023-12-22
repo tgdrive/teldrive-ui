@@ -131,6 +131,21 @@ export const CustomActions = {
           ? CustomVisibilityState.Hidden
           : CustomVisibilityState.Default,
     }),
+  GoToFolder: (path = "") =>
+    defineFileAction({
+      id: "go_to_folder",
+      requiresSelection: true,
+      button: {
+        name: "Go to folder",
+        tooltip: "Go to folder",
+        contextMenu: true,
+        icon: ChonkyIconName.folder,
+      },
+      customVisibility: () =>
+        path !== "search"
+          ? CustomVisibilityState.Hidden
+          : CustomVisibilityState.Default,
+    }),
 }
 
 export const useFileAction = (
@@ -156,6 +171,7 @@ export const useFileAction = (
 
   const fileActions = useMemo(
     () => [
+      CustomActions.GoToFolder(type),
       CustomActions.DownloadFile,
       CustomActions.RenameFile,
       CustomActions.DeleteFile,
@@ -191,6 +207,13 @@ export const useFileAction = (
               })
             }
           }
+          break
+        }
+
+        case "go_to_folder" as any: {
+          const { selectedFiles } = data.state as any
+          const fileToOpen = selectedFiles[0]
+          preloadFiles({ type: "my-drive", path: fileToOpen.location })
           break
         }
         case CustomActions.DownloadFile.id: {

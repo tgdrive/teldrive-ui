@@ -16,6 +16,7 @@ export type File = {
   parentId: string
   id: string
   starred: boolean
+  parentPath?: string
 }
 
 export type ModalState = {

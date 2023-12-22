@@ -9,6 +9,7 @@ export const getFiles = (data: File[]): FileData[] => {
         id: item.id,
         name: item.name,
         type: item.type,
+        location: item.parentPath,
         size: item.size ? Number(item.size) : 0,
         modDate: item.updatedAt,
         path: item.path,
@@ -20,9 +21,10 @@ export const getFiles = (data: File[]): FileData[] => {
       id: item.id,
       name: item.name,
       type: item.type,
-      size: Number(item.size),
-      starred: item.starred,
+      size: item.size ? Number(item.size) : 0,
       modDate: item.updatedAt,
+      starred: item.starred,
+      location: item.parentPath,
     }
   })
 }
