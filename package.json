@@ -57,6 +57,7 @@
     "dev": "vite dev",
     "build": "tsc && vite build",
     "preview": "vite preview ",
-    "format": "prettier --config ./prettier.config.js  --write '**/*.{ts,tsx}'"
+    "format": "prettier --config ./prettier.config.js  --write '**/*.{ts,tsx}'",
+    "postinstall": "node ./scripts/version.js"
   }
 }
