@@ -142,9 +142,9 @@ export const CustomActions = {
         icon: ChonkyIconName.folder,
       },
       customVisibility: () =>
-        path !== "search"
-          ? CustomVisibilityState.Hidden
-          : CustomVisibilityState.Default,
+        path != "my-drive"
+          ? CustomVisibilityState.Default
+          : CustomVisibilityState.Hidden,
     }),
 }
 

@@ -99,7 +99,13 @@ export const useFetchFiles = (params: QueryParams) => {
 
 export const fetchData =
   (type: string, path: string, sortFilter: SortState) =>
-  async ({ pageParam }: { pageParam: string }): Promise<FileResponse> => {
+  async ({
+    pageParam,
+    signal,
+  }: {
+    pageParam: string
+    signal: AbortSignal
+  }): Promise<FileResponse> => {
     const url = "/api/files"
 
     const params: Partial<Params> = {
@@ -130,7 +136,7 @@ export const fetchData =
       params.type = "file"
     }
 
-    let res = await http.get(url, { params })
+    let res = await http.get(url, { params, signal })
 
     return res.data
   }

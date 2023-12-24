@@ -1,4 +1,10 @@
-import React, { useCallback, useContext, useEffect, useState } from "react"
+import React, {
+  ChangeEvent,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react"
 import ColorModeContext from "@/ui/contexts/colorModeContext"
 import { Session } from "@/ui/types"
 import CancelIcon from "@mui/icons-material/Cancel"
@@ -15,6 +21,7 @@ import Toolbar from "@mui/material/Toolbar"
 import debounce from "lodash.debounce"
 import { Link, useNavigate, useParams } from "react-router-dom"
 
+import usePrevious from "@/ui/hooks/usePrevious"
 import AccountMenu from "@/ui/components/menus/AccountMenu"
 
 import ColorMenu from "./menus/ColorMenu"
@@ -30,14 +37,12 @@ const classes = {
 
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
   [`& .${classes.search}`]: {
-    position: "relative",
     height: "48px",
     display: "flex",
     borderRadius: 6 * theme.shape.borderRadius,
     backgroundColor: theme.palette.background.paper,
-    margin: "auto",
     width: "100%",
-    maxWidth: "720px",
+    maxWidth: "420px",
     color: theme.palette.text.primary,
     [theme.breakpoints.down("sm")]: {
       display: "none",
@@ -69,39 +74,74 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
   },
 }))
 
-export default function Header({ session }: { session?: Session | null }) {
+const cleanSearchInput = (input: string) => input.trim().replace(/\s+/g, " ")
+
+const SearchBar = () => {
   const [query, setQuery] = useState("")
-
-  const theme = useTheme()
-
-  const { palette } = theme
 
   const navigate = useNavigate()
 
-  const { type } = useParams()
+  const params = useParams()
 
-  const { toggleColorMode, resetTheme } = useContext(ColorModeContext)
+  const prevType = usePrevious(params.type)
 
-  const onSearchFocus = useCallback(() => {
-    if (type !== "search") navigate("/search", { replace: true })
-  }, [type, navigate])
-
-  const debouncedSave = useCallback(
+  const debouncedSearch = useCallback(
     debounce(
-      (newValue: string) => navigate(`/search/${newValue}`, { replace: true }),
-      500
+      (newValue: string) => navigate(`/search/${newValue.trimEnd()}`),
+      1000
     ),
-    []
+    [params.type]
   )
 
-  const updateQuery = useCallback((newValue: string) => {
-    setQuery(newValue)
-    debouncedSave(newValue)
+  const updateQuery = useCallback((event: ChangeEvent<HTMLInputElement>) => {
+    setQuery(event.target.value)
+    const cleanInput = cleanSearchInput(event.target.value)
+    if (cleanInput) {
+      debouncedSearch(cleanInput)
+    }
   }, [])
 
   useEffect(() => {
-    if (type !== "search") setQuery("")
-  }, [type])
+    if (prevType == "search" && params.type != prevType) setQuery("")
+    else if (params.type == "search") setQuery(params["*"] as any)
+  }, [params.type, prevType, params["*"]])
+
+  return (
+    <Box className={classes.search}>
+      <Box className={classes.searchIcon}>
+        <SearchIcon />
+      </Box>
+      <InputBase
+        placeholder="Search Drive...."
+        classes={{
+          root: classes.inputRoot,
+          input: classes.inputInput,
+        }}
+        value={query}
+        inputProps={{
+          "aria-label": "search",
+          enterKeyHint: "search",
+          autoComplete: "off",
+        }}
+        onChange={updateQuery}
+      />
+      <Box className={classes.searchIcon}>
+        <IconButton
+          style={{ height: "35px", width: "35px" }}
+          onClick={() => setQuery("")}
+          size="large"
+        >
+          <CancelIcon />
+        </IconButton>
+      </Box>
+    </Box>
+  )
+}
+
+export default function Header({ session }: { session?: Session | null }) {
+  const { palette } = useTheme()
+
+  const { toggleColorMode, resetTheme } = useContext(ColorModeContext)
 
   return (
     <StyledAppBar
@@ -131,38 +171,16 @@ export default function Header({ session }: { session?: Session | null }) {
               TelDrive
             </Typography>
           </Grid>
-          <Grid item xs sx={{ display: "flex", alignItems: "baseline" }}>
-            {session && (
-              <Box className={classes.search}>
-                <Box className={classes.searchIcon}>
-                  <SearchIcon />
-                </Box>
-                <InputBase
-                  placeholder="Search Drive...."
-                  classes={{
-                    root: classes.inputRoot,
-                    input: classes.inputInput,
-                  }}
-                  value={query}
-                  onMouseDown={onSearchFocus}
-                  inputProps={{
-                    "aria-label": "search",
-                    enterKeyHint: "search",
-                    autoComplete: "off",
-                  }}
-                  onChange={(e) => updateQuery(e.target.value)}
-                />
-                <Box className={classes.searchIcon}>
-                  <IconButton
-                    style={{ height: "35px", width: "35px" }}
-                    onClick={() => updateQuery("")}
-                    size="large"
-                  >
-                    <CancelIcon />
-                  </IconButton>
-                </Box>
-              </Box>
-            )}
+          <Grid
+            item
+            xs
+            sx={{
+              display: "flex",
+              alignItems: "baseline",
+              justifyContent: "flex-end",
+            }}
+          >
+            {session && <SearchBar />}
           </Grid>
           <Grid item>
             <ColorMenu />

@@ -176,7 +176,7 @@ const MyFileBrowser = () => {
         useThemeProvider={false}
         defaultSortActionId={order.defaultSortActionId}
         defaultSortOrder={order.defaultSortOrder}
-        defaultFileViewEntryHeight={type === "search" ? 60 : undefined}
+        defaultFileViewEntryHeight={type !== "my-drive" ? 60 : undefined}
       >
         <FileNavbar />
 

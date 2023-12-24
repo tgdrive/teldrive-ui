@@ -9,9 +9,10 @@ const TimeScaleBar = () => {
   const [position, setPosition] = useState(Math.floor(getPosition()))
 
   useEffect(() => {
-    setInterval(() => {
+    const timer = setInterval(() => {
       setPosition(Math.floor(getPosition()))
     }, 1000)
+    return () => clearInterval(timer)
   }, [position])
 
   return (
