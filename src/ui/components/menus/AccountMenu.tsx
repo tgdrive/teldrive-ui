@@ -40,7 +40,7 @@ export default function AccountMenu() {
     const res = await http.post<Message>("/api/auth/logout")
     refetch()
     if (res.status === 200) {
-      queryClient.invalidateQueries({ queryKey: ["user"] })
+      queryClient.removeQueries()
       navigate("/login", { replace: true })
     }
   }, [])
