@@ -60,6 +60,6 @@
     "preview": "vite preview ",
     "format": "prettier --config ./prettier.config.js  --write '**/*.{ts,tsx}'",
     "postinstall": "node ./scripts/version.cjs",
-    "update": "npx  --yes npm-check-updates -u && npm install "
+    "update": "npx  --yes npm-check-updates -u && npm install"
   }
 }

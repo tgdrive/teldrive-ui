@@ -332,8 +332,12 @@ const uploadFile = async (
     const partCancelSignals: AbortController[] = []
 
     for (let partIndex = 0; partIndex < totalParts; partIndex++) {
-      if (uploadedParts.findIndex((item) => item.partNo === partIndex + 1) > -1)
+      if (
+        uploadedParts.findIndex((item) => item.partNo === partIndex + 1) > -1
+      ) {
+        partProgress[partIndex] = 100
         continue
+      }
 
       const controller = new AbortController()
 

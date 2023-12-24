@@ -32,7 +32,7 @@ const queryClient = new QueryClient({
 })
 const router = createBrowserRouter([
   {
-    path: "/",
+    path: "*",
     element: <RootLayout />,
     children: [
       {
