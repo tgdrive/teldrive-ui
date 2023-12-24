@@ -16,9 +16,7 @@ if (!fs.existsSync(filePath)) {
     if (err) {
       console.error("Error creating version-info.json:", err)
     } else {
-      console.log("version-info.json created successfully.")
+      console.log("version.json created successfully.")
     }
   })
-} else {
-  console.log("version.json already exists. Skipping creation.")
 }

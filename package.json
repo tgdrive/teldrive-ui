@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "@bhunter179/chonky": "^0.2.41",
+    "@bhunter179/chonky": "^0.2.42",
     "@emotion/cache": "^11.11.0",
     "@emotion/react": "^11.11.3",
     "@emotion/server": "^11.11.0",
@@ -52,7 +52,6 @@
     "typescript": "5.3.3",
     "vite": "^5.0.10",
     "vite-plugin-eslint": "^1.8.1",
-    "vite-plugin-remove-console": "^2.2.0",
     "vite-tsconfig-paths": "^4.2.2"
   },
   "scripts": {
