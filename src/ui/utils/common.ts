@@ -103,6 +103,7 @@ export default function textToSvgURL(text: string) {
 }
 
 export const splitFileSizes = [
+  { value: 100 * 1024 * 1024, label: "100MB" },
   { value: 500 * 1024 * 1024, label: "500MB" },
   { value: 1000 * 1024 * 1024, label: "1GB" },
   { value: 2 * 1000 * 1024 * 1024, label: "2GB" },
