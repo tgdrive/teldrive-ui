@@ -42,7 +42,7 @@ const DriveThemeProvider: FC<{
 
   const [schemeColor, setSchemeColor] = useLocalStorage<string>(
     "schemeColor",
-    colors.indigo.A100
+    "#dec4be"
   )
 
   const colorMode = useMemo(

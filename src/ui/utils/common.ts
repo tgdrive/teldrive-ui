@@ -14,7 +14,6 @@ export const getFiles = (data: File[]): FileData[] => {
         modDate: item.updatedAt,
         path: item.path,
         isDir: true,
-        color: "#FAD165",
       }
 
     return {
@@ -148,4 +147,22 @@ export function formatTime(epochTime: number): string {
   const formattedDate = date.toISOString()
 
   return formattedDate
+}
+
+export function encode(str: string) {
+  const charMap = {
+    "!": "%21",
+    "'": "%27",
+    "(": "%28",
+    ")": "%29",
+    "~": "%7E",
+    "%20": "+",
+    "%00": "\x00",
+  } as const
+  return encodeURIComponent(str).replace(
+    /[!'()~]|%20|%00/g,
+    function replacer(match) {
+      return charMap[match as keyof typeof charMap]
+    }
+  )
 }

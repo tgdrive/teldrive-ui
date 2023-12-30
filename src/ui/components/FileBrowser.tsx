@@ -65,7 +65,13 @@ const sortMap = {
   name: ChonkyActions.SortFilesByName.id,
   updatedAt: ChonkyActions.SortFilesByDate.id,
   size: ChonkyActions.SortFilesBySize.id,
-}
+} as const
+
+const viewMap = {
+  list: ChonkyActions.EnableListView.id,
+  grid: ChonkyActions.EnableGridView.id,
+} as const
+
 const MyFileBrowser = () => {
   const positions = useRef<Map<string, StateSnapshot>>(new Map()).current
 
@@ -162,6 +168,8 @@ const MyFileBrowser = () => {
     return <ErrorView error={error as Error} />
   }
 
+  const defaultView = localStorage.getItem("view") || "list"
+
   return (
     <Root className={classes.root}>
       {isLoading && type !== "search" && <Loader />}
@@ -171,7 +179,7 @@ const MyFileBrowser = () => {
         onFileAction={chonkyActionHandler()}
         fileActions={fileActions}
         disableDragAndDropProvider={isMobile ? true : false}
-        defaultFileViewActionId={ChonkyActions.EnableListView.id}
+        defaultFileViewActionId={viewMap[defaultView as "list" | "grid"]}
         useStoreProvider={true}
         useThemeProvider={false}
         defaultSortActionId={order.defaultSortActionId}

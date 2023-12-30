@@ -324,6 +324,15 @@ export const useFileAction = (
 
           break
         }
+        case ChonkyActions.EnableGridView.id: {
+          localStorage.setItem("view", "grid")
+          break
+        }
+
+        case ChonkyActions.EnableListView.id: {
+          localStorage.setItem("view", "list")
+          break
+        }
         case CustomActions.SyncFiles.id: {
           const queryKey = [
             "files",
