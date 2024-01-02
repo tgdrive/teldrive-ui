@@ -348,7 +348,7 @@ export const useFileAction = (
           break
       }
     }
-  }, [sortFilter, type])
+  }, [[sortFilter[type], type]])
 
   return { fileActions, chonkyActionHandler }
 }
