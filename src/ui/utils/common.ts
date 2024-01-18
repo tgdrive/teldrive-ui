@@ -2,6 +2,8 @@ import { File, QueryParams } from "@/ui/types"
 import { FileData } from "@bhunter179/chonky"
 import { Params } from "react-router-dom"
 
+import { getPreviewType } from "./getPreviewType"
+
 export const getFiles = (data: File[]): FileData[] => {
   return data.map((item): FileData => {
     if (item.mimeType === "drive/folder")
@@ -24,6 +26,9 @@ export const getFiles = (data: File[]): FileData[] => {
       modDate: item.updatedAt,
       starred: item.starred,
       location: item.parentPath,
+      previewType: getPreviewType(getExtension(item.name), {
+        video: item.mimeType.includes("video"),
+      }),
     }
   })
 }

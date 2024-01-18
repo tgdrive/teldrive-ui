@@ -206,6 +206,7 @@ export default memo(function PreviewModal({
         overflowY: "auto",
         flexDirection: "column",
         gap: "3rem",
+        overflow: "hidden",
       }}
       onClose={handleClose}
       closeAfterTransition
