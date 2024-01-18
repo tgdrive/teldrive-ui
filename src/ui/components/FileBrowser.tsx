@@ -184,10 +184,12 @@ const MyFileBrowser = () => {
         file.id,
         file.name,
         session?.hash!
-      ).replace("https://", "")
+      )
+      const url = new URL(mediaUrl)
+      url.searchParams.set("w", "360")
       return file.previewType === "image"
         ? settings.resizerHost
-          ? `${settings.resizerHost}/${mediaUrl}&w=360`
+          ? `${settings.resizerHost}/${url.host}${url.pathname}${url.search}`
           : mediaUrl
         : undefined
     },
