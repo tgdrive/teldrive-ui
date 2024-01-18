@@ -8,6 +8,7 @@ const defaultSettings: Settings = {
   splitFileSize: splitFileSizes[1].value,
   uploadConcurrency: 4,
   encryptFiles: "no",
+  resizerHost: "",
 }
 
 export default function useSettings() {

@@ -1,9 +1,10 @@
-import { memo, useEffect, useMemo, useRef, useState } from "react"
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { ModalState } from "@/ui/types"
 import {
   ChonkyActions,
   FileBrowser,
   FileContextMenu,
+  FileData,
   FileList,
   FileNavbar,
   FileToolbar,
@@ -20,9 +21,11 @@ import { useBoolean } from "usehooks-ts"
 import { useFetchFiles } from "@/ui/hooks/queryhooks"
 import { useDevice } from "@/ui/hooks/useDevice"
 import { CustomActions, useFileAction } from "@/ui/hooks/useFileAction"
+import { useSession } from "@/ui/hooks/useSession"
+import useSettings from "@/ui/hooks/useSettings"
 import { useSortFilter } from "@/ui/hooks/useSortFilter"
 import Loader from "@/ui/components/Loader"
-import { chainLinks, getFiles, getParams } from "@/ui/utils/common"
+import { chainLinks, getFiles, getMediaUrl, getParams } from "@/ui/utils/common"
 
 import DeleteDialog from "./DeleteDialog"
 import ErrorView from "./ErrorView"
@@ -170,6 +173,27 @@ const MyFileBrowser = () => {
 
   const defaultView = localStorage.getItem("view") || "list"
 
+  const { settings } = useSettings()
+
+  const { data: session } = useSession()
+
+  const thumbnailGenerator = useCallback(
+    (file: FileData) => {
+      const mediaUrl = getMediaUrl(
+        settings.apiUrl,
+        file.id,
+        file.name,
+        session?.hash!
+      ).replace("https://", "")
+      return file.previewType === "image"
+        ? settings.resizerHost
+          ? `${settings.resizerHost}/${mediaUrl}&w=360`
+          : mediaUrl
+        : undefined
+    },
+    [settings.resizerHost]
+  )
+
   return (
     <Root className={classes.root}>
       {isLoading && type !== "search" && <Loader />}
@@ -185,6 +209,7 @@ const MyFileBrowser = () => {
         defaultSortActionId={order.defaultSortActionId}
         defaultSortOrder={order.defaultSortOrder}
         defaultFileViewEntryHeight={type !== "my-drive" ? 60 : undefined}
+        thumbnailGenerator={thumbnailGenerator}
       >
         <FileNavbar />
 

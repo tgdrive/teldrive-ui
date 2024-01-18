@@ -351,6 +351,21 @@ const OtherTab: React.FC<{ control: Control<Settings, any> }> = memo(
           )}
         />
         <Controller
+          name="resizerHost"
+          control={control}
+          render={({ field, fieldState: { error } }) => (
+            <TextField
+              {...field}
+              margin="normal"
+              fullWidth
+              error={!!error}
+              type="text"
+              label="Resize Host"
+              helperText={error ? error.message : ""}
+            />
+          )}
+        />
+        <Controller
           name="uploadConcurrency"
           control={control}
           render={({ field, fieldState: { error } }) => (
@@ -467,13 +482,19 @@ function SettingsDialog({ open, onClose }: SettingsProps) {
           }
           break
         case SettingsSection.Other:
-          const { uploadConcurrency, splitFileSize, apiUrl, encryptFiles } =
-            settings
+          const {
+            uploadConcurrency,
+            splitFileSize,
+            apiUrl,
+            encryptFiles,
+            resizerHost,
+          } = settings
           setSettings({
             uploadConcurrency,
             splitFileSize,
             apiUrl,
             encryptFiles,
+            resizerHost,
           })
           break
         default:

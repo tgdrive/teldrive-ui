@@ -71,6 +71,7 @@ export type Message = {
 
 export type Settings = {
   apiUrl: string
+  resizerHost: string
   splitFileSize: number
   uploadConcurrency: number
   encryptFiles: string

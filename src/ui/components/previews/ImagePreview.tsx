@@ -13,13 +13,11 @@ const ImagePreview: FC<{ name: string; mediaUrl: string }> = ({
   return (
     <Box
       sx={{
-        maxWidth: "70%",
-        width: "auto",
+        maxWidth: "64rem",
+        maxHeight: "calc(100vh - 4rem)",
         margin: "auto",
         padding: "1rem",
         position: "relative",
-        display: "grid",
-        placeContent: "center",
       }}
     >
       {!isLoaded && (
@@ -39,9 +37,10 @@ const ImagePreview: FC<{ name: string; mediaUrl: string }> = ({
         alt={name}
         sx={{
           maxWidth: "100%",
-          height: "auto",
+          maxHeight: "100%",
           opacity: isLoaded ? 1 : 0,
-          transition: "opacity 300ms ease-in 0ms",
+          transition: "opacity 300ms ease",
+          objectFit: "contain",
         }}
       />
     </Box>
