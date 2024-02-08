@@ -10,10 +10,7 @@ import {
   FileToolbar,
 } from "@bhunter179/chonky"
 import { styled } from "@mui/material/styles"
-import {
-  useInfiniteQuery,
-  useSuspenseInfiniteQuery,
-} from "@tanstack/react-query"
+import { useSuspenseInfiniteQuery } from "@tanstack/react-query"
 import { getRouteApi } from "@tanstack/react-router"
 import type {
   StateSnapshot,

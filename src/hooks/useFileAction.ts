@@ -134,7 +134,7 @@ export const useFileAction = (
 
   const isSm = useMediaQuery("(max-width:600px)")
 
-  const preloadFiles = usePreloadFiles(params)
+  const preloadFiles = usePreloadFiles()
 
   const { data: session } = useSession()
 

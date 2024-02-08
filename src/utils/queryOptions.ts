@@ -74,7 +74,7 @@ export const filesQueryOptions = (params: QueryParams) =>
       ),
   })
 
-export const usePreloadFiles = (params: QueryParams) => {
+export const usePreloadFiles = () => {
   const queryClient = useQueryClient()
 
   const router = useRouter()
@@ -82,10 +82,10 @@ export const usePreloadFiles = (params: QueryParams) => {
   const { startProgress, stopProgress } = useProgress()
 
   const preloadFiles = useCallback(
-    async (path: string, type?: BrowseView) => {
+    async (path: string, type?: BrowseView, showProgress = true) => {
       const newParams = {
         path,
-        type: type || params.type,
+        type: type,
       }
       const queryKey = ["files", newParams]
       const queryState = queryClient.getQueryState(queryKey)
@@ -98,11 +98,11 @@ export const usePreloadFiles = (params: QueryParams) => {
       }
       if (!queryState?.data) {
         try {
-          startProgress()
+          if (showProgress) startProgress()
           await router.preloadRoute(nextRoute)
           router.navigate(nextRoute)
         } finally {
-          stopProgress()
+          if (showProgress) stopProgress()
         }
       } else router.navigate(nextRoute)
     },

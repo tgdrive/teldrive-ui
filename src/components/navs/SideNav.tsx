@@ -1,5 +1,5 @@
 import { FC } from "react"
-import { version } from "@/version"
+import version from "@/version.json"
 import AddToDriveIcon from "@mui/icons-material/AddToDrive"
 import StarBorder from "@mui/icons-material/StarBorder"
 import WatchLaterIcon from "@mui/icons-material/WatchLater"
@@ -55,7 +55,7 @@ export const SideNav: FC<DrawerProps> = (props) => {
           color: "inherit",
         }}
         component="a"
-        href={version.link}
+        href={version.link ? `${version.link}/commit/${version.commit}` : ""}
         target="_blank"
         rel="noopener noreferrer"
         gutterBottom

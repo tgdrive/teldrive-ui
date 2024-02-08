@@ -25,6 +25,7 @@ import usePrevious from "@/hooks/usePrevious"
 import { useSession } from "@/hooks/useSession"
 import AccountMenu from "@/components/menus/Account"
 import ColorMenu from "@/components/menus/Color"
+import { usePreloadFiles } from "@/utils/queryOptions"
 
 const PREFIX = "AppBar"
 
@@ -88,15 +89,11 @@ const SearchBar = () => {
 
   const [query, setQuery] = useState("")
 
-  const navigate = useNavigate()
+  const preloadFiles = usePreloadFiles()
 
   const debouncedSearch = useCallback(
     debounce(
-      (newValue: string) =>
-        navigate({
-          to: "/$",
-          params: { _splat: "search/" + newValue },
-        }),
+      (newValue: string) => preloadFiles("/" + newValue, "search", false),
       1000
     ),
     []

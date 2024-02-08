@@ -18,6 +18,7 @@ import http from "@/utils/http"
 
 import TelegramIcon from "./icons/TelegramIcon"
 import QrCode from "./QrCode"
+import { useProgress } from "./TopProgress"
 
 type FormState = {
   phoneCodeHash?: string
@@ -69,13 +70,17 @@ export default function SignIn() {
 
   const router = useRouter()
 
+  const { startProgress, stopProgress } = useProgress()
+
   const postLogin = useCallback(
     async function postLogin(payload: Record<string, any>) {
+      startProgress()
       const res = await http.post<Message>("/api/auth/login", payload)
       if (res.status === 200) {
         await queryClient.invalidateQueries({ queryKey: ["session"] })
         router.history.push(redirect || "/my-drive", { replace: true })
       }
+      stopProgress()
     },
     [redirect]
   )
