@@ -304,9 +304,29 @@ const uploadFile = async (
       })
     ).data
 
-    if (res.results.length > 0) {
-      reject(new Error("duplicate file change name"))
-      return
+        if (res.results.length > 0) {
+      let fileNameWithoutExtension = file.name.replace(/\.[^/.]+$/, "");
+      let extension = file.name.split(".").pop();
+    
+      let match = fileNameWithoutExtension.match(/\((\d+)\)$/);
+      let counter = match ? parseInt(match[1]) : 0;
+    
+      let newFileName;
+      let res;
+    
+      do {
+        newFileName = `${fileNameWithoutExtension.replace(/\(\d+\)$/, '')}(${counter}).${extension}`;
+    
+        res = (
+          await http.get<FileResponse>("/api/files", {
+            params: { path, name: newFileName, op: "find" },
+          })
+        ).data;
+    
+        counter++;
+      } while (res.results.length > 0);
+    
+      file = new File([file], newFileName, { type: file.type });
     }
 
     const totalParts = Math.ceil(file.size / settings.splitFileSize)
