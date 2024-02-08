@@ -28,5 +28,3 @@ yarn-error.log*
 
 #other
 tsconfig.tsbuildinfo
-version.json
-routeTree.gen.ts
