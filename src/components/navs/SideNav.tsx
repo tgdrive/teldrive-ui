@@ -1,5 +1,4 @@
 import { FC } from "react"
-import version from "@/version.json"
 import AddToDriveIcon from "@mui/icons-material/AddToDrive"
 import StarBorder from "@mui/icons-material/StarBorder"
 import WatchLaterIcon from "@mui/icons-material/WatchLater"
@@ -21,6 +20,10 @@ export const categories = [
   { id: "starred", name: "Starred", icon: <StarBorder /> },
   { id: "recent", name: "recent", icon: <WatchLaterIcon /> },
 ] as const
+
+const version = JSON.parse(
+  import.meta.env.VITE_VERSION_INFO || '{"version":"dev","commit":"","link":""}'
+)
 
 export const SideNav: FC<DrawerProps> = (props) => {
   const { ...others } = props
