@@ -55,7 +55,7 @@ export const getMediaUrl = (
   hash: string,
   download = false
 ) => {
-  const host = "http://localhost:5000"
+  const host = window.location.origin
   return `${host}/api/files/${id}/stream/${encodeURIComponent(
     name
   )}?hash=${hash}${download ? "&d=1" : ""}`
