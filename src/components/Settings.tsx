@@ -451,7 +451,10 @@ function SettingsDialog({ open, onClose }: SettingsProps) {
             queryClient.invalidateQueries({ queryKey: ["user", "bots"] })
           } catch (err) {
             const error = err as AxiosError<Message>
-            if (error.response) toast.error(error.response.data.error!)
+            if (error.response)
+              toast.error(
+                error.response.data.error || error.response.data.message
+              )
           } finally {
             setIsSaving(false)
           }
@@ -467,7 +470,10 @@ function SettingsDialog({ open, onClose }: SettingsProps) {
               queryClient.invalidateQueries({ queryKey: ["user", "bots"] })
             } catch (err) {
               const error = err as AxiosError<Message>
-              if (error.response) toast.error(error.response.data.error!)
+              if (error.response)
+                toast.error(
+                  error.response.data.message?.split(":").slice(-1)[0]
+                )
             } finally {
               setIsSaving(false)
             }
