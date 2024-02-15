@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from "react"
 import Artplayer from "artplayer"
 import type ArtOption from "artplayer/types/option"
 
+Artplayer.LOG_VERSION = false
 interface PlayerProps {
   option: ArtOption
   style: React.CSSProperties

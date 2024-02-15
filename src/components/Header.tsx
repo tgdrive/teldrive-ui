@@ -6,7 +6,6 @@ import React, {
   useMemo,
   useState,
 } from "react"
-import ColorModeContext from "@/contexts/ColorMode"
 import CancelIcon from "@mui/icons-material/Cancel"
 import DarkIcon from "@mui/icons-material/DarkModeOutlined"
 import LightIcon from "@mui/icons-material/LightModeOutlined"
@@ -18,11 +17,12 @@ import IconButton from "@mui/material/IconButton"
 import InputBase from "@mui/material/InputBase"
 import { styled, useTheme } from "@mui/material/styles"
 import Toolbar from "@mui/material/Toolbar"
-import { Link, useNavigate, useRouterState } from "@tanstack/react-router"
+import { Link, useRouterState } from "@tanstack/react-router"
 import debounce from "lodash.debounce"
 
 import usePrevious from "@/hooks/usePrevious"
 import { useSession } from "@/hooks/useSession"
+import ColorModeContext from "@/contexts/ColorMode"
 import AccountMenu from "@/components/menus/Account"
 import ColorMenu from "@/components/menus/Color"
 import { usePreloadFiles } from "@/utils/queryOptions"
