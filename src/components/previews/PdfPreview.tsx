@@ -2,7 +2,7 @@ import { FC, memo } from "react"
 import { Box } from "@mui/material"
 
 const PDFEmbedPreview: FC<{ mediaUrl: string }> = ({ mediaUrl }) => {
-  const url = `https://alist-org.github.io/pdf.js/web/viewer.html?file=${mediaUrl}`
+  const url = `/pdf.js/web/viewer?file=${mediaUrl}`
   return (
     <Box
       component={"iframe"}
