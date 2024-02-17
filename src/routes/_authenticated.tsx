@@ -1,4 +1,3 @@
-import { AuthLayout } from "@/layouts/AuthLayout"
 import { QueryClient } from "@tanstack/react-query"
 import {
   createFileRoute,
@@ -6,6 +5,7 @@ import {
   redirect,
 } from "@tanstack/react-router"
 
+import { AuthLayout } from "@/layouts/AuthLayout"
 import { sessionQueryOptions } from "@/utils/queryOptions"
 
 const checkAuth = async (
@@ -30,5 +30,5 @@ const checkAuth = async (
 export const Route = createFileRoute("/_authenticated")({
   component: AuthLayout,
   beforeLoad: async ({ location, context: { queryClient }, preload }) =>
-    checkAuth(queryClient, location, preload),
+    await checkAuth(queryClient, location, preload),
 })
