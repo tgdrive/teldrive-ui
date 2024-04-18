@@ -1,14 +1,16 @@
-import { FC, memo } from "react"
+import { memo } from "react"
+import Editor from "@monaco-editor/react"
+import { Spinner } from "@tw-material/react"
+
 import useFileContent from "@/hooks/useFileContent"
 import { getLanguageByFileName } from "@/utils/getPreviewType"
-import Editor from "@monaco-editor/react"
-import { Box } from "@mui/material"
 
-const CodePreview: FC<{ name: string; mediaUrl: string }> = ({
-  name,
-  mediaUrl,
-}) => {
-  const { response: content, error, validating } = useFileContent(mediaUrl)
+interface CodePreviewProps {
+  name: string
+  assetUrl: string
+}
+const CodePreview = ({ name, assetUrl }: CodePreviewProps) => {
+  const { response: content, validating } = useFileContent(assetUrl)
 
   return (
     <>
@@ -17,10 +19,11 @@ const CodePreview: FC<{ name: string; mediaUrl: string }> = ({
           options={{
             readOnly: true,
           }}
-          language={getLanguageByFileName(name)}
+          loading={<Spinner />}
+          defaultLanguage={getLanguageByFileName(name)}
           theme="vs-dark"
           height="100%"
-          value={content}
+          defaultValue={content}
         />
       )}
     </>

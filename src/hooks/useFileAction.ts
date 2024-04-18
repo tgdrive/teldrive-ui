@@ -1,69 +1,47 @@
-import { useCallback, useMemo } from "react"
-import { Message, ModalState, QueryParams, SetValue } from "@/types"
+import { useCallback } from "react"
+import type { QueryParams, Session } from "@/types"
+import { useQueryClient } from "@tanstack/react-query"
 import {
-  ChonkyActions,
-  ChonkyActionUnion,
-  ChonkyIconName,
-  CustomVisibilityState,
   defineFileAction,
+  FbActions,
+  FbActionUnion,
+  FbIconName,
   FileHelper,
   MapFileActionsToData,
-} from "@bhunter179/chonky"
-import useMediaQuery from "@mui/material/useMediaQuery"
-import { useQueryClient } from "@tanstack/react-query"
+  type FileData,
+} from "@tw-material/file-browser"
+import IconFlatColorIconsVlc from "~icons/flat-color-icons/vlc"
+import IconLetsIconsViewAltFill from "~icons/lets-icons/view-alt-fill"
+import toast from "react-hot-toast"
 
-import { useSession } from "@/hooks/useSession"
-import {
-  getExtension,
-  getMediaUrl,
-  navigateToExternalUrl,
-} from "@/utils/common"
-import { getPreviewType, preview } from "@/utils/getPreviewType"
+import { mediaUrl, navigateToExternalUrl } from "@/utils/common"
+import { getSortState, SortOrder } from "@/utils/defaults"
 import http from "@/utils/http"
-import { usePreloadFiles } from "@/utils/queryOptions"
+import { usePreload } from "@/utils/queryOptions"
+import { useFileUploadStore, useModalStore } from "@/utils/stores"
 
-export const CustomActions = (isSm: boolean, type: string) => ({
-  DownloadFile: defineFileAction({
-    id: "download_file",
+const CustomActions = {
+  Preview: defineFileAction({
+    id: "preview",
     requiresSelection: true,
-    fileFilter: (file) => (file && "isDir" in file ? false : true),
+    fileFilter: (file) => !file?.isDir,
     button: {
-      name: "Download",
+      name: "Preview",
+      toolbar: true,
+      group: "OpenOptions",
       contextMenu: true,
-      icon: ChonkyIconName.download,
-    },
-  } as const),
-  RenameFile: defineFileAction({
-    id: "rename_file",
-    requiresSelection: true,
-    button: {
-      name: "Rename",
-      contextMenu: true,
-      icon: ChonkyIconName.rename,
-    },
-  } as const),
-  DeleteFile: defineFileAction({
-    id: "delete_file",
-    requiresSelection: true,
-    button: {
-      name: "Delete",
-      contextMenu: true,
-      icon: ChonkyIconName.trash,
+      icon: IconLetsIconsViewAltFill,
     },
   } as const),
   OpenInVLCPlayer: defineFileAction({
     id: "open_vlc_player",
     requiresSelection: true,
-    fileFilter: (file) =>
-      file &&
-      getPreviewType(getExtension(file.name)) === "video" &&
-      !("isDir" in file)
-        ? true
-        : false,
+    fileFilter: (file) => file?.previewType === "video",
     button: {
       name: "Open In VLC",
-      contextMenu: true,
-      icon: ChonkyIconName.play,
+      toolbar: true,
+      group: "OpenOptions",
+      icon: IconFlatColorIconsVlc,
     },
   } as const),
   CopyDownloadLink: defineFileAction({
@@ -71,197 +49,154 @@ export const CustomActions = (isSm: boolean, type: string) => ({
     requiresSelection: true,
     fileFilter: (file) => (file && "isDir" in file ? false : true),
     button: {
-      name: "Copy Download Link",
+      name: "Copy Link",
       contextMenu: true,
-      icon: ChonkyIconName.copy,
+      icon: FbIconName.copy,
     },
   } as const),
-  CreateFolder: defineFileAction({
-    id: "create_folder",
-    button: {
-      name: "Create folder",
-      tooltip: "Create a folder",
-      toolbar: true,
-      group: isSm ? "Actions" : "",
-      icon: ChonkyIconName.folderCreate,
-    },
-    customVisibility: () =>
-      type !== "my-drive"
-        ? CustomVisibilityState.Hidden
-        : CustomVisibilityState.Default,
-  } as const),
-  UploadFiles: defineFileAction({
-    id: "upload_files",
-    button: {
-      name: "Upload files",
-      tooltip: "Upload files",
-      toolbar: true,
-      group: isSm ? "Actions" : "",
-      icon: ChonkyIconName.upload,
-    },
-    customVisibility: () =>
-      type !== "my-drive"
-        ? CustomVisibilityState.Hidden
-        : CustomVisibilityState.Default,
-  } as const),
-  GoToFolder: defineFileAction({
-    id: "go_to_folder",
-    requiresSelection: true,
-    button: {
-      name: "Go to folder",
-      tooltip: "Go to folder",
-      contextMenu: true,
-      icon: ChonkyIconName.folder,
-    },
-    customVisibility: () =>
-      type != "my-drive"
-        ? CustomVisibilityState.Default
-        : CustomVisibilityState.Hidden,
-  } as const),
-})
+}
 
-type ChonkyActionFullUnion =
-  | ReturnType<typeof CustomActions>[keyof ReturnType<typeof CustomActions>]
-  | ChonkyActionUnion
+type FbActionFullUnion =
+  | (typeof CustomActions)[keyof typeof CustomActions]
+  | FbActionUnion
 
-export const useFileAction = (
-  params: QueryParams,
-  setModalState: SetValue<ModalState>,
-  openUpload: () => void,
-  openFileDialog: () => void
-) => {
+export const useFileAction = (params: QueryParams, session: Session) => {
   const queryClient = useQueryClient()
 
-  const isSm = useMediaQuery("(max-width:600px)")
+  const { preloadFiles } = usePreload()
 
-  const preloadFiles = usePreloadFiles()
+  const actions = useModalStore((state) => state.actions)
 
-  const { data: session } = useSession()
-
-  const { type } = params
-
-  const fileActions = useMemo(
-    () => CustomActions(isSm, params.type),
-    [isSm, type]
+  const fileDialogOpen = useFileUploadStore(
+    (state) => state.actions.setFileDialogOpen
   )
+  const uploadOpen = useFileUploadStore((state) => state.actions.setUploadOpen)
 
-  const chonkyActionHandler = useCallback(() => {
-    return async (data: MapFileActionsToData<ChonkyActionFullUnion>) => {
+  return useCallback(() => {
+    return async (data: MapFileActionsToData<FbActionFullUnion>) => {
       switch (data.id) {
-        case ChonkyActions.OpenFiles.id: {
+        case FbActions.OpenFiles.id: {
           const { targetFile, files } = data.payload
 
           const fileToOpen = targetFile ?? files[0]
 
           if (fileToOpen && FileHelper.isDirectory(fileToOpen)) {
             preloadFiles(fileToOpen.path, "my-drive")
+          } else if (fileToOpen && FileHelper.isOpenable(fileToOpen)) {
+            actions.set({
+              open: true,
+              currentFile: fileToOpen,
+              operation: FbActions.OpenFiles.id,
+            })
           }
-          if (fileToOpen && fileToOpen.type === "file") {
-            const previewType = fileToOpen.previewType as string
-            if (!FileHelper.isDirectory(fileToOpen) && previewType in preview) {
-              setModalState({
-                open: true,
-                currentFile: fileToOpen,
-                operation: ChonkyActions.OpenFiles.id,
-              })
-            }
-          }
+
           break
         }
-        case fileActions.GoToFolder.id: {
-          preloadFiles(data.state.selectedFiles[0].location, "my-drive")
-          break
-        }
-        case fileActions.DownloadFile.id: {
+        case FbActions.DownloadFiles.id: {
           const { selectedFiles } = data.state
           for (const file of selectedFiles) {
             if (!FileHelper.isDirectory(file)) {
               const { id, name } = file
-              const url = getMediaUrl(id, name, session?.hash!, true)
+              const url = mediaUrl(id, name, session.hash, true)
               navigateToExternalUrl(url, false)
             }
           }
           break
         }
-        case fileActions.OpenInVLCPlayer.id: {
+        case CustomActions.OpenInVLCPlayer.id: {
           const { selectedFiles } = data.state
           const fileToOpen = selectedFiles[0]
           const { id, name } = fileToOpen
-          const url = `vlc://${getMediaUrl(id, name, session?.hash!)}`
+          const url = `vlc://${mediaUrl(id, name, session.hash)}`
           navigateToExternalUrl(url, false)
           break
         }
-        case fileActions.RenameFile.id: {
-          setModalState({
+        case FbActions.RenameFile.id: {
+          actions.set({
             open: true,
             currentFile: data.state.selectedFiles[0],
-            operation: fileActions.RenameFile.id,
+            operation: FbActions.RenameFile.id,
           })
           break
         }
-        case fileActions.DeleteFile.id: {
-          setModalState({
+        case FbActions.DeleteFiles.id: {
+          actions.set({
             open: true,
             selectedFiles: data.state.selectedFiles.map((item) => item.id),
-            operation: fileActions.DeleteFile.id,
+            operation: FbActions.DeleteFiles.id,
           })
           break
         }
-        case ChonkyActions.CreateFolder.id: {
-          setModalState({
+        case FbActions.CreateFolder.id: {
+          actions.set({
             open: true,
-            operation: ChonkyActions.CreateFolder.id,
+            operation: FbActions.CreateFolder.id,
+            currentFile: {} as FileData,
           })
           break
         }
-        case ChonkyActions.UploadFiles.id: {
-          openUpload()
-          openFileDialog()
-          break
-        }
-        case fileActions.CopyDownloadLink.id: {
+        case CustomActions.CopyDownloadLink.id: {
           const selections = data.state.selectedFilesForAction
           let clipboardText = ""
           selections.forEach((element) => {
             if (!FileHelper.isDirectory(element)) {
               const { id, name } = element
-              clipboardText = `${clipboardText}${getMediaUrl(
-                id,
-                name,
-                session?.hash!
-              )}\n`
+              clipboardText = `${clipboardText}${mediaUrl(id, name, session.hash)}\n`
             }
           })
           navigator.clipboard.writeText(clipboardText)
           break
         }
-        case ChonkyActions.MoveFiles.id: {
-          const { files, destination } = data.payload
-          let res = await http.post<Message>("/api/files/move", {
-            files: files.map((file) => file.id),
-            destination: destination.path || "/",
+        case FbActions.MoveFiles.id: {
+          const { files, target } = data.payload
+          const res = await http.post("/api/files/move", {
+            files: files.map((file) => file?.id),
+            destination: target.path || "/",
           })
           if (res.status === 200) {
+            toast.success(`${files.length} files moved successfully`)
             queryClient.invalidateQueries({
               queryKey: ["files"],
             })
           }
           break
         }
-        case ChonkyActions.EnableGridView.id: {
-          localStorage.setItem("view", "grid")
+
+        case FbActions.UploadFiles.id: {
+          fileDialogOpen(true)
+          uploadOpen(true)
           break
         }
 
-        case ChonkyActions.EnableListView.id: {
-          localStorage.setItem("view", "list")
+        case FbActions.EnableListView.id:
+        case FbActions.EnableGridView.id:
+        case FbActions.EnableTileView.id: {
+          localStorage.setItem("viewId", data.id)
+          break
+        }
+        case FbActions.SortFilesByName.id:
+        case FbActions.SortFilesBySize.id:
+        case FbActions.SortFilesByDate.id: {
+          if (params.type === "my-drive") {
+            const currentSortState = getSortState()
+            const order =
+              currentSortState.order === SortOrder.ASC
+                ? SortOrder.DESC
+                : SortOrder.ASC
+            localStorage.setItem(
+              "sort",
+              JSON.stringify({ sortId: data.id, order })
+            )
+          }
           break
         }
         default:
           break
       }
     }
-  }, [type])
-
-  return { fileActions, chonkyActionHandler }
+  }, [params.type])
 }
+
+export const fileActions = Object.keys(CustomActions).map(
+  (t) => CustomActions[t as keyof typeof CustomActions]
+)

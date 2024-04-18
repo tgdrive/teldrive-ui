@@ -1,5 +1,4 @@
 import { Dispatch, SetStateAction } from "react"
-import { FileData, SortOrder } from "@bhunter179/chonky"
 
 export type FileResponse = { results: SingleFile[]; nextPageToken?: string }
 
@@ -17,29 +16,6 @@ export type SingleFile = {
   id: string
   starred: boolean
   parentPath?: string
-}
-
-export type ModalState = {
-  open: boolean
-  operation?: string
-  type?: string
-  currentFile?: FileData
-  selectedFiles?: string[]
-  name?: string
-  successful?: boolean
-}
-
-export type Params = {
-  nextPageToken: string
-  perPage: number
-  order: string
-  path: string
-  search: string
-  sort: string
-  starred: boolean
-  type: string
-  op: string
-  view: string
 }
 
 export type FilePayload = {
@@ -75,8 +51,6 @@ export type Settings = {
   splitFileSize: number
   uploadConcurrency: number
   encryptFiles: string
-  channel?: Channel
-  bots?: string
 }
 
 export type Session = {
@@ -93,11 +67,8 @@ export type QueryParams = {
 }
 
 export type AccountStats = {
-  totalSize: number
-  totalFiles: number
   channelId: number
-  channelName: string
-  [key: string]: number | string
+  bots: string[]
 }
 
 export type Channel = {
@@ -115,10 +86,15 @@ export type AudioMetadata = {
   cover: string
 }
 
-export type SortField = "name" | "size" | "updatedAt"
+export type UploadStats = {
+  uploadDate: string
+  totalUploaded: number
+}
 
-export type SortState = {
-  [key in BrowseView]: { sort: SortField; order: SortOrder }
+export type CategoryStorage = {
+  category: string
+  totalFiles: number
+  totalSize: number
 }
 
 export type SetValue<T> = Dispatch<SetStateAction<T>>
@@ -130,11 +106,11 @@ export type PreviewFile = {
   previewType: string
   starred: boolean
 }
-export type BrowseView = "my-drive" | "search" | "starred" | "recent"
+export type BrowseView =
+  | "my-drive"
+  | "search"
+  | "starred"
+  | "recent"
+  | "category"
 
-export type FileQueryKey = (string | QueryParams | SortState[BrowseView])[]
-
-export type FileSearch = {
-  sort?: SortField
-  order?: SortOrder
-}
+export type FileQueryKey = (string | QueryParams)[]

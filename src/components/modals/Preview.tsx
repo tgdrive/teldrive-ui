@@ -1,49 +1,30 @@
-import React, { lazy, memo, Suspense, useCallback, useState } from "react"
-import { FileQueryKey, ModalState, SetValue } from "@/types"
-import {
-  ChonkyIconFA,
-  ColorsLight,
-  FileData,
-  useIconData,
-} from "@bhunter179/chonky"
-import ArrowBackIcon from "@mui/icons-material/ArrowBack"
-import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined"
-import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore"
-import NavigateNextIcon from "@mui/icons-material/NavigateNext"
-import { alpha } from "@mui/material"
-import Backdrop from "@mui/material/Backdrop"
-import Box from "@mui/material/Box"
-import IconButton from "@mui/material/IconButton"
-import Modal from "@mui/material/Modal"
-import Typography from "@mui/material/Typography"
+import { lazy, memo, Suspense, useCallback } from "react"
+import { Session } from "@/types"
+import { FbIcon, FileData, useIconData } from "@tw-material/file-browser"
+import { Box, Button, Modal, ModalContent } from "@tw-material/react"
+import IconIcRoundArrowBack from "~icons/ic/round-arrow-back"
+import IconIcRoundNavigateBefore from "~icons/ic/round-navigate-before"
+import IconIcRoundNavigateNext from "~icons/ic/round-navigate-next"
+import clsx from "clsx"
 
-import { useSession } from "@/hooks/useSession"
 import Loader from "@/components/Loader"
-import ControlsMenu from "@/components/menus/Controls"
-import OpenWithMenu from "@/components/menus/OpenWith"
 import AudioPreview from "@/components/previews/audio/AudioPreview"
 import DocPreview from "@/components/previews/DocPreview"
-import FullScreenIFrame from "@/components/previews/FullScreenIFrame"
 import ImagePreview from "@/components/previews/ImagePreview"
 import PDFPreview from "@/components/previews/PdfPreview"
-import { getMediaUrl } from "@/utils/common"
+import { WideScreen } from "@/components/previews/WideScreen"
+import { mediaUrl } from "@/utils/common"
 import { preview } from "@/utils/getPreviewType"
-import { useUpdateFile } from "@/utils/queryOptions"
+import { useModalStore } from "@/utils/stores"
+
+import CodePreview from "../previews/CodePreview"
 
 const VideoPreview = lazy(
   () => import("@/components/previews/video/VideoPreview")
 )
 
-const CodePreview = lazy(() => import("@/components/previews/CodePreview"))
-
 const EpubPreview = lazy(() => import("@/components/previews/EpubPreview"))
 
-type PreviewModalProps = {
-  files: FileData[]
-  modalState: Partial<ModalState>
-  setModalState: SetValue<ModalState>
-  queryKey: FileQueryKey
-}
 const findNext = (files: FileData[], fileId: string, previewType: string) => {
   let index = -1,
     firstPreviewIndex = -1
@@ -68,6 +49,7 @@ const findNext = (files: FileData[], fileId: string, previewType: string) => {
       return files[firstPreviewIndex]
     }
   }
+  return 0
 }
 
 const findPrev = (files: FileData[], fileId: string, previewType: string) => {
@@ -92,27 +74,60 @@ const findPrev = (files: FileData[], fileId: string, previewType: string) => {
       return files[lastPreviewIndex]
     }
   }
+  return 0
+}
+
+interface ControlButtonProps {
+  type: "next" | "prev"
+  onPress: () => void
+}
+
+const ControlButton = ({ type, onPress }: ControlButtonProps) => {
+  return (
+    <Box
+      className={clsx(
+        "w-10  opacity-0 data-[hover=true]:opacity-100 transition-opacity ease-out",
+        "h-[calc(100vh-4rem)] mt-16 fixed  top-0 flex justify-center items-center",
+        type === "next" ? "right-0" : "left-0"
+      )}
+    >
+      <Button
+        className="data-[hover=true]:bg-zinc-100/hover  text-gray-100 w-5 min-w-5 px-0"
+        variant="text"
+        onPress={onPress}
+      >
+        {type === "next" ? (
+          <IconIcRoundNavigateNext />
+        ) : (
+          <IconIcRoundNavigateBefore />
+        )}
+      </Button>
+    </Box>
+  )
 }
 
 export default memo(function PreviewModal({
   files,
-  modalState,
-  setModalState,
-  queryKey,
-}: PreviewModalProps) {
-  const { data: session } = useSession()
+  session,
+}: {
+  files: FileData[]
+  session: Session
+}) {
+  const modalActions = useModalStore((state) => state.actions)
 
-  const [previewFile, setPreviewFile] = useState(modalState.currentFile!)
+  const previewFile = useModalStore((state) => state.currentFile)
 
-  const { id, name, previewType, starred } = previewFile
+  const modalOpen = useModalStore((state) => state.open)
 
-  const { icon, colorCode } = useIconData({ id, name, isDir: false })
+  const { id, name, previewType } = previewFile
+
+  const { icon } = useIconData({ id, name, isDir: false })
 
   const nextItem = useCallback(
     (previewType = "all") => {
       if (files) {
         const nextItem = findNext(files, id, previewType)
-        if (nextItem) setPreviewFile(nextItem)
+        if (nextItem) modalActions.setCurrentFile(nextItem)
       }
     },
     [id, files]
@@ -122,28 +137,15 @@ export default memo(function PreviewModal({
     (previewType = "all") => {
       if (files) {
         const prevItem = findPrev(files, id, previewType)
-        if (prevItem) setPreviewFile(prevItem)
+        if (prevItem) modalActions.setCurrentFile(prevItem)
       }
     },
     [id, files]
   )
 
-  const handleClose = useCallback(() => {
-    setModalState((prev) => ({ ...prev, open: false }))
-  }, [])
+  const handleClose = useCallback(() => modalActions.setOpen(false), [])
 
-  const mediaUrl = getMediaUrl(id, name, session?.hash!)
-
-  const updateMutation = useUpdateFile(queryKey)
-
-  const toggleStarred = useCallback(() => {
-    updateMutation.mutate({
-      id,
-      payload: {
-        starred: !starred,
-      },
-    })
-  }, [id, starred, updateMutation])
+  const assetUrl = mediaUrl(id, name, session.hash)
 
   const renderPreview = useCallback(() => {
     if (previewType) {
@@ -151,42 +153,40 @@ export default memo(function PreviewModal({
         case preview.video:
           return (
             <Suspense fallback={<Loader />}>
-              <VideoPreview name={name} mediaUrl={mediaUrl} />
+              <VideoPreview name={name} assetUrl={assetUrl} />
             </Suspense>
           )
 
         case preview.pdf:
           return (
-            <FullScreenIFrame>
-              <PDFPreview mediaUrl={mediaUrl} />
-            </FullScreenIFrame>
+            <WideScreen>
+              <PDFPreview assetUrl={assetUrl} />
+            </WideScreen>
           )
 
         case preview.office:
           return (
-            <FullScreenIFrame>
-              <DocPreview mediaUrl={mediaUrl} />
-            </FullScreenIFrame>
+            <WideScreen>
+              <DocPreview assetUrl={assetUrl} />
+            </WideScreen>
           )
 
         case preview.code:
           return (
-            <Suspense fallback={<Loader />}>
-              <FullScreenIFrame>
-                <CodePreview name={name} mediaUrl={mediaUrl} />
-              </FullScreenIFrame>
-            </Suspense>
+            <WideScreen>
+              <CodePreview name={name} assetUrl={assetUrl} />
+            </WideScreen>
           )
 
         case preview.image:
-          return <ImagePreview name={name} mediaUrl={mediaUrl} />
+          return <ImagePreview name={name} assetUrl={assetUrl} />
 
         case preview.epub:
           return (
             <Suspense fallback={<Loader />}>
-              <FullScreenIFrame>
-                <EpubPreview mediaUrl={mediaUrl} />
-              </FullScreenIFrame>
+              <WideScreen>
+                <EpubPreview assetUrl={assetUrl} />
+              </WideScreen>
             </Suspense>
           )
 
@@ -196,7 +196,7 @@ export default memo(function PreviewModal({
               nextItem={nextItem}
               prevItem={prevItem}
               name={name}
-              mediaUrl={mediaUrl}
+              assetUrl={assetUrl}
             />
           )
 
@@ -204,151 +204,50 @@ export default memo(function PreviewModal({
           return null
       }
     }
-  }, [mediaUrl, name, previewType])
+    return null
+  }, [assetUrl, name, previewType])
 
   return (
     <Modal
-      aria-labelledby="transition-modal-title"
-      aria-describedby="transition-modal-description"
-      open={modalState.open as boolean}
-      sx={{
-        display: "flex",
-        overflowY: "auto",
-        flexDirection: "column",
-        gap: "3rem",
-        overflow: "hidden",
+      aria-labelledby="preview-modal"
+      isOpen={modalOpen}
+      size="5xl"
+      classNames={{
+        wrapper: "overflow-hidden",
+        base: "bg-transparent w-full shadow-none",
       }}
+      placement="center"
+      backdrop="blur"
       onClose={handleClose}
-      closeAfterTransition
-      slots={{ backdrop: Backdrop }}
-      slotProps={{
-        backdrop: {
-          timeout: 500,
-          sx: {
-            bgcolor: (theme) => alpha(theme.palette.shadow.main, 0.7),
-          },
-        },
-      }}
+      hideCloseButton
     >
-      <>
-        {id && name && (
+      <ModalContent>
+        {id && (
           <>
-            <IconButton
-              sx={{
-                position: "absolute",
-                left: 32,
-                color: "white",
-                top: "50%",
-                background: "#1F1F1F",
-              }}
-              color="inherit"
-              edge="start"
-              onClick={() => prevItem()}
-            >
-              <NavigateBeforeIcon />
-            </IconButton>
-
-            <IconButton
-              sx={{
-                position: "absolute",
-                right: 32,
-                color: "white",
-                top: "50%",
-                background: "#1F1F1F",
-              }}
-              color="inherit"
-              edge="start"
-              onClick={() => nextItem()}
-            >
-              <NavigateNextIcon />
-            </IconButton>
-
-            <Box
-              sx={{
-                position: "absolute",
-                height: 64,
-                width: "100%",
-                top: 0,
-                padding: 2,
-                color: "white",
-                display: "flex",
-                justifyContent: "space-between",
-              }}
-            >
-              <Box
-                sx={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: "0.5rem",
-                  width: "30%",
-                  position: "absolute",
-                  left: "1rem",
-                }}
-              >
-                <IconButton color="inherit" edge="start" onClick={handleClose}>
-                  <ArrowBackIcon />
-                </IconButton>
-                <ChonkyIconFA
-                  icon={icon}
-                  style={{ color: ColorsLight[colorCode] }}
-                />
-                <Typography
-                  sx={{
-                    whiteSpace: "nowrap",
-                    textOverflow: "ellipsis",
-                    overflow: "hidden",
-                    fontSize: "1rem",
-                    cursor: "pointer",
-                  }}
-                  variant="h6"
-                  component="h6"
+            <div className="fixed top-0 left-0 h-16 w-full p-3 text-inherit flex justify-between">
+              <div className="flex items-center gap-3 w-full">
+                <Button
+                  variant="text"
+                  className="data-[hover=true]:bg-zinc-300/hover dark:data-[hover=true]:bg-zinc-500/hover text-inherit"
+                  onPress={handleClose}
+                >
+                  <IconIcRoundArrowBack className="size-6" />
+                </Button>
+                <FbIcon icon={icon} className="size-6 min-w-6" />
+                <h6
+                  className="truncate text-label-large font-normal text-inherit"
                   title={name}
                 >
                   {name}
-                </Typography>
-              </Box>
-              {previewType === preview.video && (
-                <Box
-                  sx={{
-                    position: "absolute",
-                    top: "50%",
-                    left: "50%",
-                    marginRight: "-50%",
-                    transform: "translate(-50%,-50%)",
-                  }}
-                >
-                  <OpenWithMenu
-                    videoUrl={`${mediaUrl}`}
-                    previewType={previewType!}
-                  />
-                </Box>
-              )}
-              <Box
-                sx={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: "1rem",
-                  position: "absolute",
-                  right: "1rem",
-                }}
-              >
-                <IconButton
-                  component={"a"}
-                  rel="noopener noreferrer"
-                  href={`${mediaUrl}&d=1`}
-                  color="inherit"
-                  edge="start"
-                >
-                  <FileDownloadOutlinedIcon />
-                </IconButton>
-                <ControlsMenu starred={starred} toggleStarred={toggleStarred} />
-              </Box>
-            </Box>
-
-            {renderPreview()}
+                </h6>
+              </div>
+            </div>
+            <ControlButton type="prev" onPress={() => prevItem()} />
+            <ControlButton type="next" onPress={() => nextItem()} />
+            <div className="px-8 size-full">{renderPreview()}</div>
           </>
         )}
-      </>
+      </ModalContent>
     </Modal>
   )
 })

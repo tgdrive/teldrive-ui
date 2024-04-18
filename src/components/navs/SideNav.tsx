@@ -1,70 +1,64 @@
-import { FC } from "react"
-import AddToDriveIcon from "@mui/icons-material/AddToDrive"
-import StarBorder from "@mui/icons-material/StarBorder"
-import WatchLaterIcon from "@mui/icons-material/WatchLater"
-import {
-  Drawer,
-  DrawerProps,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  Toolbar,
-  Typography,
-} from "@mui/material"
-import { Link } from "@tanstack/react-router"
+import { memo, MouseEvent, SVGProps, useCallback } from "react"
+import { Button } from "@tw-material/react"
+import IconBasilGoogleDriveOutline from "~icons/basil/google-drive-outline"
+import IconIcOutlineSdStorage from "~icons/ic/outline-sd-storage"
+import IconMdiRecent from "~icons/mdi/recent"
+import IconMdiStarOutline from "~icons/mdi/star-outline"
+import clsx from "clsx"
+
+import { ForwardLink } from "@/components/ForwardLink"
+import { usePreload } from "@/utils/queryOptions"
 
 export const categories = [
-  { id: "my-drive", name: "My Drive", icon: <AddToDriveIcon /> },
-  { id: "starred", name: "Starred", icon: <StarBorder /> },
-  { id: "recent", name: "recent", icon: <WatchLaterIcon /> },
+  { id: "my-drive", name: "My Drive", icon: IconBasilGoogleDriveOutline },
+  { id: "starred", name: "Starred", icon: IconMdiStarOutline },
+  { id: "recent", name: "Recent", icon: IconMdiRecent },
+  { id: "storage", name: "Storage", icon: IconIcOutlineSdStorage },
 ] as const
 
-const version = JSON.parse(
-  import.meta.env.VITE_VERSION_INFO || '{"version":"dev","commit":"","link":""}'
+interface SidNavItemProps extends ReturnType<typeof usePreload> {
+  id: (typeof categories)[number]["id"]
+  icon: (props: SVGProps<SVGSVGElement>) => React.ReactElement
+}
+
+const SidNavItem = memo(
+  ({ id, icon: Icon, preloadFiles, preloadStorage }: SidNavItemProps) => {
+    const handleClick = useCallback((e: MouseEvent<HTMLButtonElement>) => {
+      e.preventDefault()
+      if (id !== "storage") preloadFiles("", id)
+      else preloadStorage()
+    }, [])
+
+    return (
+      <Button
+        as={ForwardLink}
+        to="/$"
+        params={{ _splat: id }}
+        variant="text"
+        onClick={handleClick}
+        isIconOnly
+        className={clsx(
+          "h-8 w-full max-w-14 rounded-3xl px-0 mx-auto",
+          "text-on-surface-variant",
+          "data-[status=active]:bg-secondary-container data-[status=active]:text-on-secondary-container",
+          "[&>svg]:data-[status=active]:scale-110 [&>svg]:transition-transform"
+        )}
+      >
+        <Icon className="size-6 text-inherit pointer-events-none" />
+      </Button>
+    )
+  }
 )
 
-export const SideNav: FC<DrawerProps> = (props) => {
-  const { ...others } = props
-
+export const SideNav = memo(() => {
+  const preload = usePreload()
   return (
-    <Drawer variant="permanent" {...others}>
-      <Toolbar />
-      <List>
-        {categories.map(({ id, name, icon }) => (
-          <Link key={id} to="/$" params={{ _splat: id }} preload="intent">
-            {({ isActive }) => {
-              return (
-                <ListItem>
-                  <ListItemButton selected={isActive}>
-                    <ListItemIcon>{icon}</ListItemIcon>
-                    <ListItemText>{name}</ListItemText>
-                  </ListItemButton>
-                </ListItem>
-              )
-            }}
-          </Link>
+    <aside className="w-full md:w-20 md:pt-20 pt-0 h-12 md:h-full">
+      <ul className="size-full flex-wrap flex flex-row md:flex-col items-center list-none gap-4 px-3 overflow-auto">
+        {categories.map(({ id, icon: Icon }) => (
+          <SidNavItem key={id} id={id} icon={Icon} {...preload} />
         ))}
-      </List>
-      <Typography
-        sx={{
-          position: "fixed",
-          bottom: 10,
-          left: 0,
-          padding: 2,
-          cursor: "pointer",
-          textDecoration: "none",
-          color: "inherit",
-        }}
-        component="a"
-        href={version.link ? `${version.link}/commit/${version.commit}` : ""}
-        target="_blank"
-        rel="noopener noreferrer"
-        gutterBottom
-      >
-        Build: {version.version}-{version.commit}
-      </Typography>
-    </Drawer>
+      </ul>
+    </aside>
   )
-}
+})

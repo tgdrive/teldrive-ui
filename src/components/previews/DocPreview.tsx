@@ -1,21 +1,13 @@
-import { FC, memo } from "react"
-import { Box } from "@mui/material"
+import { memo } from "react"
 
-const DocPreview: FC<{ mediaUrl: string }> = ({ mediaUrl }) => {
-  const url = `https://view.officeapps.live.com/op/view.aspx?src=${mediaUrl}`
+const DocPreview = ({ assetUrl }: { assetUrl: string }) => {
+  const url = `https://view.officeapps.live.com/op/view.aspx?src=${assetUrl}`
 
   return (
-    <Box
-      component={"iframe"}
+    <iframe
       title="DocView"
-      sx={{
-        position: "relative",
-        border: "none",
-        zIndex: 101,
-      }}
+      className="relative border-none z-[100] size-full"
       src={url}
-      width="100%"
-      height="100%"
       allowFullScreen
     />
   )

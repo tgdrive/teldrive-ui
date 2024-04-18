@@ -37,7 +37,7 @@ function decode(bytes: Uint8Array, encoding: string = "utf-8") {
 async function getBuffer(url: string, size?: number): Promise<ArrayBuffer> {
   const response = await http.get(url, {
     headers: { Range: `bytes=${0}-${size}` },
-    responseType: "arraybuffer",
+    responseType: "arrayBuffer",
   })
   return response.data
 }

@@ -1,5 +1,4 @@
 import { FC, memo, useEffect, useRef } from "react"
-import { Box, useTheme } from "@mui/material"
 import type Artplayer from "artplayer"
 import type ArtOption from "artplayer/types/option"
 import { AspectRatio } from "artplayer/types/player"
@@ -8,17 +7,16 @@ import Player from "./ArtPlayer"
 
 const aspectRatioes = ["default", "4:3", "16:9"]
 
-const VideoPlayer: FC<{
-  videoName: string
-  videoUrl: string
-}> = ({ videoName, videoUrl }) => {
-  const theme = useTheme()
-
+interface VideoPlayerProps {
+  name: string
+  assetUrl: string
+}
+const VideoPlayer = ({ name, assetUrl }: VideoPlayerProps) => {
   const artInstance = useRef<Artplayer | null>(null)
 
   const artOptions: ArtOption = {
     container: "",
-    title: videoName,
+    title: name,
     volume: 0.6,
     muted: false,
     autoplay: true,
@@ -39,22 +37,21 @@ const VideoPlayer: FC<{
     playsInline: true,
     autoPlayback: true,
     airplay: true,
-    theme: theme.palette.primary.main,
     lock: true,
     fastForward: true,
     autoOrientation: true,
     moreVideoAttr: {
       // @ts-ignore
       "webkit-playsinline": true,
-      crossOrigin: "use-credentials",
+      crossOrigin: "anonymous",
       playsInline: true,
     },
   }
 
   useEffect(() => {
-    if (artInstance.current && videoUrl) {
-      artInstance.current.switchUrl(videoUrl)
-      artInstance.current.title = videoName
+    if (artInstance.current && assetUrl) {
+      artInstance.current.switchUrl(assetUrl)
+      artInstance.current.title = name
     }
     return () => {
       if (artInstance.current) {
@@ -63,7 +60,7 @@ const VideoPlayer: FC<{
         artInstance.current.video.load()
       }
     }
-  }, [videoName, videoUrl])
+  }, [name, assetUrl])
 
   return (
     <Player
@@ -82,20 +79,4 @@ const VideoPlayer: FC<{
   )
 }
 
-const VideoPreview: FC<{ name: string; mediaUrl: string }> = ({
-  name,
-  mediaUrl,
-}) => {
-  return (
-    <Box
-      sx={{
-        width: { xs: "100%", md: "70%" },
-        margin: "auto",
-        padding: "1rem",
-      }}
-    >
-      <VideoPlayer videoName={name} videoUrl={mediaUrl} />
-    </Box>
-  )
-}
-export default memo(VideoPreview)
+export default memo(VideoPlayer)

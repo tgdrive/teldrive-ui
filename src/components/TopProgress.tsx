@@ -1,5 +1,4 @@
 import * as React from "react"
-import { useTheme } from "@mui/material"
 import LoadingBar, { LoadingBarRef } from "react-top-loading-bar"
 
 interface InitContextProps {
@@ -13,10 +12,6 @@ const ProgressContext = React.createContext({} as InitContextProps)
 export function ProgressProvider({ children }: { children: React.ReactNode }) {
   const ref = React.useRef<LoadingBarRef>(null)
 
-  const theme = useTheme()
-
-  const color = theme.palette.onPrimaryContainer.main
-
   const startProgress = () => ref?.current?.continuousStart()
 
   const stopProgress = () => ref?.current?.complete()
@@ -28,7 +23,12 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
   return (
     <ProgressContext.Provider value={value}>
       {children}
-      <LoadingBar color={color} ref={ref} waitingTime={200} />
+      <LoadingBar
+        className="!bg-primary"
+        shadow={false}
+        ref={ref}
+        waitingTime={200}
+      />
     </ProgressContext.Provider>
   )
 }

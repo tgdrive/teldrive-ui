@@ -1,22 +1,8 @@
-import { BrowseView } from "@/types"
+import { BrowseView, Session } from "@/types"
+import { partial } from "filesize"
 
 export const navigateToExternalUrl = (url: string, shouldOpenNewTab = true) =>
   shouldOpenNewTab ? window.open(url, "_blank") : (window.location.href = url)
-
-export const isMobileDevice = () => {
-  const toMatch = [
-    /Android/i,
-    /webOS/i,
-    /iPhone/i,
-    /iPad/i,
-    /iPod/i,
-    /BlackBerry/i,
-    /Windows Phone/i,
-  ]
-  return toMatch.some(function (toMatchItem) {
-    return navigator.userAgent.match(toMatchItem)
-  })
-}
 
 export const chainLinks = (path: string) => {
   const paths = path?.split("/").slice(1)
@@ -45,38 +31,6 @@ export function getExtension(fileName: string) {
 
 export const zeroPad = (num: number | string, places: number) =>
   String(num).padStart(places, "0")
-
-export const getSortOrder = () =>
-  JSON.parse(localStorage.getItem("sortOrder") as string) || "desc"
-
-export const getMediaUrl = (
-  id: string,
-  name: string,
-  hash: string,
-  download = false
-) => {
-  const host = window.location.origin
-  return `${host}/api/files/${id}/stream/${encodeURIComponent(
-    name
-  )}?hash=${hash}${download ? "&d=1" : ""}`
-}
-
-export default function textToSvgURL(text: string) {
-  const blob = new Blob([text], { type: "image/svg+xml;charset=utf-8" })
-  return new Promise((resolve) => {
-    const reader = new FileReader()
-    reader.onload = (e) => {
-      resolve(e.target?.result)
-    }
-    reader.readAsDataURL(blob)
-  })
-}
-
-export const splitFileSizes = [
-  { value: 500 * 1024 * 1024, label: "500MB" },
-  { value: 1000 * 1024 * 1024, label: "1GB" },
-  { value: 2 * 1000 * 1024 * 1024, label: "2GB" },
-]
 
 export const copyDataToClipboard = (data: string[]) => {
   return new Promise((resolve, reject) => {
@@ -144,3 +98,51 @@ export function extractPathParts(path: string): {
     path: restOfPath ? "/" + restOfPath : "",
   }
 }
+
+export const mediaUrl = (
+  id: string,
+  name: string,
+  sessionHash: string,
+  download = false
+) => {
+  const host = window.location.origin
+  return `${host}/api/files/${id}/stream/${encodeURIComponent(
+    name
+  )}?hash=${sessionHash}${download ? "&d=1" : ""}`
+}
+
+export const profileUrl = (session: Session) =>
+  `/api/users/profile?photo=1&hash=${session.hash}`
+
+export const profileName = (session: Session) => session.userName
+
+export function bytesToGB(bytes: number) {
+  let gb = bytes / Math.pow(1024, 3)
+  return Math.round(gb * 10) / 10
+}
+
+export const filesize = partial({ standard: "jedec" })
+
+export const splitFileSizes = [
+  { value: 100 * 1024 * 1024, label: "100MB" },
+  { value: 500 * 1024 * 1024, label: "500MB" },
+  { value: 1000 * 1024 * 1024, label: "1GB" },
+  { value: 2 * 1000 * 1024 * 1024, label: "2GB" },
+]
+
+const isMobileDevice = () => {
+  const toMatch = [
+    /Android/i,
+    /webOS/i,
+    /iPhone/i,
+    /iPad/i,
+    /iPod/i,
+    /BlackBerry/i,
+    /Windows Phone/i,
+  ]
+  return toMatch.some(function (toMatchItem) {
+    return navigator.userAgent.match(toMatchItem)
+  })
+}
+
+export const isMobile = isMobileDevice()

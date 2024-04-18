@@ -1,47 +1,26 @@
-import { existsSync } from "fs"
-import { resolve } from "path"
 import { TanStackRouterVite } from "@tanstack/router-vite-plugin"
 import react from "@vitejs/plugin-react"
-import AdmZip from "adm-zip"
-import axios from "axios"
-import { defineConfig, Plugin, splitVendorChunkPlugin } from "vite"
+import Icons from "unplugin-icons/vite"
+import { defineConfig, loadEnv } from "vite"
 import tsconfigPaths from "vite-tsconfig-paths"
 
-function PdfJsPlugin(): Plugin {
-  return {
-    name: "pdf-js-plugin",
-    apply: "build",
-    async buildStart() {
-      const pdfJsDir = resolve(__dirname, "public", "pdf.js")
-      if (existsSync(pdfJsDir)) {
-        return
-      }
-      const response = await axios.get(
-        "https://github.com/divyam234/pdf.js/releases/download/latest/pdfjs.zip",
-        {
-          responseType: "arraybuffer",
-        }
-      )
-
-      const zip = new AdmZip(response.data)
-
-      zip.extractAllTo(pdfJsDir, true)
-    },
-  }
-}
-
 export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd())
   return {
     plugins: [
       TanStackRouterVite(),
       react(),
       tsconfigPaths(),
-      splitVendorChunkPlugin(),
-      PdfJsPlugin(),
+      Icons({
+        compiler: "jsx",
+        jsx: "react",
+        iconCustomizer(_1, _2, props) {
+          props.width = "1.5rem"
+          props.height = "1.5rem"
+        },
+      }),
     ],
-    esbuild: {
-      drop: mode === "production" ? ["console", "debugger"] : [],
-    },
+
     server: {
       proxy: {
         "/api": {

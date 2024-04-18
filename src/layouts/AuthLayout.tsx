@@ -1,54 +1,26 @@
-import { Box, Container } from "@mui/material"
+import { memo } from "react"
 import { Outlet } from "@tanstack/react-router"
+import clsx from "clsx"
 
 import Header from "@/components/Header"
-import FixedBottomNavigation from "@/components/navs/BottomNav"
 import { SideNav } from "@/components/navs/SideNav"
+import { scrollbarClasses } from "@/utils/classes"
 
-const drawerWidth = 250
-
-export const AuthLayout = () => {
+export const AuthLayout = memo(() => {
   return (
-    <Box sx={{ position: "fixed", inset: 0, display: "flex" }}>
-      <Box
-        component="nav"
-        sx={{
-          width: { md: drawerWidth },
-          flexShrink: { md: 0 },
-          display: "block",
-          "@media (max-width: 1024px)": {
-            display: "none",
-          },
-        }}
-      >
-        <SideNav
-          PaperProps={{
-            sx: {
-              width: drawerWidth,
-              bgcolor: "background.default",
-              boxSizing: "border-box",
-            },
-          }}
-        />
-      </Box>
-      <FixedBottomNavigation />
-
-      <Box sx={{ flex: 1, display: "flex", flexDirection: "column" }}>
-        <Header auth={true} />
-        <Container
-          maxWidth="xl"
-          sx={{
-            pt: 1,
-            marginTop: 8,
-            height: "calc(100% - 68px)",
-            "@media (max-width: 1024px)": {
-              height: "calc(100% - 124px)",
-            },
-          }}
+    <div className="flex flex-col-reverse md:flex-row h-dvh overflow-hidden">
+      <SideNav />
+      <div className="relative flex flex-1 flex-col overflow-x-hidden">
+        <Header auth />
+        <main
+          className={clsx(
+            "max-w-screen-2xl flex-1 overflow-y-auto overflow-x-hidden p-4 pb-2",
+            scrollbarClasses
+          )}
         >
           <Outlet />
-        </Container>
-      </Box>
-    </Box>
+        </main>
+      </div>
+    </div>
   )
-}
+})

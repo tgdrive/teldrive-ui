@@ -1,90 +1,104 @@
-import React, { FC, ReactNode, useMemo } from "react"
-import ColorModeContext from "@/contexts/ColorMode"
-import { useChonkyTheme } from "@bhunter179/chonky"
-import {
-  colors,
-  CssBaseline,
-  ThemeProvider as MuiThemeProvider,
-  PaletteMode,
-  ThemeOptions,
-} from "@mui/material"
-import { Toaster } from "react-hot-toast"
-import { IntlProvider } from "react-intl"
+import { createContext, useContext, useEffect } from "react"
 import { useLocalStorage } from "usehooks-ts"
 
-import { ProgressProvider } from "./TopProgress"
+import { useIsFirstRender } from "@/hooks/useFirstRender"
 
-const muiThemeOverrides: Partial<ThemeOptions> = {
-  typography: {
-    fontFamily: "'Poppins', sans-seriff",
-    body1: {
-      fontFamily: "'Poppins', sans-seriff",
-      overflow: "hidden",
-    },
-    button: {
-      fontFamily: "'Poppins', sans-seriff",
-    },
-  },
-  components: {
-    MuiPaper: {
-      styleOverrides: {
-        root: {
-          backgroundImage: "none",
-        },
-      },
-    },
-    MuiCssBaseline: {
-      styleOverrides: {
-        a: {
-          textDecoration: "none",
-          cursor: "pointer",
-          color: "inherit",
-        },
-      },
-    },
-  },
+type Theme = "dark" | "light" | "system"
+
+type ThemeProviderProps = {
+  children: React.ReactNode
+  defaultTheme?: Theme
+  storageKey?: string
 }
 
-export const ThemeProvider: FC<{
-  children: ReactNode
-}> = ({ children }) => {
-  const [mode, setMode] = useLocalStorage("themeMode", "light")
+type ThemeProviderState = {
+  colorScheme: ColorScheme
+  theme: Theme
+  setTheme: (theme: Theme) => void
+  setColorScheme: (colorScheme: ColorScheme) => void
+}
 
-  const [schemeColor, setSchemeColor] = useLocalStorage<string>(
-    "schemeColor",
-    colors.indigo.A100
+const defaultColorScheme: ColorScheme = {
+  color: "#8B4E4B",
+}
+
+const initialState: ThemeProviderState = {
+  colorScheme: defaultColorScheme,
+  theme: "system",
+  setTheme: () => null,
+  setColorScheme: () => null,
+}
+
+type ColorScheme = {
+  color: string
+  cssVars?: Record<string, string>
+}
+
+const sheet = new CSSStyleSheet()
+
+const ThemeProviderContext = createContext<ThemeProviderState>(initialState)
+
+export function ThemeProvider({
+  children,
+  defaultTheme = "system",
+  storageKey = "theme",
+  ...props
+}: ThemeProviderProps) {
+  const firstRender = useIsFirstRender()
+
+  const [colorScheme, setColorScheme] = useLocalStorage<ColorScheme>(
+    "colorScheme",
+    defaultColorScheme
   )
 
-  const colorMode = useMemo(
-    () => ({
-      toggleColorMode: () => {
-        setMode((prevMode) => (prevMode === "light" ? "dark" : "light"))
-      },
-      resetTheme: () => {
-        setMode("light")
-        setSchemeColor(colors.indigo.A100)
-      },
-      setSchemeColor: setSchemeColor,
-      schemeColor: schemeColor,
-    }),
-    []
-  )
+  const [theme, setTheme] = useLocalStorage<Theme>(storageKey, defaultTheme)
 
-  const theme = useChonkyTheme(
-    mode as PaletteMode,
-    schemeColor,
-    muiThemeOverrides as any
-  )
+  useEffect(() => {
+    const root = window.document.documentElement
+
+    root.classList.remove("light", "dark")
+
+    if (theme === "system") {
+      const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
+        .matches
+        ? "dark"
+        : "light"
+
+      root.classList.add(systemTheme)
+      return
+    }
+
+    root.classList.add(theme)
+  }, [theme])
+
+  useEffect(() => {
+    if (colorScheme.cssVars && firstRender) {
+      for (const key in colorScheme.cssVars)
+        sheet.insertRule(`${key}{${colorScheme.cssVars[key]}}`)
+
+      document.adoptedStyleSheets = [sheet]
+    }
+  }, [colorScheme.color, firstRender])
+
+  const value = {
+    theme,
+    setTheme,
+    colorScheme,
+    setColorScheme,
+  }
 
   return (
-    <ColorModeContext.Provider value={colorMode}>
-      <MuiThemeProvider theme={theme}>
-        <CssBaseline enableColorScheme />
-        <IntlProvider locale="en">
-          <Toaster position="bottom-right" />
-          <ProgressProvider>{children}</ProgressProvider>
-        </IntlProvider>
-      </MuiThemeProvider>
-    </ColorModeContext.Provider>
+    <ThemeProviderContext.Provider {...props} value={value}>
+      {children}
+    </ThemeProviderContext.Provider>
   )
+}
+
+export const useTheme = () => {
+  const context = useContext(ThemeProviderContext)
+
+  if (context === undefined)
+    throw new Error("useTheme must be used within a ThemeProvider")
+
+  return context
 }

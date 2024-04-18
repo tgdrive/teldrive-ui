@@ -1,49 +1,37 @@
-import { FC, memo, useState } from "react"
-import { Box, CircularProgress } from "@mui/material"
+import { memo, useState } from "react"
+import IconSvgSpinnerTadpole from "~icons/svg-spinners/tadpole"
+import clsx from "clsx"
 
-const ImagePreview: FC<{ name: string; mediaUrl: string }> = ({
-  name,
-  mediaUrl,
-}) => {
+import { center } from "@/utils/classes"
+
+interface ImagePreviewProps {
+  name: string
+  assetUrl: string
+}
+
+const ImagePreview = ({ name, assetUrl }: ImagePreviewProps) => {
   const [isLoaded, setIsLoaded] = useState<boolean>(false)
+
   const handleImageOnLoad = () => {
     setIsLoaded(true)
   }
 
   return (
-    <Box
-      sx={{
-        maxWidth: "64rem",
-        maxHeight: "calc(100vh - 4rem)",
-        margin: "auto",
-        padding: "1rem",
-        position: "relative",
-      }}
-    >
+    <div className="max-w-[64rem] m-auto relative">
       {!isLoaded && (
-        <CircularProgress
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-          }}
-        />
+        <IconSvgSpinnerTadpole className={clsx(center, "size-8")} />
       )}
-      <Box
+
+      <img
         onLoad={handleImageOnLoad}
-        component={"img"}
-        src={mediaUrl}
+        className={clsx(
+          "opacity-0 max-h-[calc(100vh-4rem)] pt-8 mx-auto object-contain transition-opacity duration-300 ease-in-out",
+          isLoaded && "opacity-100"
+        )}
+        src={assetUrl}
         alt={name}
-        sx={{
-          maxWidth: "100%",
-          maxHeight: "100%",
-          opacity: isLoaded ? 1 : 0,
-          transition: "opacity 300ms ease",
-          objectFit: "contain",
-        }}
       />
-    </Box>
+    </div>
   )
 }
 

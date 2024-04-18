@@ -9,7 +9,7 @@ interface PlayerProps {
   getInstance?: (instance: Artplayer) => void
 }
 
-const Player: React.FC<PlayerProps> = ({ option, getInstance, ...rest }) => {
+const Player = ({ option, getInstance, ...rest }: PlayerProps) => {
   const artRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {

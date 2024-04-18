@@ -1,5 +1,5 @@
 import { QueryClient } from "@tanstack/react-query"
-import { isAxiosError } from "axios"
+import { isAxiosError } from "feaxios"
 
 const HTTP_STATUS_TO_NOT_RETRY = [400, 401, 403, 404]
 

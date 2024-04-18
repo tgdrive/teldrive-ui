@@ -28,4 +28,3 @@ yarn-error.log*
 
 #other
 tsconfig.tsbuildinfo
-public/pdf.js

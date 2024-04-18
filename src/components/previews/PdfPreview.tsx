@@ -1,20 +1,12 @@
-import { FC, memo } from "react"
-import { Box } from "@mui/material"
+import { memo } from "react"
 
-const PDFEmbedPreview: FC<{ mediaUrl: string }> = ({ mediaUrl }) => {
-  const url = `/pdf.js/web/viewer.html?file=${mediaUrl}`
+const PDFEmbedPreview = ({ assetUrl }: { assetUrl: string }) => {
+  const url = `https://pdfview.pages.dev/web/viewer.html?file=${assetUrl}`
   return (
-    <Box
-      component={"iframe"}
+    <iframe
       title="PdfView"
-      sx={{
-        position: "relative",
-        border: "none",
-        zIndex: 101,
-      }}
+      className="relative border-none z-50 size-full"
       src={url}
-      width="100%"
-      height="100%"
       allowFullScreen
     />
   )

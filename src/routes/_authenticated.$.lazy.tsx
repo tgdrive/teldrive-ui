@@ -1,7 +1,7 @@
 import { createLazyFileRoute } from "@tanstack/react-router"
-import { AxiosError } from "axios"
+import { AxiosError } from "feaxios"
 
-import ErrorView from "@/components/ErrorView"
+import { ErrorView } from "@/components/ErrorView"
 import { DriveFileBrowser } from "@/components/FileBrowser"
 
 export const Route = createLazyFileRoute("/_authenticated/$")({

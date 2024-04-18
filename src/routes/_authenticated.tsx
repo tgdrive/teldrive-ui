@@ -18,17 +18,18 @@ const checkAuth = async (
   }
   const session = await queryClient.ensureQueryData(sessionQueryOptions)
   if (!session) {
-    throw redirect({
+    redirect({
       to: "/login",
       search: {
         redirect: location.href,
       },
+      throw: true,
     })
   }
 }
 
 export const Route = createFileRoute("/_authenticated")({
   component: AuthLayout,
-  beforeLoad: async ({ location, context: { queryClient }, preload }) =>
-    await checkAuth(queryClient, location, preload),
+  beforeLoad: ({ location, context: { queryClient }, preload }) =>
+    checkAuth(queryClient, location, preload),
 })

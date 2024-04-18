@@ -1,4 +1,4 @@
-import axios from "axios"
+import axios from "feaxios"
 
 const http = axios.create({
   timeout: 180 * 1000,

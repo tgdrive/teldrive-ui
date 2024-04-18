@@ -1,141 +1,231 @@
-import React, { memo, useCallback } from "react"
-import { FileQueryKey, ModalState, QueryParams, SetValue } from "@/types"
-import { ChonkyActions, FileData } from "@bhunter179/chonky"
-import Backdrop from "@mui/material/Backdrop"
-import Box from "@mui/material/Box"
-import Button from "@mui/material/Button"
-import Fade from "@mui/material/Fade"
-import Modal from "@mui/material/Modal"
-import Paper from "@mui/material/Paper"
-import TextField from "@mui/material/TextField"
-import Typography from "@mui/material/Typography"
-import { styled } from "@mui/system"
+import { memo, useCallback } from "react"
+import { FileQueryKey, QueryParams } from "@/types"
+import { FbActions } from "@tw-material/file-browser"
+import {
+  Button,
+  Input,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+} from "@tw-material/react"
+import clsx from "clsx"
+import { useShallow } from "zustand/react/shallow"
 
-import { useCreateFile, useUpdateFile } from "@/utils/queryOptions"
-
-const StyledPaper = styled(Paper)({
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 400,
-  display: "flex",
-  flexDirection: "column",
-  gap: "1rem",
-  padding: 24,
-  "@media (max-width: 480px)": {
-    width: 300,
-  },
-})
+import {
+  useCreateFile,
+  useDeleteFile,
+  useUpdateFile,
+} from "@/utils/queryOptions"
+import { useModalStore } from "@/utils/stores"
 
 type FileModalProps = {
-  modalState: ModalState
-  setModalState: SetValue<ModalState>
   queryKey: FileQueryKey
 }
 
-export default memo(function FileModal({
-  modalState,
-  setModalState,
-  queryKey,
-}: FileModalProps) {
-  const handleClose = useCallback(
-    () => setModalState((prev) => ({ ...prev, open: false })),
-    []
+interface RenameDialogProps {
+  queryKey: FileQueryKey
+  handleClose: () => void
+}
+
+const RenameDialog = memo(({ queryKey, handleClose }: RenameDialogProps) => {
+  const updateMutation = useUpdateFile(queryKey)
+  const { currentFile, actions } = useModalStore(
+    useShallow((state) => ({
+      currentFile: state.currentFile,
+      actions: state.actions,
+    }))
   )
 
-  const updateMutation = useUpdateFile(queryKey)
+  const onRename = useCallback(() => {
+    updateMutation.mutate({
+      id: currentFile?.id,
+      payload: {
+        name: currentFile?.name,
+        type: currentFile?.type,
+      },
+    })
+    handleClose()
+  }, [currentFile.name, currentFile.id])
 
-  const createMutation = useCreateFile(queryKey)
+  return (
+    <>
+      <ModalHeader className="flex flex-col gap-1">Rename</ModalHeader>
+      <ModalBody>
+        <Input
+          size="lg"
+          variant="bordered"
+          classNames={{
+            inputWrapper: "border-primary border-large",
+          }}
+          value={currentFile.name}
+          onValueChange={(value) =>
+            actions.setCurrentFile({ ...currentFile, name: value })
+          }
+        ></Input>
+      </ModalBody>
+      <ModalFooter>
+        <Button className="font-normal" variant="text" onPress={handleClose}>
+          Close
+        </Button>
+        <Button
+          className="font-normal"
+          variant="filledTonal"
+          onPress={onRename}
+        >
+          Rename
+        </Button>
+      </ModalFooter>
+    </>
+  )
+})
 
-  const { currentFile, open, operation } = modalState
+interface FolderCreateDialogProps {
+  queryKey: FileQueryKey
+  handleClose: () => void
+}
 
-  const onUpdate = useCallback(() => {
-    if (operation === "rename_file")
-      updateMutation.mutate({
-        id: currentFile?.id,
-        payload: {
-          name: currentFile?.name,
-          type: currentFile?.type,
-        },
-      })
+const FolderCreateDialog = memo(
+  ({ queryKey, handleClose }: FolderCreateDialogProps) => {
+    const createMutation = useCreateFile(queryKey)
 
-    if (operation === ChonkyActions.CreateFolder.id)
+    const { currentFile, actions } = useModalStore(
+      useShallow((state) => ({
+        currentFile: state.currentFile,
+        actions: state.actions,
+      }))
+    )
+
+    const onCreate = useCallback(() => {
       createMutation.mutate({
         payload: {
-          name: currentFile?.name,
+          name: currentFile.name,
           type: "folder",
           path: (queryKey[1] as QueryParams).path || "/",
         },
       })
+    }, [currentFile.name])
 
+    return (
+      <>
+        <ModalHeader className="flex flex-col gap-1">Create Folder</ModalHeader>
+        <ModalBody>
+          <Input
+            size="lg"
+            variant="bordered"
+            classNames={{
+              inputWrapper: "border-primary border-large",
+            }}
+            value={currentFile?.name}
+            onValueChange={(value) =>
+              actions.setCurrentFile({ ...currentFile, name: value })
+            }
+          ></Input>
+        </ModalBody>
+        <ModalFooter>
+          <Button className="font-normal" variant="text" onPress={handleClose}>
+            Close
+          </Button>
+          <Button
+            className="font-normal"
+            variant="filledTonal"
+            onPress={onCreate}
+          >
+            Create
+          </Button>
+        </ModalFooter>
+      </>
+    )
+  }
+)
+interface DeleteDialogProps {
+  queryKey: FileQueryKey
+  handleClose: () => void
+}
+const DeleteDialog = memo(({ handleClose, queryKey }: DeleteDialogProps) => {
+  const deleteMutation = useDeleteFile(queryKey)
+
+  const selectedFiles = useModalStore(
+    (state) => state.selectedFiles
+  ) as string[]
+
+  const onDelete = useCallback(() => {
+    deleteMutation.mutate({ files: selectedFiles })
     handleClose()
-  }, [currentFile, operation, updateMutation, handleClose, createMutation])
+  }, [])
+
+  return (
+    <>
+      <ModalHeader className="flex flex-col gap-1">Delete Files</ModalHeader>
+      <ModalBody>
+        <h1 className="text-large font-medium mt-2">
+          {`Are you sure to delete ${selectedFiles.length} file${selectedFiles.length > 1 ? "s" : ""} ?`}
+        </h1>
+      </ModalBody>
+      <ModalFooter>
+        <Button className="font-normal" variant="text" onPress={handleClose}>
+          No
+        </Button>
+        <Button
+          variant="filledTonal"
+          classNames={{
+            base: "font-normal",
+          }}
+          onPress={onDelete}
+        >
+          Yes
+        </Button>
+      </ModalFooter>
+    </>
+  )
+})
+
+export const FileOperationModal = memo(({ queryKey }: FileModalProps) => {
+  const { open, operation, actions } = useModalStore(
+    useShallow((state) => ({
+      open: state.open,
+      operation: state.operation,
+      actions: state.actions,
+    }))
+  )
+
+  const handleClose = useCallback(
+    () =>
+      actions.set({
+        open: false,
+      }),
+    []
+  )
+
+  const renderOperation = () => {
+    switch (operation) {
+      case FbActions.RenameFile.id:
+        return <RenameDialog queryKey={queryKey} handleClose={handleClose} />
+      case FbActions.CreateFolder.id:
+        return (
+          <FolderCreateDialog queryKey={queryKey} handleClose={handleClose} />
+        )
+      case FbActions.DeleteFiles.id:
+        return <DeleteDialog queryKey={queryKey} handleClose={handleClose} />
+      default:
+        return null
+    }
+  }
 
   return (
     <Modal
-      aria-labelledby="transition-modal-title"
-      aria-describedby="transition-modal-description"
-      open={!!open}
-      onClose={handleClose}
-      closeAfterTransition
-      slots={{ backdrop: Backdrop }}
-      slotProps={{
-        backdrop: {
-          timeout: 500,
-        },
+      isOpen={open}
+      size="md"
+      classNames={{
+        wrapper: "overflow-hidden",
+        base: "bg-surface w-full shadow-none",
       }}
+      placement="center"
+      onClose={handleClose}
+      hideCloseButton
     >
-      <Fade in={open}>
-        <StyledPaper elevation={3}>
-          <Typography id="transition-modal-title" variant="h6" component="h2">
-            {operation === "rename_file" && "Rename"}
-            {operation === ChonkyActions.CreateFolder.id &&
-              ChonkyActions.CreateFolder.button.name}
-          </Typography>
-          <TextField
-            fullWidth
-            focused
-            value={currentFile?.name}
-            variant="outlined"
-            inputProps={{ autoComplete: "off" }}
-            onChange={(e) =>
-              setModalState((prev) => ({
-                ...prev,
-                currentFile: {
-                  ...prev.currentFile,
-                  name: e.target.value,
-                } as FileData,
-              }))
-            }
-          />
-          <Box
-            sx={{
-              display: "inline-flex",
-              justifyContent: "flex-end",
-              gap: "1.2rem",
-            }}
-          >
-            <Button
-              sx={{ fontWeight: "normal" }}
-              variant="text"
-              onClick={handleClose}
-              disableElevation
-            >
-              Cancel
-            </Button>
-            <Button
-              disabled={!currentFile?.name}
-              sx={{ fontWeight: "normal" }}
-              variant="contained"
-              onClick={onUpdate}
-              disableElevation
-            >
-              OK
-            </Button>
-          </Box>
-        </StyledPaper>
-      </Fade>
+      <ModalContent>{renderOperation}</ModalContent>
     </Modal>
   )
 })

@@ -1,25 +1,23 @@
-import React, { useEffect, useRef, useState } from "react"
-import { Box, Grow, useTheme } from "@mui/material"
+import { useEffect, useMemo, useRef, useState } from "react"
+import clsx from "clsx"
 import QRCodeStyling from "qr-code-styling"
-import { useAsyncMemo } from "use-async-memo"
 
-const QR_SIZE = 280
+import { grow } from "@/utils/classes"
+
+const QR_SIZE = 256
 
 export default function QrCode({ qrCode }: { qrCode: string }) {
   const ref = useRef(null)
 
-  const theme = useTheme()
-
   const [isQrMounted, setisQrMounted] = useState(false)
 
-  const qrStyle = useAsyncMemo(async () => {
+  const qrStyle = useMemo(() => {
     return new QRCodeStyling({
       width: QR_SIZE,
       height: QR_SIZE,
       margin: 10,
       type: "svg",
       dotsOptions: {
-        color: theme.palette.text.primary,
         type: "rounded",
       },
       cornersSquareOptions: {
@@ -30,14 +28,11 @@ export default function QrCode({ qrCode }: { qrCode: string }) {
         imageSize: 0.4,
         margin: 2,
       },
-      backgroundOptions: {
-        color: theme.palette.background.paper,
-      },
       qrOptions: {
         errorCorrectionLevel: "M",
       },
     })
-  }, [theme.palette])
+  }, [])
 
   useEffect(() => {
     if (ref.current && qrStyle) {
@@ -52,8 +47,13 @@ export default function QrCode({ qrCode }: { qrCode: string }) {
   }, [qrCode, qrStyle])
 
   return (
-    <Grow in={isQrMounted}>
-      <Box ref={ref} sx={{ height: "auto", maxWidth: "100%", width: "100%" }} />
-    </Grow>
+    <div
+      ref={ref}
+      data-mounted={isQrMounted}
+      className={clsx(
+        grow,
+        "size-full [&>svg>rect:nth-child(3)]:fill-on-surface [&>svg>rect:nth-child(2)]:fill-surface"
+      )}
+    />
   )
 }
