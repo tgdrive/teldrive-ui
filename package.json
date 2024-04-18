@@ -6,7 +6,7 @@
     "@monaco-editor/react": "^4.6.0",
     "@react-aria/i18n": "^3.10.2",
     "@tanstack/react-query": "^5.29.2",
-    "@tanstack/react-router": "^1.27.0",
+    "@tanstack/react-router": "1.27.0",
     "@tw-material/file-browser": "^1.0.15",
     "@tw-material/framer-transitions": "^1.1.1",
     "@tw-material/react": "^1.1.17",

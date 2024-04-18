@@ -65,6 +65,7 @@ export const PhoneNoPicker = memo(({ field }: PhoneNoPickerProps) => {
           isClearable
         />
         <Listbox
+          aria-label="Country Code"
           items={codes}
           className={clsx(
             "max-h-64 overflow-y-auto rounded-lg bg-inherit",

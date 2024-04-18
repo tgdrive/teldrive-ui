@@ -19,7 +19,7 @@ type ThemeProviderState = {
 }
 
 const defaultColorScheme: ColorScheme = {
-  color: "#8B4E4B",
+  color: "#82b1ff",
 }
 
 const initialState: ThemeProviderState = {
