@@ -16,6 +16,7 @@ export type SingleFile = {
   id: string
   starred: boolean
   parentPath?: string
+  encrypted?: boolean
 }
 
 export type FilePayload = {
