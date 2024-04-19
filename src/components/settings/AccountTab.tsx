@@ -192,7 +192,9 @@ export const AccountTab = memo(() => {
             className="col-span-6 xs:col-span-3"
             variant="bordered"
             items={channelData || []}
-            defaultSelectedKeys={[data?.channelId.toString() || ""]}
+            defaultSelectedKeys={[
+              data?.channelId ? data.channelId.toString() : "",
+            ]}
             onSelectionChange={handleSelectionChange}
           >
             {(channel) => (
