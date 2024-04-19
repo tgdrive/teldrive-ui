@@ -40,7 +40,7 @@ export const AccountTab = memo(() => {
 
   const { data: session } = useQuery(sessionQueryOptions)
 
-  const { data, refetch, isLoading } = useQuery({
+  const { data, refetch, isSuccess } = useQuery({
     queryKey: ["stats", session?.userName],
     queryFn: async () =>
       (await http.get<AccountStats>("/api/users/stats")).data,
@@ -176,7 +176,7 @@ export const AccountTab = memo(() => {
         </p>
       </div>
       <div className="col-span-6 xs:col-span-3">
-        {!isLoading && (
+        {isSuccess && (
           <Select
             aria-label="Select Channel"
             size="lg"
