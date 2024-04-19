@@ -238,7 +238,7 @@ export const fetchFiles =
 export const useCreateFile = (queryKey: any[]) => {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: async (data: FilePayload["payload"]) =>
+    mutationFn: async (data: Record<string, any>) =>
       http.post("/api/files", data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey })

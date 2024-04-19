@@ -99,11 +99,9 @@ const FolderCreateDialog = memo(
 
     const onCreate = useCallback(() => {
       createMutation.mutate({
-        payload: {
-          name: currentFile.name,
-          type: "folder",
-          path: (queryKey[1] as QueryParams).path || "/",
-        },
+        name: currentFile.name,
+        type: "folder",
+        path: (queryKey[1] as QueryParams).path || "/",
       })
     }, [currentFile.name])
 
