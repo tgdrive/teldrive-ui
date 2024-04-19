@@ -98,7 +98,7 @@ const uploadFile = async (
   const uploadedParts = (await http.get<{ parts: UploadPart[] }>(url)).data
     .parts
 
-  let channelId: number | undefined = undefined
+  let channelId = 0
 
   if (uploadedParts.length > 0) {
     channelId = uploadedParts[0].channelId
@@ -394,7 +394,7 @@ export const Upload = ({ queryKey }: { queryKey: FileQueryKey }) => {
             aria-label="Upload Files"
             isVirtualized={fileIds.length > 100}
             className={clsx(
-              "max-w-xs rounded-none rounded-b-lg bg-surface-container-lowest shadow-md",
+              "max-w-xs rounded-none rounded-b-lg dark:bg-surface-container-lowest bg-surface shadow-md",
               "transition-[max-height] duration-300 ease-in-out select-none",
               scrollbarClasses,
               collapse ? "max-h-0 overflow-hidden" : "max-h-80 overflow-y-auto"
