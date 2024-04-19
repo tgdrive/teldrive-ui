@@ -41,7 +41,6 @@ const mapFilesToFb = (files: SingleFile[], sessionHash: string): FileData[] => {
         modDate: item.updatedAt,
         path: item.path,
         isDir: true,
-        isEncrypted: item.encrypted,
       }
 
     const previewType = getPreviewType(getExtension(item.name), {
@@ -70,6 +69,7 @@ const mapFilesToFb = (files: SingleFile[], sessionHash: string): FileData[] => {
       starred: item.starred,
       thumbnailUrl,
       modDate: item.updatedAt,
+      isEncrypted: item.encrypted,
     }
   })
 }
