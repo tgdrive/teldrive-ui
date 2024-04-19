@@ -326,7 +326,7 @@ export const Upload = ({ queryKey }: { queryKey: FileQueryKey }) => {
         (queryKey[1] as QueryParams).path,
         Number(settings.splitFileSize),
         Number(settings.uploadConcurrency),
-        false,
+        Boolean(settings.encryptFiles),
         currentFile.controller.signal,
         (progress) => actions.setProgress(currentFile.id, progress),
         async (payload) => {

@@ -143,7 +143,7 @@ export const GeneralTab = memo(() => {
                     "w-14 h-8 peer bg-gray-400 peer-focus:outline-none rounded-full",
                     "peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[4px] after:left-[4px]",
                     "after:bg-white after:rounded-full after:h-6",
-                    "after:w-6 after:transition-all peer-checked:bg-primary"
+                    "after:w-6 after:transition-all peer-checked:bg-secondary"
                   )}
                 />
               </label>
