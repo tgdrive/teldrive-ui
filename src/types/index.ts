@@ -72,7 +72,7 @@ export type AccountStats = {
 }
 
 export type Channel = {
-  channelName: string
+  channelName?: string
   channelId: number
 }
 

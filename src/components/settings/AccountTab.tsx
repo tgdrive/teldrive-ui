@@ -27,8 +27,8 @@ const validateBots = (value?: string) => {
   return false
 }
 
-async function updateChannel(channelId: number) {
-  return http.patch("/api/users/channels", { channelId }).then(() => {
+async function updateChannel(channel: Channel) {
+  return http.patch("/api/users/channels", { ...channel }).then(() => {
     toast.success("Channel updated")
   })
 }
@@ -98,11 +98,19 @@ export const AccountTab = memo(() => {
     }
   }, [])
 
-  const handleSelectionChange = useCallback((value: any) => {
-    updateChannel(parseInt([...value][0])).then(() => {
-      queryClient.invalidateQueries({ queryKey: ["stats"] })
-    })
-  }, [])
+  const handleSelectionChange = useCallback(
+    (value: any) => {
+      let channelId = parseInt([...value][0])
+      let channelName = channelData?.find(
+        (c) => c.channelId === channelId
+      )?.channelName
+
+      updateChannel({ channelId, channelName }).then(() => {
+        queryClient.invalidateQueries({ queryKey: ["stats"] })
+      })
+    },
+    [channelData]
+  )
 
   return (
     <div
