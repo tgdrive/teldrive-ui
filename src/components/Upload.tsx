@@ -98,7 +98,7 @@ const uploadFile = async (
   const uploadedParts = (await http.get<{ parts: UploadPart[] }>(url)).data
     .parts
 
-  let channelId: number | undefined = 1912547482
+  let channelId: number | undefined = undefined
 
   if (uploadedParts.length > 0) {
     channelId = uploadedParts[0].channelId
