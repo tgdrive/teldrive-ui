@@ -40,6 +40,7 @@ export function ProfileDropDown() {
         <Avatar
           as="button"
           size="sm"
+          showFallback
           className="outline-none shrink-0"
           src={profileUrl(session!)}
         />
