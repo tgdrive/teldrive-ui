@@ -98,11 +98,13 @@ const FolderCreateDialog = memo(
     )
 
     const onCreate = useCallback(() => {
-      createMutation.mutate({
-        name: currentFile.name,
-        type: "folder",
-        path: (queryKey[1] as QueryParams).path || "/",
-      })
+      createMutation
+        .mutateAsync({
+          name: currentFile.name,
+          type: "folder",
+          path: (queryKey[1] as QueryParams).path || "/",
+        })
+        .then(() => handleClose())
     }, [currentFile.name])
 
     return (
@@ -129,8 +131,10 @@ const FolderCreateDialog = memo(
             className="font-normal"
             variant="filledTonal"
             onPress={onCreate}
+            isDisabled={createMutation.isPending || !currentFile.name}
+            isLoading={createMutation.isPending}
           >
-            Create
+            {createMutation.isPending ? "Creating" : "Create"}
           </Button>
         </ModalFooter>
       </>
