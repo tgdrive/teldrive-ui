@@ -40,7 +40,7 @@ export const AccountTab = memo(() => {
 
   const { data: session } = useQuery(sessionQueryOptions)
 
-  const { data, refetch } = useQuery({
+  const { data, refetch, isLoading } = useQuery({
     queryKey: ["stats", session?.userName],
     queryFn: async () =>
       (await http.get<AccountStats>("/api/users/stats")).data,
@@ -176,15 +176,15 @@ export const AccountTab = memo(() => {
         </p>
       </div>
       <div className="col-span-6 xs:col-span-3">
-        {data?.channelId && (
+        {!isLoading && (
           <Select
-            aria-label="Split File Size"
+            aria-label="Select Channel"
             size="lg"
             isLoading={channelLoading}
             className="col-span-6 xs:col-span-3"
             variant="bordered"
             items={channelData || []}
-            defaultSelectedKeys={[data.channelId.toString()]}
+            defaultSelectedKeys={[data?.channelId.toString() || ""]}
             onSelectionChange={handleSelectionChange}
           >
             {(channel) => (
