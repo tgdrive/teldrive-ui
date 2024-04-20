@@ -146,3 +146,8 @@ const isMobileDevice = () => {
 }
 
 export const isMobile = isMobileDevice()
+
+export const sortCollator = new Intl.Collator(undefined, {
+  numeric: true,
+  sensitivity: "base",
+})

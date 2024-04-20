@@ -1,4 +1,4 @@
-import { lazy, memo, Suspense, useCallback } from "react"
+import { lazy, memo, Suspense, useCallback, useState } from "react"
 import { Session } from "@/types"
 import { FbIcon, FileData, useIconData } from "@tw-material/file-browser"
 import { Box, Button, Modal, ModalContent } from "@tw-material/react"
@@ -13,7 +13,7 @@ import DocPreview from "@/components/previews/DocPreview"
 import ImagePreview from "@/components/previews/ImagePreview"
 import PDFPreview from "@/components/previews/PdfPreview"
 import { WideScreen } from "@/components/previews/WideScreen"
-import { mediaUrl } from "@/utils/common"
+import { mediaUrl, sortCollator } from "@/utils/common"
 import { preview } from "@/utils/getPreviewType"
 import { useModalStore } from "@/utils/stores"
 
@@ -107,12 +107,15 @@ const ControlButton = ({ type, onPress }: ControlButtonProps) => {
 }
 
 export default memo(function PreviewModal({
-  files,
+  files: fileProp,
   session,
 }: {
   files: FileData[]
   session: Session
 }) {
+  const [files] = useState(
+    fileProp.toSorted((a, b) => sortCollator.compare(a.name, b.name))
+  )
   const modalActions = useModalStore((state) => state.actions)
 
   const previewFile = useModalStore((state) => state.currentFile)
