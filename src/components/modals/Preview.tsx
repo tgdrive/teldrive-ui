@@ -13,11 +13,17 @@ import DocPreview from "@/components/previews/DocPreview"
 import ImagePreview from "@/components/previews/ImagePreview"
 import PDFPreview from "@/components/previews/PdfPreview"
 import { WideScreen } from "@/components/previews/WideScreen"
-import { mediaUrl, sortCollator } from "@/utils/common"
+import { mediaUrl } from "@/utils/common"
+import { defaultSortState } from "@/utils/defaults"
 import { preview } from "@/utils/getPreviewType"
 import { useModalStore } from "@/utils/stores"
 
 import CodePreview from "../previews/CodePreview"
+
+const sortOptions = {
+  numeric: true,
+  sensitivity: "base",
+} as const
 
 const VideoPreview = lazy(
   () => import("@/components/previews/video/VideoPreview")
@@ -114,8 +120,13 @@ export default memo(function PreviewModal({
   session: Session
 }) {
   const [files] = useState(
-    fileProp.toSorted((a, b) => sortCollator.compare(a.name, b.name))
+    fileProp.toSorted((a, b) =>
+      defaultSortState.order === "asc"
+        ? a.name.localeCompare(b.name, undefined, sortOptions)
+        : b.name.localeCompare(a.name, undefined, sortOptions)
+    )
   )
+
   const modalActions = useModalStore((state) => state.actions)
 
   const previewFile = useModalStore((state) => state.currentFile)
