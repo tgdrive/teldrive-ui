@@ -18,7 +18,7 @@ type ThemeProviderState = {
   setColorScheme: (colorScheme: ColorScheme) => void
 }
 
-const defaultColorScheme: ColorScheme = {
+export const defaultColorScheme: ColorScheme = {
   color: "#82b1ff",
 }
 
