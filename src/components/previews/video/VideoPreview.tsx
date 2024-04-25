@@ -1,4 +1,4 @@
-import { FC, memo, useEffect, useRef } from "react"
+import { memo, useEffect, useRef } from "react"
 import type Artplayer from "artplayer"
 import type ArtOption from "artplayer/types/option"
 import { AspectRatio } from "artplayer/types/player"

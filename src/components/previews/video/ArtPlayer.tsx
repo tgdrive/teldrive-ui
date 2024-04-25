@@ -3,6 +3,7 @@ import Artplayer from "artplayer"
 import type ArtOption from "artplayer/types/option"
 
 Artplayer.LOG_VERSION = false
+Artplayer.USE_RAF = true
 interface PlayerProps {
   option: ArtOption
   style: React.CSSProperties
