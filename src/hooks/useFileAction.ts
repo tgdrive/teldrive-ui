@@ -12,6 +12,7 @@ import {
 } from "@tw-material/file-browser"
 import IconFlatColorIconsVlc from "~icons/flat-color-icons/vlc"
 import IconLetsIconsViewAltFill from "~icons/lets-icons/view-alt-fill"
+import IconPotPlayerIcon from "~icons/material-symbols/play-circle-rounded"
 import toast from "react-hot-toast"
 
 import { mediaUrl, navigateToExternalUrl } from "@/utils/common"
@@ -42,6 +43,17 @@ const CustomActions = {
       toolbar: true,
       group: "OpenOptions",
       icon: IconFlatColorIconsVlc,
+    },
+  } as const),
+  OpenInPotPlayer: defineFileAction({
+    id: "open_pot_player",
+    requiresSelection: true,
+    fileFilter: (file) => file?.previewType === "video",
+    button: {
+      name: "Open In Pot Player",
+      toolbar: true,
+      group: "OpenOptions",
+      icon: IconPotPlayerIcon,
     },
   } as const),
   CopyDownloadLink: defineFileAction({
@@ -108,6 +120,14 @@ export const useFileAction = (params: QueryParams, session: Session) => {
           const fileToOpen = selectedFiles[0]
           const { id, name } = fileToOpen
           const url = `vlc://${mediaUrl(id, name, session.hash)}`
+          navigateToExternalUrl(url, false)
+          break
+        }
+        case CustomActions.OpenInPotPlayer.id: {
+          const { selectedFiles } = data.state
+          const fileToOpen = selectedFiles[0]
+          const { id, name } = fileToOpen
+          const url = `potplayer://${mediaUrl(id, name, session.hash)}`
           navigateToExternalUrl(url, false)
           break
         }
