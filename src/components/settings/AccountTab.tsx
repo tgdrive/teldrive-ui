@@ -190,6 +190,12 @@ export const AccountTab = memo(() => {
             size="lg"
             isLoading={channelLoading}
             className="col-span-6 xs:col-span-3"
+            scrollShadowProps={{
+              isEnabled: false,
+            }}
+            classNames={{
+              popoverContent: "rounded-lg shadow-1",
+            }}
             variant="bordered"
             items={channelData || []}
             defaultSelectedKeys={[

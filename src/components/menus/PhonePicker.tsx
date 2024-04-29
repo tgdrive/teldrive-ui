@@ -39,7 +39,7 @@ export const PhoneNoPicker = memo(({ field }: PhoneNoPickerProps) => {
     <Popover
       classNames={{
         base: "max-w-xs rounded-lg shadow-sm",
-        content: "rounded-lg shadow-1 min-w-72 p-0",
+        content: "rounded-lg shadow-md min-w-72 p-0",
       }}
       placement="bottom-start"
       offset={10}

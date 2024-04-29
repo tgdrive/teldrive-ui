@@ -11,7 +11,6 @@ import {
   type FileData,
 } from "@tw-material/file-browser"
 import IconFlatColorIconsVlc from "~icons/flat-color-icons/vlc"
-import IconLetsIconsViewAltFill from "~icons/lets-icons/view-alt-fill"
 import IconPotPlayerIcon from "~icons/material-symbols/play-circle-rounded"
 import toast from "react-hot-toast"
 
@@ -22,24 +21,12 @@ import { usePreload } from "@/utils/queryOptions"
 import { useFileUploadStore, useModalStore } from "@/utils/stores"
 
 const CustomActions = {
-  Preview: defineFileAction({
-    id: "preview",
-    requiresSelection: true,
-    fileFilter: (file) => !file?.isDir,
-    button: {
-      name: "Preview",
-      toolbar: true,
-      group: "OpenOptions",
-      contextMenu: true,
-      icon: IconLetsIconsViewAltFill,
-    },
-  } as const),
   OpenInVLCPlayer: defineFileAction({
     id: "open_vlc_player",
     requiresSelection: true,
     fileFilter: (file) => file?.previewType === "video",
     button: {
-      name: "Open In VLC",
+      name: "VLC",
       toolbar: true,
       group: "OpenOptions",
       icon: IconFlatColorIconsVlc,
@@ -50,7 +37,7 @@ const CustomActions = {
     requiresSelection: true,
     fileFilter: (file) => file?.previewType === "video",
     button: {
-      name: "Open In Pot Player",
+      name: "PotPlayer",
       toolbar: true,
       group: "OpenOptions",
       icon: IconPotPlayerIcon,

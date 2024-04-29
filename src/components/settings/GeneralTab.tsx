@@ -103,6 +103,12 @@ export const GeneralTab = memo(() => {
             variant="bordered"
             isInvalid={!!error}
             defaultSelectedKeys={[field.value]}
+            scrollShadowProps={{
+              isEnabled: false,
+            }}
+            classNames={{
+              popoverContent: "rounded-lg shadow-1",
+            }}
             items={splitFileSizes}
             errorMessage={error?.message}
             {...field}
