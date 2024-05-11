@@ -43,10 +43,8 @@ async function parseFile(file: string, buffer: ArrayBuffer) {
   throw new Error("Invalid or unsupported file")
 }
 
-async function parseAudioMetadata(url: string) {
-  const buffer = await getBuffer(url, 512 * 1024 - 1)
+export async function parseAudioMetadata(url: string, signal?: AbortSignal) {
+  const buffer = await getBuffer(url, 512 * 1024 - 1, signal)
 
   return parseFile(url, buffer)
 }
-
-export default parseAudioMetadata

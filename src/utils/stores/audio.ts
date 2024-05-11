@@ -1,26 +1,29 @@
 import { Tags } from "@/types"
-import type { FileData } from "@tw-material/file-browser"
 import { create } from "zustand"
 
-import parseAudioMetadata from "../tagparser"
+import { parseAudioMetadata } from "@/utils/tagparser"
 
-type AudioRef = HTMLAudioElement | null
+type AudioElem = HTMLAudioElement | null
 
 const defaultState = {
-  audio: null as AudioRef,
+  audio: null as AudioElem,
   isPlaying: false,
-  currentTime: 0,
   duration: 0,
   isLooping: false,
   isMuted: false,
   volume: 1,
   isEnded: false,
-  seekPosition: 0,
-  delay: 0,
+  currentTime: 0,
   metadata: {
-    artist: "Unkown artist",
-    title: "Unkown title",
-    cover: "/images/cover.png",
+    artist: "Unknown artist",
+    title: "Unknown title",
+    cover: "",
+  },
+  metadataParsingController: null as AbortController | null,
+  error: "",
+  handlers: {
+    nextItem: function (_: string) {},
+    prevItem: function (_: string) {},
   },
 }
 
@@ -31,13 +34,11 @@ type PlayerState = typeof defaultState & {
     togglePlay: () => void
     toggleMute: () => void
     toggleLooping: () => void
-    setDuration: (value: number) => void
-    setEnded: () => void
-    setAudioRef: (ref: AudioRef) => void
     loadAudio: (url: string, name: string) => void
-    setSeekPosition: (value: number) => void
     set: (payload: Partial<PlayerState>) => void
     reset: () => void
+    setCurrentTime: (value: number) => void
+    setHandlers: (handlers: (typeof defaultState)["handlers"]) => void
   }
 }
 
@@ -46,27 +47,69 @@ export const useAudioStore = create<PlayerState>((set, get) => ({
   actions: {
     loadAudio: async (url, name) => {
       const state = get()
-      const audio = state.audio
-      if (audio instanceof HTMLAudioElement) {
-        const tags = await parseAudioMetadata(url)
-        let { artist, title, picture } = tags as Tags
-        let cover = defaultState.metadata.cover
-        if (picture) cover = URL.createObjectURL(picture as unknown as Blob)
-        const metadata = {
-          artist: artist || defaultState.metadata.artist,
-          title: title || name,
-          cover,
-        }
-        audio.src = url
-        audio.autoplay = true
-        audio.load()
-        set({
-          ...state,
-          isPlaying: true,
-          isEnded: false,
-          metadata,
-          delay: 1000,
+      let audio = state.audio
+
+      if (!audio) {
+        audio = new Audio()
+        audio.addEventListener("ended", () => {
+          set((prev) => ({ ...prev, isEnded: true, currentTime: 0, delay: 0 }))
+          state.handlers.nextItem("audio")
         })
+        audio.addEventListener("loadedmetadata", () =>
+          set((prev) => ({
+            ...prev,
+            isPlaying: true,
+            duration: audio?.duration || 0,
+          }))
+        )
+        audio.addEventListener("play", () =>
+          set((prev) => ({ ...prev, isPlaying: true }))
+        )
+        audio.addEventListener("pause", () =>
+          set((prev) => ({ ...prev, isPlaying: false }))
+        )
+      }
+
+      if (audio instanceof HTMLAudioElement) {
+        try {
+          audio.pause()
+          audio.currentTime = 0
+
+          const controller = new AbortController()
+          const signal = controller.signal
+
+          if (state.metadataParsingController)
+            state.metadataParsingController.abort()
+
+          set({ metadataParsingController: controller })
+
+          let tags = await parseAudioMetadata(url, signal)
+          let { artist, title, picture } = tags as Tags
+          let cover = ""
+          if (picture) cover = URL.createObjectURL(picture)
+          const metadata = {
+            artist: artist || defaultState.metadata.artist,
+            title: title || name,
+            cover,
+          }
+          audio.src = url
+          audio.autoplay = true
+          audio.load()
+          set({
+            ...state,
+            audio,
+            isPlaying: true,
+            isEnded: false,
+            metadata,
+            currentTime: 0,
+            error: "",
+          })
+        } catch (error) {
+          if ((error as Error).name !== "AbortError")
+            set({ ...state, error: (error as Error).message })
+        } finally {
+          set({ metadataParsingController: null })
+        }
       }
     },
     seek: (value) =>
@@ -78,11 +121,6 @@ export const useAudioStore = create<PlayerState>((set, get) => ({
         }
         return state
       }),
-    setSeekPosition: (value) => {
-      set((state) => {
-        return { ...state, seekPosition: value }
-      })
-    },
     setVolume: (value) =>
       set((state) => {
         const audio = state.audio
@@ -92,6 +130,8 @@ export const useAudioStore = create<PlayerState>((set, get) => ({
         }
         return state
       }),
+    setCurrentTime: (value) =>
+      set((state) => ({ ...state, currentTime: value })),
     togglePlay: () =>
       set((state) => {
         const { audio, isPlaying } = state
@@ -120,12 +160,9 @@ export const useAudioStore = create<PlayerState>((set, get) => ({
         }
         return state
       }),
-    setDuration: (value) => set((state) => ({ ...state, duration: value })),
-    setEnded: () => set((state) => ({ ...state, isEnded: true })),
-    setAudioRef: (ref: AudioRef) => set({ audio: ref }),
     set: (payload) => set((state) => ({ ...state, ...payload })),
     reset: () => set(() => ({ ...defaultState })),
+    setHandlers: (handlers) => set((state) => ({ ...state, handlers })),
   },
 }))
-
 export const audioActions = (state: PlayerState) => state.actions

@@ -34,10 +34,15 @@ function decode(bytes: Uint8Array, encoding: string = "utf-8") {
   return decoder.decode(bytes)
 }
 
-async function getBuffer(url: string, size?: number): Promise<ArrayBuffer> {
+async function getBuffer(
+  url: string,
+  size?: number,
+  signal?: AbortSignal
+): Promise<ArrayBuffer> {
   const response = await http.get(url, {
     headers: { Range: `bytes=${0}-${size}` },
     responseType: "arrayBuffer",
+    signal,
   })
   return response.data
 }

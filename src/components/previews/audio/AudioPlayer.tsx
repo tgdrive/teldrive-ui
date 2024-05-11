@@ -1,4 +1,5 @@
-import { memo, useCallback, useEffect, useRef } from "react"
+import { memo, useCallback, useEffect, useRef, useState } from "react"
+import { FbIcon, FbIconName } from "@tw-material/file-browser"
 import { Button, Slider } from "@tw-material/react"
 import IconPauseCircle from "~icons/ic/round-pause-circle"
 import IconPlayCircle from "~icons/ic/round-play-circle"
@@ -9,16 +10,11 @@ import IconRepeat2Fill from "~icons/ri/repeat-2-fill"
 import IconRepeatOneFill from "~icons/ri/repeat-one-fill"
 import IconSkipNextBold from "~icons/solar/skip-next-bold"
 import IconSkipPreviousBold from "~icons/solar/skip-previous-bold"
-import { useEventListener, useInterval } from "usehooks-ts"
+import clsx from "clsx"
 import { useShallow } from "zustand/react/shallow"
 
 import { formatDuration } from "@/utils/common"
 import { audioActions, useAudioStore } from "@/utils/stores"
-
-interface PlayerProps {
-  nextItem: (previewType: string) => void
-  prevItem: (previewType: string) => void
-}
 
 type SliderValue = number | number[]
 
@@ -30,10 +26,21 @@ const getVolumeIcon = (volume: number, muted: boolean) => {
 const AudioCover = memo(() => {
   const metadata = useAudioStore((state) => state.metadata)
   return (
-    <div className="relative col-span-6 md:col-span-5">
+    <div className="relative col-span-6 md:col-span-5 grid">
+      <div
+        className={clsx(
+          "bg-neutral-400 flex justify-center items-center rounded-large aspect-[1/1] row-span-full col-span-full",
+          metadata.cover ? "-z-[1]" : "z-10"
+        )}
+      >
+        <FbIcon icon={FbIconName.music} className="size-16" />
+      </div>
       <img
         alt="Album cover"
-        className="object-cover rounded-large"
+        className={clsx(
+          "object-cover rounded-large row-span-full col-span-full transition",
+          metadata.cover ? "z-10 opacity-100" : "-z-[1] opacity-0"
+        )}
         height={200}
         src={metadata.cover}
         width="100%"
@@ -65,39 +72,42 @@ const AudioInfo = memo(() => {
 })
 
 const AudioDurationSlider = memo(() => {
-  const { audio, duration, seekPosition, actions, delay } = useAudioStore(
+  const { audio, duration, currentTime, actions, isPlaying } = useAudioStore(
     useShallow((state) => ({
       audio: state.audio,
       duration: state.duration,
-      seekPosition: state.seekPosition,
+      currentTime: state.currentTime,
       actions: state.actions,
-      delay: state.delay,
+      isPlaying: state.isPlaying,
     }))
   )
 
+  const [isDragging, setIsDragging] = useState(false)
+
   const sliderRef = useRef<HTMLDivElement>(null)
 
-  const onPositionChangeEnd = useCallback(
-    (value: SliderValue) => actions.seek(value as number),
-    []
-  )
+  const playAnimationRef = useRef<number | null>(null)
 
-  const onPositionChange = useCallback(
-    (value: SliderValue) => actions.setSeekPosition(value as number),
-    []
-  )
+  const onPositionChangeEnd = useCallback((value: SliderValue) => {
+    actions.seek(value as number)
+    setIsDragging(false)
+  }, [])
 
-  useInterval(() => {
-    if (sliderRef.current && delay > 0) {
-      const isDragging = (
-        sliderRef?.current.firstElementChild?.firstElementChild
-          ?.lastElementChild as HTMLDivElement
-      ).dataset?.dragging
-      if (isDragging !== "true") {
-        actions.setSeekPosition(Math.floor(audio?.currentTime!))
-      }
-    }
-  }, delay)
+  const onPositionChange = useCallback((value: SliderValue) => {
+    setIsDragging(true)
+    actions.setCurrentTime(value as number)
+  }, [])
+
+  const repeat = useCallback(() => {
+    actions.setCurrentTime(audio?.currentTime!)
+    playAnimationRef.current = requestAnimationFrame(repeat)
+  }, [audio, actions.setCurrentTime])
+
+  useEffect(() => {
+    if (isPlaying && !isDragging)
+      playAnimationRef.current = requestAnimationFrame(repeat)
+    else cancelAnimationFrame(playAnimationRef.current!)
+  }, [isPlaying, isDragging, audio, repeat])
 
   return (
     <>
@@ -105,7 +115,7 @@ const AudioDurationSlider = memo(() => {
         ref={sliderRef}
         size="sm"
         aria-label="progress"
-        value={seekPosition}
+        value={currentTime}
         maxValue={duration}
         minValue={0}
         step={1}
@@ -119,7 +129,7 @@ const AudioDurationSlider = memo(() => {
         }}
       />
       <div className="flex justify-between">
-        <p className="text-small">{formatDuration(seekPosition)}</p>
+        <p className="text-small">{formatDuration(currentTime)}</p>
         <p className="text-small ">{formatDuration(duration)}</p>
       </div>
     </>
@@ -153,28 +163,14 @@ const VolumeSlider = memo(() => {
   )
 })
 
-interface TopControlsProps {
-  nextItem: (previewType: string) => void
-  prevItem: (previewType: string) => void
-}
-
-const TopControls = memo(({ nextItem, prevItem }: TopControlsProps) => {
-  const { isPlaying, actions } = useAudioStore(
+const TopControls = memo(() => {
+  const { isPlaying, actions, handlers } = useAudioStore(
     useShallow((state) => ({
       isPlaying: state.isPlaying,
       actions: state.actions,
+      handlers: state.handlers,
     }))
   )
-
-  const handleNext = useCallback(() => {
-    actions.set({ seekPosition: 0, delay: 0 })
-    nextItem("audio")
-  }, [nextItem])
-
-  const handlePrev = useCallback(() => {
-    actions.set({ seekPosition: 0, delay: 0 })
-    prevItem("audio")
-  }, [prevItem])
 
   return (
     <div className="flex w-full items-center justify-center gap-3">
@@ -182,7 +178,7 @@ const TopControls = memo(({ nextItem, prevItem }: TopControlsProps) => {
         isIconOnly
         className="text-inherit"
         variant="text"
-        onPress={handlePrev}
+        onPress={() => handlers.prevItem("audio")}
       >
         <IconSkipPreviousBold />
       </Button>
@@ -202,7 +198,7 @@ const TopControls = memo(({ nextItem, prevItem }: TopControlsProps) => {
         isIconOnly
         className="text-inherit"
         variant="text"
-        onPress={handleNext}
+        onPress={() => handlers.nextItem("audio")}
       >
         <IconSkipNextBold />
       </Button>
@@ -243,46 +239,7 @@ const BottomControls = memo(() => {
   )
 })
 
-export const AudioPlayer = memo(({ nextItem, prevItem }: PlayerProps) => {
-  const audio = useRef(new Audio())
-
-  const actions = useAudioStore(audioActions)
-
-  const isEnded = useAudioStore((state) => state.isEnded)
-
-  useEffect(() => {
-    if (audio.current !== null) actions.setAudioRef(audio.current)
-  }, [audio.current])
-
-  useEventListener(
-    "loadedmetadata",
-    () => actions.setDuration(audio.current.duration),
-    audio
-  )
-
-  useEventListener(
-    "ended",
-    () => {
-      actions.set({ seekPosition: 0, delay: 0, isEnded: true })
-    },
-    audio
-  )
-
-  useEffect(() => {
-    return () => {
-      if (audio.current) {
-        actions.reset()
-        audio.current.pause()
-        audio.current.src = ""
-        audio.current.load()
-      }
-    }
-  }, [])
-
-  useEffect(() => {
-    if (isEnded) nextItem("audio")
-  }, [isEnded])
-
+export const AudioPlayer = memo(() => {
   return (
     <div
       className="flex flex-col relative overflow-hidden height-auto outline-none 
@@ -294,7 +251,7 @@ export const AudioPlayer = memo(({ nextItem, prevItem }: PlayerProps) => {
           <AudioInfo />
           <div className="flex flex-col mt-3 gap-1">
             <AudioDurationSlider />
-            <TopControls nextItem={nextItem} prevItem={prevItem} />
+            <TopControls />
             <BottomControls />
           </div>
         </div>
