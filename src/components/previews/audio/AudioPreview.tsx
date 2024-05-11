@@ -38,14 +38,29 @@ const AudioPreview = ({
   }, [audio])
 
   useEffect(() => {
-    if (assetUrl) {
-      actions.setHandlers({
-        prevItem,
-        nextItem,
-      })
-      actions.loadAudio(assetUrl, name)
+    actions.setHandlers({
+      prevItem,
+      nextItem,
+    })
+    if ("mediaSession" in navigator) {
+      navigator.mediaSession.setActionHandler("nexttrack", () =>
+        nextItem("audio")
+      )
+      navigator.mediaSession.setActionHandler("previoustrack", () =>
+        prevItem("audio")
+      )
     }
-  }, [assetUrl, prevItem, nextItem])
+    return () => {
+      if ("mediaSession" in navigator) {
+        navigator.mediaSession.setActionHandler("nexttrack", null)
+        navigator.mediaSession.setActionHandler("previoustrack", null)
+      }
+    }
+  }, [prevItem, nextItem])
+
+  useEffect(() => {
+    if (assetUrl) actions.loadAudio(assetUrl, name)
+  }, [assetUrl])
 
   return <AudioPlayer />
 }

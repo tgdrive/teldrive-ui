@@ -52,8 +52,10 @@ export const useAudioStore = create<PlayerState>((set, get) => ({
       if (!audio) {
         audio = new Audio()
         audio.addEventListener("ended", () => {
-          set((prev) => ({ ...prev, isEnded: true, currentTime: 0, delay: 0 }))
-          state.handlers.nextItem("audio")
+          set((prev) => {
+            prev.handlers.nextItem("audio")
+            return { ...prev, isEnded: true, currentTime: 0 }
+          })
         })
         audio.addEventListener("loadedmetadata", () =>
           set((prev) => ({
@@ -81,7 +83,7 @@ export const useAudioStore = create<PlayerState>((set, get) => ({
           if (state.metadataParsingController)
             state.metadataParsingController.abort()
 
-          set({ metadataParsingController: controller })
+          set((prev) => ({ ...prev, metadataParsingController: controller }))
 
           let tags = await parseAudioMetadata(url, signal)
           let { artist, title, picture, album } = tags as Tags
@@ -108,27 +110,21 @@ export const useAudioStore = create<PlayerState>((set, get) => ({
                 },
               ],
             })
-            navigator.mediaSession.setActionHandler("nexttrack", () =>
-              state.handlers.nextItem("audio")
-            )
-            navigator.mediaSession.setActionHandler("previoustrack", () =>
-              state.handlers.prevItem("audio")
-            )
           }
-          set({
-            ...state,
+          set((prev) => ({
+            ...prev,
             audio,
             isPlaying: true,
             isEnded: false,
             metadata,
             currentTime: 0,
             error: "",
-          })
+          }))
         } catch (error) {
           if ((error as Error).name !== "AbortError")
-            set({ ...state, error: (error as Error).message })
+            set((prev) => ({ ...prev, error: (error as Error).message }))
         } finally {
-          set({ metadataParsingController: null })
+          set((prev) => ({ ...prev, metadataParsingController: null }))
         }
       }
     },
