@@ -84,7 +84,7 @@ export const useAudioStore = create<PlayerState>((set, get) => ({
           set({ metadataParsingController: controller })
 
           let tags = await parseAudioMetadata(url, signal)
-          let { artist, title, picture } = tags as Tags
+          let { artist, title, picture, album } = tags as Tags
           let cover = ""
           if (picture) cover = URL.createObjectURL(picture)
           const metadata = {
@@ -95,6 +95,26 @@ export const useAudioStore = create<PlayerState>((set, get) => ({
           audio.src = url
           audio.autoplay = true
           audio.load()
+
+          if ("mediaSession" in navigator) {
+            navigator.mediaSession.metadata = new MediaMetadata({
+              title,
+              artist,
+              album,
+              artwork: [
+                {
+                  src: cover,
+                  type: "image/jpeg",
+                },
+              ],
+            })
+            navigator.mediaSession.setActionHandler("nexttrack", () =>
+              state.handlers.nextItem("audio")
+            )
+            navigator.mediaSession.setActionHandler("previoustrack", () =>
+              state.handlers.prevItem("audio")
+            )
+          }
           set({
             ...state,
             audio,
