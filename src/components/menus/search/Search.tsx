@@ -115,7 +115,7 @@ export const SearchMenu = memo(
             pathname.includes("/my-drive")
           ) {
             const path = pathname.split("/my-drive")[1] || "/"
-            filterQuery.path = path
+            filterQuery.path = decodeURI(path)
           } else if (key === "query" && value) {
             filterQuery[key] = value
           }

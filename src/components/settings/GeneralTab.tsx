@@ -1,5 +1,5 @@
 import { memo, useCallback } from "react"
-import { Button, Input, Select, SelectItem } from "@tw-material/react"
+import { Button, Input, Select, SelectItem, Switch } from "@tw-material/react"
 import clsx from "clsx"
 import { Controller, useForm } from "react-hook-form"
 
@@ -132,28 +132,13 @@ export const GeneralTab = memo(() => {
           name="encryptFiles"
           control={control}
           render={({ field }) => (
-            <>
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input
-                  type="checkbox"
-                  className="sr-only peer"
-                  onChange={(e) => {
-                    field.onChange({ target: { value: e.target.checked } })
-                  }}
-                  checked={field.value}
-                  name={field.name}
-                  onBlur={field.onBlur}
-                />
-                <span
-                  className={clsx(
-                    "w-14 h-8 peer bg-gray-400 peer-focus:outline-none rounded-full",
-                    "peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[4px] after:left-[4px]",
-                    "after:bg-white after:rounded-full after:h-6",
-                    "after:w-6 after:transition-all peer-checked:bg-secondary"
-                  )}
-                />
-              </label>
-            </>
+            <Switch
+              size="lg"
+              onChange={field.onChange}
+              isSelected={field.value}
+              name={field.name}
+              onBlur={field.onBlur}
+            />
           )}
         />
       </div>
