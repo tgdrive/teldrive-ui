@@ -35,7 +35,10 @@ const CategoryStorageCard = memo(
 
     const handleClick = useCallback((e: MouseEvent<"a">) => {
       e.preventDefault()
-      preloadFiles(`/${category}s`, "category")
+      preloadFiles({
+        type: "category",
+        path: `/${category}`,
+      })
     }, [])
 
     return (

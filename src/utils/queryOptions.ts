@@ -123,20 +123,17 @@ export const usePreload = () => {
   const { startProgress, stopProgress } = useProgress()
 
   const preloadFiles = useCallback(
-    async (path: string, type: BrowseView, showProgress = true) => {
-      const newParams = {
-        path,
-        type,
-      }
-      const queryKey = ["files", newParams]
+    async (params: QueryParams, showProgress = true) => {
+      const queryKey = ["files", params]
 
       const queryState = queryClient.getQueryState(queryKey)
 
       const nextRoute: NavigateOptions = {
         to: "/$",
         params: {
-          _splat: newParams.type + path,
+          _splat: params.type + params.path,
         },
+        search: params.filter,
       }
       if (!queryState?.data) {
         try {
@@ -151,7 +148,7 @@ export const usePreload = () => {
     [queryClient]
   )
   const preloadStorage = useCallback(async () => {
-    const queryKey = ["category-storage"]
+    const queryKey = ["stats"]
     const queryState = queryClient.getQueryState(queryKey)
 
     const nextRoute: NavigateOptions = {
@@ -214,10 +211,8 @@ export const fetchFiles =
     if (type === "my-drive") {
       query.path = path.startsWith("/") ? path : "/" + path
     } else if (type === "search") {
-      query.op = "search"
-      query.search = path.split("/")?.[1] ?? ""
-
-      if (!query.search) return { results: [] }
+      query.op = "find"
+      for (const key in params.filter) query[key] = params.filter[key]
     } else if (type === "starred") {
       query.op = "find"
       query.starred = true
@@ -227,7 +222,7 @@ export const fetchFiles =
     } else if (type === "category") {
       query.op = "find"
       query.type = "file"
-      query.category = path.slice(1, -1)
+      query.category = path.replaceAll("/", "")
     }
 
     return (

@@ -25,7 +25,11 @@ const SidNavItem = memo(
   ({ id, icon: Icon, preloadFiles, preloadStorage }: SidNavItemProps) => {
     const handleClick = useCallback((e: MouseEvent<HTMLButtonElement>) => {
       e.preventDefault()
-      if (id !== "storage") preloadFiles("", id)
+      if (id !== "storage")
+        preloadFiles({
+          type: id,
+          path: "",
+        })
       else preloadStorage()
     }, [])
 

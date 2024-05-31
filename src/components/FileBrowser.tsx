@@ -50,11 +50,16 @@ const positions = new Map<string, StateSnapshot>()
 export const DriveFileBrowser = memo(() => {
   const { queryParams: params } = fileRoute.useRouteContext()
 
+  const search = fileRoute.useSearch()
+
   const listRef = useRef<VirtuosoHandle | VirtuosoGridHandle>(null)
 
   const { data: session } = useQuery(sessionQueryOptions)
 
-  const queryOptions = filesQueryOptions(params, session?.hash!)
+  const queryOptions = filesQueryOptions(
+    Object.keys(search).length > 0 ? { ...params, filter: search } : params,
+    session?.hash!
+  )
 
   const modalOpen = useModalStore((state) => state.open)
 

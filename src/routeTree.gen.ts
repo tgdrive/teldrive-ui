@@ -26,6 +26,9 @@ import { Route as AuthLoginImport } from './routes/_auth.login'
 const AuthenticatedSettingsTabIdLazyImport = createFileRoute(
   '/_authenticated/settings/$tabId',
 )()
+const AuthenticatedWatchIdNameLazyImport = createFileRoute(
+  '/_authenticated/watch/$id/$name',
+)()
 
 // Create/Update Routes
 
@@ -76,57 +79,158 @@ const AuthenticatedSettingsTabIdLazyRoute =
     import('./routes/_authenticated.settings.$tabId.lazy').then((d) => d.Route),
   )
 
+const AuthenticatedWatchIdNameLazyRoute =
+  AuthenticatedWatchIdNameLazyImport.update({
+    path: '/watch/$id/$name',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any).lazy(() =>
+    import('./routes/_authenticated.watch.$id.$name.lazy').then((d) => d.Route),
+  )
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
     '/_auth': {
+      id: '/_auth'
+      path: ''
+      fullPath: ''
       preLoaderRoute: typeof AuthImport
       parentRoute: typeof rootRoute
     }
     '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: ''
       preLoaderRoute: typeof AuthenticatedImport
       parentRoute: typeof rootRoute
     }
     '/_auth/login': {
+      id: '/_auth/login'
+      path: '/login'
+      fullPath: '/login'
       preLoaderRoute: typeof AuthLoginImport
       parentRoute: typeof AuthImport
     }
     '/_authenticated/$': {
+      id: '/_authenticated/$'
+      path: '/$'
+      fullPath: '/$'
       preLoaderRoute: typeof AuthenticatedSplatImport
       parentRoute: typeof AuthenticatedImport
     }
     '/_authenticated/settings': {
+      id: '/_authenticated/settings'
+      path: '/settings'
+      fullPath: '/settings'
       preLoaderRoute: typeof AuthenticatedSettingsImport
       parentRoute: typeof AuthenticatedImport
     }
     '/_authenticated/storage': {
+      id: '/_authenticated/storage'
+      path: '/storage'
+      fullPath: '/storage'
       preLoaderRoute: typeof AuthenticatedStorageImport
       parentRoute: typeof AuthenticatedImport
     }
     '/_authenticated/': {
+      id: '/_authenticated/'
+      path: '/'
+      fullPath: '/'
       preLoaderRoute: typeof AuthenticatedIndexImport
       parentRoute: typeof AuthenticatedImport
     }
     '/_authenticated/settings/$tabId': {
+      id: '/_authenticated/settings/$tabId'
+      path: '/$tabId'
+      fullPath: '/settings/$tabId'
       preLoaderRoute: typeof AuthenticatedSettingsTabIdLazyImport
       parentRoute: typeof AuthenticatedSettingsImport
+    }
+    '/_authenticated/watch/$id/$name': {
+      id: '/_authenticated/watch/$id/$name'
+      path: '/watch/$id/$name'
+      fullPath: '/watch/$id/$name'
+      preLoaderRoute: typeof AuthenticatedWatchIdNameLazyImport
+      parentRoute: typeof AuthenticatedImport
     }
   }
 }
 
 // Create and export the route tree
 
-export const routeTree = rootRoute.addChildren([
-  AuthRoute.addChildren([AuthLoginRoute]),
-  AuthenticatedRoute.addChildren([
+export const routeTree = rootRoute.addChildren({
+  AuthRoute: AuthRoute.addChildren({ AuthLoginRoute }),
+  AuthenticatedRoute: AuthenticatedRoute.addChildren({
     AuthenticatedSplatRoute,
-    AuthenticatedSettingsRoute.addChildren([
+    AuthenticatedSettingsRoute: AuthenticatedSettingsRoute.addChildren({
       AuthenticatedSettingsTabIdLazyRoute,
-    ]),
+    }),
     AuthenticatedStorageRoute,
     AuthenticatedIndexRoute,
-  ]),
-])
+    AuthenticatedWatchIdNameLazyRoute,
+  }),
+})
 
 /* prettier-ignore-end */
+
+/* ROUTE_MANIFEST_START
+{
+  "routes": {
+    "__root__": {
+      "filePath": "__root.tsx",
+      "children": [
+        "/_auth",
+        "/_authenticated"
+      ]
+    },
+    "/_auth": {
+      "filePath": "_auth.tsx",
+      "children": [
+        "/_auth/login"
+      ]
+    },
+    "/_authenticated": {
+      "filePath": "_authenticated.tsx",
+      "children": [
+        "/_authenticated/$",
+        "/_authenticated/settings",
+        "/_authenticated/storage",
+        "/_authenticated/",
+        "/_authenticated/watch/$id/$name"
+      ]
+    },
+    "/_auth/login": {
+      "filePath": "_auth.login.tsx",
+      "parent": "/_auth"
+    },
+    "/_authenticated/$": {
+      "filePath": "_authenticated.$.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/settings": {
+      "filePath": "_authenticated.settings.tsx",
+      "parent": "/_authenticated",
+      "children": [
+        "/_authenticated/settings/$tabId"
+      ]
+    },
+    "/_authenticated/storage": {
+      "filePath": "_authenticated.storage.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/": {
+      "filePath": "_authenticated.index.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/settings/$tabId": {
+      "filePath": "_authenticated.settings.$tabId.lazy.tsx",
+      "parent": "/_authenticated/settings"
+    },
+    "/_authenticated/watch/$id/$name": {
+      "filePath": "_authenticated.watch.$id.$name.lazy.tsx",
+      "parent": "/_authenticated"
+    }
+  }
+}
+ROUTE_MANIFEST_END */

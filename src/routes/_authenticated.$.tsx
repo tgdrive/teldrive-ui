@@ -1,3 +1,4 @@
+import { FilterQuery, QueryParams } from "@/types"
 import { createFileRoute } from "@tanstack/react-router"
 
 import { extractPathParts } from "@/utils/common"
@@ -20,10 +21,17 @@ export const Route = createFileRoute("/_authenticated/$")({
     }
     return { queryParams: { type, path } }
   },
-  loader: async ({ context: { queryClient, queryParams }, preload }) => {
+  validateSearch: (search: Record<string, unknown>) => search as FilterQuery,
+  loaderDeps: ({ search }) => search,
+  loader: async ({ context: { queryClient, queryParams }, preload, deps }) => {
+    let params = queryParams as QueryParams
+
+    if (queryParams.type === "search" && Object.keys(deps).length > 0)
+      params = { ...queryParams, filter: deps }
+
     if (preload)
-      await queryClient.prefetchInfiniteQuery(filesQueryOptions(queryParams))
-    else queryClient.fetchInfiniteQuery(filesQueryOptions(queryParams))
+      await queryClient.prefetchInfiniteQuery(filesQueryOptions(params))
+    else queryClient.fetchInfiniteQuery(filesQueryOptions(params))
   },
   wrapInSuspense: true,
 })
