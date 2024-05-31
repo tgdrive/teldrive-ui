@@ -45,7 +45,7 @@ const categories = [
   { value: "other", icon: IconFaSolidFile },
 ]
 
-const locations = ["any", "current"]
+const locations = ["current", "custom"]
 
 const modifiedDateValues = [
   { value: "7", label: "Last 7 days" },
@@ -67,6 +67,7 @@ const defaultFilters = {
   query: "",
   fromDate: "",
   toDate: "",
+  path: "",
 }
 
 export const SearchMenu = memo(
@@ -80,6 +81,8 @@ export const SearchMenu = memo(
     const modifiedDate = useWatch({ control, name: "modifiedDate" })
 
     const fromDate = useWatch({ control, name: "fromDate" })
+
+    const location = useWatch({ control, name: "location" })
 
     const pathname = useRouterState({ select: (s) => s.location.pathname })
 
@@ -116,6 +119,8 @@ export const SearchMenu = memo(
           ) {
             const path = pathname.split("/my-drive")[1] || "/"
             filterQuery.path = decodeURI(path)
+          } else if (key === "location" && value === "custom" && data.path) {
+            filterQuery.path = data.path
           } else if (key === "query" && value) {
             filterQuery[key] = value
           }
@@ -172,7 +177,7 @@ export const SearchMenu = memo(
               <CheckboxGroup
                 classNames={{
                   wrapper: "gap-2",
-                  label: "text-md text-inherit",
+                  label: "text-md text-inherit select-none",
                 }}
                 label="Category"
                 orientation="horizontal"
@@ -217,20 +222,46 @@ export const SearchMenu = memo(
               <RadioGroup
                 label="Location"
                 classNames={{
-                  wrapper: "gap-16",
-                  label: "text-md text-inherit",
+                  wrapper: "gap-4",
+                  label: "text-md text-inherit select-none",
                 }}
                 orientation="horizontal"
                 {...field}
               >
                 {locations.map((location) => (
-                  <Radio value={location} key={location}>
+                  <Radio
+                    value={location}
+                    key={location}
+                    classNames={{
+                      label: "capitalize text-md",
+                    }}
+                  >
                     {location}
                   </Radio>
                 ))}
               </RadioGroup>
             )}
           />
+          {location === "custom" && (
+            <Controller
+              name="path"
+              control={control}
+              render={({ field, fieldState: { error } }) => (
+                <Input
+                  size="md"
+                  placeholder="Custom Path"
+                  autoComplete="off"
+                  isClearable
+                  onClear={() => field.onChange("")}
+                  className="max-w-xs"
+                  variant="bordered"
+                  isInvalid={!!error}
+                  errorMessage={error?.message}
+                  {...field}
+                ></Input>
+              )}
+            />
+          )}
           <Controller
             control={control}
             name="modifiedDate"
@@ -240,7 +271,7 @@ export const SearchMenu = memo(
                 classNames={{
                   wrapper:
                     "grid gap-2 grid-cols-[repeat(auto-fit,minmax(100px,min-content))]",
-                  label: "text-md text-inherit",
+                  label: "text-md text-inherit select-none",
                 }}
                 {...field}
               >
