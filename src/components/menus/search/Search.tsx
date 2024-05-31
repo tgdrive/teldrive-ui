@@ -7,6 +7,7 @@ import {
 } from "@tanstack/react-router"
 import {
   Button,
+  Checkbox,
   CheckboxGroup,
   Input,
   FreeSoloPopover as Popover,
@@ -68,6 +69,7 @@ const defaultFilters = {
   fromDate: "",
   toDate: "",
   path: "",
+  deepSearch: false,
 }
 
 export const SearchMenu = memo(
@@ -119,8 +121,10 @@ export const SearchMenu = memo(
           ) {
             const path = pathname.split("/my-drive")[1] || "/"
             filterQuery.path = decodeURI(path)
+            filterQuery.deepSearch = data.deepSearch
           } else if (key === "location" && value === "custom" && data.path) {
             filterQuery.path = data.path
+            filterQuery.deepSearch = data.deepSearch
           } else if (key === "query" && value) {
             filterQuery[key] = value
           }
@@ -215,33 +219,49 @@ export const SearchMenu = memo(
               ></Input>
             )}
           />
-          <Controller
-            control={control}
-            name="location"
-            render={({ field }) => (
-              <RadioGroup
-                label="Location"
-                classNames={{
-                  wrapper: "gap-4",
-                  label: "text-md text-inherit select-none",
-                }}
-                orientation="horizontal"
-                {...field}
-              >
-                {locations.map((location) => (
-                  <Radio
-                    value={location}
-                    key={location}
-                    classNames={{
-                      label: "capitalize text-md",
-                    }}
-                  >
-                    {location}
-                  </Radio>
-                ))}
-              </RadioGroup>
-            )}
-          />
+          <div className="flex items-end gap-4">
+            <Controller
+              control={control}
+              name="location"
+              render={({ field }) => (
+                <RadioGroup
+                  label="Location"
+                  classNames={{
+                    wrapper: "gap-4",
+                    label: "text-md text-inherit select-none",
+                  }}
+                  orientation="horizontal"
+                  {...field}
+                >
+                  {locations.map((location) => (
+                    <Radio
+                      value={location}
+                      key={location}
+                      classNames={{
+                        label: "capitalize text-md",
+                      }}
+                    >
+                      {location}
+                    </Radio>
+                  ))}
+                </RadioGroup>
+              )}
+            />
+            <Controller
+              name="deepSearch"
+              control={control}
+              render={({ field }) => (
+                <Checkbox
+                  onChange={field.onChange}
+                  isSelected={field.value}
+                  name={field.name}
+                  onBlur={field.onBlur}
+                >
+                  Deep Search
+                </Checkbox>
+              )}
+            />
+          </div>
           {location === "custom" && (
             <Controller
               name="path"

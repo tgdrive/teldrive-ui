@@ -122,4 +122,5 @@ export type FilterQuery = {
   path?: string
   query?: string
   updatedAt?: string
+  deepSearch?: boolean
 }
