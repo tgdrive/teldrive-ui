@@ -11,6 +11,7 @@ const allowedTypes = [
   "search",
   "storage",
   "category",
+  "browse",
 ]
 
 export const Route = createFileRoute("/_authenticated/$")({
@@ -25,8 +26,10 @@ export const Route = createFileRoute("/_authenticated/$")({
   loaderDeps: ({ search }) => search,
   loader: async ({ context: { queryClient, queryParams }, preload, deps }) => {
     let params = queryParams as QueryParams
-
-    if (queryParams.type === "search" && Object.keys(deps).length > 0)
+    if (
+      (queryParams.type === "search" || queryParams.type == "browse") &&
+      Object.keys(deps).length > 0
+    )
       params = { ...queryParams, filter: deps }
 
     if (preload)

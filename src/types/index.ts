@@ -63,7 +63,7 @@ export type Session = {
 export type QueryParams = {
   type: BrowseView
   path: string
-  filter?: Record<string, string>
+  filter?: FilterQuery
 }
 
 export type AccountStats = {
@@ -112,6 +112,7 @@ export type BrowseView =
   | "starred"
   | "recent"
   | "category"
+  | "browse"
 
 export type FileQueryKey = (string | QueryParams)[]
 
@@ -121,4 +122,5 @@ export type FilterQuery = {
   query?: string
   updatedAt?: string
   deepSearch?: boolean
+  parentId?: string
 }

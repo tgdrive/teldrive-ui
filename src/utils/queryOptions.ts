@@ -218,7 +218,8 @@ export const fetchFiles =
       query.op = "find"
       query.type = "file"
       query.category = path.replaceAll("/", "")
-    }
+    } else if (type === "browse")
+      query.parentId = params.filter?.parentId as string
 
     return (
       await http.get<FileResponse>("/api/files", { params: query, signal })

@@ -10,6 +10,10 @@ export const sortViewMap = {
     sortId: "sort_files_by_name",
     order: SortOrder.ASC,
   },
+  browse: {
+    sortId: "sort_files_by_name",
+    order: SortOrder.ASC,
+  },
   search: { sortId: "sort_files_by_name", order: SortOrder.ASC },
   starred: { sortId: "sort_files_by_date", order: SortOrder.DESC },
   recent: { sortId: "sort_files_by_date", order: SortOrder.DESC },

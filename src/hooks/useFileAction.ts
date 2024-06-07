@@ -92,13 +92,24 @@ export const useFileAction = (params: QueryParams, session: Session) => {
           const fileToOpen = targetFile ?? files[0]
 
           if (fileToOpen && FileHelper.isDirectory(fileToOpen)) {
-            preloadFiles({
-              type: "my-drive",
-              path:
-                fileToOpen.path || fileToOpen.path == ""
-                  ? fileToOpen.path
-                  : params.path + "/" + fileToOpen.name,
-            })
+            let qparams: QueryParams
+
+            if (params.type === "my-drive") {
+              qparams = {
+                type: params.type,
+                path:
+                  fileToOpen.path || fileToOpen.path == ""
+                    ? fileToOpen.path
+                    : params.path + "/" + fileToOpen.name,
+              }
+            } else {
+              qparams = {
+                type: "browse",
+                path: "",
+                filter: { parentId: fileToOpen.id },
+              }
+            }
+            preloadFiles(qparams)
           } else if (fileToOpen && FileHelper.isOpenable(fileToOpen)) {
             actions.set({
               open: true,
