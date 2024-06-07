@@ -1,12 +1,10 @@
-import { useCallback, useEffect } from "react"
+import { useCallback } from "react"
 import {
-  BrowseView,
   CategoryStorage,
   FilePayload,
   FileResponse,
   QueryParams,
   Session,
-  Settings,
   SingleFile,
   UploadStats,
 } from "@/types"
@@ -36,10 +34,8 @@ const mapFilesToFb = (files: SingleFile[], sessionHash: string): FileData[] => {
         name: item.name,
         type: item.type,
         mimeType: item.mimeType,
-        location: item.parentPath,
         size: item.size ? Number(item.size) : 0,
         modDate: item.updatedAt,
-        path: item.path,
         isDir: true,
       }
 
@@ -62,7 +58,6 @@ const mapFilesToFb = (files: SingleFile[], sessionHash: string): FileData[] => {
       name: item.name,
       type: item.type,
       mimeType: item.mimeType,
-      location: item.parentPath,
       size: item.size ? Number(item.size) : 0,
       previewType,
       openable: preview[previewType!] ? true : false,

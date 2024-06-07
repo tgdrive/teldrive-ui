@@ -6,7 +6,6 @@ export type SingleFile = {
   name: string
   type: string
   mimeType: string
-  path?: string
   size: number
   depth: number
   createdAt: string
@@ -15,7 +14,6 @@ export type SingleFile = {
   parentId: string
   id: string
   starred: boolean
-  parentPath?: string
   encrypted?: boolean
 }
 
