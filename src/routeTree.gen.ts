@@ -20,12 +20,10 @@ import { Route as AuthenticatedStorageImport } from './routes/_authenticated.sto
 import { Route as AuthenticatedSettingsImport } from './routes/_authenticated.settings'
 import { Route as AuthenticatedSplatImport } from './routes/_authenticated.$'
 import { Route as AuthLoginImport } from './routes/_auth.login'
+import { Route as AuthenticatedSettingsTabIdImport } from './routes/_authenticated.settings.$tabId'
 
 // Create Virtual Routes
 
-const AuthenticatedSettingsTabIdLazyImport = createFileRoute(
-  '/_authenticated/settings/$tabId',
-)()
 const AuthenticatedWatchIdNameLazyImport = createFileRoute(
   '/_authenticated/watch/$id/$name',
 )()
@@ -71,13 +69,12 @@ const AuthLoginRoute = AuthLoginImport.update({
   getParentRoute: () => AuthRoute,
 } as any).lazy(() => import('./routes/_auth.login.lazy').then((d) => d.Route))
 
-const AuthenticatedSettingsTabIdLazyRoute =
-  AuthenticatedSettingsTabIdLazyImport.update({
+const AuthenticatedSettingsTabIdRoute = AuthenticatedSettingsTabIdImport.update(
+  {
     path: '/$tabId',
     getParentRoute: () => AuthenticatedSettingsRoute,
-  } as any).lazy(() =>
-    import('./routes/_authenticated.settings.$tabId.lazy').then((d) => d.Route),
-  )
+  } as any,
+)
 
 const AuthenticatedWatchIdNameLazyRoute =
   AuthenticatedWatchIdNameLazyImport.update({
@@ -144,7 +141,7 @@ declare module '@tanstack/react-router' {
       id: '/_authenticated/settings/$tabId'
       path: '/$tabId'
       fullPath: '/settings/$tabId'
-      preLoaderRoute: typeof AuthenticatedSettingsTabIdLazyImport
+      preLoaderRoute: typeof AuthenticatedSettingsTabIdImport
       parentRoute: typeof AuthenticatedSettingsImport
     }
     '/_authenticated/watch/$id/$name': {
@@ -164,7 +161,7 @@ export const routeTree = rootRoute.addChildren({
   AuthenticatedRoute: AuthenticatedRoute.addChildren({
     AuthenticatedSplatRoute,
     AuthenticatedSettingsRoute: AuthenticatedSettingsRoute.addChildren({
-      AuthenticatedSettingsTabIdLazyRoute,
+      AuthenticatedSettingsTabIdRoute,
     }),
     AuthenticatedStorageRoute,
     AuthenticatedIndexRoute,
@@ -224,7 +221,7 @@ export const routeTree = rootRoute.addChildren({
       "parent": "/_authenticated"
     },
     "/_authenticated/settings/$tabId": {
-      "filePath": "_authenticated.settings.$tabId.lazy.tsx",
+      "filePath": "_authenticated.settings.$tabId.tsx",
       "parent": "/_authenticated/settings"
     },
     "/_authenticated/watch/$id/$name": {
