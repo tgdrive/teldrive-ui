@@ -1,6 +1,6 @@
 import { memo, useCallback, useState } from "react"
-import { AccountStats, Channel, Message } from "@/types"
-import { useQuery, useQueryClient } from "@tanstack/react-query"
+import { AccountStats, Channel, Message, UserSession } from "@/types"
+import { useQueries, useQuery, useQueryClient } from "@tanstack/react-query"
 import {
   Button,
   scrollbarClasses,
@@ -8,6 +8,8 @@ import {
   SelectItem,
   Textarea,
 } from "@tw-material/react"
+import IcRoundCancel from "~icons/ic/round-cancel"
+import IcRoundCheckCircle from "~icons/ic/round-check-circle"
 import IcRoundContentCopy from "~icons/ic/round-content-copy"
 import IcRoundRemoveCircleOutline from "~icons/ic/round-remove-circle-outline"
 import clsx from "clsx"
@@ -17,7 +19,11 @@ import toast from "react-hot-toast"
 
 import { copyDataToClipboard } from "@/utils/common"
 import http from "@/utils/http"
-import { sessionQueryOptions } from "@/utils/queryOptions"
+import {
+  sessionQueryOptions,
+  sessionsQueryOptions,
+  useDeleteSession,
+} from "@/utils/queryOptions"
 
 const validateBots = (value?: string) => {
   if (value) {
@@ -33,6 +39,50 @@ async function updateChannel(channel: Channel) {
   })
 }
 
+const Session = memo(
+  ({ appName, location, createdAt, valid, hash, current }: UserSession) => {
+    const deleteSession = useDeleteSession()
+
+    const handleDelete = useCallback(() => deleteSession.mutate(hash), [hash])
+
+    return (
+      <div
+        className={clsx(
+          "flex  flex-col justify-between p-4 rounded-lg gap-1 relative",
+          valid ? "bg-green-500/20" : "bg-red-500/20"
+        )}
+      >
+        {(!current || !valid) && (
+          <Button
+            isIconOnly
+            variant="text"
+            size="sm"
+            className="absolute top-1 right-1"
+            onPress={handleDelete}
+          >
+            <IcRoundCancel />
+          </Button>
+        )}
+
+        <div className="flex gap-1 items-center">
+          {valid ? (
+            <IcRoundCheckCircle className="text-green-500 size-4" />
+          ) : (
+            <IcRoundCancel className="text-red-500 size-4" />
+          )}
+          <p className="font-medium">{appName || "Unknown"}</p>
+        </div>
+        <p className="text-sm font-normal">
+          Created : {new Date(createdAt).toISOString().split("T")[0]}
+        </p>
+        {location && (
+          <p className="text-sm font-normal">Location : {location}</p>
+        )}
+      </div>
+    )
+  }
+)
+
 export const AccountTab = memo(() => {
   const { control, handleSubmit } = useForm<{ tokens: string }>({
     defaultValues: { tokens: "" },
@@ -40,16 +90,24 @@ export const AccountTab = memo(() => {
 
   const { data: session } = useQuery(sessionQueryOptions)
 
-  const { data, refetch, isSuccess } = useQuery({
-    queryKey: ["stats", session?.userName],
-    queryFn: async () =>
-      (await http.get<AccountStats>("/api/users/stats")).data,
-  })
-
-  const { data: channelData, isLoading: channelLoading } = useQuery({
-    queryKey: ["channels", session?.userName],
-    queryFn: async () =>
-      (await http.get<Channel[]>("/api/users/channels")).data,
+  const [
+    { data, refetch, isSuccess },
+    { data: sessions, isSuccess: sessionsLoaded },
+    { data: channelData, isLoading: channelLoading },
+  ] = useQueries({
+    queries: [
+      {
+        queryKey: ["stats", session?.userName],
+        queryFn: async () =>
+          (await http.get<AccountStats>("/api/users/stats")).data,
+      },
+      sessionsQueryOptions,
+      {
+        queryKey: ["channels", session?.userName],
+        queryFn: async () =>
+          (await http.get<Channel[]>("/api/users/channels")).data,
+      },
+    ],
   })
 
   const [isRemoving, setIsRemoving] = useState<boolean>(false)
@@ -210,6 +268,18 @@ export const AccountTab = memo(() => {
             )}
           </Select>
         )}
+      </div>
+      <div className="col-span-6">
+        <p className="text-lg font-medium">Sessions</p>
+        <p className="text-sm font-normal text-on-surface-variant">
+          Active sessions for your account
+        </p>
+        <div className="flex pt-2 flex-wrap gap-2">
+          {sessionsLoaded &&
+            sessions?.map((session) => (
+              <Session key={session.hash} {...session} />
+            ))}
+        </div>
       </div>
     </div>
   )

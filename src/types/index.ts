@@ -60,6 +60,16 @@ export type Session = {
   expires: string
 }
 
+export type UserSession = {
+  hash: string
+  createdAt: string
+  location?: string
+  officialApp?: boolean
+  appName?: string
+  valid: boolean
+  current: boolean
+}
+
 export type QueryParams = {
   type: BrowseView
   path: string

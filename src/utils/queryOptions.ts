@@ -7,6 +7,7 @@ import {
   Session,
   SingleFile,
   UploadStats,
+  UserSession,
 } from "@/types"
 import {
   InfiniteData,
@@ -74,6 +75,12 @@ export const sessionQueryOptions = queryOptions({
   staleTime: 10 * (60 * 1000),
   gcTime: 15 * (60 * 1000),
   refetchOnWindowFocus: false,
+})
+
+export const sessionsQueryOptions = queryOptions({
+  queryKey: ["sessions"],
+  queryFn: async ({ signal }) =>
+    (await http.get<UserSession[]>("/api/users/sessions", { signal })).data,
 })
 
 export const filesQueryOptions = (params: QueryParams, sessionHash?: string) =>
@@ -305,6 +312,28 @@ export const useDeleteFile = (queryKey: any[]) => {
     },
     onSuccess: () => {
       toast.success("File deleted successfully")
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey })
+    },
+  })
+}
+
+export const useDeleteSession = () => {
+  const queryClient = useQueryClient()
+  const queryKey = ["sessions"]
+  return useMutation({
+    mutationFn: async (id: string) => http.delete(`/api/users/sessions/${id}`),
+    onMutate: async (variables) => {
+      await queryClient.cancelQueries({ queryKey })
+      const previousSessions = queryClient.getQueryData(queryKey)
+      queryClient.setQueryData<UserSession[]>(queryKey, (prev) =>
+        prev!.filter((val) => val.hash !== variables)
+      )
+      return { previousSessions }
+    },
+    onError: (_1, _2, context) => {
+      queryClient.setQueryData(queryKey, context?.previousSessions)
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey })
