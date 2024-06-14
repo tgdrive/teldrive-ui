@@ -1,5 +1,12 @@
 import React, { memo, useCallback, useEffect, useMemo, useRef } from "react"
-import { FileQueryKey, FileResponse, QueryParams, UploadPart } from "@/types"
+import {
+  AccountStats,
+  FileQueryKey,
+  FileResponse,
+  QueryParams,
+  UploadPart,
+} from "@/types"
+import { useQuery } from "@tanstack/react-query"
 import { ColorsLight, FbIcon, useIconData } from "@tw-material/file-browser"
 import { Button, Listbox, ListboxItem } from "@tw-material/react"
 import IcOutlineCheckCircle from "~icons/ic/outline-check-circle"
@@ -19,7 +26,7 @@ import useSettings from "@/hooks/useSettings"
 import { scrollbarClasses } from "@/utils/classes"
 import { filesize, formatTime, zeroPad } from "@/utils/common"
 import http from "@/utils/http"
-import { useCreateFile } from "@/utils/queryOptions"
+import { sessionQueryOptions, useCreateFile } from "@/utils/queryOptions"
 import { FileUploadStatus, useFileUploadStore } from "@/utils/stores"
 
 type UploadParams = Record<string, string | number | boolean | undefined>
@@ -67,6 +74,7 @@ const uploadFile = async (
   file: File,
   path: string,
   chunkSize: number,
+  userId: number,
   concurrency: number,
   encyptFile: boolean,
   signal: AbortSignal,
@@ -90,7 +98,12 @@ const uploadFile = async (
   const limit = pLimit(concurrency)
 
   const uploadId = md5(
-    path + "/" + fileName + file.size.toString() + formatTime(file.lastModified)
+    path +
+      "/" +
+      fileName +
+      file.size.toString() +
+      formatTime(file.lastModified) +
+      userId
   )
 
   const url = `${window.location.origin}/api/uploads/${uploadId}`
@@ -275,7 +288,7 @@ const UploadFileEntry = memo(({ id }: { id: string }) => {
 })
 
 export const Upload = ({ queryKey }: { queryKey: FileQueryKey }) => {
-  const { fileIds, currentFile, collapse, fileDialogOpen, actions, fileMap } =
+  const { fileIds, currentFile, collapse, fileDialogOpen, actions } =
     useFileUploadStore(
       useShallow((state) => ({
         fileIds: state.filesIds,
@@ -288,6 +301,8 @@ export const Upload = ({ queryKey }: { queryKey: FileQueryKey }) => {
     )
 
   const { settings } = useSettings()
+
+  const { data: session } = useQuery(sessionQueryOptions)
 
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -325,6 +340,7 @@ export const Upload = ({ queryKey }: { queryKey: FileQueryKey }) => {
         currentFile.file,
         (queryKey[1] as QueryParams).path,
         Number(settings.splitFileSize),
+        session?.userId as number,
         Number(settings.uploadConcurrency),
         Boolean(settings.encryptFiles),
         currentFile.controller.signal,
