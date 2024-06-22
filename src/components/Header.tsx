@@ -96,7 +96,7 @@ const SearchBar = memo(({ className }: SearchBarProps) => {
 
 export default memo(function Header({ auth }: { auth?: boolean }) {
   return (
-    <header className="sticky top-0 z-50 flex items-center min-h-16 px-4">
+    <header className="sticky top-0 z-50 flex items-center min-h-12 xs:min-h-16 px-4">
       <div className="flex-1 flex gap-2 items-center">
         <Link to="/" className="flex gap-2 items-center cursor-pointer">
           <PhTelegramLogoFill className="size-6 text-inherit" />

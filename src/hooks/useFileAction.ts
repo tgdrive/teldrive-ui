@@ -183,7 +183,7 @@ export const useFileAction = (params: QueryParams, session: Session) => {
           selections.forEach((element) => {
             if (!FileHelper.isDirectory(element)) {
               const { id, name } = element
-              clipboardText = `${clipboardText}${mediaUrl(id, name, session.hash)}\n`
+              clipboardText = `${clipboardText}${mediaUrl(id, name, session.hash, true)}\n`
             }
           })
           navigator.clipboard.writeText(clipboardText)

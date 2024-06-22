@@ -106,9 +106,9 @@ export const mediaUrl = (
   download = false
 ) => {
   const host = window.location.origin
-  return `${host}/api/files/${id}/stream/${encodeURIComponent(
+  return `${host}/api/files/${id}/${download ? "download" : "stream"}/${encodeURIComponent(
     name
-  )}?hash=${sessionHash}${download ? "&d=1" : ""}`
+  )}?hash=${sessionHash}`
 }
 
 export const profileUrl = (session: Session) =>
