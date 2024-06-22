@@ -1,4 +1,4 @@
-import { memo, useCallback } from "react"
+import { memo } from "react"
 import { getRouteApi } from "@tanstack/react-router"
 
 import { AccountTab } from "./AccountTab"
@@ -9,17 +9,14 @@ const fileRoute = getRouteApi("/_authenticated/settings/$tabId")
 
 export const SettingsTabView = memo(() => {
   const params = fileRoute.useParams()
-  const renderTab = useCallback(() => {
-    switch (params.tabId) {
-      case "appearance":
-        return <ApperanceTab />
 
-      case "account":
-        return <AccountTab />
-      default:
-        return <GeneralTab />
-    }
-  }, [params.tabId])
+  switch (params.tabId) {
+    case "appearance":
+      return <ApperanceTab />
 
-  return <>{renderTab()}</>
+    case "account":
+      return <AccountTab />
+    default:
+      return <GeneralTab />
+  }
 })
