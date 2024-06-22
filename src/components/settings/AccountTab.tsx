@@ -148,7 +148,7 @@ export const AccountTab = memo(() => {
         )
         await Promise.all(tokenPromies)
         toast.success("bots added")
-        queryClient.invalidateQueries({ queryKey: ["user", "bots"] })
+        queryClient.invalidateQueries({ queryKey: ["stats"] })
       } catch (err) {
         const error = err as AxiosError<Message>
         if (error.response)
