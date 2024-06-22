@@ -17,7 +17,7 @@ import { AxiosError } from "feaxios"
 import { Controller, useForm } from "react-hook-form"
 import toast from "react-hot-toast"
 
-import { copyDataToClipboard } from "@/utils/common"
+import { chunkArray, copyDataToClipboard } from "@/utils/common"
 import http from "@/utils/http"
 import {
   sessionQueryOptions,
@@ -143,7 +143,10 @@ export const AccountTab = memo(() => {
     if (tokensList?.length! > 0) {
       setIsSaving(true)
       try {
-        await http.post("/api/users/bots", tokensList)
+        const tokenPromies = chunkArray(tokensList, 8).map((tokens) =>
+          http.post<Message>("/api/users/bots", tokens)
+        )
+        await Promise.all(tokenPromies)
         toast.success("bots added")
         queryClient.invalidateQueries({ queryKey: ["user", "bots"] })
       } catch (err) {
