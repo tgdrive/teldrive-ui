@@ -196,6 +196,7 @@ const uploadFile = async (
   } as const
 
   await onCreate(payload)
+  await http.delete(url)
   clearInterval(timer)
 }
 
