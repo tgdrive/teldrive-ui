@@ -180,11 +180,11 @@ export const useFileAction = (params: QueryParams, session: Session) => {
         case CustomActions.CopyDownloadLink.id: {
           const selections = data.state.selectedFilesForAction
           let clipboardText = ""
-          selections.forEach((element) => {
-            if (!FileHelper.isDirectory(element)) {
+          selections
+            .filter((element)=>!FileHelper.isDirectory(element))
+            .forEach((element, idx, arr) => {
               const { id, name } = element
-              clipboardText = `${clipboardText}${mediaUrl(id, name, session.hash, true)}\n`
-            }
+              clipboardText = `${clipboardText}${mediaUrl(id, name, session.hash, true)}` + (idx+1 < arr.length ? "\n" : "");
           })
           navigator.clipboard.writeText(clipboardText)
           break
