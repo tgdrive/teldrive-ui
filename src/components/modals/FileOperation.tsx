@@ -1,4 +1,4 @@
-import { memo, useCallback } from "react"
+import { memo, useCallback, useEffect, useRef } from "react"
 import { FileQueryKey, QueryParams } from "@/types"
 import { FbActions } from "@tw-material/file-browser"
 import {
@@ -38,6 +38,15 @@ const RenameDialog = memo(({ queryKey, handleClose }: RenameDialogProps) => {
     }))
   )
 
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus()
+      inputRef.current.select()
+    }
+  }, [])
+
   const onRename = useCallback(() => {
     updateMutation.mutate({
       id: currentFile?.id,
@@ -54,6 +63,7 @@ const RenameDialog = memo(({ queryKey, handleClose }: RenameDialogProps) => {
       <ModalHeader className="flex flex-col gap-1">Rename</ModalHeader>
       <ModalBody>
         <Input
+          ref={inputRef}
           size="lg"
           variant="bordered"
           classNames={{
@@ -63,7 +73,8 @@ const RenameDialog = memo(({ queryKey, handleClose }: RenameDialogProps) => {
           onValueChange={(value) =>
             actions.setCurrentFile({ ...currentFile, name: value })
           }
-        ></Input>
+          autoFocus
+        />
       </ModalBody>
       <ModalFooter>
         <Button className="font-normal" variant="text" onPress={handleClose}>
@@ -97,6 +108,14 @@ const FolderCreateDialog = memo(
       }))
     )
 
+    const inputRef = useRef<HTMLInputElement>(null)
+
+    useEffect(() => {
+      if (inputRef.current) {
+        inputRef.current.focus()
+      }
+    }, [])
+
     const onCreate = useCallback(() => {
       createMutation
         .mutateAsync({
@@ -112,6 +131,7 @@ const FolderCreateDialog = memo(
         <ModalHeader className="flex flex-col gap-1">Create Folder</ModalHeader>
         <ModalBody>
           <Input
+            ref={inputRef}
             size="lg"
             variant="bordered"
             classNames={{
@@ -121,7 +141,8 @@ const FolderCreateDialog = memo(
             onValueChange={(value) =>
               actions.setCurrentFile({ ...currentFile, name: value })
             }
-          ></Input>
+            autoFocus
+          />
         </ModalBody>
         <ModalFooter>
           <Button className="font-normal" variant="text" onPress={handleClose}>
@@ -141,6 +162,7 @@ const FolderCreateDialog = memo(
     )
   }
 )
+
 interface DeleteDialogProps {
   queryKey: FileQueryKey
   handleClose: () => void
