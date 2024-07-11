@@ -1,4 +1,5 @@
 import { ChangeEvent, memo, useCallback, useRef, useState } from "react"
+import { useQueryClient } from "@tanstack/react-query"
 import { Link } from "@tanstack/react-router"
 import { Button, Input } from "@tw-material/react"
 import IconBiSearch from "~icons/bi/search"
@@ -28,6 +29,8 @@ const SearchBar = memo(({ className }: SearchBarProps) => {
 
   const triggerRef = useRef<HTMLButtonElement | null>(null)
 
+  const queryClient = useQueryClient()
+
   const debouncedSearch = useCallback(
     debounce(
       (newValue: string) =>
@@ -50,6 +53,9 @@ const SearchBar = memo(({ className }: SearchBarProps) => {
     setQuery(event.target.value)
     const cleanInput = cleanSearchInput(event.target.value)
     if (cleanInput) {
+      queryClient.cancelQueries({
+        queryKey: ["files"],
+      })
       debouncedSearch(cleanInput)
     }
   }, [])
