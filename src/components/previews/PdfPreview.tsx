@@ -1,7 +1,7 @@
-import { memo } from "react"
+import { memo } from "react";
 
 const PDFEmbedPreview = ({ assetUrl }: { assetUrl: string }) => {
-  const url = `https://pdfview.pages.dev/web/viewer.html?file=${assetUrl}`
+  const url = `https://pdfview.pages.dev/web/viewer.html?file=${assetUrl}`;
   return (
     <iframe
       title="PdfView"
@@ -9,7 +9,7 @@ const PDFEmbedPreview = ({ assetUrl }: { assetUrl: string }) => {
       src={url}
       allowFullScreen
     />
-  )
-}
+  );
+};
 
-export default memo(PDFEmbedPreview)
+export default memo(PDFEmbedPreview);

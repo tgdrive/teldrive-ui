@@ -1,16 +1,16 @@
-import { memo } from "react"
-import Editor from "@monaco-editor/react"
-import { Spinner } from "@tw-material/react"
+import { memo } from "react";
+import Editor from "@monaco-editor/react";
+import { Spinner } from "@tw-material/react";
 
-import useFileContent from "@/hooks/useFileContent"
-import { getLanguageByFileName } from "@/utils/getPreviewType"
+import useFileContent from "@/hooks/useFileContent";
+import { getLanguageByFileName } from "@/utils/getPreviewType";
 
 interface CodePreviewProps {
-  name: string
-  assetUrl: string
+  name: string;
+  assetUrl: string;
 }
 const CodePreview = ({ name, assetUrl }: CodePreviewProps) => {
-  const { response: content, validating } = useFileContent(assetUrl)
+  const { response: content, validating } = useFileContent(assetUrl);
 
   return (
     <>
@@ -27,7 +27,7 @@ const CodePreview = ({ name, assetUrl }: CodePreviewProps) => {
         />
       )}
     </>
-  )
-}
+  );
+};
 
-export default memo(CodePreview)
+export default memo(CodePreview);

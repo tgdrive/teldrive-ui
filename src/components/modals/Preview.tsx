@@ -1,91 +1,87 @@
-import { lazy, memo, Suspense, useCallback, useState } from "react"
-import { Session } from "@/types"
-import { FbIcon, FileData, useIconData } from "@tw-material/file-browser"
-import { Box, Button, Modal, ModalContent } from "@tw-material/react"
-import IconIcRoundArrowBack from "~icons/ic/round-arrow-back"
-import IconIcRoundNavigateBefore from "~icons/ic/round-navigate-before"
-import IconIcRoundNavigateNext from "~icons/ic/round-navigate-next"
-import clsx from "clsx"
+import { lazy, memo, Suspense, useCallback, useState } from "react";
+import type { Session } from "@/types";
+import { FbIcon, type FileData, useIconData } from "@tw-material/file-browser";
+import { Box, Button, Modal, ModalContent } from "@tw-material/react";
+import IconIcRoundArrowBack from "~icons/ic/round-arrow-back";
+import IconIcRoundNavigateBefore from "~icons/ic/round-navigate-before";
+import IconIcRoundNavigateNext from "~icons/ic/round-navigate-next";
+import clsx from "clsx";
 
-import Loader from "@/components/Loader"
-import AudioPreview from "@/components/previews/audio/AudioPreview"
-import DocPreview from "@/components/previews/DocPreview"
-import ImagePreview from "@/components/previews/ImagePreview"
-import PDFPreview from "@/components/previews/PdfPreview"
-import { WideScreen } from "@/components/previews/WideScreen"
-import { mediaUrl } from "@/utils/common"
-import { defaultSortState } from "@/utils/defaults"
-import { preview } from "@/utils/getPreviewType"
-import { useModalStore } from "@/utils/stores"
+import Loader from "@/components/Loader";
+import AudioPreview from "@/components/previews/audio/AudioPreview";
+import DocPreview from "@/components/previews/DocPreview";
+import ImagePreview from "@/components/previews/ImagePreview";
+import PDFPreview from "@/components/previews/PdfPreview";
+import { WideScreen } from "@/components/previews/WideScreen";
+import { mediaUrl } from "@/utils/common";
+import { defaultSortState } from "@/utils/defaults";
+import { preview } from "@/utils/getPreviewType";
+import { useModalStore } from "@/utils/stores";
 
-import CodePreview from "../previews/CodePreview"
+import CodePreview from "../previews/CodePreview";
 
 const sortOptions = {
   numeric: true,
   sensitivity: "base",
-} as const
+} as const;
 
-const VideoPreview = lazy(
-  () => import("@/components/previews/video/VideoPreview")
-)
+const VideoPreview = lazy(() => import("@/components/previews/video/VideoPreview"));
 
-const EpubPreview = lazy(() => import("@/components/previews/EpubPreview"))
+const EpubPreview = lazy(() => import("@/components/previews/EpubPreview"));
 
 const findNext = (files: FileData[], fileId: string, previewType: string) => {
   let index = -1,
-    firstPreviewIndex = -1
+    firstPreviewIndex = -1;
 
   for (let i = 0; i < files.length; i++) {
     const matchPreview =
-      (previewType == "all" && files[i].previewType) ||
-      files[i].previewType == previewType
+      (previewType == "all" && files[i].previewType) || files[i].previewType == previewType;
 
     if (index > -1 && matchPreview) {
-      return files[i]
+      return files[i];
     }
 
     if (firstPreviewIndex === -1 && matchPreview) {
-      firstPreviewIndex = i
+      firstPreviewIndex = i;
     }
 
     if (files[i].id === fileId) {
-      index = i
+      index = i;
     }
     if (i === files.length - 1) {
-      return files[firstPreviewIndex]
+      return files[firstPreviewIndex];
     }
   }
-  return 0
-}
+  return 0;
+};
 
 const findPrev = (files: FileData[], fileId: string, previewType: string) => {
   let index = -1,
-    lastPreviewIndex = -1
+    lastPreviewIndex = -1;
   for (let i = files.length - 1; i >= 0; i--) {
     const matchPreview =
-      (previewType == "all" && files[i].previewType) ||
-      files[i].previewType == previewType
+      (previewType == "all" && files[i].previewType) || files[i].previewType == previewType;
 
     if (index > -1 && matchPreview) {
-      return files[i]
+      return files[i];
     }
     if (lastPreviewIndex === -1 && matchPreview) {
-      lastPreviewIndex = i
+      lastPreviewIndex = i;
     }
     if (files[i].id === fileId) {
-      index = i
+      index = i;
     }
 
     if (i === 0) {
-      return files[lastPreviewIndex]
+      return files[lastPreviewIndex];
     }
   }
-  return 0
-}
+  return 0;
+};
 
 interface ControlButtonProps {
-  type: "next" | "prev"
-  onPress: () => void
+  type: "next" | "prev";
+  onPress: () => void;
 }
 
 const ControlButton = ({ type, onPress }: ControlButtonProps) => {
@@ -94,7 +90,7 @@ const ControlButton = ({ type, onPress }: ControlButtonProps) => {
       className={clsx(
         "w-10  opacity-0 data-[hover=true]:opacity-100 transition-opacity ease-out",
         "h-[calc(100vh-4rem)] mt-16 fixed  top-0 flex justify-center items-center",
-        type === "next" ? "right-0" : "left-0"
+        type === "next" ? "right-0" : "left-0",
       )}
     >
       <Button
@@ -102,64 +98,60 @@ const ControlButton = ({ type, onPress }: ControlButtonProps) => {
         variant="text"
         onPress={onPress}
       >
-        {type === "next" ? (
-          <IconIcRoundNavigateNext />
-        ) : (
-          <IconIcRoundNavigateBefore />
-        )}
+        {type === "next" ? <IconIcRoundNavigateNext /> : <IconIcRoundNavigateBefore />}
       </Button>
     </Box>
-  )
-}
+  );
+};
 
 export default memo(function PreviewModal({
   files: fileProp,
   session,
 }: {
-  files: FileData[]
-  session: Session
+  files: FileData[];
+  session: Session;
 }) {
   const [files] = useState(
     fileProp.toSorted((a, b) =>
       defaultSortState.order === "asc"
         ? a.name.localeCompare(b.name, undefined, sortOptions)
-        : b.name.localeCompare(a.name, undefined, sortOptions)
-    )
-  )
+        : b.name.localeCompare(a.name, undefined, sortOptions),
+    ),
+  );
 
-  const modalActions = useModalStore((state) => state.actions)
+  const modalActions = useModalStore((state) => state.actions);
 
-  const previewFile = useModalStore((state) => state.currentFile)
+  const previewFile = useModalStore((state) => state.currentFile);
 
-  const modalOpen = useModalStore((state) => state.open)
+  const modalOpen = useModalStore((state) => state.open);
 
-  const { id, name, previewType } = previewFile
+  const { id, name, previewType } = previewFile;
 
-  const { icon } = useIconData({ id, name, isDir: false })
+  const { icon } = useIconData({ id, name, isDir: false });
 
   const nextItem = useCallback(
     (previewType = "all") => {
       if (files) {
-        const nextItem = findNext(files, id, previewType)
-        if (nextItem) modalActions.setCurrentFile(nextItem)
+        const nextItem = findNext(files, id, previewType);
+        if (nextItem) modalActions.setCurrentFile(nextItem);
       }
     },
-    [id, files]
-  )
+    [id, files],
+  );
 
   const prevItem = useCallback(
     (previewType = "all") => {
       if (files) {
-        const prevItem = findPrev(files, id, previewType)
-        if (prevItem) modalActions.setCurrentFile(prevItem)
+        const prevItem = findPrev(files, id, previewType);
+        if (prevItem) modalActions.setCurrentFile(prevItem);
       }
     },
-    [id, files]
-  )
+    [id, files],
+  );
 
-  const handleClose = useCallback(() => modalActions.setOpen(false), [])
+  const handleClose = useCallback(() => modalActions.setOpen(false), []);
 
-  const assetUrl = mediaUrl(id, name, session.hash)
+  const assetUrl = mediaUrl(id, name, session.hash);
 
   const renderPreview = useCallback(() => {
     if (previewType) {
@@ -169,31 +161,31 @@ export default memo(function PreviewModal({
             <Suspense fallback={<Loader />}>
               <VideoPreview name={name} assetUrl={assetUrl} />
             </Suspense>
-          )
+          );
 
         case preview.pdf:
           return (
             <WideScreen>
               <PDFPreview assetUrl={assetUrl} />
             </WideScreen>
-          )
+          );
 
         case preview.office:
           return (
             <WideScreen>
               <DocPreview assetUrl={assetUrl} />
             </WideScreen>
-          )
+          );
 
         case preview.code:
           return (
             <WideScreen>
               <CodePreview name={name} assetUrl={assetUrl} />
             </WideScreen>
-          )
+          );
 
         case preview.image:
-          return <ImagePreview name={name} assetUrl={assetUrl} />
+          return <ImagePreview name={name} assetUrl={assetUrl} />;
 
         case preview.epub:
           return (
@@ -202,24 +194,19 @@ export default memo(function PreviewModal({
                 <EpubPreview assetUrl={assetUrl} />
               </WideScreen>
             </Suspense>
-          )
+          );
 
         case preview.audio:
           return (
-            <AudioPreview
-              nextItem={nextItem}
-              prevItem={prevItem}
-              name={name}
-              assetUrl={assetUrl}
-            />
-          )
+            <AudioPreview nextItem={nextItem} prevItem={prevItem} name={name} assetUrl={assetUrl} />
+          );
 
         default:
-          return null
+          return null;
       }
     }
-    return null
-  }, [assetUrl, name, previewType])
+    return null;
+  }, [assetUrl, name, previewType]);
 
   return (
     <Modal
@@ -248,10 +235,7 @@ export default memo(function PreviewModal({
                   <IconIcRoundArrowBack className="size-6" />
                 </Button>
                 <FbIcon icon={icon} className="size-6 min-w-6" />
-                <h6
-                  className="truncate text-label-large font-normal text-inherit"
-                  title={name}
-                >
+                <h6 className="truncate text-label-large font-normal text-inherit" title={name}>
                   {name}
                 </h6>
               </div>
@@ -263,5 +247,5 @@ export default memo(function PreviewModal({
         )}
       </ModalContent>
     </Modal>
-  )
-})
+  );
+});

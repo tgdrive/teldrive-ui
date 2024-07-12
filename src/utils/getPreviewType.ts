@@ -1,4 +1,4 @@
-import { getExtension } from "@/utils/common"
+import { getExtension } from "@/utils/common";
 
 export const preview = {
   markdown: "markdown",
@@ -10,7 +10,7 @@ export const preview = {
   audio: "audio",
   office: "office",
   epub: "epub",
-}
+};
 
 export const extensions = {
   gif: preview.image,
@@ -77,46 +77,43 @@ export const extensions = {
   flac: preview.audio,
 
   epub: preview.epub,
-}
+};
 
-export function getPreviewType(
-  extension: string,
-  flags?: { video?: boolean }
-): string | undefined {
-  let previewType = extensions[extension as keyof typeof extensions]
+export function getPreviewType(extension: string, flags?: { video?: boolean }): string | undefined {
+  let previewType = extensions[extension as keyof typeof extensions];
 
   if (!previewType) {
-    return previewType
+    return previewType;
   }
 
   if (extension === "ts") {
     if (flags?.video) {
-      previewType = preview.video
+      previewType = preview.video;
     }
   }
 
-  return previewType
+  return previewType;
 }
 export function getLanguageByFileName(filename: string): string {
-  const extension = getExtension(filename)
+  const extension = getExtension(filename);
   switch (extension) {
     case "ts":
     case "tsx":
-      return "typescript"
+      return "typescript";
     case "rs":
-      return "rust"
+      return "rust";
     case "js":
     case "jsx":
-      return "javascript"
+      return "javascript";
     case "sh":
-      return "shell"
+      return "shell";
     case "cs":
-      return "csharp"
+      return "csharp";
     case "py":
-      return "python"
+      return "python";
     case "yml":
-      return "yaml"
+      return "yaml";
     default:
-      return extension
+      return extension;
   }
 }

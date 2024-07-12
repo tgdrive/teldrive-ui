@@ -1,9 +1,10 @@
 {
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "editor.formatOnSave": true,
-  "editor.formatOnPaste": false,
-  "[typescriptreact]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  "[javascript]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+"editor.formatOnSave": true,
+ "editor.codeActionsOnSave": {
+    "quickfix.biome": "explicit"
   },
   "tailwindCSS.classAttributes": ["className", "class", "classNames"]
 }

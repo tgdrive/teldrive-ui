@@ -1,6 +1,6 @@
-import { useLocalStorage } from "usehooks-ts"
+import { useLocalStorage } from "usehooks-ts";
 
-import { splitFileSizes } from "@/utils/common"
+import { splitFileSizes } from "@/utils/common";
 
 const defaultSettings = {
   pageSize: "500",
@@ -8,9 +8,9 @@ const defaultSettings = {
   uploadConcurrency: "4",
   encryptFiles: false,
   resizerHost: "",
-}
+};
 
 export default function useSettings() {
-  const [settings, setSettings] = useLocalStorage("settings", defaultSettings)
-  return { settings, setSettings }
+  const [settings, setSettings] = useLocalStorage("settings", defaultSettings);
+  return { settings, setSettings };
 }

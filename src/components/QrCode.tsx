@@ -1,15 +1,15 @@
-import { useEffect, useMemo, useRef, useState } from "react"
-import clsx from "clsx"
-import QRCodeStyling from "qr-code-styling"
+import { useEffect, useMemo, useRef, useState } from "react";
+import clsx from "clsx";
+import QRCodeStyling from "qr-code-styling";
 
-import { grow } from "@/utils/classes"
+import { grow } from "@/utils/classes";
 
-const QR_SIZE = 256
+const QR_SIZE = 256;
 
 export default function QrCode({ qrCode }: { qrCode: string }) {
-  const ref = useRef(null)
+  const ref = useRef(null);
 
-  const [isQrMounted, setisQrMounted] = useState(false)
+  const [isQrMounted, setisQrMounted] = useState(false);
 
   const qrStyle = useMemo(() => {
     return new QRCodeStyling({
@@ -31,20 +31,20 @@ export default function QrCode({ qrCode }: { qrCode: string }) {
       qrOptions: {
         errorCorrectionLevel: "M",
       },
-    })
-  }, [])
+    });
+  }, []);
 
   useEffect(() => {
     if (ref.current && qrStyle) {
-      qrStyle.append(ref.current)
-      setisQrMounted(true)
+      qrStyle.append(ref.current);
+      setisQrMounted(true);
     }
-  }, [qrStyle])
+  }, [qrStyle]);
 
   useEffect(() => {
-    if (!qrCode) return
-    if (qrStyle) qrStyle.update({ data: qrCode })
-  }, [qrCode, qrStyle])
+    if (!qrCode) return;
+    if (qrStyle) qrStyle.update({ data: qrCode });
+  }, [qrCode, qrStyle]);
 
   return (
     <div
@@ -52,8 +52,8 @@ export default function QrCode({ qrCode }: { qrCode: string }) {
       data-mounted={isQrMounted}
       className={clsx(
         grow,
-        "size-full [&>svg>rect:nth-child(3)]:fill-on-surface [&>svg>rect:nth-child(2)]:fill-surface"
+        "size-full [&>svg>rect:nth-child(3)]:fill-on-surface [&>svg>rect:nth-child(2)]:fill-surface",
       )}
     />
-  )
+  );
 }

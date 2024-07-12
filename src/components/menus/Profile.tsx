@@ -1,34 +1,28 @@
-import { useCallback } from "react"
-import { useQuery, useQueryClient } from "@tanstack/react-query"
-import { Link, useNavigate } from "@tanstack/react-router"
-import {
-  Avatar,
-  Dropdown,
-  DropdownItem,
-  DropdownMenu,
-  DropdownTrigger,
-} from "@tw-material/react"
-import IconBaselineLogout from "~icons/ic/baseline-logout"
-import IconOutlineSettings from "~icons/ic/outline-settings"
+import { useCallback } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { Avatar, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@tw-material/react";
+import IconBaselineLogout from "~icons/ic/baseline-logout";
+import IconOutlineSettings from "~icons/ic/outline-settings";
 
-import { profileName, profileUrl } from "@/utils/common"
-import http from "@/utils/http"
-import { sessionQueryOptions } from "@/utils/queryOptions"
+import { profileName, profileUrl } from "@/utils/common";
+import http from "@/utils/http";
+import { sessionQueryOptions } from "@/utils/queryOptions";
 
 export function ProfileDropDown() {
-  const { data: session, refetch } = useQuery(sessionQueryOptions)
-  const navigate = useNavigate()
+  const { data: session, refetch } = useQuery(sessionQueryOptions);
+  const navigate = useNavigate();
 
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
 
   const signOut = useCallback(async () => {
-    const res = await http.post("/api/auth/logout")
-    refetch()
+    const res = await http.post("/api/auth/logout");
+    refetch();
     if (res.status === 200) {
-      queryClient.removeQueries()
-      navigate({ to: "/login", replace: true })
+      queryClient.removeQueries();
+      navigate({ to: "/login", replace: true });
     }
-  }, [])
+  }, []);
 
   return (
     <Dropdown
@@ -77,5 +71,5 @@ export function ProfileDropDown() {
         </DropdownItem>
       </DropdownMenu>
     </Dropdown>
-  )
+  );
 }

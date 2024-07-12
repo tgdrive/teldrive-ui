@@ -1,17 +1,11 @@
-import {
-  Button,
-  Dropdown,
-  DropdownItem,
-  DropdownMenu,
-  DropdownTrigger,
-} from "@tw-material/react"
-import IconPhSun from "~icons/ph/sun"
-import IconRiMoonClearLine from "~icons/ri/moon-clear-line"
+import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@tw-material/react";
+import IconPhSun from "~icons/ph/sun";
+import IconRiMoonClearLine from "~icons/ri/moon-clear-line";
 
-import { useTheme } from "@/components/ThemeProvider"
+import { useTheme } from "@/components/ThemeProvider";
 
 export function ThemeToggle() {
-  const { setTheme } = useTheme()
+  const { setTheme } = useTheme();
 
   return (
     <Dropdown
@@ -49,5 +43,5 @@ export function ThemeToggle() {
         </DropdownItem>
       </DropdownMenu>
     </Dropdown>
-  )
+  );
 }

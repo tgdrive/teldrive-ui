@@ -1,6 +1,6 @@
-import { memo, useCallback } from "react"
-import { FileQueryKey, QueryParams } from "@/types"
-import { FbActions } from "@tw-material/file-browser"
+import { memo, useCallback } from "react";
+import type { FileQueryKey, QueryParams } from "@/types";
+import { FbActions } from "@tw-material/file-browser";
 import {
   Button,
   Input,
@@ -9,34 +9,30 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
-} from "@tw-material/react"
-import clsx from "clsx"
-import { useShallow } from "zustand/react/shallow"
+} from "@tw-material/react";
+import clsx from "clsx";
+import { useShallow } from "zustand/react/shallow";
 
-import {
-  useCreateFile,
-  useDeleteFile,
-  useUpdateFile,
-} from "@/utils/queryOptions"
-import { useModalStore } from "@/utils/stores"
+import { useCreateFile, useDeleteFile, useUpdateFile } from "@/utils/queryOptions";
+import { useModalStore } from "@/utils/stores";
 
 type FileModalProps = {
-  queryKey: FileQueryKey
-}
+  queryKey: FileQueryKey;
+};
 
 interface RenameDialogProps {
-  queryKey: FileQueryKey
-  handleClose: () => void
+  queryKey: FileQueryKey;
+  handleClose: () => void;
 }
 
 const RenameDialog = memo(({ queryKey, handleClose }: RenameDialogProps) => {
-  const updateMutation = useUpdateFile(queryKey)
+  const updateMutation = useUpdateFile(queryKey);
   const { currentFile, actions } = useModalStore(
     useShallow((state) => ({
       currentFile: state.currentFile,
       actions: state.actions,
-    }))
-  )
+    })),
+  );
 
   const onRename = useCallback(() => {
     updateMutation.mutate({
@@ -45,9 +41,9 @@ const RenameDialog = memo(({ queryKey, handleClose }: RenameDialogProps) => {
         name: currentFile?.name,
         type: currentFile?.type,
       },
-    })
-    handleClose()
-  }, [currentFile.name, currentFile.id])
+    });
+    handleClose();
+  }, [currentFile.name, currentFile.id]);
 
   return (
     <>
@@ -60,10 +56,59 @@ const RenameDialog = memo(({ queryKey, handleClose }: RenameDialogProps) => {
             inputWrapper: "border-primary border-large",
           }}
           value={currentFile.name}
-          onValueChange={(value) =>
-            actions.setCurrentFile({ ...currentFile, name: value })
-          }
-        ></Input>
+          onValueChange={(value) => actions.setCurrentFile({ ...currentFile, name: value })}
+        />
+      </ModalBody>
+      <ModalFooter>
+        <Button className="font-normal" variant="text" onPress={handleClose}>
+          Close
+        </Button>
+        <Button className="font-normal" variant="filledTonal" onPress={onRename}>
+          Rename
+        </Button>
+      </ModalFooter>
+    </>
+  );
+});
+
+interface FolderCreateDialogProps {
+  queryKey: FileQueryKey;
+  handleClose: () => void;
+}
+
+const FolderCreateDialog = memo(({ queryKey, handleClose }: FolderCreateDialogProps) => {
+  const createMutation = useCreateFile(queryKey);
+
+  const { currentFile, actions } = useModalStore(
+    useShallow((state) => ({
+      currentFile: state.currentFile,
+      actions: state.actions,
+    })),
+  );
+
+  const onCreate = useCallback(() => {
+    createMutation
+      .mutateAsync({
+        name: currentFile.name,
+        type: "folder",
+        path: (queryKey[1] as QueryParams).path || "/",
+      })
+      .then(() => handleClose());
+  }, [currentFile.name]);
+
+  return (
+    <>
+      <ModalHeader className="flex flex-col gap-1">Create Folder</ModalHeader>
+      <ModalBody>
+        <Input
+          size="lg"
+          variant="bordered"
+          classNames={{
+            inputWrapper: "border-primary border-large",
+          }}
+          value={currentFile?.name}
+          onValueChange={(value) => actions.setCurrentFile({ ...currentFile, name: value })}
+        />
       </ModalBody>
       <ModalFooter>
         <Button className="font-normal" variant="text" onPress={handleClose}>
@@ -72,90 +117,29 @@ const RenameDialog = memo(({ queryKey, handleClose }: RenameDialogProps) => {
         <Button
           className="font-normal"
           variant="filledTonal"
-          onPress={onRename}
+          onPress={onCreate}
+          isDisabled={createMutation.isPending || !currentFile.name}
+          isLoading={createMutation.isPending}
         >
-          Rename
+          {createMutation.isPending ? "Creating" : "Create"}
         </Button>
       </ModalFooter>
     </>
-  )
-})
-
-interface FolderCreateDialogProps {
-  queryKey: FileQueryKey
-  handleClose: () => void
-}
-
-const FolderCreateDialog = memo(
-  ({ queryKey, handleClose }: FolderCreateDialogProps) => {
-    const createMutation = useCreateFile(queryKey)
-
-    const { currentFile, actions } = useModalStore(
-      useShallow((state) => ({
-        currentFile: state.currentFile,
-        actions: state.actions,
-      }))
-    )
-
-    const onCreate = useCallback(() => {
-      createMutation
-        .mutateAsync({
-          name: currentFile.name,
-          type: "folder",
-          path: (queryKey[1] as QueryParams).path || "/",
-        })
-        .then(() => handleClose())
-    }, [currentFile.name])
-
-    return (
-      <>
-        <ModalHeader className="flex flex-col gap-1">Create Folder</ModalHeader>
-        <ModalBody>
-          <Input
-            size="lg"
-            variant="bordered"
-            classNames={{
-              inputWrapper: "border-primary border-large",
-            }}
-            value={currentFile?.name}
-            onValueChange={(value) =>
-              actions.setCurrentFile({ ...currentFile, name: value })
-            }
-          ></Input>
-        </ModalBody>
-        <ModalFooter>
-          <Button className="font-normal" variant="text" onPress={handleClose}>
-            Close
-          </Button>
-          <Button
-            className="font-normal"
-            variant="filledTonal"
-            onPress={onCreate}
-            isDisabled={createMutation.isPending || !currentFile.name}
-            isLoading={createMutation.isPending}
-          >
-            {createMutation.isPending ? "Creating" : "Create"}
-          </Button>
-        </ModalFooter>
-      </>
-    )
-  }
-)
+  );
+});
 interface DeleteDialogProps {
-  queryKey: FileQueryKey
-  handleClose: () => void
+  queryKey: FileQueryKey;
+  handleClose: () => void;
 }
 const DeleteDialog = memo(({ handleClose, queryKey }: DeleteDialogProps) => {
-  const deleteMutation = useDeleteFile(queryKey)
+  const deleteMutation = useDeleteFile(queryKey);
 
-  const selectedFiles = useModalStore(
-    (state) => state.selectedFiles
-  ) as string[]
+  const selectedFiles = useModalStore((state) => state.selectedFiles) as string[];
 
   const onDelete = useCallback(() => {
-    deleteMutation.mutate({ files: selectedFiles })
-    handleClose()
-  }, [])
+    deleteMutation.mutate({ files: selectedFiles });
+    handleClose();
+  }, []);
 
   return (
     <>
@@ -180,8 +164,8 @@ const DeleteDialog = memo(({ handleClose, queryKey }: DeleteDialogProps) => {
         </Button>
       </ModalFooter>
     </>
-  )
-})
+  );
+});
 
 export const FileOperationModal = memo(({ queryKey }: FileModalProps) => {
   const { open, operation, actions } = useModalStore(
@@ -189,31 +173,29 @@ export const FileOperationModal = memo(({ queryKey }: FileModalProps) => {
       open: state.open,
       operation: state.operation,
       actions: state.actions,
-    }))
-  )
+    })),
+  );
 
   const handleClose = useCallback(
     () =>
       actions.set({
         open: false,
       }),
-    []
-  )
+    [],
+  );
 
   const renderOperation = () => {
     switch (operation) {
       case FbActions.RenameFile.id:
-        return <RenameDialog queryKey={queryKey} handleClose={handleClose} />
+        return <RenameDialog queryKey={queryKey} handleClose={handleClose} />;
       case FbActions.CreateFolder.id:
-        return (
-          <FolderCreateDialog queryKey={queryKey} handleClose={handleClose} />
-        )
+        return <FolderCreateDialog queryKey={queryKey} handleClose={handleClose} />;
       case FbActions.DeleteFiles.id:
-        return <DeleteDialog queryKey={queryKey} handleClose={handleClose} />
+        return <DeleteDialog queryKey={queryKey} handleClose={handleClose} />;
       default:
-        return null
+        return null;
     }
-  }
+  };
 
   return (
     <Modal
@@ -229,5 +211,5 @@ export const FileOperationModal = memo(({ queryKey }: FileModalProps) => {
     >
       <ModalContent>{renderOperation}</ModalContent>
     </Modal>
-  )
-})
+  );
+});

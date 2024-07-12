@@ -1,5 +1,5 @@
-import { useCallback } from "react"
-import {
+import { useCallback } from "react";
+import type {
   CategoryStorage,
   FilePayload,
   FileResponse,
@@ -8,24 +8,24 @@ import {
   SingleFile,
   UploadStats,
   UserSession,
-} from "@/types"
+} from "@/types";
 import {
-  InfiniteData,
+  type InfiniteData,
   infiniteQueryOptions,
   queryOptions,
   useMutation,
   useQueryClient,
-} from "@tanstack/react-query"
-import { NavigateOptions, useRouter } from "@tanstack/react-router"
-import type { FileData } from "@tw-material/file-browser"
-import toast from "react-hot-toast"
+} from "@tanstack/react-query";
+import { type NavigateOptions, useRouter } from "@tanstack/react-router";
+import type { FileData } from "@tw-material/file-browser";
+import toast from "react-hot-toast";
 
-import { useProgress } from "@/components/TopProgress"
+import { useProgress } from "@/components/TopProgress";
 
-import { bytesToGB, getExtension, mediaUrl } from "./common"
-import { defaultSortState, settings, sortIdsMap, sortViewMap } from "./defaults"
-import { getPreviewType, preview } from "./getPreviewType"
-import http from "./http"
+import { bytesToGB, getExtension, mediaUrl } from "./common";
+import { defaultSortState, settings, sortIdsMap, sortViewMap } from "./defaults";
+import { getPreviewType, preview } from "./getPreviewType";
+import http from "./http";
 
 const mapFilesToFb = (files: SingleFile[], sessionHash: string): FileData[] => {
   return files.map((item): FileData => {
@@ -38,20 +38,20 @@ const mapFilesToFb = (files: SingleFile[], sessionHash: string): FileData[] => {
         size: item.size ? Number(item.size) : 0,
         modDate: item.updatedAt,
         isDir: true,
-      }
+      };
 
     const previewType = getPreviewType(getExtension(item.name), {
       video: item.mimeType.includes("video"),
-    })
+    });
 
-    let thumbnailUrl = ""
+    let thumbnailUrl = "";
     if (previewType === "image") {
       if (settings.resizerHost) {
-        const url = new URL(mediaUrl(item.id, item.name, sessionHash))
-        url.searchParams.set("w", "360")
+        const url = new URL(mediaUrl(item.id, item.name, sessionHash));
+        url.searchParams.set("w", "360");
         thumbnailUrl = settings.resizerHost
           ? `${settings.resizerHost}/${url.host}${url.pathname}${url.search}`
-          : ""
+          : "";
       }
     }
     return {
@@ -66,22 +66,22 @@ const mapFilesToFb = (files: SingleFile[], sessionHash: string): FileData[] => {
       thumbnailUrl,
       modDate: item.updatedAt,
       isEncrypted: item.encrypted,
-    }
-  })
-}
+    };
+  });
+};
 export const sessionQueryOptions = queryOptions({
   queryKey: ["session"],
   queryFn: fetchSession,
   staleTime: 10 * (60 * 1000),
   gcTime: 15 * (60 * 1000),
   refetchOnWindowFocus: false,
-})
+});
 
 export const sessionsQueryOptions = queryOptions({
   queryKey: ["sessions"],
   queryFn: async ({ signal }) =>
     (await http.get<UserSession[]>("/api/users/sessions", { signal })).data,
-})
+});
 
 export const filesQueryOptions = (params: QueryParams, sessionHash?: string) =>
   infiniteQueryOptions({
@@ -91,9 +91,9 @@ export const filesQueryOptions = (params: QueryParams, sessionHash?: string) =>
     getNextPageParam: (lastPage, _) => lastPage.nextPageToken,
     select: (data) =>
       data.pages.flatMap((page) =>
-        page.results ? mapFilesToFb(page.results, sessionHash as string) : []
+        page.results ? mapFilesToFb(page.results, sessionHash as string) : [],
       ),
-  })
+  });
 
 export const uploadStatsQueryOptions = (days: number) =>
   queryOptions({
@@ -101,34 +101,34 @@ export const uploadStatsQueryOptions = (days: number) =>
     queryFn: async ({ signal }) => uploadStats(days, signal),
     select: (data) =>
       data.map((stat) => {
-        let options = { day: "numeric", month: "short" } as const
-        let formattedDate = new Intl.DateTimeFormat("en-US", options).format(
-          new Date(stat.uploadDate)
-        )
+        const options = { day: "numeric", month: "short" } as const;
+        const formattedDate = new Intl.DateTimeFormat("en-US", options).format(
+          new Date(stat.uploadDate),
+        );
         return {
           totalUploaded: bytesToGB(stat.totalUploaded),
           uploadDate: formattedDate,
-        }
+        };
       }),
-  })
+  });
 
 export const categoryStorageQueryOptions = queryOptions({
   queryKey: ["category-storage"],
   queryFn: async ({ signal }) => categoryStorage(signal),
-})
+});
 
 export const usePreload = () => {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
 
-  const router = useRouter()
+  const router = useRouter();
 
-  const { startProgress, stopProgress } = useProgress()
+  const { startProgress, stopProgress } = useProgress();
 
   const preloadFiles = useCallback(
     async (params: QueryParams, showProgress = true) => {
-      const queryKey = ["files", params]
+      const queryKey = ["files", params];
 
-      const queryState = queryClient.getQueryState(queryKey)
+      const queryState = queryClient.getQueryState(queryKey);
 
       const nextRoute: NavigateOptions = {
         to: "/$",
@@ -136,47 +136,47 @@ export const usePreload = () => {
           _splat: params.type + params.path,
         },
         search: params.filter,
-      }
+      };
       if (!queryState?.data) {
         try {
-          if (showProgress) startProgress()
-          await router.preloadRoute(nextRoute)
-          router.navigate(nextRoute)
+          if (showProgress) startProgress();
+          await router.preloadRoute(nextRoute);
+          router.navigate(nextRoute);
         } finally {
-          if (showProgress) stopProgress()
+          if (showProgress) stopProgress();
         }
-      } else router.navigate(nextRoute)
+      } else router.navigate(nextRoute);
     },
-    [queryClient]
-  )
+    [queryClient],
+  );
   const preloadStorage = useCallback(async () => {
-    const queryKey = ["stats"]
-    const queryState = queryClient.getQueryState(queryKey)
+    const queryKey = ["stats"];
+    const queryState = queryClient.getQueryState(queryKey);
 
     const nextRoute: NavigateOptions = {
       to: "/storage",
-    }
+    };
     if (!queryState?.data) {
       try {
-        startProgress()
-        await router.preloadRoute(nextRoute)
-        router.navigate(nextRoute)
+        startProgress();
+        await router.preloadRoute(nextRoute);
+        router.navigate(nextRoute);
       } finally {
-        stopProgress()
+        stopProgress();
       }
-    } else router.navigate(nextRoute)
-  }, [])
+    } else router.navigate(nextRoute);
+  }, []);
 
-  return { preloadFiles, preloadStorage }
-}
+  return { preloadFiles, preloadStorage };
+};
 
 async function fetchSession() {
-  const res = await http.get<Session>("/api/auth/session")
-  const contentType = res.headers.get("content-type")
+  const res = await http.get<Session>("/api/auth/session");
+  const contentType = res.headers.get("content-type");
   if (contentType && contentType.includes("application/json")) {
-    return res.data
+    return res.data;
   } else {
-    return null
+    return null;
   }
 }
 
@@ -184,159 +184,147 @@ async function uploadStats(days: number, signal: AbortSignal) {
   const res = await http.get<UploadStats[]>("/api/uploads/stats", {
     params: { days },
     signal,
-  })
-  return res.data
+  });
+  return res.data;
 }
 
 async function categoryStorage(signal: AbortSignal) {
   const res = await http.get<CategoryStorage[]>("/api/files/category/stats", {
     signal,
-  })
-  return res.data
+  });
+  return res.data;
 }
 
 export const fetchFiles =
   (params: QueryParams) =>
   async ({ pageParam, signal }: { pageParam: string; signal: AbortSignal }) => {
-    const { type, path } = params
+    const { type, path } = params;
     const query: Record<string, string | number | boolean> = {
       nextPageToken: pageParam,
       perPage: 500,
-      order:
-        type === "my-drive" ? defaultSortState.order : sortViewMap[type].order,
+      order: type === "my-drive" ? defaultSortState.order : sortViewMap[type].order,
       sort:
         type === "my-drive"
           ? sortIdsMap[defaultSortState.sortId]
           : sortIdsMap[sortViewMap[type].sortId],
-    }
+    };
 
     if (type === "my-drive") {
-      query.path = path.startsWith("/") ? path : "/" + path
+      query.path = path.startsWith("/") ? path : "/" + path;
     } else if (type === "search") {
-      query.op = "find"
-      for (const key in params.filter) query[key] = params.filter[key]
+      query.op = "find";
+      for (const key in params.filter) query[key] = params.filter[key];
     } else if (type === "starred") {
-      query.op = "find"
-      query.starred = true
+      query.op = "find";
+      query.starred = true;
     } else if (type === "recent") {
-      query.op = "find"
-      query.type = "file"
+      query.op = "find";
+      query.type = "file";
     } else if (type === "category") {
-      query.op = "find"
-      query.type = "file"
-      query.category = path.replaceAll("/", "")
-    } else if (type === "browse")
-      query.parentId = params.filter?.parentId as string
+      query.op = "find";
+      query.type = "file";
+      query.category = path.replaceAll("/", "");
+    } else if (type === "browse") query.parentId = params.filter?.parentId as string;
 
-    return (
-      await http.get<FileResponse>("/api/files", { params: query, signal })
-    ).data
-  }
+    return (await http.get<FileResponse>("/api/files", { params: query, signal })).data;
+  };
 
 export const useCreateFile = (queryKey: any[]) => {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (data: Record<string, any>) =>
-      http.post("/api/files", data),
+    mutationFn: async (data: Record<string, any>) => http.post("/api/files", data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey })
+      queryClient.invalidateQueries({ queryKey });
     },
-  })
-}
+  });
+};
 
 export const useUpdateFile = (queryKey: any[]) => {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (data: FilePayload) => {
-      return (await http.patch(`/api/files/${data.id}`, data.payload)).data
+      return (await http.patch(`/api/files/${data.id}`, data.payload)).data;
     },
     onMutate: async (variables) => {
-      await queryClient.cancelQueries({ queryKey })
-      const previousFiles = queryClient.getQueryData<FileResponse>(queryKey)
+      await queryClient.cancelQueries({ queryKey });
+      const previousFiles = queryClient.getQueryData<FileResponse>(queryKey);
 
       if (previousFiles) {
-        queryClient.setQueryData<InfiniteData<FileResponse>>(
-          queryKey,
-          (prev) => {
-            return <InfiniteData<FileResponse>>{
-              ...prev,
-              pages: prev?.pages.map((page) => ({
-                ...page,
-                results: page.results.map((val) =>
-                  val.id === variables.id
-                    ? { ...val, ...variables.payload }
-                    : val
-                ),
-              })),
-            }
-          }
-        )
+        queryClient.setQueryData<InfiniteData<FileResponse>>(queryKey, (prev) => {
+          return <InfiniteData<FileResponse>>{
+            ...prev,
+            pages: prev?.pages.map((page) => ({
+              ...page,
+              results: page.results.map((val) =>
+                val.id === variables.id ? { ...val, ...variables.payload } : val,
+              ),
+            })),
+          };
+        });
       }
-      return { previousFiles }
+      return { previousFiles };
     },
     onError: (_1, _2, context) => {
       if (context?.previousFiles) {
-        queryClient.setQueryData(queryKey, context?.previousFiles)
+        queryClient.setQueryData(queryKey, context?.previousFiles);
       }
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey })
+      queryClient.invalidateQueries({ queryKey });
     },
-  })
-}
+  });
+};
 
 export const useDeleteFile = (queryKey: any[]) => {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (data: Record<string, any>) => {
-      return (await http.post(`/api/files/delete`, { files: data.files })).data
+      return (await http.post(`/api/files/delete`, { files: data.files })).data;
     },
     onMutate: async (variables: { files: string[] }) => {
-      await queryClient.cancelQueries({ queryKey })
-      const previousFiles = queryClient.getQueryData(queryKey)
+      await queryClient.cancelQueries({ queryKey });
+      const previousFiles = queryClient.getQueryData(queryKey);
       queryClient.setQueryData<InfiniteData<FileResponse>>(queryKey, (prev) => {
         return <InfiniteData<FileResponse>>{
           ...prev,
           pages: prev?.pages.map((page) => ({
             ...page,
-            results: page.results.filter(
-              (val) => !variables.files.includes(val.id)
-            ),
+            results: page.results.filter((val) => !variables.files.includes(val.id)),
           })),
-        }
-      })
-      return { previousFiles }
+        };
+      });
+      return { previousFiles };
     },
     onError: (_1, _2, context) => {
-      queryClient.setQueryData(queryKey, context?.previousFiles)
+      queryClient.setQueryData(queryKey, context?.previousFiles);
     },
     onSuccess: () => {
-      toast.success("File deleted successfully")
+      toast.success("File deleted successfully");
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey })
+      queryClient.invalidateQueries({ queryKey });
     },
-  })
-}
+  });
+};
 
 export const useDeleteSession = () => {
-  const queryClient = useQueryClient()
-  const queryKey = ["sessions"]
+  const queryClient = useQueryClient();
+  const queryKey = ["sessions"];
   return useMutation({
     mutationFn: async (id: string) => http.delete(`/api/users/sessions/${id}`),
     onMutate: async (variables) => {
-      await queryClient.cancelQueries({ queryKey })
-      const previousSessions = queryClient.getQueryData(queryKey)
+      await queryClient.cancelQueries({ queryKey });
+      const previousSessions = queryClient.getQueryData(queryKey);
       queryClient.setQueryData<UserSession[]>(queryKey, (prev) =>
-        prev!.filter((val) => val.hash !== variables)
-      )
-      return { previousSessions }
+        prev!.filter((val) => val.hash !== variables),
+      );
+      return { previousSessions };
     },
     onError: (_1, _2, context) => {
-      queryClient.setQueryData(queryKey, context?.previousSessions)
+      queryClient.setQueryData(queryKey, context?.previousSessions);
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey })
+      queryClient.invalidateQueries({ queryKey });
     },
-  })
-}
+  });
+};

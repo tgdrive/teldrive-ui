@@ -1,7 +1,7 @@
-import { memo } from "react"
+import { memo } from "react";
 
 const DocPreview = ({ assetUrl }: { assetUrl: string }) => {
-  const url = `https://view.officeapps.live.com/op/view.aspx?src=${assetUrl}`
+  const url = `https://view.officeapps.live.com/op/view.aspx?src=${assetUrl}`;
 
   return (
     <iframe
@@ -10,7 +10,7 @@ const DocPreview = ({ assetUrl }: { assetUrl: string }) => {
       src={url}
       allowFullScreen
     />
-  )
-}
+  );
+};
 
-export default memo(DocPreview)
+export default memo(DocPreview);

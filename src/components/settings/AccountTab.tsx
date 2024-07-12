@@ -1,94 +1,80 @@
-import { memo, useCallback, useState } from "react"
-import { AccountStats, Channel, Message, UserSession } from "@/types"
-import { useQueries, useQuery, useQueryClient } from "@tanstack/react-query"
-import {
-  Button,
-  scrollbarClasses,
-  Select,
-  SelectItem,
-  Textarea,
-} from "@tw-material/react"
-import IcRoundCancel from "~icons/ic/round-cancel"
-import IcRoundCheckCircle from "~icons/ic/round-check-circle"
-import IcRoundContentCopy from "~icons/ic/round-content-copy"
-import IcRoundRemoveCircleOutline from "~icons/ic/round-remove-circle-outline"
-import clsx from "clsx"
-import { AxiosError } from "feaxios"
-import { Controller, useForm } from "react-hook-form"
-import toast from "react-hot-toast"
+import { memo, useCallback, useState } from "react";
+import type { AccountStats, Channel, Message, UserSession } from "@/types";
+import { useQueries, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Button, scrollbarClasses, Select, SelectItem, Textarea } from "@tw-material/react";
+import IcRoundCancel from "~icons/ic/round-cancel";
+import IcRoundCheckCircle from "~icons/ic/round-check-circle";
+import IcRoundContentCopy from "~icons/ic/round-content-copy";
+import IcRoundRemoveCircleOutline from "~icons/ic/round-remove-circle-outline";
+import clsx from "clsx";
+import type { AxiosError } from "feaxios";
+import { Controller, useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 
-import { chunkArray, copyDataToClipboard } from "@/utils/common"
-import http from "@/utils/http"
-import {
-  sessionQueryOptions,
-  sessionsQueryOptions,
-  useDeleteSession,
-} from "@/utils/queryOptions"
+import { chunkArray, copyDataToClipboard } from "@/utils/common";
+import http from "@/utils/http";
+import { sessionQueryOptions, sessionsQueryOptions, useDeleteSession } from "@/utils/queryOptions";
 
 const validateBots = (value?: string) => {
   if (value) {
-    const regexPattern = /^\d{10}:[A-Za-z\d_-]{35}$/gm
-    return regexPattern.test(value) || "Invalid Token format"
+    const regexPattern = /^\d{10}:[A-Za-z\d_-]{35}$/gm;
+    return regexPattern.test(value) || "Invalid Token format";
   }
-  return false
-}
+  return false;
+};
 
 async function updateChannel(channel: Channel) {
   return http.patch("/api/users/channels", { ...channel }).then(() => {
-    toast.success("Channel updated")
-  })
+    toast.success("Channel updated");
+  });
 }
 
-const Session = memo(
-  ({ appName, location, createdAt, valid, hash, current }: UserSession) => {
-    const deleteSession = useDeleteSession()
+const Session = memo(({ appName, location, createdAt, valid, hash, current }: UserSession) => {
+  const deleteSession = useDeleteSession();
 
-    const handleDelete = useCallback(() => deleteSession.mutate(hash), [hash])
+  const handleDelete = useCallback(() => deleteSession.mutate(hash), [hash]);
 
-    return (
-      <div
-        className={clsx(
-          "flex  flex-col justify-between p-4 rounded-lg gap-1 relative",
-          valid ? "bg-green-500/20" : "bg-red-500/20"
-        )}
-      >
-        {(!current || !valid) && (
-          <Button
-            isIconOnly
-            variant="text"
-            size="sm"
-            className="absolute top-1 right-1"
-            onPress={handleDelete}
-          >
-            <IcRoundCancel />
-          </Button>
-        )}
+  return (
+    <div
+      className={clsx(
+        "flex  flex-col justify-between p-4 rounded-lg gap-1 relative",
+        valid ? "bg-green-500/20" : "bg-red-500/20",
+      )}
+    >
+      {(!current || !valid) && (
+        <Button
+          isIconOnly
+          variant="text"
+          size="sm"
+          className="absolute top-1 right-1"
+          onPress={handleDelete}
+        >
+          <IcRoundCancel />
+        </Button>
+      )}
 
-        <div className="flex gap-1 items-center">
-          {valid ? (
-            <IcRoundCheckCircle className="text-green-500 size-4" />
-          ) : (
-            <IcRoundCancel className="text-red-500 size-4" />
-          )}
-          <p className="font-medium">{appName || "Unknown"}</p>
-        </div>
-        <p className="text-sm font-normal">
-          Created : {new Date(createdAt).toISOString().split("T")[0]}
-        </p>
-        {location && (
-          <p className="text-sm font-normal">Location : {location}</p>
+      <div className="flex gap-1 items-center">
+        {valid ? (
+          <IcRoundCheckCircle className="text-green-500 size-4" />
+        ) : (
+          <IcRoundCancel className="text-red-500 size-4" />
         )}
+        <p className="font-medium">{appName || "Unknown"}</p>
       </div>
-    )
-  }
-)
+      <p className="text-sm font-normal">
+        Created : {new Date(createdAt).toISOString().split("T")[0]}
+      </p>
+      {location && <p className="text-sm font-normal">Location : {location}</p>}
+    </div>
+  );
+});
 
 export const AccountTab = memo(() => {
   const { control, handleSubmit } = useForm<{ tokens: string }>({
     defaultValues: { tokens: "" },
-  })
+  });
 
-  const { data: session } = useQuery(sessionQueryOptions)
+  const { data: session } = useQuery(sessionQueryOptions);
 
   const [
     { data, refetch, isSuccess },
@@ -98,88 +84,80 @@ export const AccountTab = memo(() => {
     queries: [
       {
         queryKey: ["stats", session?.userName],
-        queryFn: async () =>
-          (await http.get<AccountStats>("/api/users/stats")).data,
+        queryFn: async () => (await http.get<AccountStats>("/api/users/stats")).data,
       },
       sessionsQueryOptions,
       {
         queryKey: ["channels", session?.userName],
-        queryFn: async () =>
-          (await http.get<Channel[]>("/api/users/channels")).data,
+        queryFn: async () => (await http.get<Channel[]>("/api/users/channels")).data,
       },
     ],
-  })
+  });
 
-  const [isRemoving, setIsRemoving] = useState<boolean>(false)
+  const [isRemoving, setIsRemoving] = useState<boolean>(false);
 
-  const [isSaving, setIsSaving] = useState<boolean>(false)
+  const [isSaving, setIsSaving] = useState<boolean>(false);
 
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
 
   const removeBots = useCallback(() => {
-    setIsRemoving(true)
+    setIsRemoving(true);
     http
       .delete("/api/users/bots")
       .then(() => {
-        toast.success("bots removed")
+        toast.success("bots removed");
       })
       .finally(() => {
         refetch().finally(() => {
-          setIsRemoving(false)
-        })
-      })
-  }, [])
+          setIsRemoving(false);
+        });
+      });
+  }, []);
 
   const copyTokens = useCallback(() => {
     if (data && data.bots.length > 0) {
       copyDataToClipboard(data.bots).then(() => {
-        toast.success("Tokens Copied")
-      })
+        toast.success("Tokens Copied");
+      });
     }
-  }, [data?.bots])
+  }, [data?.bots]);
 
   const onSubmit = useCallback(async ({ tokens }: { tokens: string }) => {
-    const tokensList = tokens.trim().split("\n")
+    const tokensList = tokens.trim().split("\n");
     if (tokensList?.length! > 0) {
-      setIsSaving(true)
+      setIsSaving(true);
       try {
         const tokenPromies = chunkArray(tokensList, 8).map((tokens) =>
-          http.post<Message>("/api/users/bots", tokens)
-        )
-        await Promise.all(tokenPromies)
-        toast.success("bots added")
-        queryClient.invalidateQueries({ queryKey: ["stats"] })
+          http.post<Message>("/api/users/bots", tokens),
+        );
+        await Promise.all(tokenPromies);
+        toast.success("bots added");
+        queryClient.invalidateQueries({ queryKey: ["stats"] });
       } catch (err) {
-        const error = err as AxiosError<Message>
-        if (error.response)
-          toast.error(error.response.data.message?.split(":").slice(-1)[0])
+        const error = err as AxiosError<Message>;
+        if (error.response) {
+          toast.error(error.response.data.message?.split(":").slice(-1)[0]);
+        }
       } finally {
-        setIsSaving(false)
+        setIsSaving(false);
       }
     }
-  }, [])
+  }, []);
 
   const handleSelectionChange = useCallback(
     (value: any) => {
-      let channelId = parseInt([...value][0])
-      let channelName = channelData?.find(
-        (c) => c.channelId === channelId
-      )?.channelName
+      const channelId = Number.parseInt([...value][0]);
+      const channelName = channelData?.find((c) => c.channelId === channelId)?.channelName;
 
       updateChannel({ channelId, channelName }).then(() => {
-        queryClient.invalidateQueries({ queryKey: ["stats"] })
-      })
+        queryClient.invalidateQueries({ queryKey: ["stats"] });
+      });
     },
-    [channelData]
-  )
+    [channelData],
+  );
 
   return (
-    <div
-      className={clsx(
-        "grid grid-cols-6 gap-8 p-2 w-full overflow-y-auto",
-        scrollbarClasses
-      )}
-    >
+    <div className={clsx("grid grid-cols-6 gap-8 p-2 w-full overflow-y-auto", scrollbarClasses)}>
       <div className="col-span-6 xs:col-span-3 flex flex-col justify-around">
         <div>
           <p className="text-lg font-medium">Add Bots</p>
@@ -259,9 +237,7 @@ export const AccountTab = memo(() => {
             }}
             variant="bordered"
             items={channelData || []}
-            defaultSelectedKeys={[
-              data?.channelId ? data.channelId.toString() : "",
-            ]}
+            defaultSelectedKeys={[data?.channelId ? data.channelId.toString() : ""]}
             onSelectionChange={handleSelectionChange}
           >
             {(channel) => (
@@ -279,11 +255,9 @@ export const AccountTab = memo(() => {
         </p>
         <div className="flex pt-2 flex-wrap gap-2">
           {sessionsLoaded &&
-            sessions?.map((session) => (
-              <Session key={session.hash} {...session} />
-            ))}
+            sessions?.map((session) => <Session key={session.hash} {...session} />)}
         </div>
       </div>
     </div>
-  )
-})
+  );
+});

@@ -1,25 +1,25 @@
-import { useCallback } from "react"
-import type { QueryParams, Session } from "@/types"
-import { useQueryClient } from "@tanstack/react-query"
+import { useCallback } from "react";
+import type { QueryParams, Session } from "@/types";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   defineFileAction,
   FbActions,
-  FbActionUnion,
+  type FbActionUnion,
   FbIconName,
   FileHelper,
-  MapFileActionsToData,
+  type MapFileActionsToData,
   type FileData,
-} from "@tw-material/file-browser"
-import IconFlatColorIconsVlc from "~icons/flat-color-icons/vlc"
-import IconPotPlayerIcon from "~icons/material-symbols/play-circle-rounded"
-import RadixIconsOpenInNewWindow from "~icons/radix-icons/open-in-new-window"
-import toast from "react-hot-toast"
+} from "@tw-material/file-browser";
+import IconFlatColorIconsVlc from "~icons/flat-color-icons/vlc";
+import IconPotPlayerIcon from "~icons/material-symbols/play-circle-rounded";
+import RadixIconsOpenInNewWindow from "~icons/radix-icons/open-in-new-window";
+import toast from "react-hot-toast";
 
-import { mediaUrl, navigateToExternalUrl } from "@/utils/common"
-import { getSortState, SortOrder } from "@/utils/defaults"
-import http from "@/utils/http"
-import { usePreload } from "@/utils/queryOptions"
-import { useFileUploadStore, useModalStore } from "@/utils/stores"
+import { mediaUrl, navigateToExternalUrl } from "@/utils/common";
+import { getSortState, SortOrder } from "@/utils/defaults";
+import http from "@/utils/http";
+import { usePreload } from "@/utils/queryOptions";
+import { useFileUploadStore, useModalStore } from "@/utils/stores";
 
 const CustomActions = {
   OpenInVLCPlayer: defineFileAction({
@@ -65,34 +65,30 @@ const CustomActions = {
       icon: RadixIconsOpenInNewWindow,
     },
   } as const),
-}
+};
 
-type FbActionFullUnion =
-  | (typeof CustomActions)[keyof typeof CustomActions]
-  | FbActionUnion
+type FbActionFullUnion = (typeof CustomActions)[keyof typeof CustomActions] | FbActionUnion;
 
 export const useFileAction = (params: QueryParams, session: Session) => {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
 
-  const { preloadFiles } = usePreload()
+  const { preloadFiles } = usePreload();
 
-  const actions = useModalStore((state) => state.actions)
+  const actions = useModalStore((state) => state.actions);
 
-  const fileDialogOpen = useFileUploadStore(
-    (state) => state.actions.setFileDialogOpen
-  )
-  const uploadOpen = useFileUploadStore((state) => state.actions.setUploadOpen)
+  const fileDialogOpen = useFileUploadStore((state) => state.actions.setFileDialogOpen);
+  const uploadOpen = useFileUploadStore((state) => state.actions.setUploadOpen);
 
   return useCallback(() => {
     return async (data: MapFileActionsToData<FbActionFullUnion>) => {
       switch (data.id) {
         case FbActions.OpenFiles.id: {
-          const { targetFile, files } = data.payload
+          const { targetFile, files } = data.payload;
 
-          const fileToOpen = targetFile ?? files[0]
+          const fileToOpen = targetFile ?? files[0];
 
           if (fileToOpen && FileHelper.isDirectory(fileToOpen)) {
-            let qparams: QueryParams
+            let qparams: QueryParams;
 
             if (params.type === "my-drive") {
               qparams = {
@@ -101,144 +97,140 @@ export const useFileAction = (params: QueryParams, session: Session) => {
                   fileToOpen.path || fileToOpen.path == ""
                     ? fileToOpen.path
                     : params.path + "/" + fileToOpen.name,
-              }
+              };
             } else {
               qparams = {
                 type: "browse",
                 path: "",
                 filter: { parentId: fileToOpen.id },
-              }
+              };
             }
-            preloadFiles(qparams)
+            preloadFiles(qparams);
           } else if (fileToOpen && FileHelper.isOpenable(fileToOpen)) {
             actions.set({
               open: true,
               currentFile: fileToOpen,
               operation: FbActions.OpenFiles.id,
-            })
+            });
           }
 
-          break
+          break;
         }
         case FbActions.DownloadFiles.id: {
-          const { selectedFiles } = data.state
+          const { selectedFiles } = data.state;
           for (const file of selectedFiles) {
             if (!FileHelper.isDirectory(file)) {
-              const { id, name } = file
-              const url = mediaUrl(id, name, session.hash, true)
-              navigateToExternalUrl(url, false)
+              const { id, name } = file;
+              const url = mediaUrl(id, name, session.hash, true);
+              navigateToExternalUrl(url, false);
             }
           }
-          break
+          break;
         }
         case CustomActions.OpenInVLCPlayer.id: {
-          const { selectedFiles } = data.state
-          const fileToOpen = selectedFiles[0]
-          const { id, name } = fileToOpen
-          const url = `vlc://${mediaUrl(id, name, session.hash)}`
-          navigateToExternalUrl(url, false)
-          break
+          const { selectedFiles } = data.state;
+          const fileToOpen = selectedFiles[0];
+          const { id, name } = fileToOpen;
+          const url = `vlc://${mediaUrl(id, name, session.hash)}`;
+          navigateToExternalUrl(url, false);
+          break;
         }
         case CustomActions.OpenInPotPlayer.id: {
-          const { selectedFiles } = data.state
-          const fileToOpen = selectedFiles[0]
-          const { id, name } = fileToOpen
-          const url = `potplayer://${mediaUrl(id, name, session.hash)}`
-          navigateToExternalUrl(url, false)
-          break
+          const { selectedFiles } = data.state;
+          const fileToOpen = selectedFiles[0];
+          const { id, name } = fileToOpen;
+          const url = `potplayer://${mediaUrl(id, name, session.hash)}`;
+          navigateToExternalUrl(url, false);
+          break;
         }
         case CustomActions.OpenInNew.id: {
-          const { selectedFiles } = data.state
-          const { id, name } = selectedFiles[0]
-          navigateToExternalUrl(`/watch/${id}/${name}`, true)
-          break
+          const { selectedFiles } = data.state;
+          const { id, name } = selectedFiles[0];
+          navigateToExternalUrl(`/watch/${id}/${name}`, true);
+          break;
         }
         case FbActions.RenameFile.id: {
           actions.set({
             open: true,
             currentFile: data.state.selectedFiles[0],
             operation: FbActions.RenameFile.id,
-          })
-          break
+          });
+          break;
         }
         case FbActions.DeleteFiles.id: {
           actions.set({
             open: true,
             selectedFiles: data.state.selectedFiles.map((item) => item.id),
             operation: FbActions.DeleteFiles.id,
-          })
-          break
+          });
+          break;
         }
         case FbActions.CreateFolder.id: {
           actions.set({
             open: true,
             operation: FbActions.CreateFolder.id,
             currentFile: {} as FileData,
-          })
-          break
+          });
+          break;
         }
         case CustomActions.CopyDownloadLink.id: {
-          const selections = data.state.selectedFilesForAction
-          let clipboardText = ""
+          const selections = data.state.selectedFilesForAction;
+          let clipboardText = "";
           selections
-            .filter((element)=>!FileHelper.isDirectory(element))
+            .filter((element) => !FileHelper.isDirectory(element))
             .forEach((element, idx, arr) => {
-              const { id, name } = element
-              clipboardText = `${clipboardText}${mediaUrl(id, name, session.hash, true)}` + (idx+1 < arr.length ? "\n" : "");
-          })
-          navigator.clipboard.writeText(clipboardText)
-          break
+              const { id, name } = element;
+              clipboardText =
+                `${clipboardText}${mediaUrl(id, name, session.hash, true)}` +
+                (idx + 1 < arr.length ? "\n" : "");
+            });
+          navigator.clipboard.writeText(clipboardText);
+          break;
         }
         case FbActions.MoveFiles.id: {
-          const { files, target } = data.payload
+          const { files, target } = data.payload;
           const res = await http.post("/api/files/move", {
             files: files.map((file) => file?.id),
             destination: target.path || "/",
-          })
+          });
           if (res.status === 200) {
-            toast.success(`${files.length} files moved successfully`)
+            toast.success(`${files.length} files moved successfully`);
             queryClient.invalidateQueries({
               queryKey: ["files"],
-            })
+            });
           }
-          break
+          break;
         }
 
         case FbActions.UploadFiles.id: {
-          fileDialogOpen(true)
-          uploadOpen(true)
-          break
+          fileDialogOpen(true);
+          uploadOpen(true);
+          break;
         }
 
         case FbActions.EnableListView.id:
         case FbActions.EnableGridView.id:
         case FbActions.EnableTileView.id: {
-          localStorage.setItem("viewId", data.id)
-          break
+          localStorage.setItem("viewId", data.id);
+          break;
         }
         case FbActions.SortFilesByName.id:
         case FbActions.SortFilesBySize.id:
         case FbActions.SortFilesByDate.id: {
           if (params.type === "my-drive") {
-            const currentSortState = getSortState()
-            const order =
-              currentSortState.order === SortOrder.ASC
-                ? SortOrder.DESC
-                : SortOrder.ASC
-            localStorage.setItem(
-              "sort",
-              JSON.stringify({ sortId: data.id, order })
-            )
+            const currentSortState = getSortState();
+            const order = currentSortState.order === SortOrder.ASC ? SortOrder.DESC : SortOrder.ASC;
+            localStorage.setItem("sort", JSON.stringify({ sortId: data.id, order }));
           }
-          break
+          break;
         }
         default:
-          break
+          break;
       }
-    }
-  }, [params.type, params.path])
-}
+    };
+  }, [params.type, params.path]);
+};
 
 export const fileActions = Object.keys(CustomActions).map(
-  (t) => CustomActions[t as keyof typeof CustomActions]
-)
+  (t) => CustomActions[t as keyof typeof CustomActions],
+);

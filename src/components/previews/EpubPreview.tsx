@@ -1,24 +1,24 @@
-import { memo, useState } from "react"
-import { Rendition } from "epubjs"
-import { ReactReader } from "react-reader"
+import { memo, useState } from "react";
+import type { Rendition } from "epubjs";
+import { ReactReader } from "react-reader";
 
 const EpubPreview = ({ assetUrl }: { assetUrl: string }) => {
-  const [location, setLocation] = useState<string>()
+  const [location, setLocation] = useState<string>();
 
-  const onLocationChange = (cfiStr: string) => setLocation(cfiStr)
+  const onLocationChange = (cfiStr: string) => setLocation(cfiStr);
 
   const fixEpub = (rendition: Rendition) => {
-    const spineGet = rendition.book.spine.get.bind(rendition.book.spine)
-    rendition.book.spine.get = function (target) {
-      const targetStr = target as string
-      let t = spineGet(target)
+    const spineGet = rendition.book.spine.get.bind(rendition.book.spine);
+    rendition.book.spine.get = (target) => {
+      const targetStr = target as string;
+      let t = spineGet(target);
       while (t == null && targetStr.startsWith("../")) {
-        target = targetStr.substring(3)
-        t = spineGet(target)
+        target = targetStr.substring(3);
+        t = spineGet(target);
       }
-      return t
-    }
-  }
+      return t;
+    };
+  };
 
   return (
     <ReactReader
@@ -29,7 +29,7 @@ const EpubPreview = ({ assetUrl }: { assetUrl: string }) => {
       epubInitOptions={{ openAs: "epub" }}
       epubOptions={{ flow: "scrolled", allowPopups: true }}
     />
-  )
-}
+  );
+};
 
-export default memo(EpubPreview)
+export default memo(EpubPreview);

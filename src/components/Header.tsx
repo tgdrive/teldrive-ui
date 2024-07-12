@@ -1,35 +1,35 @@
-import { ChangeEvent, memo, useCallback, useRef, useState } from "react"
-import { useQueryClient } from "@tanstack/react-query"
-import { Link } from "@tanstack/react-router"
-import { Button, Input } from "@tw-material/react"
-import IconBiSearch from "~icons/bi/search"
-import MdiFilterOutline from "~icons/mdi/filter-outline"
-import PhTelegramLogoFill from "~icons/ph/telegram-logo-fill"
-import clsx from "clsx"
-import debounce from "lodash.debounce"
+import { type ChangeEvent, memo, useCallback, useRef, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { Link } from "@tanstack/react-router";
+import { Button, Input } from "@tw-material/react";
+import IconBiSearch from "~icons/bi/search";
+import MdiFilterOutline from "~icons/mdi/filter-outline";
+import PhTelegramLogoFill from "~icons/ph/telegram-logo-fill";
+import clsx from "clsx";
+import debounce from "lodash.debounce";
 
-import { usePreload } from "@/utils/queryOptions"
+import { usePreload } from "@/utils/queryOptions";
 
-import { ProfileDropDown } from "./menus/Profile"
-import { SearchMenu } from "./menus/search/Search"
-import { ThemeToggle } from "./menus/ThemeToggle"
+import { ProfileDropDown } from "./menus/Profile";
+import { SearchMenu } from "./menus/search/Search";
+import { ThemeToggle } from "./menus/ThemeToggle";
 
-const cleanSearchInput = (input: string) => input.trim().replace(/\s+/g, " ")
+const cleanSearchInput = (input: string) => input.trim().replace(/\s+/g, " ");
 
 interface SearchBarProps {
-  className?: string
+  className?: string;
 }
 
 const SearchBar = memo(({ className }: SearchBarProps) => {
-  const [query, setQuery] = useState("")
+  const [query, setQuery] = useState("");
 
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(false);
 
-  const { preloadFiles } = usePreload()
+  const { preloadFiles } = usePreload();
 
-  const triggerRef = useRef<HTMLButtonElement | null>(null)
+  const triggerRef = useRef<HTMLButtonElement | null>(null);
 
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
 
   const debouncedSearch = useCallback(
     debounce(
@@ -42,23 +42,23 @@ const SearchBar = memo(({ className }: SearchBarProps) => {
               query: newValue,
             },
           },
-          false
+          false,
         ),
-      1000
+      1000,
     ),
-    []
-  )
+    [],
+  );
 
   const updateQuery = useCallback((event: ChangeEvent<HTMLInputElement>) => {
-    setQuery(event.target.value)
-    const cleanInput = cleanSearchInput(event.target.value)
+    setQuery(event.target.value);
+    const cleanInput = cleanSearchInput(event.target.value);
     if (cleanInput) {
       queryClient.cancelQueries({
         queryKey: ["files"],
-      })
-      debouncedSearch(cleanInput)
+      });
+      debouncedSearch(cleanInput);
     }
-  }, [])
+  }, []);
 
   return (
     <>
@@ -88,17 +88,11 @@ const SearchBar = memo(({ className }: SearchBarProps) => {
           input: "px-2",
         }}
         startContent={<IconBiSearch className="size-6" />}
-      ></Input>
-      {isOpen && (
-        <SearchMenu
-          isOpen={isOpen}
-          setIsOpen={setIsOpen}
-          triggerRef={triggerRef}
-        />
-      )}
+      />
+      {isOpen && <SearchMenu isOpen={isOpen} setIsOpen={setIsOpen} triggerRef={triggerRef} />}
     </>
-  )
-})
+  );
+});
 
 export default memo(function Header({ auth }: { auth?: boolean }) {
   return (
@@ -115,5 +109,5 @@ export default memo(function Header({ auth }: { auth?: boolean }) {
         {auth && <ProfileDropDown />}
       </div>
     </header>
-  )
-})
+  );
+});

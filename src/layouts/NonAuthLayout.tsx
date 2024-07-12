@@ -1,7 +1,7 @@
-import { memo } from "react"
-import { Outlet } from "@tanstack/react-router"
+import { memo } from "react";
+import { Outlet } from "@tanstack/react-router";
 
-import Header from "@/components/Header"
+import Header from "@/components/Header";
 
 export const NonAuthLayout = memo(() => {
   return (
@@ -13,5 +13,5 @@ export const NonAuthLayout = memo(() => {
         </main>
       </div>
     </div>
-  )
-})
+  );
+});

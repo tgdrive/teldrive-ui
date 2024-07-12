@@ -1,9 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router"
+import { createFileRoute } from "@tanstack/react-router";
 
-import {
-  categoryStorageQueryOptions,
-  uploadStatsQueryOptions,
-} from "@/utils/queryOptions"
+import { categoryStorageQueryOptions, uploadStatsQueryOptions } from "@/utils/queryOptions";
 
 export const Route = createFileRoute("/_authenticated/storage")({
   wrapInSuspense: true,
@@ -12,10 +9,10 @@ export const Route = createFileRoute("/_authenticated/storage")({
       await Promise.all([
         queryClient.prefetchQuery(uploadStatsQueryOptions(7)),
         queryClient.prefetchQuery(categoryStorageQueryOptions),
-      ])
+      ]);
     } else {
-      queryClient.prefetchQuery(uploadStatsQueryOptions(7))
-      queryClient.prefetchQuery(categoryStorageQueryOptions)
+      queryClient.prefetchQuery(uploadStatsQueryOptions(7));
+      queryClient.prefetchQuery(categoryStorageQueryOptions);
     }
   },
-})
+});

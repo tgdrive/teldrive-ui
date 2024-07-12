@@ -1,137 +1,146 @@
-import { Dispatch, SetStateAction } from "react"
+import type { Dispatch, SetStateAction } from "react";
 
-export type FileResponse = { results: SingleFile[]; nextPageToken?: string }
+export type FileResponse = { results: SingleFile[]; nextPageToken?: string };
 
 export type SingleFile = {
-  name: string
-  type: string
-  mimeType: string
-  size: number
-  depth: number
-  createdAt: string
-  updatedAt: string
-  userId: string
-  parentId: string
-  id: string
-  starred: boolean
-  encrypted?: boolean
-}
+  name: string;
+  type: string;
+  mimeType: string;
+  size: number;
+  depth: number;
+  createdAt: string;
+  updatedAt: string;
+  userId: string;
+  parentId: string;
+  id: string;
+  starred: boolean;
+  encrypted?: boolean;
+};
 
 export type FilePayload = {
-  id?: string
-  payload?: Record<string, any>
-}
+  id?: string;
+  payload?: Record<string, any>;
+};
 
 export type UploadPart = {
-  name: string
-  partId: number
-  partNo: number
-  size: number
-  channelId: number
-  encrypted?: boolean
-  salt?: string
-}
+  name: string;
+  partId: number;
+  partNo: number;
+  size: number;
+  channelId: number;
+  encrypted?: boolean;
+  salt?: string;
+};
 
 export type AuthMessage = {
-  type: string
-  payload: Record<string, string | number | boolean>
-  message: string
-}
+  type: string;
+  payload: Record<string, string | number | boolean>;
+  message: string;
+};
 
 export type Message = {
-  message: string
-  error?: string
-  code?: number
-}
+  message: string;
+  error?: string;
+  code?: number;
+};
 
 export type Settings = {
-  pageSize: number
-  resizerHost: string
-  splitFileSize: number
-  uploadConcurrency: number
-  encryptFiles: string
-}
+  pageSize: number;
+  resizerHost: string;
+  splitFileSize: number;
+  uploadConcurrency: number;
+  encryptFiles: string;
+};
 
 export type Session = {
-  name: string
-  userName: string
-  userId: number
-  isPremium: boolean
-  hash: string
-  expires: string
-}
+  name: string;
+  userName: string;
+  userId: number;
+  isPremium: boolean;
+  hash: string;
+  expires: string;
+};
 
 export type UserSession = {
-  hash: string
-  createdAt: string
-  location?: string
-  officialApp?: boolean
-  appName?: string
-  valid: boolean
-  current: boolean
-}
+  hash: string;
+  createdAt: string;
+  location?: string;
+  officialApp?: boolean;
+  appName?: string;
+  valid: boolean;
+  current: boolean;
+};
 
 export type QueryParams = {
-  type: BrowseView
-  path: string
-  filter?: FilterQuery
-}
+  type: BrowseView;
+  path: string;
+  filter?: FilterQuery;
+};
 
 export type AccountStats = {
-  channelId: number
-  bots: string[]
-}
+  channelId: number;
+  bots: string[];
+};
 
 export type Channel = {
-  channelName?: string
-  channelId: number
-}
+  channelName?: string;
+  channelId: number;
+};
 
 export type Tags = {
-  [key: string]: any
-}
+  [key: string]: any;
+};
 
 export type AudioMetadata = {
-  artist: string
-  title: string
-  cover: string
-}
+  artist: string;
+  title: string;
+  cover: string;
+};
 
 export type UploadStats = {
-  uploadDate: string
-  totalUploaded: number
-}
+  uploadDate: string;
+  totalUploaded: number;
+};
 
 export type CategoryStorage = {
-  category: string
-  totalFiles: number
-  totalSize: number
-}
+  category: string;
+  totalFiles: number;
+  totalSize: number;
+};
 
-export type SetValue<T> = Dispatch<SetStateAction<T>>
+export type SetValue<T> = Dispatch<SetStateAction<T>>;
 
 export type PreviewFile = {
-  id: string
-  name: string
-  mimeType: string
-  previewType: string
-  starred: boolean
-}
-export type BrowseView =
-  | "my-drive"
-  | "search"
-  | "starred"
-  | "recent"
-  | "category"
-  | "browse"
+  id: string;
+  name: string;
+  mimeType: string;
+  previewType: string;
+  starred: boolean;
+};
+export type BrowseView = "my-drive" | "search" | "starred" | "recent" | "category" | "browse";
 
-export type FileQueryKey = (string | QueryParams)[]
+export type FileQueryKey = (string | QueryParams)[];
 
 export type FilterQuery = {
-  category?: string
-  path?: string
-  query?: string
-  updatedAt?: string
-  deepSearch?: boolean
-  parentId?: string
-}
+  category?: string;
+  path?: string;
+  query?: string;
+  updatedAt?: string;
+  deepSearch?: boolean;
+  parentId?: string;
+};
+
+export type LinkComponentProps<TComp> = React.PropsWithoutRef<
+  TComp extends React.FC<infer TProps> | React.Component<infer TProps>
+    ? TProps
+    : TComp extends keyof JSX.IntrinsicElements
+      ? Omit<React.HTMLProps<TComp>, "children" | "preload">
+      : never
+> &
+  React.RefAttributes<
+    TComp extends React.FC<{ ref: infer TRef }> | React.Component<{ ref: infer TRef }>
+      ? TRef
+      : TComp extends keyof JSX.IntrinsicElements
+        ? React.ComponentRef<TComp>
+        : never
+  >;

@@ -1,36 +1,36 @@
-import { memo, useCallback, useEffect, useRef, useState } from "react"
-import { FbIcon, FbIconName } from "@tw-material/file-browser"
-import { Button, Slider } from "@tw-material/react"
-import IconPauseCircle from "~icons/ic/round-pause-circle"
-import IconPlayCircle from "~icons/ic/round-play-circle"
-import IconVolume1 from "~icons/lucide/volume-1"
-import IconVolume2 from "~icons/lucide/volume-2"
-import IconVolumeX from "~icons/lucide/volume-x"
-import IconRepeat2Fill from "~icons/ri/repeat-2-fill"
-import IconRepeatOneFill from "~icons/ri/repeat-one-fill"
-import IconSkipNextBold from "~icons/solar/skip-next-bold"
-import IconSkipPreviousBold from "~icons/solar/skip-previous-bold"
-import clsx from "clsx"
-import { useShallow } from "zustand/react/shallow"
+import { memo, useCallback, useEffect, useRef, useState } from "react";
+import { FbIcon, FbIconName } from "@tw-material/file-browser";
+import { Button, Slider } from "@tw-material/react";
+import IconPauseCircle from "~icons/ic/round-pause-circle";
+import IconPlayCircle from "~icons/ic/round-play-circle";
+import IconVolume1 from "~icons/lucide/volume-1";
+import IconVolume2 from "~icons/lucide/volume-2";
+import IconVolumeX from "~icons/lucide/volume-x";
+import IconRepeat2Fill from "~icons/ri/repeat-2-fill";
+import IconRepeatOneFill from "~icons/ri/repeat-one-fill";
+import IconSkipNextBold from "~icons/solar/skip-next-bold";
+import IconSkipPreviousBold from "~icons/solar/skip-previous-bold";
+import clsx from "clsx";
+import { useShallow } from "zustand/react/shallow";
 
-import { formatDuration } from "@/utils/common"
-import { audioActions, useAudioStore } from "@/utils/stores"
+import { formatDuration } from "@/utils/common";
+import { audioActions, useAudioStore } from "@/utils/stores";
 
-type SliderValue = number | number[]
+type SliderValue = number | number[];
 
 const getVolumeIcon = (volume: number, muted: boolean) => {
-  if (volume === 0 || muted) return <IconVolumeX />
-  if (volume < 0.5) return <IconVolume1 />
-  return <IconVolume2 />
-}
+  if (volume === 0 || muted) return <IconVolumeX />;
+  if (volume < 0.5) return <IconVolume1 />;
+  return <IconVolume2 />;
+};
 const AudioCover = memo(() => {
-  const metadata = useAudioStore((state) => state.metadata)
+  const metadata = useAudioStore((state) => state.metadata);
   return (
     <div className="relative col-span-6 md:col-span-5 grid">
       <div
         className={clsx(
           "bg-neutral-400 flex justify-center items-center rounded-large aspect-[1/1] row-span-full col-span-full",
-          metadata.cover ? "-z-[1]" : "z-10"
+          metadata.cover ? "-z-[1]" : "z-10",
         )}
       >
         <FbIcon icon={FbIconName.music} className="size-16" />
@@ -39,37 +39,31 @@ const AudioCover = memo(() => {
         alt="Album cover"
         className={clsx(
           "object-cover rounded-large row-span-full col-span-full transition",
-          metadata.cover ? "z-10 opacity-100" : "-z-[1] opacity-0"
+          metadata.cover ? "z-10 opacity-100" : "-z-[1] opacity-0",
         )}
         height={200}
         src={metadata.cover}
         width="100%"
       />
     </div>
-  )
-})
+  );
+});
 
 const AudioInfo = memo(() => {
-  const metadata = useAudioStore((state) => state.metadata)
+  const metadata = useAudioStore((state) => state.metadata);
   return (
     <div className="flex justify-between items-start">
       <div className="flex flex-col gap-0 min-w-0">
-        <h3
-          title={metadata.title}
-          className="text-small font-semibold truncate"
-        >
+        <h3 title={metadata.title} className="text-small font-semibold truncate">
           {metadata.title}
         </h3>
-        <h1
-          title={metadata.artist}
-          className="text-large font-medium mt-2 truncate"
-        >
+        <h1 title={metadata.artist} className="text-large font-medium mt-2 truncate">
           {metadata.artist}
         </h1>
       </div>
     </div>
-  )
-})
+  );
+});
 
 const AudioDurationSlider = memo(() => {
   const { audio, duration, currentTime, actions, isPlaying } = useAudioStore(
@@ -79,35 +73,34 @@ const AudioDurationSlider = memo(() => {
       currentTime: state.currentTime,
       actions: state.actions,
       isPlaying: state.isPlaying,
-    }))
-  )
+    })),
+  );
 
-  const [isDragging, setIsDragging] = useState(false)
+  const [isDragging, setIsDragging] = useState(false);
 
-  const sliderRef = useRef<HTMLDivElement>(null)
+  const sliderRef = useRef<HTMLDivElement>(null);
 
-  const playAnimationRef = useRef<number | null>(null)
+  const playAnimationRef = useRef<number | null>(null);
 
   const onPositionChangeEnd = useCallback((value: SliderValue) => {
-    actions.seek(value as number)
-    setIsDragging(false)
-  }, [])
+    actions.seek(value as number);
+    setIsDragging(false);
+  }, []);
 
   const onPositionChange = useCallback((value: SliderValue) => {
-    setIsDragging(true)
-    actions.setCurrentTime(value as number)
-  }, [])
+    setIsDragging(true);
+    actions.setCurrentTime(value as number);
+  }, []);
 
   const repeat = useCallback(() => {
-    actions.setCurrentTime(audio?.currentTime!)
-    playAnimationRef.current = requestAnimationFrame(repeat)
-  }, [audio, actions.setCurrentTime])
+    actions.setCurrentTime(audio?.currentTime!);
+    playAnimationRef.current = requestAnimationFrame(repeat);
+  }, [audio, actions.setCurrentTime]);
 
   useEffect(() => {
-    if (isPlaying && !isDragging)
-      playAnimationRef.current = requestAnimationFrame(repeat)
-    else cancelAnimationFrame(playAnimationRef.current!)
-  }, [isPlaying, isDragging, audio, repeat])
+    if (isPlaying && !isDragging) playAnimationRef.current = requestAnimationFrame(repeat);
+    else cancelAnimationFrame(playAnimationRef.current!);
+  }, [isPlaying, isDragging, audio, repeat]);
 
   return (
     <>
@@ -124,8 +117,7 @@ const AudioDurationSlider = memo(() => {
         onChange={onPositionChange}
         classNames={{
           thumb: "size-3 after:size-3  after:bg-primary",
-          track:
-            "data-[thumb-hidden=false]:border-x-[calc(theme(spacing.3)/2)]",
+          track: "data-[thumb-hidden=false]:border-x-[calc(theme(spacing.3)/2)]",
         }}
       />
       <div className="flex justify-between">
@@ -133,17 +125,17 @@ const AudioDurationSlider = memo(() => {
         <p className="text-small ">{formatDuration(duration)}</p>
       </div>
     </>
-  )
-})
+  );
+});
 
 const VolumeSlider = memo(() => {
-  const volume = useAudioStore((state) => state.volume)
-  const actions = useAudioStore(audioActions)
+  const volume = useAudioStore((state) => state.volume);
+  const actions = useAudioStore(audioActions);
 
   const onVolumeChange = useCallback(
     (value: SliderValue) => actions.setVolume(value as number),
-    []
-  )
+    [],
+  );
 
   return (
     <Slider
@@ -160,8 +152,8 @@ const VolumeSlider = memo(() => {
         track: "data-[thumb-hidden=false]:border-x-[calc(theme(spacing.3)/2)]",
       }}
     />
-  )
-})
+  );
+});
 
 const TopControls = memo(() => {
   const { isPlaying, actions, handlers } = useAudioStore(
@@ -169,8 +161,8 @@ const TopControls = memo(() => {
       isPlaying: state.isPlaying,
       actions: state.actions,
       handlers: state.handlers,
-    }))
-  )
+    })),
+  );
 
   return (
     <div className="flex w-full items-center justify-center gap-3">
@@ -203,41 +195,31 @@ const TopControls = memo(() => {
         <IconSkipNextBold />
       </Button>
     </div>
-  )
-})
+  );
+});
 
 const BottomControls = memo(() => {
-  const actions = useAudioStore(audioActions)
+  const actions = useAudioStore(audioActions);
   const { volume, muted, looping } = useAudioStore(
     useShallow((state) => ({
       volume: state.volume,
       muted: state.isMuted,
       looping: state.isLooping,
-    }))
-  )
+    })),
+  );
 
   return (
     <div className="flex w-full items-center justify-center gap-3">
-      <Button
-        isIconOnly
-        className="text-inherit"
-        variant="text"
-        onPress={actions.toggleLooping}
-      >
+      <Button isIconOnly className="text-inherit" variant="text" onPress={actions.toggleLooping}>
         {looping ? <IconRepeatOneFill /> : <IconRepeat2Fill />}
       </Button>
-      <Button
-        isIconOnly
-        className="text-inherit"
-        variant="text"
-        onPress={actions.toggleMute}
-      >
+      <Button isIconOnly className="text-inherit" variant="text" onPress={actions.toggleMute}>
         {getVolumeIcon(volume, muted)}
       </Button>
       <VolumeSlider />
     </div>
-  )
-})
+  );
+});
 
 export const AudioPlayer = memo(() => {
   return (
@@ -257,5 +239,5 @@ export const AudioPlayer = memo(() => {
         </div>
       </div>
     </div>
-  )
-})
+  );
+});

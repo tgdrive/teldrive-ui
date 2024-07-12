@@ -1,22 +1,22 @@
-import { memo } from "react"
-import { getRouteApi } from "@tanstack/react-router"
+import { memo } from "react";
+import { getRouteApi } from "@tanstack/react-router";
 
-import { AccountTab } from "./AccountTab"
-import { ApperanceTab } from "./ApperanceTab"
-import { GeneralTab } from "./GeneralTab"
+import { AccountTab } from "./AccountTab";
+import { ApperanceTab } from "./ApperanceTab";
+import { GeneralTab } from "./GeneralTab";
 
-const fileRoute = getRouteApi("/_authenticated/settings/$tabId")
+const fileRoute = getRouteApi("/_authenticated/settings/$tabId");
 
 export const SettingsTabView = memo(() => {
-  const params = fileRoute.useParams()
+  const params = fileRoute.useParams();
 
   switch (params.tabId) {
     case "appearance":
-      return <ApperanceTab />
+      return <ApperanceTab />;
 
     case "account":
-      return <AccountTab />
+      return <AccountTab />;
     default:
-      return <GeneralTab />
+      return <GeneralTab />;
   }
-})
+});

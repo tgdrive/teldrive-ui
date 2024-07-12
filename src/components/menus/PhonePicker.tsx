@@ -1,5 +1,5 @@
-import { memo, useMemo, useState } from "react"
-import { useFilter } from "@react-aria/i18n"
+import { memo, useMemo, useState } from "react";
+import { useFilter } from "@react-aria/i18n";
 import {
   Divider,
   Input,
@@ -8,32 +8,32 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@tw-material/react"
-import clsx from "clsx"
-import type { ControllerRenderProps } from "react-hook-form"
+} from "@tw-material/react";
+import clsx from "clsx";
+import type { ControllerRenderProps } from "react-hook-form";
 
-import { isoCodeMap, isoCodes, type FormState } from "@/components/Login"
-import { scrollbarClasses } from "@/utils/classes"
-import { flags } from "@/utils/country-flags"
+import { isoCodeMap, isoCodes, type FormState } from "@/components/Login";
+import { scrollbarClasses } from "@/utils/classes";
+import { flags } from "@/utils/country-flags";
 
 interface PhoneNoPickerProps {
-  field: ControllerRenderProps<FormState, "phoneCode">
+  field: ControllerRenderProps<FormState, "phoneCode">;
 }
 
 export const PhoneNoPicker = memo(({ field }: PhoneNoPickerProps) => {
   const { contains } = useFilter({
     sensitivity: "base",
-  })
+  });
 
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(false);
 
-  const [value, setValue] = useState("")
+  const [value, setValue] = useState("");
 
   const codes = useMemo(
     () => isoCodes.filter((composer) => contains(composer.country, value)),
-    [value]
-  )
-  const TriggerIcon = flags[field.value as keyof typeof flags]
+    [value],
+  );
+  const TriggerIcon = flags[field.value as keyof typeof flags];
 
   return (
     <Popover
@@ -50,9 +50,7 @@ export const PhoneNoPicker = memo(({ field }: PhoneNoPickerProps) => {
       <PopoverTrigger>
         <button className="outline-none flex gap-3 items-center shrink-0">
           <TriggerIcon width={30} height={20} />
-          <span className="text-on-surface-variant min-w-10">
-            {isoCodeMap[field.value].value}
-          </span>
+          <span className="text-on-surface-variant min-w-10">{isoCodeMap[field.value].value}</span>
           <Divider className="h-8" orientation="vertical" />
         </button>
       </PopoverTrigger>
@@ -67,18 +65,15 @@ export const PhoneNoPicker = memo(({ field }: PhoneNoPickerProps) => {
         <Listbox
           aria-label="Country Code"
           items={codes}
-          className={clsx(
-            "max-h-64 overflow-y-auto rounded-lg bg-inherit",
-            scrollbarClasses
-          )}
+          className={clsx("max-h-64 overflow-y-auto rounded-lg bg-inherit", scrollbarClasses)}
           onAction={(key) => {
-            field.onChange({ target: { value: key } })
-            setIsOpen(false)
+            field.onChange({ target: { value: key } });
+            setIsOpen(false);
           }}
           isVirtualized
         >
           {(item) => {
-            const Flag = flags[item.code as keyof typeof flags]
+            const Flag = flags[item.code as keyof typeof flags];
             return (
               <ListboxItem
                 key={item.code}
@@ -92,10 +87,10 @@ export const PhoneNoPicker = memo(({ field }: PhoneNoPickerProps) => {
                   <span className="ml-auto">{item.value}</span>
                 </div>
               </ListboxItem>
-            )
+            );
           }}
         </Listbox>
       </PopoverContent>
     </Popover>
-  )
-})
+  );
+});

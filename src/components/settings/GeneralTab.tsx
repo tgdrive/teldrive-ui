@@ -1,34 +1,29 @@
-import { memo, useCallback } from "react"
-import { Button, Input, Select, SelectItem, Switch } from "@tw-material/react"
-import clsx from "clsx"
-import { Controller, useForm } from "react-hook-form"
+import { memo, useCallback } from "react";
+import { Button, Input, Select, SelectItem, Switch } from "@tw-material/react";
+import clsx from "clsx";
+import { Controller, useForm } from "react-hook-form";
 
-import useSettings from "@/hooks/useSettings"
-import { scrollbarClasses } from "@/utils/classes"
-import { splitFileSizes } from "@/utils/common"
+import useSettings from "@/hooks/useSettings";
+import { scrollbarClasses } from "@/utils/classes";
+import { splitFileSizes } from "@/utils/common";
 
 export const GeneralTab = memo(() => {
-  const { settings, setSettings } = useSettings()
+  const { settings, setSettings } = useSettings();
 
   const { control, handleSubmit } = useForm({
     defaultValues: settings,
-  })
+  });
 
-  const onSubmit = useCallback((data: typeof settings) => setSettings(data), [])
+  const onSubmit = useCallback((data: typeof settings) => setSettings(data), []);
 
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className={clsx(
-        "grid grid-cols-6 gap-8 p-2 w-full overflow-y-auto",
-        scrollbarClasses
-      )}
+      className={clsx("grid grid-cols-6 gap-8 p-2 w-full overflow-y-auto", scrollbarClasses)}
     >
       <div className="col-span-6 xs:col-span-3">
         <p className="text-lg font-medium">Upload Concurrency</p>
-        <p className="text-sm font-normal text-on-surface-variant">
-          Concurrent Part Uploads
-        </p>
+        <p className="text-sm font-normal text-on-surface-variant">Concurrent Part Uploads</p>
       </div>
       <Controller
         name="uploadConcurrency"
@@ -67,9 +62,7 @@ export const GeneralTab = memo(() => {
       />
       <div className="col-span-6 xs:col-span-3">
         <p className="text-lg font-medium">Page Size</p>
-        <p className="text-sm font-normal text-on-surface-variant">
-          Number of items per page
-        </p>
+        <p className="text-sm font-normal text-on-surface-variant">Number of items per page</p>
       </div>
       <Controller
         name="pageSize"
@@ -148,5 +141,5 @@ export const GeneralTab = memo(() => {
         </Button>
       </div>
     </form>
-  )
-})
+  );
+});

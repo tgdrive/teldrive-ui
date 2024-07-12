@@ -1,11 +1,5 @@
-import {
-  CheckboxProps,
-  Chip,
-  tv,
-  useCheckbox,
-  VisuallyHidden,
-} from "@tw-material/react"
-import MingcuteCheck2Line from "~icons/mingcute/check-2-line"
+import { type CheckboxProps, Chip, tv, useCheckbox, VisuallyHidden } from "@tw-material/react";
+import MingcuteCheck2Line from "~icons/mingcute/check-2-line";
 
 const checkbox = tv({
   slots: {
@@ -24,25 +18,19 @@ const checkbox = tv({
       },
     },
   },
-})
+});
 
 interface FilterChipProps extends CheckboxProps {
-  startIcon: React.ReactNode
+  startIcon: React.ReactNode;
 }
 
 export const FilterChip = ({ startIcon, ...props }: FilterChipProps) => {
-  const {
-    children,
-    isSelected,
-    isFocusVisible,
-    getBaseProps,
-    getLabelProps,
-    getInputProps,
-  } = useCheckbox({
-    ...props,
-  })
+  const { children, isSelected, isFocusVisible, getBaseProps, getLabelProps, getInputProps } =
+    useCheckbox({
+      ...props,
+    });
 
-  const styles = checkbox({ isSelected, isFocusVisible })
+  const styles = checkbox({ isSelected, isFocusVisible });
 
   return (
     <label {...getBaseProps()}>
@@ -55,16 +43,12 @@ export const FilterChip = ({ startIcon, ...props }: FilterChipProps) => {
           content: styles.content(),
         }}
         startContent={
-          isSelected ? (
-            <MingcuteCheck2Line className="size-5" />
-          ) : startIcon ? (
-            startIcon
-          ) : null
+          isSelected ? <MingcuteCheck2Line className="size-5" /> : startIcon ? startIcon : null
         }
         {...getLabelProps()}
       >
         {children}
       </Chip>
     </label>
-  )
-}
+  );
+};
