@@ -52,7 +52,7 @@ const CategoryStorageCard = memo(({ category, totalSize, totalFiles }: CategoryS
         data-mounted={isMounted}
         className={clsx("flex flex-col justify-center items-center h-full duration-300", grow)}
       >
-        <h2 className="text-2xl font-medium capitalize">{category + "s"}</h2>
+        <h2 className="text-2xl font-medium capitalize">{`${category}s`}</h2>
         <p className="text-3xl font-semibold">{filesize(totalSize, { standard: "jedec" })}</p>
         <p className="text-sm font-semibold">{totalFiles} files</p>
       </div>

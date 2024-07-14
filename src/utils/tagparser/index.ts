@@ -29,15 +29,19 @@ async function parseFile(file: string, buffer: ArrayBuffer) {
       return parseFlacFile(file, buffer, size + 4);
     }
     return parseMp3File(file, buffer, bytes[3]);
-  } else if (string.startsWith("fLaC")) {
+  }
+  if (string.startsWith("fLaC")) {
     return parseFlacFile(file, buffer);
-  } else if (string.startsWith("OggS")) {
+  }
+  if (string.startsWith("OggS")) {
     buffer = await getBuffer(file);
     return parseOggOpusFile(buffer);
-  } else if (string.endsWith("ftyp")) {
+  }
+  if (string.endsWith("ftyp")) {
     buffer = await getBuffer(file);
     return parseM4aFile(buffer);
-  } else if (string.startsWith("RIFF")) {
+  }
+  if (string.startsWith("RIFF")) {
     return parseWavFile(buffer);
   }
   throw new Error("Invalid or unsupported file");

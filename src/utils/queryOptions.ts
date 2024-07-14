@@ -29,7 +29,7 @@ import http from "./http";
 
 const mapFilesToFb = (files: SingleFile[], sessionHash: string): FileData[] => {
   return files.map((item): FileData => {
-    if (item.mimeType === "drive/folder")
+    if (item.mimeType === "drive/folder") {
       return {
         id: item.id,
         name: item.name,
@@ -39,6 +39,7 @@ const mapFilesToFb = (files: SingleFile[], sessionHash: string): FileData[] => {
         modDate: item.updatedAt,
         isDir: true,
       };
+    }
 
     const previewType = getPreviewType(getExtension(item.name), {
       video: item.mimeType.includes("video"),
@@ -61,7 +62,7 @@ const mapFilesToFb = (files: SingleFile[], sessionHash: string): FileData[] => {
       mimeType: item.mimeType,
       size: item.size ? Number(item.size) : 0,
       previewType,
-      openable: preview[previewType!] ? true : false,
+      openable: !!preview[previewType!],
       starred: item.starred,
       thumbnailUrl,
       modDate: item.updatedAt,
@@ -87,11 +88,14 @@ export const filesQueryOptions = (params: QueryParams, sessionHash?: string) =>
   infiniteQueryOptions({
     queryKey: ["files", params],
     queryFn: fetchFiles(params),
-    initialPageParam: "",
-    getNextPageParam: (lastPage, _) => lastPage.nextPageToken,
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, _) =>
+      lastPage.meta.currentPage + 1 > lastPage.meta.totalPages
+        ? undefined
+        : lastPage.meta.currentPage + 1,
     select: (data) =>
       data.pages.flatMap((page) =>
-        page.results ? mapFilesToFb(page.results, sessionHash as string) : [],
+        page.files ? mapFilesToFb(page.files, sessionHash as string) : [],
       ),
   });
 
@@ -139,13 +143,19 @@ export const usePreload = () => {
       };
       if (!queryState?.data) {
         try {
-          if (showProgress) startProgress();
+          if (showProgress) {
+            startProgress();
+          }
           await router.preloadRoute(nextRoute);
           router.navigate(nextRoute);
         } finally {
-          if (showProgress) stopProgress();
+          if (showProgress) {
+            stopProgress();
+          }
         }
-      } else router.navigate(nextRoute);
+      } else {
+        router.navigate(nextRoute);
+      }
     },
     [queryClient],
   );
@@ -164,7 +174,9 @@ export const usePreload = () => {
       } finally {
         stopProgress();
       }
-    } else router.navigate(nextRoute);
+    } else {
+      router.navigate(nextRoute);
+    }
   }, []);
 
   return { preloadFiles, preloadStorage };
@@ -173,11 +185,10 @@ export const usePreload = () => {
 async function fetchSession() {
   const res = await http.get<Session>("/api/auth/session");
   const contentType = res.headers.get("content-type");
-  if (contentType && contentType.includes("application/json")) {
+  if (contentType?.includes("application/json")) {
     return res.data;
-  } else {
-    return null;
   }
+  return null;
 }
 
 async function uploadStats(days: number, signal: AbortSignal) {
@@ -197,11 +208,11 @@ async function categoryStorage(signal: AbortSignal) {
 
 export const fetchFiles =
   (params: QueryParams) =>
-  async ({ pageParam, signal }: { pageParam: string; signal: AbortSignal }) => {
+  async ({ pageParam, signal }: { pageParam: number; signal: AbortSignal }) => {
     const { type, path } = params;
     const query: Record<string, string | number | boolean> = {
-      nextPageToken: pageParam,
-      perPage: 500,
+      page: pageParam,
+      limit: settings.pageSize,
       order: type === "my-drive" ? defaultSortState.order : sortViewMap[type].order,
       sort:
         type === "my-drive"
@@ -210,10 +221,12 @@ export const fetchFiles =
     };
 
     if (type === "my-drive") {
-      query.path = path.startsWith("/") ? path : "/" + path;
+      query.path = path.startsWith("/") ? path : `/${path}`;
     } else if (type === "search") {
       query.op = "find";
-      for (const key in params.filter) query[key] = params.filter[key];
+      for (const key in params.filter) {
+        query[key] = params.filter[key];
+      }
     } else if (type === "starred") {
       query.op = "find";
       query.starred = true;
@@ -224,7 +237,9 @@ export const fetchFiles =
       query.op = "find";
       query.type = "file";
       query.category = path.replaceAll("/", "");
-    } else if (type === "browse") query.parentId = params.filter?.parentId as string;
+    } else if (type === "browse") {
+      query.parentId = params.filter?.parentId as string;
+    }
 
     return (await http.get<FileResponse>("/api/files", { params: query, signal })).data;
   };
@@ -255,7 +270,7 @@ export const useUpdateFile = (queryKey: any[]) => {
             ...prev,
             pages: prev?.pages.map((page) => ({
               ...page,
-              results: page.results.map((val) =>
+              results: page.files.map((val) =>
                 val.id === variables.id ? { ...val, ...variables.payload } : val,
               ),
             })),
@@ -279,7 +294,7 @@ export const useDeleteFile = (queryKey: any[]) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (data: Record<string, any>) => {
-      return (await http.post(`/api/files/delete`, { files: data.files })).data;
+      return (await http.post("/api/files/delete", { files: data.files })).data;
     },
     onMutate: async (variables: { files: string[] }) => {
       await queryClient.cancelQueries({ queryKey });
@@ -289,7 +304,7 @@ export const useDeleteFile = (queryKey: any[]) => {
           ...prev,
           pages: prev?.pages.map((page) => ({
             ...page,
-            results: page.results.filter((val) => !variables.files.includes(val.id)),
+            results: page.files.filter((val) => !variables.files.includes(val.id)),
           })),
         };
       });

@@ -19,8 +19,12 @@ import { audioActions, useAudioStore } from "@/utils/stores";
 type SliderValue = number | number[];
 
 const getVolumeIcon = (volume: number, muted: boolean) => {
-  if (volume === 0 || muted) return <IconVolumeX />;
-  if (volume < 0.5) return <IconVolume1 />;
+  if (volume === 0 || muted) {
+    return <IconVolumeX />;
+  }
+  if (volume < 0.5) {
+    return <IconVolume1 />;
+  }
   return <IconVolume2 />;
 };
 const AudioCover = memo(() => {
@@ -98,8 +102,11 @@ const AudioDurationSlider = memo(() => {
   }, [audio, actions.setCurrentTime]);
 
   useEffect(() => {
-    if (isPlaying && !isDragging) playAnimationRef.current = requestAnimationFrame(repeat);
-    else cancelAnimationFrame(playAnimationRef.current!);
+    if (isPlaying && !isDragging) {
+      playAnimationRef.current = requestAnimationFrame(repeat);
+    } else {
+      cancelAnimationFrame(playAnimationRef.current!);
+    }
   }, [isPlaying, isDragging, audio, repeat]);
 
   return (

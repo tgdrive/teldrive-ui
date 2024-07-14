@@ -47,7 +47,7 @@ const CustomActions = {
   CopyDownloadLink: defineFileAction({
     id: "copy_link",
     requiresSelection: true,
-    fileFilter: (file) => (file && "isDir" in file ? false : true),
+    fileFilter: (file) => !(file && "isDir" in file),
     button: {
       name: "Copy Link",
       contextMenu: true,
@@ -94,9 +94,9 @@ export const useFileAction = (params: QueryParams, session: Session) => {
               qparams = {
                 type: params.type,
                 path:
-                  fileToOpen.path || fileToOpen.path == ""
+                  fileToOpen.path || fileToOpen.path === ""
                     ? fileToOpen.path
-                    : params.path + "/" + fileToOpen.name,
+                    : `${params.path}/${fileToOpen.name}`,
               };
             } else {
               qparams = {
@@ -180,9 +180,7 @@ export const useFileAction = (params: QueryParams, session: Session) => {
             .filter((element) => !FileHelper.isDirectory(element))
             .forEach((element, idx, arr) => {
               const { id, name } = element;
-              clipboardText =
-                `${clipboardText}${mediaUrl(id, name, session.hash, true)}` +
-                (idx + 1 < arr.length ? "\n" : "");
+              clipboardText = `${clipboardText}${mediaUrl(id, name, session.hash, true)}${idx + 1 < arr.length ? "\n" : ""}`;
             });
           navigator.clipboard.writeText(clipboardText);
           break;

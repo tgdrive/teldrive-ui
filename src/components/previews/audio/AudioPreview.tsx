@@ -50,7 +50,9 @@ const AudioPreview = ({ assetUrl, name, nextItem, prevItem }: AudioPreviewProps)
   }, [prevItem, nextItem]);
 
   useEffect(() => {
-    if (assetUrl) actions.loadAudio(assetUrl, name);
+    if (assetUrl) {
+      actions.loadAudio(assetUrl, name);
+    }
   }, [assetUrl]);
 
   return <AudioPlayer />;

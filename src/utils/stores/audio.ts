@@ -76,14 +76,18 @@ export const useAudioStore = create<PlayerState>((set, get) => ({
           const controller = new AbortController();
           const signal = controller.signal;
 
-          if (state.metadataParsingController) state.metadataParsingController.abort();
+          if (state.metadataParsingController) {
+            state.metadataParsingController.abort();
+          }
 
           set((prev) => ({ ...prev, metadataParsingController: controller }));
 
           const tags = await parseAudioMetadata(url, signal);
           const { artist, title, picture, album } = tags as Tags;
           let cover = "";
-          if (picture) cover = URL.createObjectURL(picture);
+          if (picture) {
+            cover = URL.createObjectURL(picture);
+          }
           const metadata = {
             artist: artist || defaultState.metadata.artist,
             title: title || name,
@@ -116,8 +120,9 @@ export const useAudioStore = create<PlayerState>((set, get) => ({
             error: "",
           }));
         } catch (error) {
-          if ((error as Error).name !== "AbortError")
+          if ((error as Error).name !== "AbortError") {
             set((prev) => ({ ...prev, error: (error as Error).message }));
+          }
         } finally {
           set((prev) => ({ ...prev, metadataParsingController: null }));
         }

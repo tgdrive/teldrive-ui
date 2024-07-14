@@ -32,7 +32,7 @@ export function artplayerPluginThumbnail(option: ThumbnailOption) {
       position: "top",
       index: 20,
       mounted: ($control: HTMLElement) => {
-        let image: HTMLImageElement | null = null;
+        let _image: HTMLImageElement | null = null;
         let loading = false;
         let isLoad = false;
         let isHover = false;
@@ -48,10 +48,10 @@ export function artplayerPluginThumbnail(option: ThumbnailOption) {
           const yIndex = Math.ceil(perIndex / size) - 1;
           const xIndex = perIndex % size || size - 1;
 
-          let scale = 1,
-            scaledHeight = height,
-            scaledXOffset = 0,
-            scaledYOffset = 0;
+          let scale = 1;
+          let scaledHeight = height;
+          let scaledXOffset = 0;
+          let scaledYOffset = 0;
 
           if (scaledWidth) {
             scale = scaledWidth / width;
@@ -60,7 +60,9 @@ export function artplayerPluginThumbnail(option: ThumbnailOption) {
             scaledYOffset = (height - scaledHeight) / 2;
             setStyle($control, "transform", `scale(${scale})`);
             setStyle($control, "bottom", `${15 - scaledYOffset}px`);
-          } else scaledWidth = width;
+          } else {
+            scaledWidth = width;
+          }
 
           setStyle($control, "backgroundImage", `url(${url})`);
           setStyle($control, "height", `${height}px`);
@@ -80,7 +82,7 @@ export function artplayerPluginThumbnail(option: ThumbnailOption) {
           if (!loading) {
             loading = true;
             const img = await loadImg(option.url);
-            image = img;
+            _image = img;
             isLoad = true;
           }
 

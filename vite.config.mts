@@ -1,22 +1,23 @@
-import { TanStackRouterVite } from "@tanstack/router-vite-plugin"
-import react from "@vitejs/plugin-react"
-import Icons from "unplugin-icons/vite"
-import { defineConfig, loadEnv } from "vite"
-import tsconfigPaths from "vite-tsconfig-paths"
+import { TanStackRouterVite } from "@tanstack/router-vite-plugin";
+import react from "@vitejs/plugin-react";
+import Icons from "unplugin-icons/vite";
+import { defineConfig } from "vite";
+import tsconfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode, process.cwd())
   return {
     plugins: [
-      TanStackRouterVite(),
+      TanStackRouterVite({
+        quoteStyle: "double",
+      }),
       react(),
       tsconfigPaths(),
       Icons({
         compiler: "jsx",
         jsx: "react",
         iconCustomizer(_1, _2, props) {
-          props.width = "1.5rem"
-          props.height = "1.5rem"
+          props.width = "1.5rem";
+          props.height = "1.5rem";
         },
       }),
     ],
@@ -41,5 +42,5 @@ export default defineConfig(({ mode }) => {
         },
       },
     },
-  }
-})
+  };
+});

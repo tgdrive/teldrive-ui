@@ -30,12 +30,12 @@ const VideoPreview = lazy(() => import("@/components/previews/video/VideoPreview
 const EpubPreview = lazy(() => import("@/components/previews/EpubPreview"));
 
 const findNext = (files: FileData[], fileId: string, previewType: string) => {
-  let index = -1,
-    firstPreviewIndex = -1;
+  let index = -1;
+  let firstPreviewIndex = -1;
 
   for (let i = 0; i < files.length; i++) {
     const matchPreview =
-      (previewType == "all" && files[i].previewType) || files[i].previewType == previewType;
+      (previewType === "all" && files[i].previewType) || files[i].previewType === previewType;
 
     if (index > -1 && matchPreview) {
       return files[i];
@@ -56,11 +56,11 @@ const findNext = (files: FileData[], fileId: string, previewType: string) => {
 };
 
 const findPrev = (files: FileData[], fileId: string, previewType: string) => {
-  let index = -1,
-    lastPreviewIndex = -1;
+  let index = -1;
+  let lastPreviewIndex = -1;
   for (let i = files.length - 1; i >= 0; i--) {
     const matchPreview =
-      (previewType == "all" && files[i].previewType) || files[i].previewType == previewType;
+      (previewType === "all" && files[i].previewType) || files[i].previewType === previewType;
 
     if (index > -1 && matchPreview) {
       return files[i];
@@ -133,7 +133,9 @@ export default memo(function PreviewModal({
     (previewType = "all") => {
       if (files) {
         const nextItem = findNext(files, id, previewType);
-        if (nextItem) modalActions.setCurrentFile(nextItem);
+        if (nextItem) {
+          modalActions.setCurrentFile(nextItem);
+        }
       }
     },
     [id, files],
@@ -143,7 +145,9 @@ export default memo(function PreviewModal({
     (previewType = "all") => {
       if (files) {
         const prevItem = findPrev(files, id, previewType);
-        if (prevItem) modalActions.setCurrentFile(prevItem);
+        if (prevItem) {
+          modalActions.setCurrentFile(prevItem);
+        }
       }
     },
     [id, files],

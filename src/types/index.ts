@@ -1,6 +1,9 @@
 import type { Dispatch, SetStateAction } from "react";
 
-export type FileResponse = { results: SingleFile[]; nextPageToken?: string };
+export type FileResponse = {
+  files: SingleFile[];
+  meta: { totalPages: number; count: number; currentPage: number };
+};
 
 export type SingleFile = {
   name: string;
@@ -129,18 +132,3 @@ export type FilterQuery = {
   deepSearch?: boolean;
   parentId?: string;
 };
-
-export type LinkComponentProps<TComp> = React.PropsWithoutRef<
-  TComp extends React.FC<infer TProps> | React.Component<infer TProps>
-    ? TProps
-    : TComp extends keyof JSX.IntrinsicElements
-      ? Omit<React.HTMLProps<TComp>, "children" | "preload">
-      : never
-> &
-  React.RefAttributes<
-    TComp extends React.FC<{ ref: infer TRef }> | React.Component<{ ref: infer TRef }>
-      ? TRef
-      : TComp extends keyof JSX.IntrinsicElements
-        ? React.ComponentRef<TComp>
-        : never
-  >;

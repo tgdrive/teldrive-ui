@@ -72,8 +72,9 @@ export function ThemeProvider({
 
   useEffect(() => {
     if (colorScheme.cssVars && firstRender) {
-      for (const key in colorScheme.cssVars)
+      for (const key in colorScheme.cssVars) {
         sheet.insertRule(`${key}{${colorScheme.cssVars[key]}}`);
+      }
 
       document.adoptedStyleSheets = [sheet];
     }
@@ -96,7 +97,9 @@ export function ThemeProvider({
 export const useTheme = () => {
   const context = useContext(ThemeProviderContext);
 
-  if (context === undefined) throw new Error("useTheme must be used within a ThemeProvider");
+  if (context === undefined) {
+    throw new Error("useTheme must be used within a ThemeProvider");
+  }
 
   return context;
 };

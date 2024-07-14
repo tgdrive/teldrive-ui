@@ -37,7 +37,7 @@ export const GeneralTab = memo(() => {
             errorMessage={error?.message}
             type="number"
             {...field}
-          ></Input>
+          />
         )}
       />
       <div className="col-span-6 xs:col-span-3">
@@ -57,7 +57,7 @@ export const GeneralTab = memo(() => {
             isInvalid={!!error}
             errorMessage={error?.message}
             {...field}
-          ></Input>
+          />
         )}
       />
       <div className="col-span-6 xs:col-span-3">
@@ -76,7 +76,7 @@ export const GeneralTab = memo(() => {
             errorMessage={error?.message}
             {...field}
             type="number"
-          ></Input>
+          />
         )}
       />
       <div className="col-span-6 xs:col-span-3">

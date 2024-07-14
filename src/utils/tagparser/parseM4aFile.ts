@@ -37,7 +37,8 @@ function parseMovieHeaderAtom(buffer: ArrayBuffer, offset: number) {
 function getMIMEType(bytes: Uint8Array) {
   if (bytes[0] === 255 && bytes[1] === 216) {
     return "image/jpg";
-  } else if (decode(bytes.slice(0, 4)) === "\x89PNG") {
+  }
+  if (decode(bytes.slice(0, 4)) === "\x89PNG") {
     return "image/png";
   }
   return "";

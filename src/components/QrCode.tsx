@@ -42,8 +42,12 @@ export default function QrCode({ qrCode }: { qrCode: string }) {
   }, [qrStyle]);
 
   useEffect(() => {
-    if (!qrCode) return;
-    if (qrStyle) qrStyle.update({ data: qrCode });
+    if (!qrCode) {
+      return;
+    }
+    if (qrStyle) {
+      qrStyle.update({ data: qrCode });
+    }
   }, [qrCode, qrStyle]);
 
   return (

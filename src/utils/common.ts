@@ -12,7 +12,7 @@ export const chainLinks = (path: string) => {
   for (const path of paths) {
     const decodedPath = decodeURIComponent(path);
     obj[decodedPath] = pathsoFar + decodedPath;
-    pathsoFar = pathsoFar + decodedPath + "/";
+    pathsoFar = `${pathsoFar + decodedPath}/`;
   }
   return obj;
 };
@@ -39,7 +39,7 @@ export const copyDataToClipboard = (data: string[]) => {
         resolve("copy success");
       })
       .catch((err) => {
-        const errorMessage = "Unable to copy array to clipboard: " + err;
+        const errorMessage = `Unable to copy array to clipboard: ${err}`;
         console.error(errorMessage);
         reject(errorMessage);
       });
@@ -89,7 +89,7 @@ export function extractPathParts(path: string): {
 
   return {
     type: firstPart as BrowseView,
-    path: restOfPath ? "/" + restOfPath : "",
+    path: restOfPath ? `/${restOfPath}` : "",
   };
 }
 
@@ -105,7 +105,7 @@ export const profileUrl = (session: Session) => `/api/users/profile?photo=1&hash
 export const profileName = (session: Session) => session.userName;
 
 export function bytesToGB(bytes: number) {
-  const gb = bytes / Math.pow(1024, 3);
+  const gb = bytes / 1024 ** 3;
   return Math.round(gb * 10) / 10;
 }
 

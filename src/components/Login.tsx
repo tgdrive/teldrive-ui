@@ -234,7 +234,7 @@ export const Login = memo(() => {
                       onInputChange(e);
                       field.onChange(e);
                     }}
-                  ></Input>
+                  />
                 )}
               />
             )}
@@ -253,7 +253,7 @@ export const Login = memo(() => {
                     isInvalid={!!error}
                     errorMessage={error?.message}
                     {...field}
-                  ></Input>
+                  />
                 )}
               />
             )}
@@ -282,7 +282,7 @@ export const Login = memo(() => {
                 errorMessage={error?.message}
                 type="password"
                 {...field}
-              ></Input>
+              />
             )}
           />
         )}

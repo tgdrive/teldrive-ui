@@ -99,11 +99,14 @@ export const SearchMenu = memo(({ isOpen, setIsOpen, triggerRef }: SearchMenuPro
           filterQuery[key] = value.join(",");
         } else if (key === "modifiedDate") {
           if (value === "-2") {
-            if (data.fromDate) filterQuery.updatedAt = `gte:${data.fromDate}`;
-            if (data.toDate)
+            if (data.fromDate) {
+              filterQuery.updatedAt = `gte:${data.fromDate}`;
+            }
+            if (data.toDate) {
               filterQuery.updatedAt = filterQuery.updatedAt
                 ? `${filterQuery.updatedAt},lte:${data.toDate}`
                 : `lte:${data.toDate}`;
+            }
           } else if (Number(value) > 0) {
             const currentDate = new Date();
             currentDate.setUTCDate(currentDate.getUTCDate() - Number(value));
@@ -128,7 +131,9 @@ export const SearchMenu = memo(({ isOpen, setIsOpen, triggerRef }: SearchMenuPro
         },
       };
 
-      if (Object.keys(filterQuery).length === 0) return;
+      if (Object.keys(filterQuery).length === 0) {
+        return;
+      }
       setIsSearching(true);
       router
         .preloadRoute(nextRoute)
@@ -139,11 +144,12 @@ export const SearchMenu = memo(({ isOpen, setIsOpen, triggerRef }: SearchMenuPro
   );
 
   useEffect(() => {
-    if (modifiedDate == "-2" && formRef.current)
+    if (modifiedDate === "-2" && formRef.current) {
       formRef.current.scrollTo({
         top: formRef.current.scrollHeight,
         behavior: "smooth",
       });
+    }
   }, [modifiedDate]);
 
   return (
@@ -207,7 +213,7 @@ export const SearchMenu = memo(({ isOpen, setIsOpen, triggerRef }: SearchMenuPro
               isInvalid={!!error}
               errorMessage={error?.message}
               {...field}
-            ></Input>
+            />
           )}
         />
         <div className="flex items-end gap-4">
@@ -269,7 +275,7 @@ export const SearchMenu = memo(({ isOpen, setIsOpen, triggerRef }: SearchMenuPro
                 isInvalid={!!error}
                 errorMessage={error?.message}
                 {...field}
-              ></Input>
+              />
             )}
           />
         )}
@@ -318,7 +324,7 @@ export const SearchMenu = memo(({ isOpen, setIsOpen, triggerRef }: SearchMenuPro
                   isInvalid={!!error}
                   errorMessage={error?.message}
                   {...field}
-                ></Input>
+                />
               )}
             />
             <Controller
@@ -338,7 +344,7 @@ export const SearchMenu = memo(({ isOpen, setIsOpen, triggerRef }: SearchMenuPro
                   isInvalid={!!error}
                   errorMessage={error?.message}
                   {...field}
-                ></Input>
+                />
               )}
             />
           </div>

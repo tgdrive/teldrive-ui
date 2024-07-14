@@ -17,7 +17,8 @@ interface Options {
 function unpackBytes(bytes: Uint8Array, options: Partial<Options>) {
   if (options.endian === "little") {
     return bytes[0] | (bytes[1] << 8) | (bytes[2] << 16) | (bytes[3] << 24);
-  } else if (options.shiftBase === 7) {
+  }
+  if (options.shiftBase === 7) {
     return (bytes[0] << 21) | (bytes[1] << 14) | (bytes[2] << 7) | bytes[3];
   }
   let value = (bytes[1] << 16) | (bytes[2] << 8) | bytes[3];

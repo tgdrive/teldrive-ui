@@ -19,13 +19,17 @@ export const Route = createFileRoute("/_authenticated/$")({
   loader: async ({ context: { queryClient, queryParams }, preload, deps }) => {
     let params = queryParams as QueryParams;
     if (
-      (queryParams.type === "search" || queryParams.type == "browse") &&
+      (queryParams.type === "search" || queryParams.type === "browse") &&
       Object.keys(deps).length > 0
-    )
+    ) {
       params = { ...queryParams, filter: deps };
+    }
 
-    if (preload) await queryClient.prefetchInfiniteQuery(filesQueryOptions(params));
-    else queryClient.fetchInfiniteQuery(filesQueryOptions(params));
+    if (preload) {
+      await queryClient.prefetchInfiniteQuery(filesQueryOptions(params));
+    } else {
+      queryClient.fetchInfiniteQuery(filesQueryOptions(params));
+    }
   },
   wrapInSuspense: true,
 });

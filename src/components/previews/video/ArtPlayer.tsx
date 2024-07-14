@@ -25,13 +25,13 @@ const Player = ({ option, getInstance, ...rest }: PlayerProps) => {
     }
 
     return () => {
-      if (art && art.destroy) {
+      if (art?.destroy) {
         art.destroy(false);
       }
     };
   }, []);
 
-  return <div ref={artRef} {...rest}></div>;
+  return <div ref={artRef} {...rest} />;
 };
 
 export default Player;

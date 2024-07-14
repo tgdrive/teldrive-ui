@@ -23,9 +23,11 @@ function parseSegment(segment: Uint8Array, tags: Tags) {
 
   if (type === "OpusH" || type === "\x01vorb") {
     return parseIdHeader(segment, tags);
-  } else if (type === "OpusT") {
+  }
+  if (type === "OpusT") {
     return parseVorbisComment(segment, tags, 8);
-  } else if (type === "\x03vorb") {
+  }
+  if (type === "\x03vorb") {
     return parseVorbisComment(segment, tags, 7);
   }
   throw new Error("Unknown type");
