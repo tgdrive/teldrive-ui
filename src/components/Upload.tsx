@@ -85,7 +85,7 @@ const uploadFile = async (
     })
   ).data;
 
-  if (res.results.length > 0) {
+  if (res.files.length > 0) {
     throw new Error("File already exists");
   }
 
