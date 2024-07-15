@@ -212,7 +212,7 @@ export const fetchFiles =
     const { type, path } = params;
     const query: Record<string, string | number | boolean> = {
       page: pageParam,
-      limit: settings.pageSize,
+      limit: settings.pageSize || 500,
       order: type === "my-drive" ? defaultSortState.order : sortViewMap[type].order,
       sort:
         type === "my-drive"
