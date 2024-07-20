@@ -3,8 +3,11 @@ import react from "@vitejs/plugin-react";
 import Icons from "unplugin-icons/vite";
 import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
+import cp from "node:child_process";
 
-export default defineConfig(({ mode }) => {
+const commitHash = cp.execSync("git rev-parse --short HEAD").toString().replace("\n", "");
+
+export default defineConfig(({ mode: _ }) => {
   return {
     plugins: [
       TanStackRouterVite({
@@ -41,6 +44,9 @@ export default defineConfig(({ mode }) => {
           comments: false,
         },
       },
+    },
+    define: {
+      "import.meta.env.UI_VERSION": JSON.stringify(commitHash),
     },
   };
 });

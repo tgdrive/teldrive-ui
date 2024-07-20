@@ -16,9 +16,6 @@ const CodePreview = ({ name, assetUrl }: CodePreviewProps) => {
     <>
       {validating ? null : (
         <Editor
-          options={{
-            readOnly: true,
-          }}
           loading={<Spinner />}
           defaultLanguage={getLanguageByFileName(name)}
           theme="vs-dark"
