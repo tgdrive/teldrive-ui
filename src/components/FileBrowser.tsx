@@ -71,10 +71,10 @@ export const DriveFileBrowser = memo(() => {
 
   const folderChain = useMemo(() => {
     if (params.type === "my-drive") {
-      return Object.entries(chainLinks(params.path)).map(([key, value]) => ({
-        id: key,
-        name: key,
-        path: value,
+      return chainLinks(params.path).map(([name, path], index) => ({
+        id: index + name,
+        name,
+        path,
         isDir: true,
         chain: true,
       }));

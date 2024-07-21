@@ -1,20 +1,25 @@
 import type { BrowseView, Session } from "@/types";
 import { partial } from "filesize";
 
-export const navigateToExternalUrl = (url: string, shouldOpenNewTab = true) =>
-  shouldOpenNewTab ? window.open(url, "_blank") : (window.location.href = url);
+export const navigateToExternalUrl = (url: string, shouldOpenNewTab = true) => {
+  if (shouldOpenNewTab) {
+    window.open(url, "_blank");
+  } else {
+    window.location.href = url;
+  }
+};
 
 export const chainLinks = (path: string) => {
   const paths = path?.split("/").slice(1);
-  const obj: Record<string, string> = {};
+  const chains = [["My Drive", "/"]] as Array<[string, string]>;
+
   let pathsoFar = "/";
-  obj["My Drive"] = "";
   for (const path of paths) {
     const decodedPath = decodeURIComponent(path);
-    obj[decodedPath] = pathsoFar + decodedPath;
+    chains.push([decodedPath, pathsoFar + decodedPath]);
     pathsoFar = `${pathsoFar + decodedPath}/`;
   }
-  return obj;
+  return chains;
 };
 
 export const realPath = (parts: string[]) =>
