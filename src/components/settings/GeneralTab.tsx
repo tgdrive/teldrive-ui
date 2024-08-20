@@ -7,6 +7,16 @@ import useSettings from "@/hooks/useSettings";
 import { scrollbarClasses } from "@/utils/classes";
 import { splitFileSizes } from "@/utils/common";
 
+
+function validateUrl(value: string) {
+  try {
+    new URL(value);
+    return true;
+  }
+  catch {
+    return false;
+  }
+}
 export const GeneralTab = memo(() => {
   const { settings, setSettings } = useSettings();
 
@@ -43,17 +53,19 @@ export const GeneralTab = memo(() => {
       <div className="col-span-6 xs:col-span-3">
         <p className="text-lg font-medium">Resizer Host</p>
         <p className="text-sm font-normal text-on-surface-variant">
-          Image Resize Url to resize images
+          Image Resize Host to resize images
         </p>
       </div>
       <Controller
         name="resizerHost"
         control={control}
+        rules={{validate: (value) => validateUrl(value) || "Must be a valid Host"}}
         render={({ field, fieldState: { error } }) => (
           <Input
             size="lg"
             className="col-span-6 xs:col-span-3"
             variant="bordered"
+            placeholder="https://resizer.example.com"
             isInvalid={!!error}
             errorMessage={error?.message}
             {...field}
