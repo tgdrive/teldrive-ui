@@ -143,3 +143,12 @@ export const chunkArray = <T>(arr: T[], size: number): T[][] => {
     arr.slice(index * size, index * size + size),
   );
 };
+
+export const preloadImage = (src: string) => {
+  return new Promise<void>((resolve, reject) => {
+    const image = new Image();
+    image.onload = () => resolve();
+    image.onerror = () => reject();
+    image.src = src;
+  });
+};
