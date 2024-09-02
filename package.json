@@ -44,7 +44,7 @@
     "@svgr/core": "^8.1.0",
     "@svgr/plugin-jsx": "^8.1.0",
     "@tanstack/react-query-devtools": "^5.53.1",
-    "@tanstack/router-vite-plugin": "^1.51.6",
+    "@tanstack/router-vite-plugin": "^1.52.0",
     "@types/lodash.debounce": "^4.0.9",
     "@types/md5": "^2.3.5",
     "@types/node": "22.5.1",
