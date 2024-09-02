@@ -22,8 +22,8 @@ importers:
         specifier: ^5.53.1
         version: 5.53.1(react@18.3.1)
       '@tanstack/react-router':
-        specifier: 1.51.8
-        version: 1.51.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: 1.52.4
+        version: 1.52.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@tw-material/file-browser':
         specifier: ^1.0.20
         version: 1.0.20(@tw-material/react@1.1.21(@types/react@18.3.5)(framer-motion@11.3.31(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.10))(tailwindcss@3.4.10))(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.10))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.10)))(@tw-material/theme@1.1.12(tailwindcss@3.4.10))(@types/react@18.3.5)(framer-motion@11.3.31(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(redux@5.0.1)(typescript@5.5.4)
@@ -1244,8 +1244,8 @@ packages:
     peerDependencies:
       react: ^18.3.1
 
-  '@tanstack/react-router@1.51.8':
-    resolution: {integrity: sha512-xvTEayioDbT6A1wj0tyPnfu96/1P6HyT0Mm+JUySR2wxnI14LhT4ijVvhVKzQDvhwoChMcHPMhGWWFE8+XuQNg==}
+  '@tanstack/react-router@1.52.4':
+    resolution: {integrity: sha512-9pfkyfMiPByBjkkoRScrUUz+pxSlM15TSYTnUGLNyYaDGPoFg5x3KnZVkMojsYW6+2v55LePrl/+CVO4g2R4xw==}
     engines: {node: '>=12'}
     peerDependencies:
       react: ^18.3.1
@@ -4129,7 +4129,7 @@ snapshots:
       '@tanstack/query-core': 5.53.1
       react: 18.3.1
 
-  '@tanstack/react-router@1.51.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@tanstack/react-router@1.52.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@tanstack/history': 1.51.7
       '@tanstack/react-store': 0.5.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
