@@ -50,7 +50,7 @@ const mapFilesToFb = (files: SingleFile[], sessionHash: string): FileData[] => {
       if (settings.resizerHost) {
         const url = mediaUrl(item.id, item.name, sessionHash);
         thumbnailUrl = settings.resizerHost
-          ? `${settings.resizerHost}/unsafe/fit-in/360x360/filters:format(webp):quality(80)/${encodeURIComponent(url)}`
+          ? `${settings.resizerHost}/insecure/w:360/plain/${encodeURIComponent(url)}`
           : "";
       }
     }
