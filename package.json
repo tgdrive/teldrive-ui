@@ -18,7 +18,7 @@
     "epubjs": "^0.3.93",
     "feaxios": "^0.0.20",
     "filesize": "^10.1.4",
-    "framer-motion": "^11.3.31",
+    "framer-motion": "^11.5.4",
     "immer": "^10.1.1",
     "libphonenumber-js": "^1.11.7",
     "lodash.debounce": "^4.0.8",
