@@ -44,7 +44,7 @@ if (!rootElement.innerHTML) {
         </ThemeProvider>
         <TailwindIndicator />
       </ProgressProvider>
-      {/* <ReactQueryDevtools initialIsOpen={false} /> */}
+      <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>,
   );
 }

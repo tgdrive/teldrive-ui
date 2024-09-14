@@ -105,6 +105,11 @@ export const mediaUrl = (id: string, name: string, sessionHash: string, download
   )}?hash=${sessionHash}`;
 };
 
+export const sharedMediaUrl = (shareId: string, fileId: string, name: string, download = false) => {
+  const host = window.location.origin;
+  return `${host}/api/share/${shareId}/files/${fileId}/${download ? "download" : "stream"}/${encodeURIComponent(name)}`;
+};
+
 export const profileUrl = (session: Session) => `/api/users/profile?photo=1&hash=${session.hash}`;
 
 export const profileName = (session: Session) => session.userName;
@@ -152,3 +157,14 @@ export const preloadImage = (src: string) => {
     image.src = src;
   });
 };
+
+export function getNextDate(): string {
+  const today: Date = new Date();
+  today.setDate(today.getDate() + 1);
+
+  const year: number = today.getFullYear();
+  const month: string = String(today.getMonth() + 1).padStart(2, "0");
+  const day: string = String(today.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+}

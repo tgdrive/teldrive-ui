@@ -13,6 +13,7 @@ import { createFileRoute } from "@tanstack/react-router"
 // Import Routes
 
 import { Route as rootRoute } from "./routes/__root"
+import { Route as ShareImport } from "./routes/_share"
 import { Route as AuthenticatedImport } from "./routes/_authenticated"
 import { Route as AuthImport } from "./routes/_auth"
 import { Route as AuthenticatedIndexImport } from "./routes/_authenticated.index"
@@ -20,6 +21,7 @@ import { Route as AuthenticatedStorageImport } from "./routes/_authenticated.sto
 import { Route as AuthenticatedSettingsImport } from "./routes/_authenticated.settings"
 import { Route as AuthenticatedSplatImport } from "./routes/_authenticated.$"
 import { Route as AuthLoginImport } from "./routes/_auth.login"
+import { Route as ShareShareIdImport } from "./routes/_share.share.$id"
 import { Route as AuthenticatedSettingsTabIdImport } from "./routes/_authenticated.settings.$tabId"
 
 // Create Virtual Routes
@@ -29,6 +31,11 @@ const AuthenticatedWatchIdNameLazyImport = createFileRoute(
 )()
 
 // Create/Update Routes
+
+const ShareRoute = ShareImport.update({
+  id: "/_share",
+  getParentRoute: () => rootRoute,
+} as any)
 
 const AuthenticatedRoute = AuthenticatedImport.update({
   id: "/_authenticated",
@@ -69,6 +76,13 @@ const AuthLoginRoute = AuthLoginImport.update({
   getParentRoute: () => AuthRoute,
 } as any).lazy(() => import("./routes/_auth.login.lazy").then((d) => d.Route))
 
+const ShareShareIdRoute = ShareShareIdImport.update({
+  path: "/share/$id",
+  getParentRoute: () => ShareRoute,
+} as any).lazy(() =>
+  import("./routes/_share.share.$id.lazy").then((d) => d.Route),
+)
+
 const AuthenticatedSettingsTabIdRoute = AuthenticatedSettingsTabIdImport.update(
   {
     path: "/$tabId",
@@ -100,6 +114,13 @@ declare module "@tanstack/react-router" {
       path: ""
       fullPath: ""
       preLoaderRoute: typeof AuthenticatedImport
+      parentRoute: typeof rootRoute
+    }
+    "/_share": {
+      id: "/_share"
+      path: ""
+      fullPath: ""
+      preLoaderRoute: typeof ShareImport
       parentRoute: typeof rootRoute
     }
     "/_auth/login": {
@@ -144,6 +165,13 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof AuthenticatedSettingsTabIdImport
       parentRoute: typeof AuthenticatedSettingsImport
     }
+    "/_share/share/$id": {
+      id: "/_share/share/$id"
+      path: "/share/$id"
+      fullPath: "/share/$id"
+      preLoaderRoute: typeof ShareShareIdImport
+      parentRoute: typeof ShareImport
+    }
     "/_authenticated/watch/$id/$name": {
       id: "/_authenticated/watch/$id/$name"
       path: "/watch/$id/$name"
@@ -156,18 +184,152 @@ declare module "@tanstack/react-router" {
 
 // Create and export the route tree
 
-export const routeTree = rootRoute.addChildren({
-  AuthRoute: AuthRoute.addChildren({ AuthLoginRoute }),
-  AuthenticatedRoute: AuthenticatedRoute.addChildren({
-    AuthenticatedSplatRoute,
-    AuthenticatedSettingsRoute: AuthenticatedSettingsRoute.addChildren({
-      AuthenticatedSettingsTabIdRoute,
-    }),
-    AuthenticatedStorageRoute,
-    AuthenticatedIndexRoute,
-    AuthenticatedWatchIdNameLazyRoute,
-  }),
-})
+interface AuthRouteChildren {
+  AuthLoginRoute: typeof AuthLoginRoute
+}
+
+const AuthRouteChildren: AuthRouteChildren = {
+  AuthLoginRoute: AuthLoginRoute,
+}
+
+const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
+
+interface AuthenticatedSettingsRouteChildren {
+  AuthenticatedSettingsTabIdRoute: typeof AuthenticatedSettingsTabIdRoute
+}
+
+const AuthenticatedSettingsRouteChildren: AuthenticatedSettingsRouteChildren = {
+  AuthenticatedSettingsTabIdRoute: AuthenticatedSettingsTabIdRoute,
+}
+
+const AuthenticatedSettingsRouteWithChildren =
+  AuthenticatedSettingsRoute._addFileChildren(
+    AuthenticatedSettingsRouteChildren,
+  )
+
+interface AuthenticatedRouteChildren {
+  AuthenticatedSplatRoute: typeof AuthenticatedSplatRoute
+  AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRouteWithChildren
+  AuthenticatedStorageRoute: typeof AuthenticatedStorageRoute
+  AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
+  AuthenticatedWatchIdNameLazyRoute: typeof AuthenticatedWatchIdNameLazyRoute
+}
+
+const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedSplatRoute: AuthenticatedSplatRoute,
+  AuthenticatedSettingsRoute: AuthenticatedSettingsRouteWithChildren,
+  AuthenticatedStorageRoute: AuthenticatedStorageRoute,
+  AuthenticatedIndexRoute: AuthenticatedIndexRoute,
+  AuthenticatedWatchIdNameLazyRoute: AuthenticatedWatchIdNameLazyRoute,
+}
+
+const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
+  AuthenticatedRouteChildren,
+)
+
+interface ShareRouteChildren {
+  ShareShareIdRoute: typeof ShareShareIdRoute
+}
+
+const ShareRouteChildren: ShareRouteChildren = {
+  ShareShareIdRoute: ShareShareIdRoute,
+}
+
+const ShareRouteWithChildren = ShareRoute._addFileChildren(ShareRouteChildren)
+
+export interface FileRoutesByFullPath {
+  "": typeof ShareRouteWithChildren
+  "/login": typeof AuthLoginRoute
+  "/$": typeof AuthenticatedSplatRoute
+  "/settings": typeof AuthenticatedSettingsRouteWithChildren
+  "/storage": typeof AuthenticatedStorageRoute
+  "/": typeof AuthenticatedIndexRoute
+  "/settings/$tabId": typeof AuthenticatedSettingsTabIdRoute
+  "/share/$id": typeof ShareShareIdRoute
+  "/watch/$id/$name": typeof AuthenticatedWatchIdNameLazyRoute
+}
+
+export interface FileRoutesByTo {
+  "": typeof ShareRouteWithChildren
+  "/login": typeof AuthLoginRoute
+  "/$": typeof AuthenticatedSplatRoute
+  "/settings": typeof AuthenticatedSettingsRouteWithChildren
+  "/storage": typeof AuthenticatedStorageRoute
+  "/": typeof AuthenticatedIndexRoute
+  "/settings/$tabId": typeof AuthenticatedSettingsTabIdRoute
+  "/share/$id": typeof ShareShareIdRoute
+  "/watch/$id/$name": typeof AuthenticatedWatchIdNameLazyRoute
+}
+
+export interface FileRoutesById {
+  __root__: typeof rootRoute
+  "/_auth": typeof AuthRouteWithChildren
+  "/_authenticated": typeof AuthenticatedRouteWithChildren
+  "/_share": typeof ShareRouteWithChildren
+  "/_auth/login": typeof AuthLoginRoute
+  "/_authenticated/$": typeof AuthenticatedSplatRoute
+  "/_authenticated/settings": typeof AuthenticatedSettingsRouteWithChildren
+  "/_authenticated/storage": typeof AuthenticatedStorageRoute
+  "/_authenticated/": typeof AuthenticatedIndexRoute
+  "/_authenticated/settings/$tabId": typeof AuthenticatedSettingsTabIdRoute
+  "/_share/share/$id": typeof ShareShareIdRoute
+  "/_authenticated/watch/$id/$name": typeof AuthenticatedWatchIdNameLazyRoute
+}
+
+export interface FileRouteTypes {
+  fileRoutesByFullPath: FileRoutesByFullPath
+  fullPaths:
+    | ""
+    | "/login"
+    | "/$"
+    | "/settings"
+    | "/storage"
+    | "/"
+    | "/settings/$tabId"
+    | "/share/$id"
+    | "/watch/$id/$name"
+  fileRoutesByTo: FileRoutesByTo
+  to:
+    | ""
+    | "/login"
+    | "/$"
+    | "/settings"
+    | "/storage"
+    | "/"
+    | "/settings/$tabId"
+    | "/share/$id"
+    | "/watch/$id/$name"
+  id:
+    | "__root__"
+    | "/_auth"
+    | "/_authenticated"
+    | "/_share"
+    | "/_auth/login"
+    | "/_authenticated/$"
+    | "/_authenticated/settings"
+    | "/_authenticated/storage"
+    | "/_authenticated/"
+    | "/_authenticated/settings/$tabId"
+    | "/_share/share/$id"
+    | "/_authenticated/watch/$id/$name"
+  fileRoutesById: FileRoutesById
+}
+
+export interface RootRouteChildren {
+  AuthRoute: typeof AuthRouteWithChildren
+  AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
+  ShareRoute: typeof ShareRouteWithChildren
+}
+
+const rootRouteChildren: RootRouteChildren = {
+  AuthRoute: AuthRouteWithChildren,
+  AuthenticatedRoute: AuthenticatedRouteWithChildren,
+  ShareRoute: ShareRouteWithChildren,
+}
+
+export const routeTree = rootRoute
+  ._addFileChildren(rootRouteChildren)
+  ._addFileTypes<FileRouteTypes>()
 
 /* prettier-ignore-end */
 
@@ -178,7 +340,8 @@ export const routeTree = rootRoute.addChildren({
       "filePath": "__root.tsx",
       "children": [
         "/_auth",
-        "/_authenticated"
+        "/_authenticated",
+        "/_share"
       ]
     },
     "/_auth": {
@@ -195,6 +358,12 @@ export const routeTree = rootRoute.addChildren({
         "/_authenticated/storage",
         "/_authenticated/",
         "/_authenticated/watch/$id/$name"
+      ]
+    },
+    "/_share": {
+      "filePath": "_share.tsx",
+      "children": [
+        "/_share/share/$id"
       ]
     },
     "/_auth/login": {
@@ -223,6 +392,10 @@ export const routeTree = rootRoute.addChildren({
     "/_authenticated/settings/$tabId": {
       "filePath": "_authenticated.settings.$tabId.tsx",
       "parent": "/_authenticated/settings"
+    },
+    "/_share/share/$id": {
+      "filePath": "_share.share.$id.tsx",
+      "parent": "/_share"
     },
     "/_authenticated/watch/$id/$name": {
       "filePath": "_authenticated.watch.$id.$name.lazy.tsx",

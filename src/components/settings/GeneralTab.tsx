@@ -7,13 +7,11 @@ import useSettings from "@/hooks/useSettings";
 import { scrollbarClasses } from "@/utils/classes";
 import { splitFileSizes } from "@/utils/common";
 
-
 function validateUrl(value: string) {
   try {
     new URL(value);
     return true;
-  }
-  catch {
+  } catch {
     return false;
   }
 }
@@ -59,7 +57,9 @@ export const GeneralTab = memo(() => {
       <Controller
         name="resizerHost"
         control={control}
-        rules={{validate: (value) => validateUrl(value) || "Must be a valid Host"}}
+        rules={{
+          validate: (value) => (value ? validateUrl(value) || "Must be a valid Host" : true),
+        }}
         render={({ field, fieldState: { error } }) => (
           <Input
             size="lg"

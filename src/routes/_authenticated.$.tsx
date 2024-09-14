@@ -2,13 +2,13 @@ import type { FilterQuery, QueryParams } from "@/types";
 import { createFileRoute } from "@tanstack/react-router";
 
 import { extractPathParts } from "@/utils/common";
-import { filesQueryOptions } from "@/utils/queryOptions";
+import { fileQueries } from "@/utils/queryOptions";
 
-const allowedTypes = ["my-drive", "starred", "recent", "search", "storage", "category", "browse"];
+const allowedTypes = ["my-drive", "recent", "search", "storage", "category", "browse", "shared"];
 
 export const Route = createFileRoute("/_authenticated/$")({
   beforeLoad: ({ params }) => {
-    const { type, path } = extractPathParts(params._splat);
+    const { type, path } = extractPathParts(params._splat!);
     if (!allowedTypes.includes(type)) {
       throw new Error("invalid path");
     }
@@ -26,9 +26,9 @@ export const Route = createFileRoute("/_authenticated/$")({
     }
 
     if (preload) {
-      await queryClient.prefetchInfiniteQuery(filesQueryOptions(params));
+      await queryClient.prefetchInfiniteQuery(fileQueries.list(params));
     } else {
-      queryClient.fetchInfiniteQuery(filesQueryOptions(params));
+      queryClient.fetchInfiniteQuery(fileQueries.list(params));
     }
   },
   wrapInSuspense: true,

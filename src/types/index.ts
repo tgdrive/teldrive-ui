@@ -16,7 +16,6 @@ export type SingleFile = {
   userId: string;
   parentId: string;
   id: string;
-  starred: boolean;
   encrypted?: boolean;
 };
 
@@ -80,6 +79,12 @@ export type QueryParams = {
   filter?: FilterQuery;
 };
 
+export type ShareQueryParams = {
+  id: string;
+  parentId?: string;
+  password?: string;
+};
+
 export type AccountStats = {
   channelId: number;
   bots: string[];
@@ -111,6 +116,12 @@ export type CategoryStorage = {
   totalSize: number;
 };
 
+export type FileShare = {
+  id: string;
+  expirationDate: string;
+  protected: boolean;
+};
+
 export type SetValue<T> = Dispatch<SetStateAction<T>>;
 
 export type PreviewFile = {
@@ -118,11 +129,8 @@ export type PreviewFile = {
   name: string;
   mimeType: string;
   previewType: string;
-  starred: boolean;
 };
-export type BrowseView = "my-drive" | "search" | "starred" | "recent" | "category" | "browse";
-
-export type FileQueryKey = (string | QueryParams)[];
+export type BrowseView = "my-drive" | "search" | "recent" | "category" | "browse" | "shared";
 
 export type FilterQuery = {
   category?: string;
@@ -130,5 +138,9 @@ export type FilterQuery = {
   query?: string;
   updatedAt?: string;
   deepSearch?: boolean;
+  parentId?: string;
+};
+
+export type ShareQuery = {
   parentId?: string;
 };

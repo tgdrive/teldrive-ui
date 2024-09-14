@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import type { QueryParams, Session } from "@/types";
+import type { QueryParams, Session, ShareQueryParams } from "@/types";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   defineFileAction,
@@ -15,13 +15,14 @@ import IconPotPlayerIcon from "~icons/material-symbols/play-circle-rounded";
 import RadixIconsOpenInNewWindow from "~icons/radix-icons/open-in-new-window";
 import toast from "react-hot-toast";
 
-import { mediaUrl, navigateToExternalUrl } from "@/utils/common";
+import { mediaUrl, navigateToExternalUrl, sharedMediaUrl } from "@/utils/common";
 import { getSortState, SortOrder } from "@/utils/defaults";
 import http from "@/utils/http";
 import { usePreload } from "@/utils/queryOptions";
 import { useFileUploadStore, useModalStore } from "@/utils/stores";
+import Share from "~icons/fluent/share-24-regular";
 
-const CustomActions = {
+export const CustomActions = {
   OpenInVLCPlayer: defineFileAction({
     id: "open_vlc_player",
     requiresSelection: true,
@@ -44,6 +45,16 @@ const CustomActions = {
       icon: IconPotPlayerIcon,
     },
   } as const),
+  ShareFiles: defineFileAction({
+    id: "share_files",
+    requiresSelection: true,
+    button: {
+      name: "Share",
+      contextMenu: true,
+      icon: Share,
+    },
+  } as const),
+
   CopyDownloadLink: defineFileAction({
     id: "copy_link",
     requiresSelection: true,
@@ -77,6 +88,7 @@ export const useFileAction = (params: QueryParams, session: Session) => {
   const actions = useModalStore((state) => state.actions);
 
   const fileDialogOpen = useFileUploadStore((state) => state.actions.setFileDialogOpen);
+
   const uploadOpen = useFileUploadStore((state) => state.actions.setUploadOpen);
 
   return useCallback(() => {
@@ -173,15 +185,22 @@ export const useFileAction = (params: QueryParams, session: Session) => {
           });
           break;
         }
+
+        case CustomActions.ShareFiles.id: {
+          actions.set({
+            open: true,
+            operation: CustomActions.ShareFiles.id,
+            currentFile: data.state.selectedFiles[0],
+          });
+          break;
+        }
+
         case CustomActions.CopyDownloadLink.id: {
           const selections = data.state.selectedFilesForAction;
-          let clipboardText = "";
-          selections
+          const clipboardText = selections
             .filter((element) => !FileHelper.isDirectory(element))
-            .forEach((element, idx, arr) => {
-              const { id, name } = element;
-              clipboardText = `${clipboardText}${mediaUrl(id, name, session.hash, true)}${idx + 1 < arr.length ? "\n" : ""}`;
-            });
+            .map(({ id, name }) => mediaUrl(id, name, session.hash, true))
+            .join("\n");
           navigator.clipboard.writeText(clipboardText);
           break;
         }
@@ -229,6 +248,89 @@ export const useFileAction = (params: QueryParams, session: Session) => {
   }, [params.type, params.path]);
 };
 
+export const useShareFileAction = (params: ShareQueryParams) => {
+  const { preloadSharedFiles } = usePreload();
+
+  const actions = useModalStore((state) => state.actions);
+
+  return useCallback(() => {
+    return async (data: MapFileActionsToData<FbActionFullUnion>) => {
+      switch (data.id) {
+        case FbActions.OpenFiles.id: {
+          const { targetFile, files } = data.payload;
+
+          const fileToOpen = targetFile ?? files[0];
+
+          if (fileToOpen && FileHelper.isDirectory(fileToOpen)) {
+            preloadSharedFiles({
+              ...params,
+              parentId: fileToOpen.id,
+            });
+          } else if (fileToOpen && FileHelper.isOpenable(fileToOpen)) {
+            actions.set({
+              open: true,
+              currentFile: fileToOpen,
+              operation: FbActions.OpenFiles.id,
+            });
+          }
+
+          break;
+        }
+        case FbActions.DownloadFiles.id: {
+          const { selectedFiles } = data.state;
+          for (const file of selectedFiles) {
+            if (!FileHelper.isDirectory(file)) {
+              const { id, name } = file;
+              const url = sharedMediaUrl(params.id, id, name, true);
+              navigateToExternalUrl(url, false);
+            }
+          }
+          break;
+        }
+        case CustomActions.OpenInVLCPlayer.id: {
+          const { selectedFiles } = data.state;
+          const fileToOpen = selectedFiles[0];
+          const { id, name } = fileToOpen;
+          const url = `vlc://${sharedMediaUrl(params.id, id, name)}`;
+          navigateToExternalUrl(url, false);
+          break;
+        }
+        case CustomActions.OpenInPotPlayer.id: {
+          const { selectedFiles } = data.state;
+          const fileToOpen = selectedFiles[0];
+          const { id, name } = fileToOpen;
+          const url = `potplayer://${sharedMediaUrl(params.id, id, name)}`;
+          navigateToExternalUrl(url, false);
+          break;
+        }
+
+        case CustomActions.CopyDownloadLink.id: {
+          const selections = data.state.selectedFilesForAction;
+          const clipboardText = selections
+            .filter((element) => !FileHelper.isDirectory(element))
+            .map(({ id, name }) => sharedMediaUrl(params.id, id, name, true))
+            .join("\n");
+          navigator.clipboard.writeText(clipboardText);
+          break;
+        }
+
+        case FbActions.EnableListView.id:
+        case FbActions.EnableGridView.id:
+        case FbActions.EnableTileView.id: {
+          localStorage.setItem("viewId", data.id);
+          break;
+        }
+        default:
+          break;
+      }
+    };
+  }, [params.parentId, params.id]);
+};
+
 export const fileActions = Object.keys(CustomActions).map(
   (t) => CustomActions[t as keyof typeof CustomActions],
 );
+
+export const sharefileActions = Object.keys(CustomActions)
+  .map((t) => CustomActions[t as keyof typeof CustomActions])
+  .filter((action) => action.id !== CustomActions.ShareFiles.id);

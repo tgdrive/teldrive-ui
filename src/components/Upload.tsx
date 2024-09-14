@@ -1,6 +1,6 @@
 import type React from "react";
 import { memo, useCallback, useEffect, useMemo, useRef } from "react";
-import type { FileQueryKey, FileResponse, QueryParams, UploadPart } from "@/types";
+import type { FileResponse, QueryParams, UploadPart } from "@/types";
 import { useQuery } from "@tanstack/react-query";
 import { ColorsLight, FbIcon, useIconData } from "@tw-material/file-browser";
 import { Button, Listbox, ListboxItem } from "@tw-material/react";
@@ -21,7 +21,7 @@ import useSettings from "@/hooks/useSettings";
 import { scrollbarClasses } from "@/utils/classes";
 import { filesize, formatTime, zeroPad } from "@/utils/common";
 import http from "@/utils/http";
-import { sessionQueryOptions, useCreateFile } from "@/utils/queryOptions";
+import { userQueries, fileQueries } from "@/utils/queryOptions";
 import { FileUploadStatus, useFileUploadStore } from "@/utils/stores";
 
 type UploadParams = Record<string, string | number | boolean | undefined>;
@@ -258,7 +258,7 @@ const UploadFileEntry = memo(({ id }: { id: string }) => {
   );
 });
 
-export const Upload = ({ queryKey }: { queryKey: FileQueryKey }) => {
+export const Upload = ({ queryKey }: { queryKey: any[] }) => {
   const { fileIds, currentFile, collapse, fileDialogOpen, actions } = useFileUploadStore(
     useShallow((state) => ({
       fileIds: state.filesIds,
@@ -272,7 +272,7 @@ export const Upload = ({ queryKey }: { queryKey: FileQueryKey }) => {
 
   const { settings } = useSettings();
 
-  const { data: session } = useQuery(sessionQueryOptions);
+  const { data: session } = useQuery(userQueries.session());
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -297,7 +297,7 @@ export const Upload = ({ queryKey }: { queryKey: FileQueryKey }) => {
       actions.addFiles(files);
     }
   }, []);
-  const createMutation = useCreateFile(queryKey);
+  const createMutation = fileQueries.create(queryKey);
 
   useEffect(() => {
     if (currentFile?.id && currentFile?.status === FileUploadStatus.NOT_STARTED) {

@@ -10,7 +10,7 @@ import type ArtOption from "artplayer/types/option";
 import type { AspectRatio } from "artplayer/types/player";
 
 import { mediaUrl } from "@/utils/common";
-import { sessionQueryOptions } from "@/utils/queryOptions";
+import { userQueries } from "@/utils/queryOptions";
 
 import Player from "./ArtPlayer";
 
@@ -93,7 +93,7 @@ const fileRoute = getRouteApi("/_authenticated/watch/$id/$name");
 
 export const VideoSoloPreview = memo(() => {
   const { id, name } = fileRoute.useParams();
-  const { data: session } = useQuery(sessionQueryOptions);
+  const { data: session } = useQuery(userQueries.session());
   const assetUrl = mediaUrl(id, name, session?.hash!);
   return (
     <div className="relative mx-auto mt-4 max-w-4xl">

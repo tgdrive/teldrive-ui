@@ -13,6 +13,15 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer utilities {
+  .text-security-disc {
+    -webkit-text-security: disc;
+  }
+  .text-security-none {
+    -webkit-text-security: none;
+  }
+}
+
 .art-video-player {
   --art-theme: oklch(var(--m3-primary)) !important;
 }
