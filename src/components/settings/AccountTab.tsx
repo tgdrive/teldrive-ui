@@ -13,7 +13,7 @@ import toast from "react-hot-toast";
 
 import { chunkArray, copyDataToClipboard } from "@/utils/common";
 import http from "@/utils/http";
-import { sessionQueryOptions, sessionsQueryOptions, useDeleteSession } from "@/utils/queryOptions";
+import { userQueries } from "@/utils/queryOptions";
 
 const validateBots = (value?: string) => {
   if (value) {
@@ -30,9 +30,7 @@ async function updateChannel(channel: Channel) {
 }
 
 const Session = memo(({ appName, location, createdAt, valid, hash, current }: UserSession) => {
-  const deleteSession = useDeleteSession();
-
-  const handleDelete = useCallback(() => deleteSession.mutate(hash), [hash]);
+  const handleDelete = useCallback(() => userQueries.deleteSession().mutate(hash), [hash]);
 
   return (
     <div
@@ -74,7 +72,7 @@ export const AccountTab = memo(() => {
     defaultValues: { tokens: "" },
   });
 
-  const { data: session } = useQuery(sessionQueryOptions);
+  const { data: session } = useQuery(userQueries.session());
 
   const [
     { data, refetch, isSuccess },
@@ -82,15 +80,9 @@ export const AccountTab = memo(() => {
     { data: channelData, isLoading: channelLoading },
   ] = useQueries({
     queries: [
-      {
-        queryKey: ["stats", session?.userName],
-        queryFn: async () => (await http.get<AccountStats>("/api/users/stats")).data,
-      },
-      sessionsQueryOptions,
-      {
-        queryKey: ["channels", session?.userName],
-        queryFn: async () => (await http.get<Channel[]>("/api/users/channels")).data,
-      },
+      userQueries.stats(session?.userName!),
+      userQueries.sessions(),
+      userQueries.channels(session?.userName!),
     ],
   });
 

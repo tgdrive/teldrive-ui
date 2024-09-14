@@ -12,10 +12,10 @@ import {
 import type { StateSnapshot, VirtuosoGridHandle, VirtuosoHandle } from "react-virtuoso";
 import useBreakpoint from "use-breakpoint";
 
-import { fileActions, useFileAction } from "@/hooks/useFileAction";
+import { CustomActions, fileActions, useFileAction } from "@/hooks/useFileAction";
 import { chainLinks, isMobile } from "@/utils/common";
 import { BREAKPOINTS, defaultSortState, defaultViewId, sortViewMap } from "@/utils/defaults";
-import { filesQueryOptions, sessionQueryOptions } from "@/utils/queryOptions";
+import { fileQueries, userQueries } from "@/utils/queryOptions";
 import { useFileUploadStore, useModalStore } from "@/utils/stores";
 
 import { FileOperationModal } from "./modals/FileOperation";
@@ -32,6 +32,7 @@ const modalFileActions = [
   FbActions.RenameFile.id,
   FbActions.CreateFolder.id,
   FbActions.DeleteFiles.id,
+  CustomActions.ShareFiles.id,
 ];
 
 const fileRoute = getRouteApi("/_authenticated/$");
@@ -45,9 +46,9 @@ export const DriveFileBrowser = memo(() => {
 
   const listRef = useRef<VirtuosoHandle | VirtuosoGridHandle>(null);
 
-  const { data: session } = useQuery(sessionQueryOptions);
+  const { data: session } = useQuery(userQueries.session());
 
-  const queryOptions = filesQueryOptions(
+  const queryOptions = fileQueries.list(
     Object.keys(search).length > 0 ? { ...params, filter: search } : params,
     session?.hash!,
   );

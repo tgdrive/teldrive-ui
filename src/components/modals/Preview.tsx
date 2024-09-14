@@ -13,7 +13,7 @@ import DocPreview from "@/components/previews/DocPreview";
 import ImagePreview from "@/components/previews/ImagePreview";
 import PDFPreview from "@/components/previews/PdfPreview";
 import { WideScreen } from "@/components/previews/WideScreen";
-import { mediaUrl } from "@/utils/common";
+import { mediaUrl, sharedMediaUrl } from "@/utils/common";
 import { defaultSortState } from "@/utils/defaults";
 import { preview } from "@/utils/getPreviewType";
 import { useModalStore } from "@/utils/stores";
@@ -107,9 +107,11 @@ const ControlButton = ({ type, onPress }: ControlButtonProps) => {
 export default memo(function PreviewModal({
   files: fileProp,
   session,
+  shareId,
 }: {
   files: FileData[];
-  session: Session;
+  session?: Session;
+  shareId?: string;
 }) {
   const [files] = useState(
     fileProp.toSorted((a, b) =>
@@ -155,7 +157,7 @@ export default memo(function PreviewModal({
 
   const handleClose = useCallback(() => modalActions.setOpen(false), []);
 
-  const assetUrl = mediaUrl(id, name, session.hash);
+  const assetUrl = shareId ? sharedMediaUrl(shareId, id, name) : mediaUrl(id, name, session?.hash!);
 
   const renderPreview = useCallback(() => {
     if (previewType) {

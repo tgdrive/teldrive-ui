@@ -6,11 +6,8 @@ import clsx from "clsx";
 import { filesize } from "filesize";
 
 import { grow } from "@/utils/classes";
-import {
-  categoryStorageQueryOptions,
-  uploadStatsQueryOptions,
-  usePreload,
-} from "@/utils/queryOptions";
+
+import { userQueries, usePreload } from "@/utils/queryOptions";
 
 import { UploadStatsChart } from "./charts/UploadStats";
 
@@ -64,7 +61,7 @@ export const StorageView = memo(() => {
   const [days, setDays] = useState(7);
 
   const [uploadStats, categoryStorageData] = useSuspenseQueries({
-    queries: [uploadStatsQueryOptions(days), categoryStorageQueryOptions],
+    queries: [userQueries.uploadStats(days), userQueries.categories()],
   });
 
   const totalStats = getTotalStats(categoryStorageData.data);

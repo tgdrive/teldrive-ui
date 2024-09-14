@@ -1,32 +1,39 @@
-import { memo, useCallback } from "react";
-import type { FileQueryKey, QueryParams } from "@/types";
+import { memo, useCallback, useEffect, useState } from "react";
+import type { QueryParams } from "@/types";
 import { FbActions } from "@tw-material/file-browser";
 import {
   Button,
+  Divider,
   Input,
   Modal,
   ModalBody,
   ModalContent,
   ModalFooter,
   ModalHeader,
+  Switch,
 } from "@tw-material/react";
-import clsx from "clsx";
 import { useShallow } from "zustand/react/shallow";
 
-import { useCreateFile, useDeleteFile, useUpdateFile } from "@/utils/queryOptions";
+import { shareQueries, fileQueries } from "@/utils/queryOptions";
 import { useModalStore } from "@/utils/stores";
+import { Controller, useForm } from "react-hook-form";
+import { CustomActions } from "@/hooks/useFileAction";
+import { CopyButton } from "@/components/CopyButton";
+import { useQuery } from "@tanstack/react-query";
+import IcRoundClose from "~icons/ic/round-close";
+import { getNextDate } from "@/utils/common";
 
 type FileModalProps = {
-  queryKey: FileQueryKey;
+  queryKey: any[];
 };
 
 interface RenameDialogProps {
-  queryKey: FileQueryKey;
+  queryKey: any[];
   handleClose: () => void;
 }
 
 const RenameDialog = memo(({ queryKey, handleClose }: RenameDialogProps) => {
-  const updateMutation = useUpdateFile(queryKey);
+  const updateMutation = fileQueries.update(queryKey);
   const { currentFile, actions } = useModalStore(
     useShallow((state) => ({
       currentFile: state.currentFile,
@@ -72,12 +79,12 @@ const RenameDialog = memo(({ queryKey, handleClose }: RenameDialogProps) => {
 });
 
 interface FolderCreateDialogProps {
-  queryKey: FileQueryKey;
+  queryKey: any[];
   handleClose: () => void;
 }
 
 const FolderCreateDialog = memo(({ queryKey, handleClose }: FolderCreateDialogProps) => {
-  const createMutation = useCreateFile(queryKey);
+  const createMutation = fileQueries.create(queryKey);
 
   const { currentFile, actions } = useModalStore(
     useShallow((state) => ({
@@ -127,12 +134,14 @@ const FolderCreateDialog = memo(({ queryKey, handleClose }: FolderCreateDialogPr
     </>
   );
 });
+
 interface DeleteDialogProps {
-  queryKey: FileQueryKey;
+  queryKey: any[];
   handleClose: () => void;
 }
+
 const DeleteDialog = memo(({ handleClose, queryKey }: DeleteDialogProps) => {
-  const deleteMutation = useDeleteFile(queryKey);
+  const deleteMutation = fileQueries.delete(queryKey);
 
   const selectedFiles = useModalStore((state) => state.selectedFiles) as string[];
 
@@ -167,6 +176,133 @@ const DeleteDialog = memo(({ handleClose, queryKey }: DeleteDialogProps) => {
   );
 });
 
+interface ShareFileDialogProps {
+  handleClose: () => void;
+}
+
+const defaultShareOptions = {
+  expirationDate: "",
+  password: "",
+};
+
+const ShareFileDialog = memo(({ handleClose }: ShareFileDialogProps) => {
+  const file = useModalStore((state) => state.currentFile);
+
+  const shareQueryOptions = shareQueries.shareByFileId(file?.id);
+
+  const { data, isLoading } = useQuery(shareQueryOptions);
+
+  const { control, handleSubmit } = useForm({
+    defaultValues: defaultShareOptions,
+  });
+
+  const createShare = shareQueries.create(file.id, shareQueryOptions.queryKey);
+
+  const deleteShare = shareQueries.delete(file.id, shareQueryOptions.queryKey);
+
+  const [sharingOn, setSharingOn] = useState(false);
+
+  const [shareLink, setShareLink] = useState("");
+
+  const onShareChange = useCallback(() => {
+    setSharingOn((prev) => {
+      if (!prev) {
+        handleSubmit((data) => {
+          const payload = {} as Record<string, string>;
+          if (data.expirationDate) {
+            payload.expirationDate = `${data.expirationDate}T00:00:00.000Z`;
+          }
+          if (data.password) {
+            payload.password = data.password;
+          }
+          createShare.mutateAsync(payload);
+        })();
+      }
+      if (prev) {
+        deleteShare.mutateAsync();
+        setShareLink("");
+      }
+      return !prev;
+    });
+  }, []);
+
+  useEffect(() => {
+    if (data) {
+      setSharingOn(true);
+      setShareLink(`${window.location.origin}/share/${data.id}`);
+    }
+  }, [data]);
+
+  return (
+    <>
+      <ModalHeader className="flex items-center justify-between ">
+        Share Files
+        <Button size="sm" variant="text" isIconOnly onPress={handleClose}>
+          <IcRoundClose />
+        </Button>
+      </ModalHeader>
+      <ModalBody>
+        <form className="grid grid-cols-6 gap-8 p-2 w-full overflow-y-auto">
+          <div className="col-span-6 xs:col-span-3">
+            <p className="text-lg font-medium">Set expiration date</p>
+            <p className="text-sm font-normal text-on-surface-variant">Link expiration date</p>
+          </div>
+          <Controller
+            name="expirationDate"
+            control={control}
+            render={({ field, fieldState: { error } }) => (
+              <Input
+                size="lg"
+                className="col-span-6 xs:col-span-3"
+                variant="bordered"
+                isInvalid={!!error}
+                errorMessage={error?.message}
+                type="date"
+                min={getNextDate()}
+                {...field}
+              />
+            )}
+          />
+          <div className="col-span-6 xs:col-span-3">
+            <p className="text-lg font-medium">Set link password</p>
+            <p className="text-sm font-normal text-on-surface-variant">Public link password</p>
+          </div>
+          <Controller
+            name="password"
+            control={control}
+            render={({ field, fieldState: { error } }) => (
+              <Input
+                size="lg"
+                className="col-span-6 xs:col-span-3"
+                variant="bordered"
+                isInvalid={!!error}
+                errorMessage={error?.message}
+                type="password"
+                {...field}
+              />
+            )}
+          />
+        </form>
+        <Divider />
+        <div className="flex justify-between">
+          <h1 className="text-large font-medium mt-2">Sharing {sharingOn ? "On" : "Off"}</h1>
+          <Switch size="md" isSelected={sharingOn} onChange={onShareChange} />
+        </div>
+      </ModalBody>
+      <ModalFooter>
+        <Input
+          isDisabled={isLoading || !data}
+          fullWidth
+          variant="bordered"
+          readOnly
+          value={shareLink}
+        />
+        <CopyButton value={shareLink} isDisabled={isLoading || !data} />
+      </ModalFooter>
+    </>
+  );
+});
+
 export const FileOperationModal = memo(({ queryKey }: FileModalProps) => {
   const { open, operation, actions } = useModalStore(
     useShallow((state) => ({
@@ -192,6 +328,8 @@ export const FileOperationModal = memo(({ queryKey }: FileModalProps) => {
         return <FolderCreateDialog queryKey={queryKey} handleClose={handleClose} />;
       case FbActions.DeleteFiles.id:
         return <DeleteDialog queryKey={queryKey} handleClose={handleClose} />;
+      case CustomActions.ShareFiles.id:
+        return <ShareFileDialog handleClose={handleClose} />;
       default:
         return null;
     }

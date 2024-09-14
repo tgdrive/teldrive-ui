@@ -1,5 +1,5 @@
-import { material3 } from "@tw-material/theme"
-import type { Config } from "tailwindcss"
+import { material3 } from "@tw-material/theme";
+import type { Config } from "tailwindcss";
 
 export default {
   content: [
@@ -44,4 +44,4 @@ export default {
       customColors: [],
     }),
   ],
-} satisfies Config
+} satisfies Config;

@@ -3,7 +3,7 @@ import { Button } from "@tw-material/react";
 import IconBasilGoogleDriveOutline from "~icons/basil/google-drive-outline";
 import IconIcOutlineSdStorage from "~icons/ic/outline-sd-storage";
 import IconMdiRecent from "~icons/mdi/recent";
-import IconMdiStarOutline from "~icons/mdi/star-outline";
+import ShareIcon from "~icons/fluent/share-24-regular";
 import clsx from "clsx";
 
 import { ForwardLink } from "@/components/ForwardLink";
@@ -11,8 +11,8 @@ import { usePreload } from "@/utils/queryOptions";
 
 export const categories = [
   { id: "my-drive", name: "My Drive", icon: IconBasilGoogleDriveOutline },
-  { id: "starred", name: "Starred", icon: IconMdiStarOutline },
   { id: "recent", name: "Recent", icon: IconMdiRecent },
+  { id: "shared", name: "Shared", icon: ShareIcon },
   { id: "storage", name: "Storage", icon: IconIcOutlineSdStorage },
 ] as const;
 
