@@ -264,7 +264,10 @@ export const useShareFileAction = (params: ShareQueryParams) => {
           if (fileToOpen && FileHelper.isDirectory(fileToOpen)) {
             preloadSharedFiles({
               ...params,
-              parentId: fileToOpen.id,
+              path:
+                fileToOpen.path || fileToOpen.path === ""
+                  ? fileToOpen.path
+                  : `${params.path}/${fileToOpen.name}`,
             });
           } else if (fileToOpen && FileHelper.isOpenable(fileToOpen)) {
             actions.set({
@@ -324,7 +327,7 @@ export const useShareFileAction = (params: ShareQueryParams) => {
           break;
       }
     };
-  }, [params.parentId, params.id]);
+  }, [params.path, params.id]);
 };
 
 export const fileActions = Object.keys(CustomActions).map(

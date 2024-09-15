@@ -1,17 +1,18 @@
-import { memo, useEffect, useRef } from "react";
-import { useSuspenseInfiniteQuery } from "@tanstack/react-query";
+import { memo, useEffect, useMemo, useRef } from "react";
+import { useSuspenseInfiniteQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
 import {
   FbActions,
   FileBrowser,
   FileContextMenu,
   FileList,
+  FileNavbar,
   FileToolbar,
 } from "@tw-material/file-browser";
 import type { StateSnapshot, VirtuosoGridHandle, VirtuosoHandle } from "react-virtuoso";
 import useBreakpoint from "use-breakpoint";
 
-import { isMobile } from "@/utils/common";
+import { chainSharedLinks, isMobile } from "@/utils/common";
 import { BREAKPOINTS, defaultViewId } from "@/utils/defaults";
 import { shareQueries } from "@/utils/queryOptions";
 import { sharefileActions, useShareFileAction } from "@/hooks/useFileAction";
@@ -41,7 +42,7 @@ const disabledActions = [
 export const SharedFileBrowser = memo(({ password }: { password: string }) => {
   const { id } = route.useParams();
 
-  const { parentId } = route.useSearch();
+  const { path } = route.useSearch();
 
   const listRef = useRef<VirtuosoHandle | VirtuosoGridHandle>(null);
 
@@ -50,8 +51,12 @@ export const SharedFileBrowser = memo(({ password }: { password: string }) => {
   const params = {
     id,
     password,
-    parentId,
+    path: path || "",
   };
+
+  const {
+    data: { name, type },
+  } = useSuspenseQuery(shareQueries.share(id));
 
   const {
     data: files,
@@ -61,6 +66,19 @@ export const SharedFileBrowser = memo(({ password }: { password: string }) => {
   } = useSuspenseInfiniteQuery(shareQueries.list(params));
 
   const actionHandler = useShareFileAction(params);
+
+  const folderChain = useMemo(() => {
+    if (type === "file") {
+      return [];
+    }
+    return chainSharedLinks(name, params.path!).map(([name, path], index) => ({
+      id: index + name,
+      name,
+      path,
+      isDir: true,
+      chain: true,
+    }));
+  }, [params.path, name, type]);
 
   const modalOpen = useModalStore((state) => state.open);
 
@@ -74,28 +92,30 @@ export const SharedFileBrowser = memo(({ password }: { password: string }) => {
 
     setTimeout(() => {
       listRef.current?.scrollTo({
-        top: positions.get(id + (parentId || ""))?.scrollTop ?? 0,
+        top: positions.get(id + path)?.scrollTop ?? 0,
         left: 0,
       });
     }, 0);
 
     return () => {
       if (listRef.current && isVirtuosoList(listRef.current)) {
-        listRef.current?.getState((state) => positions.set(id + (parentId || ""), state));
+        listRef.current?.getState((state) => positions.set(id + path, state));
       }
     };
-  }, [id, parentId]);
+  }, [id, path]);
 
   return (
     <div className="size-full m-auto">
       <FileBrowser
         files={files}
+        folderChain={folderChain}
         onFileAction={actionHandler()}
         fileActions={sharefileActions}
         breakpoint={breakpoint}
         defaultFileViewActionId={defaultViewId}
         disableEssentailFileActions={disabledActions}
       >
+        <FileNavbar breakpoint={breakpoint} />
         <FileToolbar className="pt-2" />
         <FileList
           hasNextPage={hasNextPage}
