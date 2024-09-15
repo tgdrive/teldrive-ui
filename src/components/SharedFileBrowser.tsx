@@ -12,7 +12,7 @@ import {
 import type { StateSnapshot, VirtuosoGridHandle, VirtuosoHandle } from "react-virtuoso";
 import useBreakpoint from "use-breakpoint";
 
-import { chainSharedLinks, isMobile } from "@/utils/common";
+import { chainSharedLinks } from "@/utils/common";
 import { BREAKPOINTS, defaultViewId } from "@/utils/defaults";
 import { shareQueries } from "@/utils/queryOptions";
 import { sharefileActions, useShareFileAction } from "@/hooks/useFileAction";
@@ -123,7 +123,7 @@ export const SharedFileBrowser = memo(({ password }: { password: string }) => {
           loadNextPage={fetchNextPage}
           ref={listRef}
         />
-        {!isMobile && <FileContextMenu />}
+        <FileContextMenu />
       </FileBrowser>
       {modalOperation === FbActions.OpenFiles.id && modalOpen && (
         <PreviewModal shareId={params.id} files={files} />

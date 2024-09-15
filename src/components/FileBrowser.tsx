@@ -128,7 +128,7 @@ export const DriveFileBrowser = memo(() => {
           loadNextPage={fetchNextPage}
           ref={listRef}
         />
-        {!isMobile && <FileContextMenu />}
+        <FileContextMenu />
       </FileBrowser>
 
       {modalFileActions.find((val) => val === modalOperation) && modalOpen && (
