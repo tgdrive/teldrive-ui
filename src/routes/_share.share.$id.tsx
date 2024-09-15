@@ -17,8 +17,9 @@ export const Route = createFileRoute("/_share/share/$id")({
     const queryParams = {
       id: params.id,
       password: password || "",
-      parentId: deps.parentId,
+      path: deps.path || "",
     } as ShareQueryParams;
+
     if (preload) {
       await queryClient.prefetchInfiniteQuery(shareQueries.list(queryParams));
     } else {

@@ -146,7 +146,7 @@ export const shareQueries = {
         (
           await http.get<FileResponse>(`/api/share/${params.id}/files`, {
             signal,
-            params: params.parentId ? { parentId: params.parentId } : {},
+            params: params.path ? { path: params.path } : {},
             headers: params.password ? { Authorization: btoa(`:${params.password}`) } : {},
           })
         ).data,
@@ -316,9 +316,11 @@ export const usePreload = () => {
         params: {
           id: params.id,
         },
-        search: {
-          parentId: params.parentId,
-        },
+        search: params.path
+          ? {
+              path: params.path,
+            }
+          : {},
       };
       if (!queryState?.data) {
         try {

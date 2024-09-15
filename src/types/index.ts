@@ -81,7 +81,7 @@ export type QueryParams = {
 
 export type ShareQueryParams = {
   id: string;
-  parentId?: string;
+  path?: string;
   password?: string;
 };
 
@@ -120,6 +120,8 @@ export type FileShare = {
   id: string;
   expirationDate: string;
   protected: boolean;
+  type: string;
+  name: string;
 };
 
 export type SetValue<T> = Dispatch<SetStateAction<T>>;
@@ -142,5 +144,5 @@ export type FilterQuery = {
 };
 
 export type ShareQuery = {
-  parentId?: string;
+  path?: string;
 };

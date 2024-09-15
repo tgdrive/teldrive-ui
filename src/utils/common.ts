@@ -11,7 +11,25 @@ export const navigateToExternalUrl = (url: string, shouldOpenNewTab = true) => {
 
 export const chainLinks = (path: string) => {
   const paths = path?.split("/").slice(1);
-  const chains = [["My Drive", "/"]] as Array<[string, string]>;
+  const chains = [["My Drive", ""]] as Array<[string, string]>;
+
+  let pathsoFar = "/";
+  for (const path of paths) {
+    const decodedPath = decodeURIComponent(path);
+    chains.push([decodedPath, pathsoFar + decodedPath]);
+    pathsoFar = `${pathsoFar + decodedPath}/`;
+  }
+
+  return chains;
+};
+
+export const chainSharedLinks = (root: string, path: string) => {
+  const paths = path?.split("/").slice(1);
+  const chains = [[root, ""]] as Array<[string, string]>;
+
+  if (!path) {
+    return chains;
+  }
 
   let pathsoFar = "/";
   for (const path of paths) {
