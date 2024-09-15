@@ -165,6 +165,9 @@ export const shareQueries = {
         http.post(`/api/files/${fileId}/share`, data),
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey });
+        queryClient.invalidateQueries({
+          queryKey: [fileQueries.all(), { path: "", type: "shared" }],
+        });
       },
     });
   },
@@ -174,6 +177,9 @@ export const shareQueries = {
       mutationFn: async () => http.delete(`/api/files/${fileId}/share`),
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey });
+        queryClient.invalidateQueries({
+          queryKey: [fileQueries.all(), { path: "", type: "shared" }],
+        });
       },
     });
   },

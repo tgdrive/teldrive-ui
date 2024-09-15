@@ -1,8 +1,10 @@
 import type { FilterQuery, QueryParams } from "@/types";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
 import { extractPathParts } from "@/utils/common";
 import { fileQueries } from "@/utils/queryOptions";
+import { AxiosError } from "feaxios";
+import { ErrorView } from "@/components/ErrorView";
 
 const allowedTypes = ["my-drive", "recent", "search", "storage", "category", "browse", "shared"];
 
@@ -32,4 +34,16 @@ export const Route = createFileRoute("/_authenticated/$")({
     }
   },
   wrapInSuspense: true,
+  errorComponent: ({ error }) => {
+    let errorMessage = "server error";
+    if (error instanceof AxiosError) {
+      errorMessage =
+        error.response?.status === 404
+          ? "invalid path"
+          : error.response?.data?.message || errorMessage;
+    } else {
+      errorMessage = error.message || errorMessage;
+    }
+    return <ErrorView message={errorMessage} />;
+  },
 });
