@@ -141,7 +141,7 @@ export const shareQueries = {
     }),
   list: (params: ShareQueryParams) =>
     infiniteQueryOptions({
-      queryKey: [fileQueries.all(), params],
+      queryKey: [shareQueries.all(), params],
       queryFn: async ({ signal }) =>
         (
           await http.get<FileResponse>(`/api/share/${params.id}/files`, {
