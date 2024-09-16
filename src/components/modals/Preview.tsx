@@ -226,7 +226,7 @@ export default memo(function PreviewModal({
         {id && (
           <>
             <div className="fixed top-0 left-0 h-16 w-full p-3 text-inherit flex justify-between">
-              <div className="flex items-center gap-3 w-full">
+              <div className="flex items-center gap-3 w-full max-w-[calc(50%-5rem)]">
                 <Button
                   variant="text"
                   className="data-[hover=true]:bg-zinc-300/hover dark:data-[hover=true]:bg-zinc-500/hover text-inherit"
