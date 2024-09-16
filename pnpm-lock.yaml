@@ -28,8 +28,8 @@ importers:
         specifier: 1.57.15
         version: 1.57.15(@tanstack/router-generator@1.57.15)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@tw-material/file-browser':
-        specifier: ^1.0.26
-        version: 1.0.26(@tw-material/react@1.1.21(@types/react@18.3.6)(framer-motion@11.5.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.11))(tailwindcss@3.4.11))(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.11))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.11)))(@tw-material/theme@1.1.12(tailwindcss@3.4.11))(@types/react@18.3.6)(framer-motion@11.5.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(redux@5.0.1)(typescript@5.6.2)
+        specifier: ^1.0.28
+        version: 1.0.28(@tw-material/react@1.1.21(@types/react@18.3.6)(framer-motion@11.5.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.11))(tailwindcss@3.4.11))(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.11))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.11)))(@tw-material/theme@1.1.12(tailwindcss@3.4.11))(@types/react@18.3.6)(framer-motion@11.5.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(redux@5.0.1)(typescript@5.6.2)
       '@tw-material/framer-transitions':
         specifier: ^1.1.4
         version: 1.1.4(@tw-material/theme@1.1.12(tailwindcss@3.4.11))(framer-motion@11.5.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.11))
@@ -185,8 +185,8 @@ importers:
         specifier: ^5.4.5
         version: 5.4.5(@types/node@22.5.5)(terser@5.32.0)
       vite-bundle-analyzer:
-        specifier: ^0.10.6
-        version: 0.10.6
+        specifier: ^0.11.0
+        version: 0.11.0
       vite-tsconfig-paths:
         specifier: ^5.0.1
         version: 5.0.1(typescript@5.6.2)(vite@5.4.5(@types/node@22.5.5)(terser@5.32.0))
@@ -644,27 +644,6 @@ packages:
     engines: {node: '>=18'}
     cpu: [x64]
     os: [win32]
-
-  '@floating-ui/core@1.6.8':
-    resolution: {integrity: sha512-7XJ9cPU+yI2QeLS+FCSlqNFZJq8arvswefkZrYI1yQBbftw6FyrZOxYSh+9S7z7TpeWlRt9zJ5IhM1WIL334jA==}
-
-  '@floating-ui/dom@1.6.11':
-    resolution: {integrity: sha512-qkMCxSR24v2vGkhYDo/UzxfJN3D4syqSjyuTFz6C7XcpU1pASPRieNI0Kj5VP3/503mOfYiGY891ugBX1GlABQ==}
-
-  '@floating-ui/react-dom@2.1.2':
-    resolution: {integrity: sha512-06okr5cgPzMNBy+Ycse2A6udMi4bqwW/zgBF/rwjcNqWkyr82Mcg8b0vjX8OJpZFy/FKjJmw6wV7t44kK6kW7A==}
-    peerDependencies:
-      react: ^18.3.1
-      react-dom: ^18.3.1
-
-  '@floating-ui/react@0.26.24':
-    resolution: {integrity: sha512-2ly0pCkZIGEQUq5H8bBK0XJmc1xIK/RM3tvVzY3GBER7IOD1UgmC2Y2tjj4AuS+TC+vTE1KJv2053290jua0Sw==}
-    peerDependencies:
-      react: ^18.3.1
-      react-dom: ^18.3.1
-
-  '@floating-ui/utils@0.2.8':
-    resolution: {integrity: sha512-kym7SodPp8/wloecOpcmSnWJsK7M0E5Wg8UcFA+uO4B9s5d0ywXOEro/8HM9x0rW+TljRzul/14UYz3TleT3ig==}
 
   '@formatjs/ecma402-abstract@2.0.0':
     resolution: {integrity: sha512-rRqXOqdFmk7RYvj4khklyqzcfQl9vEL/usogncBHRZfZBDOwMGuSRNFl02fu5KGHXdbinju+YXyuR+Nk8xlr/g==}
@@ -1516,8 +1495,8 @@ packages:
       react: ^18.3.1
       react-dom: ^18.3.1
 
-  '@tw-material/file-browser@1.0.26':
-    resolution: {integrity: sha512-KIQROJclGSh36e0XtK1AZSOuHKmGGTx04FmyYJcXH2FYpVGVWg1/cUmeJXOwgUrEb9t0LqPhENbTNz83efQalg==}
+  '@tw-material/file-browser@1.0.28':
+    resolution: {integrity: sha512-+AX5hyOylHn6TmLlW6mz2KL85TVa+T6YHnUHgAYsPbF1SxlecNO8bAyvy0G7ACqBc39HBuMZgDr/vfFkmyEn1w==}
     engines: {node: '>=18'}
     peerDependencies:
       '@tw-material/react': '>=1'
@@ -2741,9 +2720,6 @@ packages:
     resolution: {integrity: sha512-h5IS/hKkuVCbKSieR9uQCj9w+zLHoPh+ce19bBYyqF53g6mnPB8sAtIbe1s9dh2S2fCmYX2xel1Ln3PJBbK4kw==}
     engines: {node: '>= 0.8.0'}
 
-  tabbable@6.2.0:
-    resolution: {integrity: sha512-Cat63mxsVJlzYvN51JmVXIgNoUokrIaT2zLclCXjRd8boZ0004U4KCs/sToJ75C6sdlByWxpYnb5Boif1VSFew==}
-
   tailwind-merge@2.5.2:
     resolution: {integrity: sha512-kjEBm+pvD+6eAwzJL2Bi+02/9LFLal1Gs61+QB7HvTfQQ0aXwC5LGT8PEt1gS0CWKktKe6ysPTAy3cBC5MeiIg==}
 
@@ -2923,8 +2899,8 @@ packages:
   util-deprecate@1.0.2:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
 
-  vite-bundle-analyzer@0.10.6:
-    resolution: {integrity: sha512-w/5wvRZeZo2lKdJzRGCTn4YW/mT++fKeii2PQPK3odblfFqsODYHF72V+QTg1Xznbxy543N0WfT5vPiSosVWxA==}
+  vite-bundle-analyzer@0.11.0:
+    resolution: {integrity: sha512-UgRP6XxXJGh+Q9fu8Cm8sBIdzDmGQjO/5I8bnV0C6ZkVeqjj79hkeCbJziV8yI9+dm4gpPemeot5KJ6wlHDOSQ==}
 
   vite-tsconfig-paths@5.0.1:
     resolution: {integrity: sha512-yqwv+LstU7NwPeNqajZzLEBVpUFU6Dugtb2P84FXuvaoYA+/70l9MHE+GYfYAycVyPSDYZ7mjOFuYBRqlEpTig==}
@@ -3347,31 +3323,6 @@ snapshots:
 
   '@esbuild/win32-x64@0.23.1':
     optional: true
-
-  '@floating-ui/core@1.6.8':
-    dependencies:
-      '@floating-ui/utils': 0.2.8
-
-  '@floating-ui/dom@1.6.11':
-    dependencies:
-      '@floating-ui/core': 1.6.8
-      '@floating-ui/utils': 0.2.8
-
-  '@floating-ui/react-dom@2.1.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
-    dependencies:
-      '@floating-ui/dom': 1.6.11
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
-
-  '@floating-ui/react@0.26.24(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
-    dependencies:
-      '@floating-ui/react-dom': 2.1.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@floating-ui/utils': 0.2.8
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
-      tabbable: 6.2.0
-
-  '@floating-ui/utils@0.2.8': {}
 
   '@formatjs/ecma402-abstract@2.0.0':
     dependencies:
@@ -4613,9 +4564,8 @@ snapshots:
       - tailwind-variants
       - tailwindcss
 
-  '@tw-material/file-browser@1.0.26(@tw-material/react@1.1.21(@types/react@18.3.6)(framer-motion@11.5.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.11))(tailwindcss@3.4.11))(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.11))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.11)))(@tw-material/theme@1.1.12(tailwindcss@3.4.11))(@types/react@18.3.6)(framer-motion@11.5.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(redux@5.0.1)(typescript@5.6.2)':
+  '@tw-material/file-browser@1.0.28(@tw-material/react@1.1.21(@types/react@18.3.6)(framer-motion@11.5.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.11))(tailwindcss@3.4.11))(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.11))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.11)))(@tw-material/theme@1.1.12(tailwindcss@3.4.11))(@types/react@18.3.6)(framer-motion@11.5.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(redux@5.0.1)(typescript@5.6.2)':
     dependencies:
-      '@floating-ui/react': 0.26.24(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@nextui-org/use-safe-layout-effect': 2.0.6(react@18.3.1)
       '@react-aria/focus': 3.18.2(react@18.3.1)
       '@react-aria/interactions': 3.22.2(react@18.3.1)
@@ -6110,8 +6060,6 @@ snapshots:
     dependencies:
       svg.js: 2.7.1
 
-  tabbable@6.2.0: {}
-
   tailwind-merge@2.5.2: {}
 
   tailwind-variants@0.2.1(tailwindcss@3.4.11):
@@ -6274,7 +6222,7 @@ snapshots:
 
   util-deprecate@1.0.2: {}
 
-  vite-bundle-analyzer@0.10.6: {}
+  vite-bundle-analyzer@0.11.0: {}
 
   vite-tsconfig-paths@5.0.1(typescript@5.6.2)(vite@5.4.5(@types/node@22.5.5)(terser@5.32.0)):
     dependencies:
