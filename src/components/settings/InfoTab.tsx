@@ -1,4 +1,3 @@
-import { Link } from "@tanstack/react-router";
 import { memo } from "react";
 
 export const InfoTab = memo(() => {
@@ -7,7 +6,7 @@ export const InfoTab = memo(() => {
       <span className="inline-flex items-center gap-2">
         <p className="text-lg font-medium">UI Version:</p>
         <a
-          href={`https://github.com/divyam234/teldrive-ui/commits/${import.meta.env.UI_VERSION}`}
+          href={`https://github.com/tgdrive/teldrive-ui/commits/${import.meta.env.UI_VERSION}`}
           rel="noopener noreferrer"
           target="_blank"
           className="text-md font-normal"
@@ -18,7 +17,7 @@ export const InfoTab = memo(() => {
       <span className="inline-flex items-center gap-2">
         <p className="text-lg font-medium">Server Version:</p>
         <a
-          href={`https://github.com/divyam234/teldrive/commits/${import.meta.env.VITE_SERVER_VERSION}`}
+          href={`https://github.com/tgdrive/teldrive/commits/${import.meta.env.VITE_SERVER_VERSION}`}
           rel="noopener noreferrer"
           target="_blank"
           className="text-md font-normal"
