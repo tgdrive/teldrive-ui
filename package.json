@@ -8,7 +8,7 @@
     "@react-aria/i18n": "^3.12.2",
     "@tanstack/react-query": "^5.56.2",
     "@tanstack/react-router": "1.57.15",
-    "@tw-material/file-browser": "^1.0.24",
+    "@tw-material/file-browser": "^1.0.26",
     "@tw-material/framer-transitions": "^1.1.4",
     "@tw-material/react": "^1.1.21",
     "@tw-material/system": "^1.1.1",
@@ -40,8 +40,8 @@
     "zustand": "5.0.0-rc.2"
   },
   "devDependencies": {
-    "@biomejs/biome": "1.9.0",
-    "@iconify/json": "^2.2.248",
+    "@biomejs/biome": "1.9.1",
+    "@iconify/json": "^2.2.249",
     "@svgr/core": "^8.1.0",
     "@svgr/plugin-jsx": "^8.1.0",
     "@tanstack/react-query-devtools": "^5.56.2",
@@ -49,7 +49,7 @@
     "@types/lodash.debounce": "^4.0.9",
     "@types/md5": "^2.3.5",
     "@types/node": "22.5.5",
-    "@types/react": "18.3.5",
+    "@types/react": "18.3.6",
     "@types/react-dom": "18.3.0",
     "@vitejs/plugin-react": "^4.3.1",
     "autoprefixer": "^10.4.20",

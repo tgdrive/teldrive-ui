@@ -20,7 +20,7 @@ const CodePreview = ({ name, assetUrl }: CodePreviewProps) => {
           defaultLanguage={getLanguageByFileName(name)}
           theme="vs-dark"
           height="100%"
-          defaultValue={content}
+          value={content}
         />
       )}
     </>

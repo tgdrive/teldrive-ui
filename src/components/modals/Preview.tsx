@@ -1,11 +1,11 @@
 import { lazy, memo, Suspense, useCallback, useState } from "react";
 import type { Session } from "@/types";
 import { FbIcon, type FileData, useIconData } from "@tw-material/file-browser";
-import { Box, Button, Modal, ModalContent } from "@tw-material/react";
+import { Button, Modal, ModalContent } from "@tw-material/react";
 import IconIcRoundArrowBack from "~icons/ic/round-arrow-back";
 import IconIcRoundNavigateBefore from "~icons/ic/round-navigate-before";
 import IconIcRoundNavigateNext from "~icons/ic/round-navigate-next";
-import clsx from "clsx";
+import DownloadIcon from "~icons/ic/outline-file-download";
 
 import Loader from "@/components/Loader";
 import AudioPreview from "@/components/previews/audio/AudioPreview";
@@ -19,6 +19,8 @@ import { preview } from "@/utils/getPreviewType";
 import { useModalStore } from "@/utils/stores";
 
 import CodePreview from "../previews/CodePreview";
+import clsx from "clsx";
+import { center } from "@/utils/classes";
 
 const sortOptions = {
   numeric: true,
@@ -52,7 +54,7 @@ const findNext = (files: FileData[], fileId: string, previewType: string) => {
       return files[firstPreviewIndex];
     }
   }
-  return 0;
+  return files[0];
 };
 
 const findPrev = (files: FileData[], fileId: string, previewType: string) => {
@@ -76,7 +78,7 @@ const findPrev = (files: FileData[], fileId: string, previewType: string) => {
       return files[lastPreviewIndex];
     }
   }
-  return 0;
+  return files[0];
 };
 
 interface ControlButtonProps {
@@ -86,21 +88,13 @@ interface ControlButtonProps {
 
 const ControlButton = ({ type, onPress }: ControlButtonProps) => {
   return (
-    <Box
-      className={clsx(
-        "w-10  opacity-0 data-[hover=true]:opacity-100 transition-opacity ease-out",
-        "h-[calc(100vh-4rem)] mt-16 fixed  top-0 flex justify-center items-center",
-        type === "next" ? "right-0" : "left-0",
-      )}
+    <Button
+      className="data-[hover=true]:bg-zinc-100/hover text-on-surface size-8 min-w-8 px-0"
+      variant="text"
+      onPress={onPress}
     >
-      <Button
-        className="data-[hover=true]:bg-zinc-100/hover  text-gray-100 w-5 min-w-5 px-0"
-        variant="text"
-        onPress={onPress}
-      >
-        {type === "next" ? <IconIcRoundNavigateNext /> : <IconIcRoundNavigateBefore />}
-      </Button>
-    </Box>
+      {type === "next" ? <IconIcRoundNavigateNext /> : <IconIcRoundNavigateBefore />}
+    </Button>
   );
 };
 
@@ -240,15 +234,33 @@ export default memo(function PreviewModal({
                 >
                   <IconIcRoundArrowBack className="size-6" />
                 </Button>
-                <FbIcon icon={icon} className="size-6 min-w-6" />
-                <h6 className="truncate text-label-large font-normal text-inherit" title={name}>
+                <FbIcon icon={icon} className="size-6 min-w-6 hidden sm:block" />
+                <h6
+                  className="truncate text-label-large font-normal text-inherit hidden sm:block"
+                  title={name}
+                >
                   {name}
                 </h6>
               </div>
+              <div className={clsx(center, "flex items-center absolute gap-4")}>
+                <ControlButton type="prev" onPress={() => prevItem()} />
+                <ControlButton type="next" onPress={() => nextItem()} />
+              </div>
+              <div className="flex items-center gap-2">
+                <Button
+                  as={"a"}
+                  href={assetUrl.replace("/stream", "/download")}
+                  rel="noopener noreferrer"
+                  target="_blank"
+                  className="text-on-surface"
+                  variant="text"
+                  isIconOnly
+                >
+                  <DownloadIcon />
+                </Button>
+              </div>
             </div>
-            <ControlButton type="prev" onPress={() => prevItem()} />
-            <ControlButton type="next" onPress={() => nextItem()} />
-            <div className="px-8 size-full">{renderPreview()}</div>
+            <div className="px-4 size-full">{renderPreview()}</div>
           </>
         )}
       </ModalContent>

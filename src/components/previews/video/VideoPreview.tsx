@@ -16,13 +16,12 @@ const VideoPlayer = ({ name, assetUrl }: VideoPlayerProps) => {
 
   const artOptions: ArtOption = {
     container: "",
-    title: name,
+    url: "",
     volume: 0.6,
     muted: false,
     autoplay: true,
     pip: true,
-    autoSize: false,
-    autoHeight: true,
+    autoSize: true,
     autoMini: true,
     screenshot: true,
     setting: true,
@@ -41,9 +40,6 @@ const VideoPlayer = ({ name, assetUrl }: VideoPlayerProps) => {
     fastForward: true,
     autoOrientation: true,
     moreVideoAttr: {
-      // @ts-ignore
-      "webkit-playsinline": true,
-      crossOrigin: "anonymous",
       playsInline: true,
     },
   };
