@@ -21,7 +21,6 @@ const VideoPlayer = ({ name, assetUrl }: VideoPlayerProps) => {
     muted: false,
     autoplay: true,
     pip: true,
-    autoSize: true,
     autoMini: true,
     screenshot: true,
     setting: true,
