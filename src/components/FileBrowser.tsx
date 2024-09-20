@@ -136,7 +136,7 @@ export const DriveFileBrowser = memo(() => {
       )}
 
       {modalOperation === FbActions.OpenFiles.id && modalOpen && (
-        <PreviewModal session={session!} files={files} />
+        <PreviewModal session={session!} files={files} path={params.path} type={params.type} />
       )}
       {openUpload && <Upload queryKey={queryOptions.queryKey} />}
     </div>

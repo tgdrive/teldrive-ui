@@ -30,7 +30,7 @@ async function updateChannel(channel: Channel) {
 }
 
 const Session = memo(({ appName, location, createdAt, valid, hash, current }: UserSession) => {
-  const handleDelete = useCallback(() => userQueries.deleteSession().mutate(hash), [hash]);
+  const deleteSession = userQueries.deleteSession();
 
   return (
     <div
@@ -45,7 +45,7 @@ const Session = memo(({ appName, location, createdAt, valid, hash, current }: Us
           variant="text"
           size="sm"
           className="absolute top-1 right-1"
-          onPress={handleDelete}
+          onPress={() => deleteSession.mutateAsync(hash)}
         >
           <IcRoundCancel />
         </Button>

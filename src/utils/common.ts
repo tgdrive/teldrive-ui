@@ -1,5 +1,6 @@
 import type { BrowseView, Session } from "@/types";
 import { partial } from "filesize";
+import { settings } from "./defaults";
 
 export const navigateToExternalUrl = (url: string, shouldOpenNewTab = true) => {
   if (shouldOpenNewTab) {
@@ -116,9 +117,17 @@ export function extractPathParts(path: string): {
   };
 }
 
-export const mediaUrl = (id: string, name: string, sessionHash: string, download = false) => {
-  const host = window.location.origin;
-  return `${host}/api/files/${id}/${download ? "download" : "stream"}/${encodeURIComponent(
+export const mediaUrl = (
+  id: string,
+  name: string,
+  path: string,
+  sessionHash: string,
+  download = false,
+) => {
+  if (settings.rcloneProxy && path) {
+    return `${settings.rcloneProxy}${path === "/" ? "" : path}/${encodeURIComponent(name)}`;
+  }
+  return `${window.location.origin}/api/files/${id}/${download ? "download" : "stream"}/${encodeURIComponent(
     name,
   )}?hash=${sessionHash}`;
 };

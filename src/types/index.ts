@@ -17,6 +17,7 @@ export type SingleFile = {
   parentId: string;
   id: string;
   encrypted?: boolean;
+  path?: string;
 };
 
 export type FilePayload = {
@@ -44,14 +45,6 @@ export type Message = {
   message: string;
   error?: string;
   code?: number;
-};
-
-export type Settings = {
-  pageSize: number;
-  resizerHost: string;
-  splitFileSize: number;
-  uploadConcurrency: number;
-  encryptFiles: string;
 };
 
 export type Session = {

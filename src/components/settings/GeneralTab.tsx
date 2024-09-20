@@ -27,7 +27,7 @@ export const GeneralTab = memo(() => {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className={clsx("grid grid-cols-6 gap-8 p-2 w-full overflow-y-auto", scrollbarClasses)}
+      className={clsx("grid grid-cols-6 gap-8 p-2 pr-4 w-full overflow-y-auto", scrollbarClasses)}
     >
       <div className="col-span-6 xs:col-span-3">
         <p className="text-lg font-medium">Upload Concurrency</p>
@@ -91,6 +91,7 @@ export const GeneralTab = memo(() => {
           />
         )}
       />
+
       <div className="col-span-6 xs:col-span-3">
         <p className="text-lg font-medium">Split File Size</p>
         <p className="text-sm font-normal text-on-surface-variant">
@@ -147,6 +148,31 @@ export const GeneralTab = memo(() => {
           )}
         />
       </div>
+
+      <div className="col-span-6 xs:col-span-3">
+        <p className="text-lg font-medium">Rclone Media Proxy</p>
+        <p className="text-sm font-normal text-on-surface-variant">
+          Play Files directly from Rclone Webdav
+        </p>
+      </div>
+      <Controller
+        name="rcloneProxy"
+        control={control}
+        rules={{
+          validate: (value) => (value ? validateUrl(value) || "Must be a valid Host" : true),
+        }}
+        render={({ field, fieldState: { error } }) => (
+          <Input
+            size="lg"
+            className="col-span-6 xs:col-span-3"
+            variant="bordered"
+            placeholder="http://localhost:8080"
+            isInvalid={!!error}
+            errorMessage={error?.message}
+            {...field}
+          />
+        )}
+      />
       <div className="col-span-6 flex justify-end">
         <Button type="submit" variant="filledTonal">
           Save

@@ -1,4 +1,4 @@
-import type { Settings } from "@/types";
+import type { Settings } from "@/hooks/useSettings";
 
 export enum SortOrder {
   ASC = "asc",

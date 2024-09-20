@@ -121,7 +121,7 @@ export const useFileAction = (params: QueryParams, session: Session) => {
           for (const file of selectedFiles) {
             if (!FileHelper.isDirectory(file)) {
               const { id, name } = file;
-              const url = mediaUrl(id, name, session.hash, true);
+              const url = mediaUrl(id, name, params.path, session.hash, true);
               navigateToExternalUrl(url, false);
             }
           }
@@ -131,7 +131,7 @@ export const useFileAction = (params: QueryParams, session: Session) => {
           const { selectedFiles } = data.state;
           const fileToOpen = selectedFiles[0];
           const { id, name } = fileToOpen;
-          const url = `vlc://${mediaUrl(id, name, session.hash)}`;
+          const url = `vlc://${mediaUrl(id, name, params.path, session.hash)}`;
           navigateToExternalUrl(url, false);
           break;
         }
@@ -139,7 +139,7 @@ export const useFileAction = (params: QueryParams, session: Session) => {
           const { selectedFiles } = data.state;
           const fileToOpen = selectedFiles[0];
           const { id, name } = fileToOpen;
-          const url = `potplayer://${mediaUrl(id, name, session.hash)}`;
+          const url = `potplayer://${mediaUrl(id, name, params.path, session.hash)}`;
           navigateToExternalUrl(url, false);
           break;
         }
@@ -181,7 +181,7 @@ export const useFileAction = (params: QueryParams, session: Session) => {
           const selections = data.state.selectedFilesForAction;
           const clipboardText = selections
             .filter((element) => !FileHelper.isDirectory(element))
-            .map(({ id, name }) => mediaUrl(id, name, session.hash, true))
+            .map(({ id, name }) => mediaUrl(id, name, params.path, session.hash, true))
             .join("\n");
           navigator.clipboard.writeText(clipboardText);
           break;

@@ -1,5 +1,5 @@
 import { lazy, memo, Suspense, useCallback, useState } from "react";
-import type { Session } from "@/types";
+import type { BrowseView, Session } from "@/types";
 import { FbIcon, type FileData, useIconData } from "@tw-material/file-browser";
 import { Button, Modal, ModalContent } from "@tw-material/react";
 import IconIcRoundArrowBack from "~icons/ic/round-arrow-back";
@@ -21,6 +21,8 @@ import { useModalStore } from "@/utils/stores";
 import CodePreview from "../previews/CodePreview";
 import clsx from "clsx";
 import { center } from "@/utils/classes";
+import { fileQueries } from "@/utils/queryOptions";
+import { useQuery } from "@tanstack/react-query";
 
 const sortOptions = {
   numeric: true,
@@ -102,10 +104,14 @@ export default memo(function PreviewModal({
   files: fileProp,
   session,
   shareId,
+  path,
+  type,
 }: {
   files: FileData[];
+  path: string;
   session?: Session;
   shareId?: string;
+  type: BrowseView;
 }) {
   const [files] = useState(
     fileProp.toSorted((a, b) =>
@@ -149,9 +155,13 @@ export default memo(function PreviewModal({
     [id, files],
   );
 
+  const { data: fileData } = useQuery(fileQueries.getFile(id, type !== "my-drive" && !path));
+
   const handleClose = useCallback(() => modalActions.setOpen(false), []);
 
-  const assetUrl = shareId ? sharedMediaUrl(shareId, id, name) : mediaUrl(id, name, session?.hash!);
+  const assetUrl = shareId
+    ? sharedMediaUrl(shareId, id, name)
+    : mediaUrl(id, name, type === "my-drive" ? path || "/" : fileData?.path!, session?.hash!);
 
   const renderPreview = useCallback(() => {
     if (previewType) {

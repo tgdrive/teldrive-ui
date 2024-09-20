@@ -8,9 +8,12 @@ const defaultSettings = {
   uploadConcurrency: "4",
   encryptFiles: false,
   resizerHost: "",
-};
+  rcloneProxy: "",
+} as const;
 
 export default function useSettings() {
   const [settings, setSettings] = useLocalStorage("settings", defaultSettings);
   return { settings, setSettings };
 }
+
+export type Settings = typeof defaultSettings;

@@ -18,7 +18,6 @@ import {
   infiniteQueryOptions,
   queryOptions,
   useMutation,
-  useQueryClient,
 } from "@tanstack/react-query";
 import { type NavigateOptions, useRouter } from "@tanstack/react-router";
 import type { FileData } from "@tw-material/file-browser";
@@ -30,6 +29,7 @@ import { bytesToGB, getExtension, mediaUrl } from "./common";
 import { defaultSortState, settings, sortIdsMap, sortViewMap } from "./defaults";
 import { getPreviewType, preview } from "./getPreviewType";
 import http from "./http";
+import { queryClient } from "./queryClient";
 
 export const fileQueries = {
   all: () => "files",
@@ -47,8 +47,14 @@ export const fileQueries = {
           page.files ? mapFilesToFb(page.files, sessionHash as string) : [],
         ),
     }),
+  getFile: (id: string, enabled: boolean) =>
+    queryOptions({
+      queryKey: [fileQueries.all(), id],
+      queryFn: async () => (await http.get<SingleFile>(`/api/files/${id}`)).data,
+      select: ({ path, ...data }) => ({ ...data, path: path?.split("/").slice(0, -1).join("/") }),
+      enabled,
+    }),
   create: (queryKey: any[]) => {
-    const queryClient = useQueryClient();
     return useMutation({
       mutationFn: async (data: Record<string, any>) => http.post("/api/files", data),
       onSuccess: () => {
@@ -57,7 +63,6 @@ export const fileQueries = {
     });
   },
   update: (queryKey: any[]) => {
-    const queryClient = useQueryClient();
     return useMutation({
       mutationFn: async (data: FilePayload) => {
         return (await http.patch(`/api/files/${data.id}`, data.payload)).data;
@@ -92,7 +97,6 @@ export const fileQueries = {
     });
   },
   delete: (queryKey: any[]) => {
-    const queryClient = useQueryClient();
     return useMutation({
       mutationFn: async (data: Record<string, any>) => {
         return (await http.post("/api/files/delete", { files: data.files })).data;
@@ -159,7 +163,6 @@ export const shareQueries = {
         data.pages.flatMap((page) => (page.files ? mapFilesToFb(page.files, "") : [])),
     }),
   create: (fileId: string, queryKey: any[]) => {
-    const queryClient = useQueryClient();
     return useMutation({
       mutationFn: async (data: Record<string, any>) =>
         http.post(`/api/files/${fileId}/share`, data),
@@ -172,7 +175,6 @@ export const shareQueries = {
     });
   },
   delete: (fileId: string, queryKey: any[]) => {
-    const queryClient = useQueryClient();
     return useMutation({
       mutationFn: async () => http.delete(`/api/files/${fileId}/share`),
       onSuccess: () => {
@@ -239,9 +241,7 @@ export const userQueries = {
       queryFn: async ({ signal }) =>
         (await http.get<UserSession[]>("/api/users/sessions", { signal })).data,
     }),
-  deleteSession: () => {
-    const queryClient = useQueryClient();
-    const queryKey = [userQueries.all(), "sessions"];
+  deleteSession: (queryKey = [userQueries.all(), "sessions"]) => {
     return useMutation({
       mutationFn: async (id: string) => http.delete(`/api/users/sessions/${id}`),
       onMutate: async (variables) => {
@@ -273,8 +273,6 @@ export const userQueries = {
 };
 
 export const usePreload = () => {
-  const queryClient = useQueryClient();
-
   const router = useRouter();
 
   const { startProgress, stopProgress } = useProgress();
@@ -428,7 +426,7 @@ const mapFilesToFb = (files: SingleFile[], sessionHash: string): FileData[] => {
     let thumbnailUrl = "";
     if (previewType === "image") {
       if (settings.resizerHost) {
-        const url = mediaUrl(item.id, item.name, sessionHash);
+        const url = mediaUrl(item.id, item.name, "", sessionHash);
         thumbnailUrl = settings.resizerHost
           ? `${settings.resizerHost}/insecure/w:360/plain/${encodeURIComponent(url)}`
           : "";
