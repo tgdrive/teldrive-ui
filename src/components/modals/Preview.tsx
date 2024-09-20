@@ -169,7 +169,9 @@ export default memo(function PreviewModal({
         case preview.video:
           return (
             <Suspense fallback={<Loader />}>
-              <VideoPreview name={name} assetUrl={assetUrl} />
+              <div className="w-full max-w-5xl overflow-hidden mx-auto">
+                <VideoPreview name={name} assetUrl={assetUrl} />
+              </div>
             </Suspense>
           );
 
@@ -225,7 +227,7 @@ export default memo(function PreviewModal({
       size="5xl"
       classNames={{
         wrapper: "overflow-hidden",
-        base: "bg-transparent w-full shadow-none",
+        base: "bg-transparent w-full shadow-none !m-0 rounded-none size-full max-w-screen-2xl",
       }}
       placement="center"
       backdrop="blur"
@@ -234,8 +236,8 @@ export default memo(function PreviewModal({
     >
       <ModalContent>
         {id && (
-          <>
-            <div className="fixed top-0 left-0 h-16 w-full p-3 text-inherit flex justify-between">
+          <div className="px-4 size-full grid grid-rows-[4rem_1fr] gap-2">
+            <div className="flex justify-between w-full relative">
               <div className="flex items-center gap-3 w-full max-w-[calc(50%-5rem)]">
                 <Button
                   variant="text"
@@ -261,7 +263,6 @@ export default memo(function PreviewModal({
                   as={"a"}
                   href={assetUrl.replace("/stream", "/download")}
                   rel="noopener noreferrer"
-                  target="_blank"
                   className="text-on-surface"
                   variant="text"
                   isIconOnly
@@ -270,8 +271,8 @@ export default memo(function PreviewModal({
                 </Button>
               </div>
             </div>
-            <div className="px-4 size-full">{renderPreview()}</div>
-          </>
+            {renderPreview()}
+          </div>
         )}
       </ModalContent>
     </Modal>

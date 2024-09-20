@@ -11,7 +11,7 @@ interface WideScreenProps {
 export const WideScreen = memo(({ children }: WideScreenProps) => {
   const [fullscreen, toggle] = useToggle(false);
   return (
-    <div className="w-full m-auto mt-8 relative h-[calc(100vh-6rem)]">
+    <div className="relative w-full md:w-4/5 overflow-hidden h-[calc(100%-2rem)] mx-auto">
       <div className={clsx("size-full", fullscreen ? "fixed inset-0 z-50" : "relative")}>
         <Button
           isIconOnly

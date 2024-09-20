@@ -17,13 +17,12 @@ const ImagePreview = ({ name, assetUrl }: ImagePreviewProps) => {
   };
 
   return (
-    <div className="max-w-[64rem] m-auto relative">
+    <div className="relative w-full h-[calc(100%-2rem)]">
       {!isLoaded && <IconSvgSpinnerTadpole className={clsx(center, "size-8")} />}
-
       <img
         onLoad={handleImageOnLoad}
         className={clsx(
-          "opacity-0 max-h-[calc(100vh-4rem)] pt-8 mx-auto object-contain transition-opacity duration-300 ease-in-out",
+          "opacity-0  absolute  w-full h-full object-contain transition-opacity duration-300 ease-in-out",
           isLoaded && "opacity-100",
         )}
         src={assetUrl}
