@@ -62,6 +62,7 @@ const RenameDialog = memo(({ queryKey, handleClose }: RenameDialogProps) => {
           classNames={{
             inputWrapper: "border-primary border-large",
           }}
+          autoFocus
           value={currentFile.name}
           onValueChange={(value) => actions.setCurrentFile({ ...currentFile, name: value })}
         />
@@ -113,6 +114,7 @@ const FolderCreateDialog = memo(({ queryKey, handleClose }: FolderCreateDialogPr
           classNames={{
             inputWrapper: "border-primary border-large",
           }}
+          autoFocus
           value={currentFile?.name}
           onValueChange={(value) => actions.setCurrentFile({ ...currentFile, name: value })}
         />
