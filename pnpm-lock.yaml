@@ -28,8 +28,8 @@ importers:
         specifier: 1.58.9
         version: 1.58.9(@tanstack/router-generator@1.58.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@tw-material/file-browser':
-        specifier: ^1.0.29
-        version: 1.0.29(@tw-material/react@1.1.21(@types/react@18.3.9)(framer-motion@11.8.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.13))(tailwindcss@3.4.13))(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.13))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.13)))(@tw-material/theme@1.1.12(tailwindcss@3.4.13))(@types/react-dom@18.3.0)(@types/react@18.3.9)(framer-motion@11.8.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(redux@5.0.1)(typescript@5.6.2)
+        specifier: ^1.0.30
+        version: 1.0.30(@tw-material/react@1.1.21(@types/react@18.3.9)(framer-motion@11.8.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.13))(tailwindcss@3.4.13))(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.13))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.13)))(@tw-material/theme@1.1.12(tailwindcss@3.4.13))(@types/react-dom@18.3.0)(@types/react@18.3.9)(framer-motion@11.8.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(redux@5.0.1)(typescript@5.6.2)
       '@tw-material/framer-transitions':
         specifier: ^1.1.4
         version: 1.1.4(@tw-material/theme@1.1.12(tailwindcss@3.4.13))(framer-motion@11.8.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.13))
@@ -1661,8 +1661,8 @@ packages:
       react: ^18.3.1
       react-dom: ^18.3.1
 
-  '@tw-material/file-browser@1.0.29':
-    resolution: {integrity: sha512-jkKLlOKWTRzuGMzkiyzbUeUIbd6vBIlCftDzoZBPChQgjoquSdYvcuIilrHx7+evQAzPaiLz2Ihxz4DVH9etBQ==}
+  '@tw-material/file-browser@1.0.30':
+    resolution: {integrity: sha512-OlcdPXRc5yRFvNH57WDTDqomL1Jj2Lc+pdknXGDBwAmsEYj9ON+NZQ0eO3O3JdGgeU4clwjAEZtGqkg51HkuNw==}
     engines: {node: '>=18'}
     peerDependencies:
       '@tw-material/react': '>=1'
@@ -4890,7 +4890,7 @@ snapshots:
       - tailwind-variants
       - tailwindcss
 
-  '@tw-material/file-browser@1.0.29(@tw-material/react@1.1.21(@types/react@18.3.9)(framer-motion@11.8.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.13))(tailwindcss@3.4.13))(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.13))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.13)))(@tw-material/theme@1.1.12(tailwindcss@3.4.13))(@types/react-dom@18.3.0)(@types/react@18.3.9)(framer-motion@11.8.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(redux@5.0.1)(typescript@5.6.2)':
+  '@tw-material/file-browser@1.0.30(@tw-material/react@1.1.21(@types/react@18.3.9)(framer-motion@11.8.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.13))(tailwindcss@3.4.13))(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.13))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.13)))(@tw-material/theme@1.1.12(tailwindcss@3.4.13))(@types/react-dom@18.3.0)(@types/react@18.3.9)(framer-motion@11.8.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(redux@5.0.1)(typescript@5.6.2)':
     dependencies:
       '@nextui-org/use-safe-layout-effect': 2.0.6(react@18.3.1)
       '@react-aria/focus': 3.18.2(react@18.3.1)
