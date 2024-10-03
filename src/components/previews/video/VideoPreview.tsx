@@ -1,7 +1,5 @@
 import { memo, useEffect, useRef } from "react";
-import type Artplayer from "artplayer";
-import type ArtOption from "artplayer/types/option";
-import type { AspectRatio } from "artplayer/types/player";
+import type { Artplayer, Option, AspectRatio } from "@artplayer/player";
 
 import Player from "./ArtPlayer";
 
@@ -14,7 +12,7 @@ interface VideoPlayerProps {
 const VideoPlayer = ({ name, assetUrl }: VideoPlayerProps) => {
   const artInstance = useRef<Artplayer | null>(null);
 
-  const artOptions: ArtOption = {
+  const artOptions: Option = {
     container: "",
     url: "",
     volume: 0.6,

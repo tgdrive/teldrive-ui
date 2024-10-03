@@ -1,12 +1,11 @@
 import type React from "react";
 import { useEffect, useRef } from "react";
-import Artplayer from "artplayer";
-import type ArtOption from "artplayer/types/option";
+import { Artplayer, type Option } from "@artplayer/player";
+import "@artplayer/player/artplayer.css";
 
-Artplayer.LOG_VERSION = false;
 Artplayer.USE_RAF = true;
 interface PlayerProps {
-  option: ArtOption;
+  option: Option;
   style: React.CSSProperties;
   getInstance?: (instance: Artplayer) => void;
 }
