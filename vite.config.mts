@@ -14,7 +14,9 @@ export default defineConfig(({ mode: _ }) => {
         quoteStyle: "double",
       }),
       react(),
-      tsconfigPaths(),
+      tsconfigPaths({
+        projects: ["./tsconfig.json"],
+      }),
       Icons({
         compiler: "jsx",
         jsx: "react",

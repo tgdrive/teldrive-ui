@@ -29,7 +29,7 @@ const Tabs = [
   },
 ];
 
-const fileRoute = getRouteApi("/_authenticated/settings/$tabId");
+const fileRoute = getRouteApi("/_authed/settings/$tabId");
 
 export const Settings = memo(() => {
   const params = fileRoute.useParams();

@@ -6,7 +6,7 @@ import { ApperanceTab } from "./ApperanceTab";
 import { GeneralTab } from "./GeneralTab";
 import { InfoTab } from "./InfoTab";
 
-const fileRoute = getRouteApi("/_authenticated/settings/$tabId");
+const fileRoute = getRouteApi("/_authed/settings/$tabId");
 
 export const SettingsTabView = memo(() => {
   const params = fileRoute.useParams();

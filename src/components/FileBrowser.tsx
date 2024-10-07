@@ -35,7 +35,7 @@ const modalFileActions = [
   CustomActions.ShareFiles.id,
 ];
 
-const fileRoute = getRouteApi("/_authenticated/$");
+const fileRoute = getRouteApi("/_authed/$");
 
 const positions = new Map<string, StateSnapshot>();
 

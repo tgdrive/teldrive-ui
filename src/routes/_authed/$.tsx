@@ -1,14 +1,16 @@
 import type { FilterQuery, QueryParams } from "@/types";
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 
 import { extractPathParts } from "@/utils/common";
 import { fileQueries } from "@/utils/queryOptions";
 import { AxiosError } from "feaxios";
 import { ErrorView } from "@/components/ErrorView";
+import { DriveFileBrowser } from "@/components/FileBrowser";
 
 const allowedTypes = ["my-drive", "recent", "search", "storage", "category", "browse", "shared"];
 
-export const Route = createFileRoute("/_authenticated/$")({
+export const Route = createFileRoute("/_authed/$")({
+  component: DriveFileBrowser,
   beforeLoad: ({ params }) => {
     const { type, path } = extractPathParts(params._splat!);
     if (!allowedTypes.includes(type)) {
