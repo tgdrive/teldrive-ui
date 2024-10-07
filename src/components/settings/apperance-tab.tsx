@@ -4,9 +4,9 @@ import { genThemeConfig } from "@tw-material/theme/config";
 import BxReset from "~icons/bx/reset";
 import clsx from "clsx";
 
-import { useIsFirstRender } from "@/hooks/useFirstRender";
-import { ColorPickerMenu } from "@/components/menus/ColorPicker";
-import { defaultColorScheme, useTheme } from "@/components/ThemeProvider";
+import { useIsFirstRender } from "@/hooks/use-first-render";
+import { ColorPickerMenu } from "@/components/menus/color-picker";
+import { defaultColorScheme, useTheme } from "@/components/theme-provider";
 
 const swatches = [
   "#ff8a80",

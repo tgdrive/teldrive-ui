@@ -12,15 +12,15 @@ import {
 import type { StateSnapshot, VirtuosoGridHandle, VirtuosoHandle } from "react-virtuoso";
 import useBreakpoint from "use-breakpoint";
 
-import { CustomActions, fileActions, useFileAction } from "@/hooks/useFileAction";
+import { CustomActions, fileActions, useFileAction } from "@/hooks/use-file-action";
 import { chainLinks, isMobile } from "@/utils/common";
 import { BREAKPOINTS, defaultSortState, defaultViewId, sortViewMap } from "@/utils/defaults";
-import { fileQueries, userQueries } from "@/utils/queryOptions";
+import { fileQueries, userQueries } from "@/utils/query-options";
 import { useFileUploadStore, useModalStore } from "@/utils/stores";
 
-import { FileOperationModal } from "./modals/FileOperation";
-import PreviewModal from "./modals/Preview";
-import { Upload } from "./Upload";
+import { FileOperationModal } from "./modals/file-operation";
+import PreviewModal from "./modals/preview";
+import { Upload } from "./upload";
 
 let firstRender = true;
 

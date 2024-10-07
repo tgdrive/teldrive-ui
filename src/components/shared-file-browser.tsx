@@ -14,10 +14,10 @@ import useBreakpoint from "use-breakpoint";
 
 import { chainSharedLinks } from "@/utils/common";
 import { BREAKPOINTS, defaultViewId } from "@/utils/defaults";
-import { shareQueries } from "@/utils/queryOptions";
-import { sharefileActions, useShareFileAction } from "@/hooks/useFileAction";
+import { shareQueries } from "@/utils/query-options";
+import { sharefileActions, useShareFileAction } from "@/hooks/use-file-action";
 import { useModalStore } from "@/utils/stores";
-import PreviewModal from "./modals/Preview";
+import PreviewModal from "./modals/preview";
 
 let firstRender = true;
 

@@ -17,7 +17,7 @@ import toast from "react-hot-toast";
 import { mediaUrl, navigateToExternalUrl, sharedMediaUrl } from "@/utils/common";
 import { getSortState, SortOrder } from "@/utils/defaults";
 import http from "@/utils/http";
-import { usePreload } from "@/utils/queryOptions";
+import { usePreload } from "@/utils/query-options";
 import { useFileUploadStore, useModalStore } from "@/utils/stores";
 import Share from "~icons/fluent/share-24-regular";
 

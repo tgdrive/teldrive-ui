@@ -7,7 +7,7 @@ import IconOutlineSettings from "~icons/ic/outline-settings";
 
 import { profileName, profileUrl } from "@/utils/common";
 import http from "@/utils/http";
-import { userQueries } from "@/utils/queryOptions";
+import { userQueries } from "@/utils/query-options";
 
 export function ProfileDropDown() {
   const { data: session, refetch } = useQuery(userQueries.session());

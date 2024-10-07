@@ -2,7 +2,7 @@ import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@
 import IconPhSun from "~icons/ph/sun";
 import IconRiMoonClearLine from "~icons/ri/moon-clear-line";
 
-import { useTheme } from "@/components/ThemeProvider";
+import { useTheme } from "@/components/theme-provider";
 
 export function ThemeToggle() {
   const { setTheme } = useTheme();

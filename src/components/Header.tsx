@@ -8,11 +8,11 @@ import PhTelegramLogoFill from "~icons/ph/telegram-logo-fill";
 import clsx from "clsx";
 import debounce from "lodash.debounce";
 
-import { usePreload } from "@/utils/queryOptions";
+import { usePreload } from "@/utils/query-options";
 
-import { ProfileDropDown } from "./menus/Profile";
-import { SearchMenu } from "./menus/search/Search";
-import { ThemeToggle } from "./menus/ThemeToggle";
+import { ProfileDropDown } from "./menus/profile";
+import { SearchMenu } from "./menus/search/search";
+import { ThemeToggle } from "./menus/theme-toggle";
 
 const cleanSearchInput = (input: string) => input.trim().replace(/\s+/g, " ");
 

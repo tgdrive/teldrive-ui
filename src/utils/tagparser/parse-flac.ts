@@ -1,7 +1,7 @@
 import type { Tags } from "@/types";
 
 import { getBuffer, getBytes, unpackBytes } from "./helpers";
-import { parsePictureBlock, parseVorbisComment } from "./vorbisComment";
+import { parsePictureBlock, parseVorbisComment } from "./vorbis-comment";
 
 function bytesToNum(bytes: Uint8Array) {
   return bytes.reduce((result, byte) => (result << 8) + byte, 0);

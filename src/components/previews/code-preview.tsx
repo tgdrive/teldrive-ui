@@ -2,8 +2,8 @@ import { memo } from "react";
 import Editor from "@monaco-editor/react";
 import { Spinner } from "@tw-material/react";
 
-import useFileContent from "@/hooks/useFileContent";
-import { getLanguageByFileName } from "@/utils/getPreviewType";
+import useFileContent from "@/hooks/use-file-content";
+import { getLanguageByFileName } from "@/utils/preview-type";
 
 interface CodePreviewProps {
   name: string;

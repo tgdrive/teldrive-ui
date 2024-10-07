@@ -2,7 +2,7 @@ import { memo, useEffect } from "react";
 
 import { audioActions, useAudioStore } from "@/utils/stores/audio";
 
-import { AudioPlayer } from "./AudioPlayer";
+import { AudioPlayer } from "./audio-player";
 
 interface AudioPreviewProps {
   nextItem: (previewType: string) => void;

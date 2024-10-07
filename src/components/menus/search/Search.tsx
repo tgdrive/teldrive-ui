@@ -22,7 +22,7 @@ import { Controller, useForm, useWatch } from "react-hook-form";
 
 import { scrollbarClasses } from "@/utils/classes";
 
-import { FilterChip } from "./FilterChip";
+import { FilterChip } from "./filter-chip";
 
 const getCurrentDateFormatted = () => {
   const today = new Date();

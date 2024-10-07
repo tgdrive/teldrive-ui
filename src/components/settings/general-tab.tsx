@@ -3,7 +3,7 @@ import { Button, Input, Select, SelectItem, Switch } from "@tw-material/react";
 import clsx from "clsx";
 import { Controller, useForm } from "react-hook-form";
 
-import useSettings from "@/hooks/useSettings";
+import useSettings from "@/hooks/use-settings";
 import { scrollbarClasses } from "@/utils/classes";
 import { splitFileSizes } from "@/utils/common";
 

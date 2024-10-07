@@ -12,7 +12,7 @@ import {
 import clsx from "clsx";
 import type { ControllerRenderProps } from "react-hook-form";
 
-import { isoCodeMap, isoCodes, type FormState } from "@/components/Login";
+import { isoCodeMap, isoCodes, type FormState } from "@/components/login";
 import { scrollbarClasses } from "@/utils/classes";
 import { flags } from "@/utils/country-flags";
 

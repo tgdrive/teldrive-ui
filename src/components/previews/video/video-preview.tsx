@@ -1,7 +1,7 @@
 import { memo, useEffect, useRef } from "react";
 import type { Artplayer, Option, AspectRatio } from "@artplayer/player";
 
-import Player from "./ArtPlayer";
+import Player from "./art-player";
 
 const aspectRatioes = ["default", "4:3", "16:9"];
 

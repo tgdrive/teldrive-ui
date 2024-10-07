@@ -5,8 +5,8 @@ import {
   redirect,
 } from "@tanstack/react-router"
 
-import { AuthLayout } from "@/layouts/AuthLayout"
-import { userQueries } from "@/utils/queryOptions"
+import { AuthLayout } from "@/layouts/auth-layout"
+import { userQueries } from "@/utils/query-options"
 
 const checkAuth = async (
   queryClient: QueryClient,

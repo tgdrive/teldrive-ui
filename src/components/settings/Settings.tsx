@@ -7,7 +7,7 @@ import FluentDarkTheme20Filled from "~icons/fluent/dark-theme-20-filled";
 import IcOutlineInfo from "~icons/ic/outline-info";
 import clsx from "clsx";
 
-import { ForwardLink } from "@/components/ForwardLink";
+import { ForwardLink } from "@/components/forward-link";
 import { motion } from "framer-motion";
 
 const Tabs = [

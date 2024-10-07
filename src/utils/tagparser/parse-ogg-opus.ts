@@ -1,7 +1,7 @@
 import type { Tags } from "@/types";
 
 import { decode, getBytes, sliceBytes, unpackBytes } from "./helpers";
-import { parseVorbisComment } from "./vorbisComment";
+import { parseVorbisComment } from "./vorbis-comment";
 
 function mergeTypedArrays(a: Uint8Array, b: Uint8Array) {
   const c = new Uint8Array(a.length + b.length);

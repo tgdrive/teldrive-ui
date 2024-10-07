@@ -8,12 +8,12 @@ import { Controller, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import useWebSocket from "react-use-websocket";
 
-import QrCode from "@/components/QrCode";
-import { TelegramIcon } from "@/components/TelegramIcon";
-import { useProgress } from "@/components/TopProgress";
+import QrCode from "@/components/qr-code";
+import { TelegramIcon } from "@/components/telegram-icon";
+import { useProgress } from "@/components/top-progress";
 import http from "@/utils/http";
 
-import { PhoneNoPicker } from "./menus/PhonePicker";
+import { PhoneNoPicker } from "./menus/phone-picker";
 
 const getKeys = Object.keys as <T>(object: T) => (keyof T)[];
 

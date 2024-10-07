@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect } from "react";
 import { useLocalStorage } from "usehooks-ts";
 
-import { useIsFirstRender } from "@/hooks/useFirstRender";
+import { useIsFirstRender } from "@/hooks/use-first-render";
 
 type Theme = "dark" | "light" | "system";
 

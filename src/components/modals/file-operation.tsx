@@ -14,11 +14,11 @@ import {
 } from "@tw-material/react";
 import { useShallow } from "zustand/react/shallow";
 
-import { shareQueries, fileQueries } from "@/utils/queryOptions";
+import { shareQueries, fileQueries } from "@/utils/query-options";
 import { useModalStore } from "@/utils/stores";
 import { Controller, useForm } from "react-hook-form";
-import { CustomActions } from "@/hooks/useFileAction";
-import { CopyButton } from "@/components/CopyButton";
+import { CustomActions } from "@/hooks/use-file-action";
+import { CopyButton } from "@/components/copy-button";
 import { useQuery } from "@tanstack/react-query";
 import IcRoundClose from "~icons/ic/round-close";
 import { getNextDate } from "@/utils/common";

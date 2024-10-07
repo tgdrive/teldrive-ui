@@ -1,5 +1,5 @@
 import type { SetValue } from "@/types";
-import { shareQueries } from "@/utils/queryOptions";
+import { shareQueries } from "@/utils/query-options";
 import { Button, Input } from "@tw-material/react";
 import PasswordIcon from "~icons/carbon/password";
 import ShowPasswordIcon from "~icons/mdi/eye-outline";
@@ -9,11 +9,11 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import http from "@/utils/http";
 import { Controller, useForm } from "react-hook-form";
 import { useSessionStorage } from "usehooks-ts";
-import { SharedFileBrowser } from "@/components/SharedFileBrowser";
+import { SharedFileBrowser } from "@/components/shared-file-browser";
 import type { ShareQuery, ShareQueryParams } from "@/types";
 import { createFileRoute } from "@tanstack/react-router";
 import { AxiosError } from "feaxios";
-import { ErrorView } from "@/components/ErrorView";
+import { ErrorView } from "@/components/error-view";
 
 export const Route = createFileRoute("/_share/share/$id")({
   component: Component,

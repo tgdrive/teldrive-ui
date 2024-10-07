@@ -1,9 +1,9 @@
 import { decode, getBuffer, getBytes } from "./helpers";
-import parseFlacFile from "./parseFlacFile";
-import parseM4aFile from "./parseM4aFile";
-import parseMp3File from "./parseMp3File";
-import parseOggOpusFile from "./parseOggOpusFile";
-import parseWavFile from "./parseWavFile";
+import parseFlacFile from "./parse-flac";
+import parseM4aFile from "./parse-m4a";
+import parseMp3File from "./parse-mp3";
+import parseOggOpusFile from "./parse-ogg-opus";
+import parseWavFile from "./parse-wav";
 
 // http://id3lib.sourceforge.net/id3/id3v2com-00.html
 function getID3TagSize(buffer: ArrayBuffer) {

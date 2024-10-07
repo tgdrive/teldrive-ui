@@ -17,11 +17,11 @@ import pLimit from "p-limit";
 import toast from "react-hot-toast";
 import { useShallow } from "zustand/react/shallow";
 
-import useSettings from "@/hooks/useSettings";
+import useSettings from "@/hooks/use-settings";
 import { scrollbarClasses } from "@/utils/classes";
 import { filesize, formatTime, zeroPad } from "@/utils/common";
 import http from "@/utils/http";
-import { userQueries, fileQueries } from "@/utils/queryOptions";
+import { userQueries, fileQueries } from "@/utils/query-options";
 import { FileUploadStatus, useFileUploadStore } from "@/utils/stores";
 
 type UploadParams = Record<string, string | number | boolean | undefined>;

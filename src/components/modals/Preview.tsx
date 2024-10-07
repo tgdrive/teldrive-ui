@@ -7,21 +7,21 @@ import IconIcRoundNavigateBefore from "~icons/ic/round-navigate-before";
 import IconIcRoundNavigateNext from "~icons/ic/round-navigate-next";
 import DownloadIcon from "~icons/ic/outline-file-download";
 
-import Loader from "@/components/Loader";
-import AudioPreview from "@/components/previews/audio/AudioPreview";
-import DocPreview from "@/components/previews/DocPreview";
-import ImagePreview from "@/components/previews/ImagePreview";
-import PDFPreview from "@/components/previews/PdfPreview";
-import { WideScreen } from "@/components/previews/WideScreen";
+import Loader from "@/components/loader";
+import AudioPreview from "@/components/previews/audio/audio-preview";
+import DocPreview from "@/components/previews/doc-preview";
+import ImagePreview from "@/components/previews/image-preview";
+import PDFPreview from "@/components/previews/pdf-preview";
+import { WideScreen } from "@/components/previews/wide-screen";
 import { mediaUrl, sharedMediaUrl } from "@/utils/common";
 import { defaultSortState } from "@/utils/defaults";
-import { preview } from "@/utils/getPreviewType";
+import { preview } from "@/utils/preview-type";
 import { useModalStore } from "@/utils/stores";
 
-import CodePreview from "../previews/CodePreview";
+import CodePreview from "../previews/code-preview";
 import clsx from "clsx";
 import { center } from "@/utils/classes";
-import { fileQueries } from "@/utils/queryOptions";
+import { fileQueries } from "@/utils/query-options";
 import { useQuery } from "@tanstack/react-query";
 
 const sortOptions = {
@@ -29,9 +29,9 @@ const sortOptions = {
   sensitivity: "base",
 } as const;
 
-const VideoPreview = lazy(() => import("@/components/previews/video/VideoPreview"));
+const VideoPreview = lazy(() => import("@/components/previews/video/video-preview"));
 
-const EpubPreview = lazy(() => import("@/components/previews/EpubPreview"));
+const EpubPreview = lazy(() => import("@/components/previews/epub-preview"));
 
 const findNext = (files: FileData[], fileId: string, previewType: string) => {
   let index = -1;

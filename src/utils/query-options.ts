@@ -23,13 +23,13 @@ import { type NavigateOptions, useRouter } from "@tanstack/react-router";
 import type { FileData } from "@tw-material/file-browser";
 import toast from "react-hot-toast";
 
-import { useProgress } from "@/components/TopProgress";
+import { useProgress } from "@/components/top-progress";
 
 import { bytesToGB, getExtension, mediaUrl } from "./common";
 import { defaultSortState, settings, sortIdsMap, sortViewMap } from "./defaults";
-import { getPreviewType, preview } from "./getPreviewType";
+import { getPreviewType, preview } from "./preview-type";
 import http from "./http";
-import { queryClient } from "./queryClient";
+import { queryClient } from "./query-client";
 
 export const fileQueries = {
   all: () => "files",

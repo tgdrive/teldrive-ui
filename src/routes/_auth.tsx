@@ -1,7 +1,7 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 
-import { NonAuthLayout } from "@/layouts/NonAuthLayout";
-import { userQueries } from "@/utils/queryOptions";
+import { NonAuthLayout } from "@/layouts/non-auth-layout";
+import { userQueries } from "@/utils/query-options";
 
 export const Route = createFileRoute("/_auth")({
   component: NonAuthLayout,

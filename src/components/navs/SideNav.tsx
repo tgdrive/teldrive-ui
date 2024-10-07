@@ -6,8 +6,8 @@ import IconMdiRecent from "~icons/mdi/recent";
 import ShareIcon from "~icons/fluent/share-24-regular";
 import clsx from "clsx";
 
-import { ForwardLink } from "@/components/ForwardLink";
-import { usePreload } from "@/utils/queryOptions";
+import { ForwardLink } from "@/components/forward-link";
+import { usePreload } from "@/utils/query-options";
 
 export const categories = [
   { id: "my-drive", name: "My Drive", icon: IconBasilGoogleDriveOutline },

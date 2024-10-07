@@ -6,11 +6,11 @@ import { createRouter, RouterProvider } from "@tanstack/react-router";
 import ReactDOM from "react-dom/client";
 import { Toaster } from "react-hot-toast";
 
-import { queryClient } from "@/utils/queryClient";
+import { queryClient } from "@/utils/query-client";
 
-import { TailwindIndicator } from "./components/TailwindIndicator";
-import { ThemeProvider } from "./components/ThemeProvider";
-import { ProgressProvider } from "./components/TopProgress";
+import { TailwindIndicator } from "./components/tailwind-indicator";
+import { ThemeProvider } from "./components/theme-provider";
+import { ProgressProvider } from "./components/top-progress";
 import { routeTree } from "./routeTree.gen";
 
 const router = createRouter({

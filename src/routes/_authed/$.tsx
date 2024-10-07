@@ -2,10 +2,10 @@ import type { FilterQuery, QueryParams } from "@/types";
 import { createFileRoute } from "@tanstack/react-router";
 
 import { extractPathParts } from "@/utils/common";
-import { fileQueries } from "@/utils/queryOptions";
+import { fileQueries } from "@/utils/query-options";
 import { AxiosError } from "feaxios";
-import { ErrorView } from "@/components/ErrorView";
-import { DriveFileBrowser } from "@/components/FileBrowser";
+import { ErrorView } from "@/components/error-view";
+import { DriveFileBrowser } from "@/components/file-browser";
 
 const allowedTypes = ["my-drive", "recent", "search", "storage", "category", "browse", "shared"];
 

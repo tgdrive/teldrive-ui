@@ -13,7 +13,7 @@ import toast from "react-hot-toast";
 
 import { chunkArray, copyDataToClipboard } from "@/utils/common";
 import http from "@/utils/http";
-import { userQueries } from "@/utils/queryOptions";
+import { userQueries } from "@/utils/query-options";
 
 const validateBots = (value?: string) => {
   if (value) {

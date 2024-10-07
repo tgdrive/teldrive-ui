@@ -1,10 +1,10 @@
 import { memo } from "react";
 import { getRouteApi } from "@tanstack/react-router";
 
-import { AccountTab } from "./AccountTab";
-import { ApperanceTab } from "./ApperanceTab";
-import { GeneralTab } from "./GeneralTab";
-import { InfoTab } from "./InfoTab";
+import { AccountTab } from "./account-tab";
+import { ApperanceTab } from "./apperance-tab";
+import { GeneralTab } from "./general-tab";
+import { InfoTab } from "./info-tab";
 
 const fileRoute = getRouteApi("/_authed/settings/$tabId");
 

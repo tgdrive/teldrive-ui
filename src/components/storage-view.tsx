@@ -7,9 +7,9 @@ import { filesize } from "filesize";
 
 import { grow } from "@/utils/classes";
 
-import { userQueries, usePreload } from "@/utils/queryOptions";
+import { userQueries, usePreload } from "@/utils/query-options";
 
-import { UploadStatsChart } from "./charts/UploadStats";
+import { UploadStatsChart } from "./charts/upload-stats";
 
 function getTotalStats(data: CategoryStorage[]) {
   return data.reduce(
