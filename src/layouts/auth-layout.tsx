@@ -3,7 +3,7 @@ import { Outlet } from "@tanstack/react-router";
 import clsx from "clsx";
 
 import Header from "@/components/header";
-import { SideNav } from "@/components/navs/sidenav";
+import { SideNav } from "@/components/navs/side-nav";
 import { scrollbarClasses } from "@/utils/classes";
 
 export const AuthLayout = memo(() => {

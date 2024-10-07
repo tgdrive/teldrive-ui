@@ -13,7 +13,7 @@ import type { StateSnapshot, VirtuosoGridHandle, VirtuosoHandle } from "react-vi
 import useBreakpoint from "use-breakpoint";
 
 import { CustomActions, fileActions, useFileAction } from "@/hooks/use-file-action";
-import { chainLinks, isMobile } from "@/utils/common";
+import { chainLinks } from "@/utils/common";
 import { BREAKPOINTS, defaultSortState, defaultViewId, sortViewMap } from "@/utils/defaults";
 import { fileQueries, userQueries } from "@/utils/query-options";
 import { useFileUploadStore, useModalStore } from "@/utils/stores";
