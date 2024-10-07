@@ -12,7 +12,7 @@ export default {
     extend: {
       fontFamily: {
         sans: [
-          "Jakarta Sans",
+          "Rubik",
           "system-ui",
           "-apple-system",
           "BlinkMacSystemFont",
