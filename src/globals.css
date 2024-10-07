@@ -19,9 +19,6 @@
   }
 }
 
-.art-video-player {
-  --art-theme: oklch(var(--m3-primary)) !important;
-}
 .apexcharts-legend-text {
   @apply text-on-surface;
 }
