@@ -1,6 +1,5 @@
 {
   "rootDirectory": ".",
   "routesDirectory": "./src/routes",
-  "generatedRouteTree": "./src/routeTree.gen.ts",
-  "autoCodeSplitting": true
+  "generatedRouteTree": "./src/route-tree.gen.ts"
 }

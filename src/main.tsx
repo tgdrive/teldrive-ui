@@ -11,7 +11,7 @@ import { queryClient } from "@/utils/query-client";
 import { TailwindIndicator } from "./components/tailwind-indicator";
 import { ThemeProvider } from "./components/theme-provider";
 import { ProgressProvider } from "./components/top-progress";
-import { routeTree } from "./routeTree.gen";
+import { routeTree } from "./route-tree.gen";
 
 const router = createRouter({
   routeTree,
