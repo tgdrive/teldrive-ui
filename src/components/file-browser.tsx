@@ -21,6 +21,7 @@ import { useFileUploadStore, useModalStore } from "@/utils/stores";
 import { FileOperationModal } from "./modals/file-operation";
 import PreviewModal from "./modals/preview";
 import { Upload } from "./upload";
+import type { BrowseView, QueryParams } from "@/types";
 
 let firstRender = true;
 
@@ -35,12 +36,12 @@ const modalFileActions = [
   CustomActions.ShareFiles.id,
 ];
 
-const fileRoute = getRouteApi("/_authed/$");
+const fileRoute = getRouteApi("/_authed/$view");
 
 const positions = new Map<string, StateSnapshot>();
 
 export const DriveFileBrowser = memo(() => {
-  const { queryParams: params } = fileRoute.useRouteContext();
+  const { view } = fileRoute.useParams();
 
   const search = fileRoute.useSearch();
 
@@ -48,10 +49,11 @@ export const DriveFileBrowser = memo(() => {
 
   const { data: session } = useQuery(userQueries.session());
 
-  const queryOptions = fileQueries.list(
-    Object.keys(search).length > 0 ? { ...params, filter: search } : params,
-    session?.hash!,
-  );
+  const queryParams: QueryParams = {
+    view: view as BrowseView,
+    search,
+  };
+  const queryOptions = fileQueries.list(queryParams, session?.hash!);
 
   const modalOpen = useModalStore((state) => state.open);
 
@@ -68,11 +70,11 @@ export const DriveFileBrowser = memo(() => {
     isFetchingNextPage,
   } = useSuspenseInfiniteQuery(queryOptions);
 
-  const actionHandler = useFileAction(params, session!);
+  const actionHandler = useFileAction(queryParams, session!);
 
   const folderChain = useMemo(() => {
-    if (params.type === "my-drive") {
-      return chainLinks(params.path).map(([name, path], index) => ({
+    if (view === "my-drive") {
+      return chainLinks(search?.path || "").map(([name, path], index) => ({
         id: index + name,
         name,
         path,
@@ -82,7 +84,7 @@ export const DriveFileBrowser = memo(() => {
     }
 
     return [];
-  }, [params.path, params.type]);
+  }, [search.path, view]);
 
   useEffect(() => {
     if (firstRender) {
@@ -92,17 +94,17 @@ export const DriveFileBrowser = memo(() => {
 
     setTimeout(() => {
       listRef.current?.scrollTo({
-        top: positions.get(params.type + params.path)?.scrollTop ?? 0,
+        top: positions.get(view + search.path || "")?.scrollTop ?? 0,
         left: 0,
       });
     }, 0);
 
     return () => {
       if (listRef.current && isVirtuosoList(listRef.current)) {
-        listRef.current?.getState((state) => positions.set(params.type + params.path, state));
+        listRef.current?.getState((state) => positions.set(view + search.path || "", state));
       }
     };
-  }, [params.path, params.type]);
+  }, [search.path, view]);
 
   return (
     <div className="size-full m-auto">
@@ -113,15 +115,13 @@ export const DriveFileBrowser = memo(() => {
         fileActions={fileActions}
         defaultFileViewActionId={defaultViewId}
         defaultSortActionId={
-          params.type === "my-drive" ? defaultSortState.sortId : sortViewMap[params.type].sortId
+          view === "my-drive" ? defaultSortState.sortId : sortViewMap[view].sortId
         }
-        defaultSortOrder={
-          params.type === "my-drive" ? defaultSortState.order : sortViewMap[params.type].order
-        }
+        defaultSortOrder={view === "my-drive" ? defaultSortState.order : sortViewMap[view].order}
         breakpoint={breakpoint}
       >
-        {params.type === "my-drive" && <FileNavbar breakpoint={breakpoint} />}
-        <FileToolbar className={params.type !== "my-drive" ? "pt-2" : ""} />
+        {view === "my-drive" && <FileNavbar breakpoint={breakpoint} />}
+        <FileToolbar className={view !== "my-drive" ? "pt-2" : ""} />
         <FileList
           hasNextPage={hasNextPage}
           isNextPageLoading={isFetchingNextPage}
@@ -136,7 +136,12 @@ export const DriveFileBrowser = memo(() => {
       )}
 
       {modalOperation === FbActions.OpenFiles.id && modalOpen && (
-        <PreviewModal session={session!} files={files} path={params.path} type={params.type} />
+        <PreviewModal
+          session={session!}
+          files={files}
+          path={search.path || ""}
+          view={view as BrowseView}
+        />
       )}
       {openUpload && <Upload queryKey={queryOptions.queryKey} />}
     </div>

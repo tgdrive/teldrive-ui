@@ -29,18 +29,21 @@ const CategoryStorageCard = memo(({ category, totalSize, totalFiles }: CategoryS
 
   const { preloadFiles } = usePreload();
 
-  const handleClick = useCallback((e: MouseEvent<"a">) => {
+  const handleClick = useCallback((e: MouseEvent) => {
     e.preventDefault();
     preloadFiles({
-      type: "category",
-      path: `/${category}`,
+      view: "browse",
+      search: {
+        category,
+      },
     });
   }, []);
 
   return (
     <Link
-      to="/$"
-      params={{ _splat: `category/${category}s` }}
+      to="/$view"
+      params={{ view: "browse" }}
+      search={{ category }}
       className="min-h-40 bg-surface rounded-xl"
       preload={false}
       onClick={handleClick}

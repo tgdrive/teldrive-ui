@@ -67,9 +67,8 @@ export type UserSession = {
 };
 
 export type QueryParams = {
-  type: BrowseView;
-  path: string;
-  filter?: FilterQuery;
+  view: BrowseView;
+  search?: FilterQuery;
 };
 
 export type ShareQueryParams = {
@@ -125,7 +124,7 @@ export type PreviewFile = {
   mimeType: string;
   previewType: string;
 };
-export type BrowseView = "my-drive" | "search" | "recent" | "category" | "browse" | "shared";
+export type BrowseView = "my-drive" | "search" | "recent" | "browse" | "shared";
 
 export type FilterQuery = {
   category?: string;

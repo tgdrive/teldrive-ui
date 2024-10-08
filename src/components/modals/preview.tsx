@@ -105,13 +105,13 @@ export default memo(function PreviewModal({
   session,
   shareId,
   path,
-  type,
+  view,
 }: {
   files: FileData[];
   path: string;
   session?: Session;
   shareId?: string;
-  type: BrowseView;
+  view: BrowseView;
 }) {
   const [files] = useState(
     fileProp.toSorted((a, b) =>
@@ -155,13 +155,13 @@ export default memo(function PreviewModal({
     [id, files],
   );
 
-  const { data: fileData } = useQuery(fileQueries.getFile(id, type !== "my-drive" && !path));
+  const { data: fileData } = useQuery(fileQueries.getFile(id, view !== "my-drive" && !path));
 
   const handleClose = useCallback(() => modalActions.setOpen(false), []);
 
   const assetUrl = shareId
     ? sharedMediaUrl(shareId, id, name)
-    : mediaUrl(id, name, type === "my-drive" ? path || "/" : fileData?.path!, session?.hash!);
+    : mediaUrl(id, name, view === "my-drive" ? path || "/" : fileData?.path!, session?.hash!);
 
   const renderPreview = useCallback(() => {
     if (previewType) {

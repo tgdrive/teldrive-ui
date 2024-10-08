@@ -48,7 +48,7 @@ export const PhoneNoPicker = memo(({ field }: PhoneNoPickerProps) => {
       onOpenChange={(open) => setIsOpen(open)}
     >
       <PopoverTrigger>
-        <button className="outline-none flex gap-3 items-center shrink-0">
+        <button type="button" className="outline-none flex gap-3 items-center shrink-0">
           <TriggerIcon width={30} height={20} />
           <span className="text-on-surface-variant min-w-10">{isoCodeMap[field.value].value}</span>
           <Divider className="h-8" orientation="vertical" />

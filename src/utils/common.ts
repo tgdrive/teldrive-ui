@@ -1,4 +1,4 @@
-import type { BrowseView, Session } from "@/types";
+import type { Session } from "@/types";
 import { partial } from "filesize";
 import { settings } from "./defaults";
 
@@ -12,9 +12,8 @@ export const navigateToExternalUrl = (url: string, shouldOpenNewTab = true) => {
 
 export const chainLinks = (path: string) => {
   const paths = path?.split("/").slice(1);
-  const chains = [["My Drive", ""]] as Array<[string, string]>;
-
   let pathsoFar = "/";
+  const chains = [["My Drive", pathsoFar]] as Array<[string, string]>;
   for (const path of paths) {
     const decodedPath = decodeURIComponent(path);
     chains.push([decodedPath, pathsoFar + decodedPath]);
@@ -101,22 +100,6 @@ export function encode(str: string) {
   });
 }
 
-export function extractPathParts(path: string): {
-  type: BrowseView;
-  path: string;
-} {
-  const parts = decodeURIComponent(path).split("/");
-
-  const firstPart = parts.shift() || "";
-
-  const restOfPath = parts.join("/");
-
-  return {
-    type: firstPart as BrowseView,
-    path: restOfPath ? `/${restOfPath}` : "",
-  };
-}
-
 export const mediaUrl = (
   id: string,
   name: string,
@@ -194,4 +177,15 @@ export function getNextDate(): string {
   const day: string = String(today.getDate()).padStart(2, "0");
 
   return `${year}-${month}-${day}`;
+}
+
+export function getCountryCode(): string | null {
+  const language: string = navigator.language || (navigator as any).userLanguage;
+
+  if (language.includes("-")) {
+    const parts: string[] = language.split("-");
+    return parts[1].toUpperCase();
+  }
+
+  return "US";
 }

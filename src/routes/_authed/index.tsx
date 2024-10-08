@@ -1,7 +1,7 @@
-import { createFileRoute, Navigate } from "@tanstack/react-router"
+import { createFileRoute, Navigate } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_authed/")({
   component: () => (
-    <Navigate from="/" to="/$" params={{ _splat: "my-drive" }} replace />
+    <Navigate from="/" to="./$view" params={{ view: "my-drive" }} search={{ path: "/" }} replace />
   ),
-})
+});

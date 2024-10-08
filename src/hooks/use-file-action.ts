@@ -68,7 +68,7 @@ export const CustomActions = {
 
 type FbActionFullUnion = (typeof CustomActions)[keyof typeof CustomActions] | FbActionUnion;
 
-export const useFileAction = (params: QueryParams, session: Session) => {
+export const useFileAction = ({ view, search }: QueryParams, session: Session) => {
   const queryClient = useQueryClient();
 
   const { preloadFiles } = usePreload();
@@ -90,19 +90,20 @@ export const useFileAction = (params: QueryParams, session: Session) => {
           if (fileToOpen && FileHelper.isDirectory(fileToOpen)) {
             let qparams: QueryParams;
 
-            if (params.type === "my-drive") {
+            if (view === "my-drive") {
+              const basePath = search?.path ?? "/";
               qparams = {
-                type: params.type,
-                path:
-                  fileToOpen.path || fileToOpen.path === ""
+                view,
+                search: {
+                  path: fileToOpen.chain
                     ? fileToOpen.path
-                    : `${params.path}/${fileToOpen.name}`,
+                    : `${basePath === "/" ? "" : basePath}/${fileToOpen.name}`,
+                },
               };
             } else {
               qparams = {
-                type: "browse",
-                path: "",
-                filter: { parentId: fileToOpen.id },
+                view: "browse",
+                search: { parentId: fileToOpen.id },
               };
             }
             preloadFiles(qparams);
@@ -121,7 +122,7 @@ export const useFileAction = (params: QueryParams, session: Session) => {
           for (const file of selectedFiles) {
             if (!FileHelper.isDirectory(file)) {
               const { id, name } = file;
-              const url = mediaUrl(id, name, params.path, session.hash, true);
+              const url = mediaUrl(id, name, search?.path || "", session.hash, true);
               navigateToExternalUrl(url, false);
             }
           }
@@ -131,7 +132,7 @@ export const useFileAction = (params: QueryParams, session: Session) => {
           const { selectedFiles } = data.state;
           const fileToOpen = selectedFiles[0];
           const { id, name } = fileToOpen;
-          const url = `vlc://${mediaUrl(id, name, params.path, session.hash)}`;
+          const url = `vlc://${mediaUrl(id, name, search?.path || "", session.hash)}`;
           navigateToExternalUrl(url, false);
           break;
         }
@@ -139,7 +140,7 @@ export const useFileAction = (params: QueryParams, session: Session) => {
           const { selectedFiles } = data.state;
           const fileToOpen = selectedFiles[0];
           const { id, name } = fileToOpen;
-          const url = `potplayer://${mediaUrl(id, name, params.path, session.hash)}`;
+          const url = `potplayer://${mediaUrl(id, name, search?.path || "", session.hash)}`;
           navigateToExternalUrl(url, false);
           break;
         }
@@ -181,7 +182,7 @@ export const useFileAction = (params: QueryParams, session: Session) => {
           const selections = data.state.selectedFilesForAction;
           const clipboardText = selections
             .filter((element) => !FileHelper.isDirectory(element))
-            .map(({ id, name }) => mediaUrl(id, name, params.path, session.hash, true))
+            .map(({ id, name }) => mediaUrl(id, name, search?.path || "", session.hash, true))
             .join("\n");
           navigator.clipboard.writeText(clipboardText);
           break;
@@ -216,7 +217,7 @@ export const useFileAction = (params: QueryParams, session: Session) => {
         case FbActions.SortFilesByName.id:
         case FbActions.SortFilesBySize.id:
         case FbActions.SortFilesByDate.id: {
-          if (params.type === "my-drive") {
+          if (view === "my-drive") {
             const currentSortState = getSortState();
             const order = currentSortState.order === SortOrder.ASC ? SortOrder.DESC : SortOrder.ASC;
             localStorage.setItem("sort", JSON.stringify({ sortId: data.id, order }));
@@ -227,7 +228,7 @@ export const useFileAction = (params: QueryParams, session: Session) => {
           break;
       }
     };
-  }, [params.type, params.path]);
+  }, [view, search?.path]);
 };
 
 export const useShareFileAction = (params: ShareQueryParams) => {
@@ -244,12 +245,12 @@ export const useShareFileAction = (params: ShareQueryParams) => {
           const fileToOpen = targetFile ?? files[0];
 
           if (fileToOpen && FileHelper.isDirectory(fileToOpen)) {
+            const basePath = params?.path ?? "/";
             preloadSharedFiles({
               ...params,
-              path:
-                fileToOpen.path || fileToOpen.path === ""
-                  ? fileToOpen.path
-                  : `${params.path}/${fileToOpen.name}`,
+              path: fileToOpen.chain
+                ? fileToOpen.path
+                : `${basePath === "/" ? "" : basePath}/${fileToOpen.name}`,
             });
           } else if (fileToOpen && FileHelper.isOpenable(fileToOpen)) {
             actions.set({

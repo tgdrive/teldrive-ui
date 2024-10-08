@@ -28,8 +28,8 @@ const SidNavItem = memo(
       e.preventDefault();
       if (id !== "storage") {
         preloadFiles({
-          type: id,
-          path: "",
+          view: id,
+          search: id === "my-drive" ? { path: "/" } : {},
         });
       } else {
         preloadStorage();
@@ -41,8 +41,9 @@ const SidNavItem = memo(
         <Button
           as={ForwardLink}
           disableRipple
-          to="/$"
-          params={{ _splat: id }}
+          to="/$view"
+          params={{ view: id }}
+          search={id === "my-drive" ? { path: "/" } : {}}
           variant="text"
           onClick={handleClick}
           isIconOnly

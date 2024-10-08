@@ -14,6 +14,7 @@ import { useProgress } from "@/components/top-progress";
 import http from "@/utils/http";
 
 import { PhoneNoPicker } from "./menus/phone-picker";
+import { getCountryCode } from "@/utils/common";
 
 const getKeys = Object.keys as <T>(object: T) => (keyof T)[];
 
@@ -78,7 +79,7 @@ const initailState = {
   step: 1,
   isLoading: false,
   form: {
-    phoneCode: "IN",
+    phoneCode: getCountryCode(),
     phoneNumber: "",
   } as FormState,
 };

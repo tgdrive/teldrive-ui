@@ -99,7 +99,7 @@ const FolderCreateDialog = memo(({ queryKey, handleClose }: FolderCreateDialogPr
       .mutateAsync({
         name: currentFile.name,
         type: "folder",
-        path: (queryKey[1] as QueryParams).path || "/",
+        path: (queryKey[1] as QueryParams).search?.path || "/",
       })
       .then(() => handleClose());
   }, [currentFile.name]);

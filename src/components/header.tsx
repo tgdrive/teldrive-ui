@@ -36,9 +36,8 @@ const SearchBar = memo(({ className }: SearchBarProps) => {
       (newValue: string) =>
         preloadFiles(
           {
-            type: "search",
-            path: "",
-            filter: {
+            view: "search",
+            search: {
               query: newValue,
             },
           },
@@ -98,7 +97,12 @@ export default memo(function Header({ auth }: { auth?: boolean }) {
   return (
     <header className="sticky top-0 z-50 flex items-center min-h-12 xs:min-h-16 px-4">
       <div className="flex-1 flex gap-2 items-center">
-        <Link to="/" className="flex gap-2 items-center cursor-pointer">
+        <Link
+          to="/$view"
+          params={{ view: "my-drive" }}
+          search={{ path: "/" }}
+          className="flex gap-2 items-center cursor-pointer"
+        >
           <PhTelegramLogoFill className="size-6 text-inherit" />
           <p className="text-headline-small hidden sm:block">Teldrive</p>
         </Link>

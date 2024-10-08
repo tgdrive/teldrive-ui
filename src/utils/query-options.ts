@@ -284,11 +284,11 @@ export const usePreload = () => {
       const queryState = queryClient.getQueryState(queryKey);
 
       const nextRoute: NavigateOptions = {
-        to: "/$",
+        to: "/$view",
         params: {
-          _splat: params.type + params.path,
+          view: params.view,
         },
-        search: params.filter,
+        search: params.search,
       };
       if (!queryState?.data) {
         try {
@@ -345,7 +345,7 @@ export const usePreload = () => {
     [queryClient],
   );
   const preloadStorage = useCallback(async () => {
-    const queryKey = ["stats"];
+    const queryKey = [userQueries.all(), "categories"];
     const queryState = queryClient.getQueryState(queryKey);
 
     const nextRoute: NavigateOptions = {
@@ -370,34 +370,39 @@ export const usePreload = () => {
 const fetchFiles =
   (params: QueryParams) =>
   async ({ pageParam, signal }: { pageParam: number; signal: AbortSignal }) => {
-    const { type, path } = params;
+    const { view, search } = params;
     const query: Record<string, string | number | boolean> = {
       page: pageParam,
       limit: settings.pageSize || 500,
-      order: type === "my-drive" ? defaultSortState.order : sortViewMap[type].order,
+      order: view === "my-drive" ? defaultSortState.order : sortViewMap[view].order,
       sort:
-        type === "my-drive"
+        view === "my-drive"
           ? sortIdsMap[defaultSortState.sortId]
-          : sortIdsMap[sortViewMap[type].sortId],
+          : sortIdsMap[sortViewMap[view].sortId],
     };
 
-    if (type === "my-drive") {
-      query.path = path.startsWith("/") ? path : `/${path}`;
-    } else if (type === "search") {
+    if (view === "my-drive") {
+      query.path = search?.path ?? "/";
+    } else if (view === "search") {
       query.op = "find";
-      for (const key in params.filter) {
-        query[key] = params.filter[key];
+      for (const key in search) {
+        if (key !== "path") {
+          query[key] = search[key];
+        }
       }
-    } else if (type === "recent") {
+    } else if (view === "recent") {
       query.op = "find";
       query.type = "file";
-    } else if (type === "category") {
-      query.op = "find";
-      query.type = "file";
-      query.category = path.replaceAll("/", "");
-    } else if (type === "browse") {
-      query.parentId = params.filter?.parentId as string;
-    } else if (type === "shared") {
+    } else if (view === "browse") {
+      if (search?.parentId) {
+        query.parentId = search?.parentId;
+      }
+      if (search?.category) {
+        query.op = "find";
+        query.type = "file";
+        query.category = search?.category;
+      }
+    } else if (view === "shared") {
       query.op = "find";
       query.shared = true;
     }

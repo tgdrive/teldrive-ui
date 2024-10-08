@@ -124,10 +124,10 @@ export const SearchMenu = memo(({ isOpen, setIsOpen, triggerRef }: SearchMenuPro
         }
       }
       const nextRoute: NavigateOptions = {
-        to: "/$",
+        to: "/$view",
         search: filterQuery,
         params: {
-          _splat: "search",
+          view: "search",
         },
       };
 

@@ -17,7 +17,7 @@ import { Route as AuthImport } from "./routes/_auth"
 import { Route as AuthedIndexImport } from "./routes/_authed/index"
 import { Route as AuthedStorageImport } from "./routes/_authed/storage"
 import { Route as AuthedSettingsImport } from "./routes/_authed/settings"
-import { Route as AuthedSplatImport } from "./routes/_authed/$"
+import { Route as AuthedViewImport } from "./routes/_authed/$view"
 import { Route as AuthLoginImport } from "./routes/_auth/login"
 import { Route as ShareShareIdImport } from "./routes/_share/share.$id"
 import { Route as AuthedSettingsTabIdImport } from "./routes/_authed/settings.$tabId"
@@ -56,10 +56,10 @@ const AuthedSettingsRoute = AuthedSettingsImport.update({
   getParentRoute: () => AuthedRoute,
 } as any)
 
-const AuthedSplatRoute = AuthedSplatImport.update({
-  path: "/$",
+const AuthedViewRoute = AuthedViewImport.update({
+  path: "/$view",
   getParentRoute: () => AuthedRoute,
-} as any).lazy(() => import("./routes/_authed/$.lazy").then((d) => d.Route))
+} as any).lazy(() => import("./routes/_authed/$view.lazy").then((d) => d.Route))
 
 const AuthLoginRoute = AuthLoginImport.update({
   path: "/login",
@@ -110,11 +110,11 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof AuthLoginImport
       parentRoute: typeof AuthImport
     }
-    "/_authed/$": {
-      id: "/_authed/$"
-      path: "/$"
-      fullPath: "/$"
-      preLoaderRoute: typeof AuthedSplatImport
+    "/_authed/$view": {
+      id: "/_authed/$view"
+      path: "/$view"
+      fullPath: "/$view"
+      preLoaderRoute: typeof AuthedViewImport
       parentRoute: typeof AuthedImport
     }
     "/_authed/settings": {
@@ -180,14 +180,14 @@ const AuthedSettingsRouteWithChildren = AuthedSettingsRoute._addFileChildren(
 )
 
 interface AuthedRouteChildren {
-  AuthedSplatRoute: typeof AuthedSplatRoute
+  AuthedViewRoute: typeof AuthedViewRoute
   AuthedSettingsRoute: typeof AuthedSettingsRouteWithChildren
   AuthedStorageRoute: typeof AuthedStorageRoute
   AuthedIndexRoute: typeof AuthedIndexRoute
 }
 
 const AuthedRouteChildren: AuthedRouteChildren = {
-  AuthedSplatRoute: AuthedSplatRoute,
+  AuthedViewRoute: AuthedViewRoute,
   AuthedSettingsRoute: AuthedSettingsRouteWithChildren,
   AuthedStorageRoute: AuthedStorageRoute,
   AuthedIndexRoute: AuthedIndexRoute,
@@ -209,7 +209,7 @@ const ShareRouteWithChildren = ShareRoute._addFileChildren(ShareRouteChildren)
 export interface FileRoutesByFullPath {
   "": typeof ShareRouteWithChildren
   "/login": typeof AuthLoginRoute
-  "/$": typeof AuthedSplatRoute
+  "/$view": typeof AuthedViewRoute
   "/settings": typeof AuthedSettingsRouteWithChildren
   "/storage": typeof AuthedStorageRoute
   "/": typeof AuthedIndexRoute
@@ -220,7 +220,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   "": typeof ShareRouteWithChildren
   "/login": typeof AuthLoginRoute
-  "/$": typeof AuthedSplatRoute
+  "/$view": typeof AuthedViewRoute
   "/settings": typeof AuthedSettingsRouteWithChildren
   "/storage": typeof AuthedStorageRoute
   "/": typeof AuthedIndexRoute
@@ -234,7 +234,7 @@ export interface FileRoutesById {
   "/_authed": typeof AuthedRouteWithChildren
   "/_share": typeof ShareRouteWithChildren
   "/_auth/login": typeof AuthLoginRoute
-  "/_authed/$": typeof AuthedSplatRoute
+  "/_authed/$view": typeof AuthedViewRoute
   "/_authed/settings": typeof AuthedSettingsRouteWithChildren
   "/_authed/storage": typeof AuthedStorageRoute
   "/_authed/": typeof AuthedIndexRoute
@@ -247,7 +247,7 @@ export interface FileRouteTypes {
   fullPaths:
     | ""
     | "/login"
-    | "/$"
+    | "/$view"
     | "/settings"
     | "/storage"
     | "/"
@@ -257,7 +257,7 @@ export interface FileRouteTypes {
   to:
     | ""
     | "/login"
-    | "/$"
+    | "/$view"
     | "/settings"
     | "/storage"
     | "/"
@@ -269,7 +269,7 @@ export interface FileRouteTypes {
     | "/_authed"
     | "/_share"
     | "/_auth/login"
-    | "/_authed/$"
+    | "/_authed/$view"
     | "/_authed/settings"
     | "/_authed/storage"
     | "/_authed/"
@@ -316,7 +316,7 @@ export const routeTree = rootRoute
     "/_authed": {
       "filePath": "_authed.tsx",
       "children": [
-        "/_authed/$",
+        "/_authed/$view",
         "/_authed/settings",
         "/_authed/storage",
         "/_authed/"
@@ -332,8 +332,8 @@ export const routeTree = rootRoute
       "filePath": "_auth/login.tsx",
       "parent": "/_auth"
     },
-    "/_authed/$": {
-      "filePath": "_authed/$.tsx",
+    "/_authed/$view": {
+      "filePath": "_authed/$view.tsx",
       "parent": "/_authed"
     },
     "/_authed/settings": {

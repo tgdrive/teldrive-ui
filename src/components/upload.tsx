@@ -304,7 +304,7 @@ export const Upload = ({ queryKey }: { queryKey: any[] }) => {
       actions.setFileUploadStatus(currentFile.id, FileUploadStatus.UPLOADING);
       uploadFile(
         currentFile.file,
-        (queryKey[1] as QueryParams).path,
+        (queryKey[1] as QueryParams).search?.path || "",
         Number(settings.splitFileSize),
         session?.userId as number,
         Number(settings.uploadConcurrency),

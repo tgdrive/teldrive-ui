@@ -1,36 +1,26 @@
-import type { FilterQuery, QueryParams } from "@/types";
+import type { BrowseView, FilterQuery, QueryParams } from "@/types";
 import { createFileRoute } from "@tanstack/react-router";
 
-import { extractPathParts } from "@/utils/common";
 import { fileQueries } from "@/utils/query-options";
 import { AxiosError } from "feaxios";
 import { ErrorView } from "@/components/error-view";
 
-const allowedTypes = ["my-drive", "recent", "search", "storage", "category", "browse", "shared"];
+const allowedTypes = ["my-drive", "recent", "search", "storage", "browse", "shared"];
 
-export const Route = createFileRoute("/_authed/$")({
+export const Route = createFileRoute("/_authed/$view")({
   beforeLoad: ({ params }) => {
-    const { type, path } = extractPathParts(params._splat!);
-    if (!allowedTypes.includes(type)) {
+    if (!allowedTypes.includes(params.view)) {
       throw new Error("invalid path");
     }
-    return { queryParams: { type, path } };
   },
   validateSearch: (search: Record<string, unknown>) => search as FilterQuery,
   loaderDeps: ({ search }) => search,
-  loader: async ({ context: { queryClient, queryParams }, preload, deps }) => {
-    let params = queryParams as QueryParams;
-    if (
-      (queryParams.type === "search" || queryParams.type === "browse") &&
-      Object.keys(deps).length > 0
-    ) {
-      params = { ...queryParams, filter: deps };
-    }
-
+  loader: async ({ context: { queryClient }, preload, deps, params }) => {
+    const queryParams: QueryParams = { view: params.view as BrowseView, search: deps };
     if (preload) {
-      await queryClient.prefetchInfiniteQuery(fileQueries.list(params));
+      await queryClient.prefetchInfiniteQuery(fileQueries.list(queryParams));
     } else {
-      queryClient.fetchInfiniteQuery(fileQueries.list(params));
+      queryClient.fetchInfiniteQuery(fileQueries.list(queryParams));
     }
   },
   wrapInSuspense: true,

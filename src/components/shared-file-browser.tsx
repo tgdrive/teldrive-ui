@@ -126,7 +126,7 @@ export const SharedFileBrowser = memo(({ password }: { password: string }) => {
         <FileContextMenu />
       </FileBrowser>
       {modalOperation === FbActions.OpenFiles.id && modalOpen && (
-        <PreviewModal shareId={params.id} files={files} />
+        <PreviewModal shareId={params.id} files={files} view="shared" path="" />
       )}
     </div>
   );

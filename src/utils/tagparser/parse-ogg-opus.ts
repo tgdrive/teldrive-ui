@@ -34,6 +34,7 @@ function parseSegment(segment: Uint8Array, tags: Tags) {
 }
 
 // https://en.wikipedia.org/wiki/Ogg#Page_structure
+//@ts-ignore
 function parsePages(buffer: ArrayBuffer) {
   let tags: Tags = {};
   let offset = 0;

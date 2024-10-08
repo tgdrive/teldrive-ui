@@ -9,8 +9,11 @@ export const Route = createFileRoute("/_auth")({
     const session = await queryClient.ensureQueryData(userQueries.session());
     if (session) {
       redirect({
-        to: "/$",
-        params: { _splat: "my-drive" },
+        to: "/$view",
+        params: { view: "my-drive" },
+        search: {
+          path: "/",
+        },
         throw: true,
       });
     }
