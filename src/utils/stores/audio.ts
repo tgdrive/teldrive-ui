@@ -1,183 +1,279 @@
 import type { Tags } from "@/types";
 import { create } from "zustand";
-
 import { parseAudioMetadata } from "@/utils/tagparser";
 
 type AudioElem = HTMLAudioElement | null;
 
-const defaultState = {
-  audio: null as AudioElem,
-  isPlaying: false,
-  duration: 0,
-  isLooping: false,
-  isMuted: false,
-  volume: 1,
-  isEnded: false,
-  currentTime: 0,
-  metadata: {
-    artist: "Unknown artist",
-    title: "Unknown title",
-    cover: "",
-  },
-  metadataParsingController: null as AbortController | null,
-  error: "",
-  handlers: {
-    nextItem: (_: string) => {},
-    prevItem: (_: string) => {},
-  },
-};
+interface AudioMetadata {
+  artist: string;
+  title: string;
+  cover: string;
+}
 
-type PlayerState = typeof defaultState & {
+interface AudioHandlers {
+  nextItem: (type: string) => void;
+  prevItem: (type: string) => void;
+}
+
+interface PlayerState {
+  audio: AudioElem;
+  isPlaying: boolean;
+  duration: number;
+  isLooping: boolean;
+  isMuted: boolean;
+  volume: number;
+  isEnded: boolean;
+  currentTime: number;
+  metadata: AudioMetadata;
+  metadataController: AbortController | null;
+  error: string;
+  handlers: AudioHandlers;
   actions: {
     seek: (value: number) => void;
     setVolume: (value: number) => void;
     togglePlay: () => void;
     toggleMute: () => void;
     toggleLooping: () => void;
-    loadAudio: (url: string, name: string) => void;
+    loadAudio: (url: string, name: string) => Promise<void>;
     set: (payload: Partial<PlayerState>) => void;
     reset: () => void;
     setCurrentTime: (value: number) => void;
-    setHandlers: (handlers: (typeof defaultState)["handlers"]) => void;
+    repeat: () => void;
+    setHandlers: (handlers: AudioHandlers) => void;
   };
+}
+
+const DEFAULT_COVER_SVG = `data:image/svg+xml,%3Csvg viewBox='0 0 150 150' xmlns='http://www.w3.org/2000/svg'%3E%3Crect 
+x='0' y='0' width='150' height='150' fill='lightgray' /%3E%3Csvg width='50' height='50' viewBox='0 0 24 24' fill='currentColor' 
+x='50' y='50'%3E%3Cpath fill='white' fill-rule='evenodd' d='M12 2.25a.75.75 0 0 0-.75.75v11.26a4.25 4.25 0 1 0 1.486 2.888A1 
+1 0 0 0 12.75 17V7.75H18a2.75 2.75 0 1 0 0-5.5zm.75 4H18a1.25 1.25 0 1 0 0-2.5h-5.25zm-4.25 8.5a2.75 2.75 0 1 0 0 5.5a2.75 
+2.75 0 0 0 0-5.5' clip-rule='evenodd'/%3E%3C/svg%3E%3C/svg%3E`
+
+const DEFAULT_METADATA: AudioMetadata = {
+  artist: "Unknown artist",
+  title: "Unknown title",
+  cover: DEFAULT_COVER_SVG,
 };
 
-export const useAudioStore = create<PlayerState>((set, get) => ({
-  ...defaultState,
-  actions: {
-    loadAudio: async (url, name) => {
-      const state = get();
-      let audio = state.audio;
+class AudioManager {
+  private audio: HTMLAudioElement | null = null;
+  private eventListeners: { event: string; handler: EventListener }[] = [];
 
-      if (!audio) {
-        audio = new Audio();
-        audio.addEventListener("ended", () => {
-          set((prev) => {
-            prev.handlers.nextItem("audio");
-            return { ...prev, isEnded: true, currentTime: 0 };
-          });
-        });
-        audio.addEventListener("loadedmetadata", () =>
-          set((prev) => ({
-            ...prev,
-            isPlaying: true,
-            duration: audio?.duration || 0,
-          })),
-        );
-        audio.addEventListener("play", () => set((prev) => ({ ...prev, isPlaying: true })));
-        audio.addEventListener("pause", () => set((prev) => ({ ...prev, isPlaying: false })));
-      }
+  attachEventListener(event: string, handler: EventListener) {
+    if (this.audio) {
+      this.audio.addEventListener(event, handler);
+      this.eventListeners.push({ event, handler });
+    }
+  }
 
-      if (audio instanceof HTMLAudioElement) {
+  removeAllEventListeners() {
+    if (this.audio) {
+      this.eventListeners.forEach(({ event, handler }) => {
+        this.audio?.removeEventListener(event, handler);
+      });
+      this.eventListeners = [];
+    }
+  }
+
+  createAudio(): HTMLAudioElement {
+    if (this.audio) {
+      this.removeAllEventListeners();
+      this.audio.pause();
+      this.audio.src = "";
+      this.audio.load();
+    }
+    this.audio = new Audio();
+    return this.audio;
+  }
+
+  getAudio(): HTMLAudioElement | null {
+    return this.audio;
+  }
+
+  cleanup() {
+    if (this.audio) {
+      this.removeAllEventListeners();
+      this.audio.pause();
+      this.audio.src = "";
+      this.audio.load();
+      this.audio = null;
+    }
+  }
+}
+
+export const useAudioStore = create<PlayerState>((set, get) => {
+  const audioManager = new AudioManager();
+
+  const updateMediaSession = (metadata: AudioMetadata) => {
+    if ("mediaSession" in navigator && metadata.cover) {
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: metadata.title,
+        artist: metadata.artist,
+        artwork: [{ src: metadata.cover, type: "image/jpeg" }],
+      });
+    }
+  };
+
+  return {
+    audio: null,
+    isPlaying: false,
+    duration: 0,
+    isLooping: false,
+    isMuted: false,
+    volume: 1,
+    isEnded: false,
+    currentTime: 0,
+    metadata: DEFAULT_METADATA,
+    metadataController: null,
+    error: "",
+    handlers: {
+      nextItem: () => {},
+      prevItem: () => {},
+    },
+
+    actions: {
+      loadAudio: async (url: string, name: string) => {
+        const state = get();
+
+        if (state.metadataController) {
+          state.metadataController.abort();
+        }
+
+        const controller = new AbortController();
+        set({ metadataController: controller });
+
         try {
-          audio.pause();
-          audio.currentTime = 0;
+          const audio = audioManager.createAudio();
 
-          const controller = new AbortController();
-          const signal = controller.signal;
+          audioManager.attachEventListener("loadedmetadata", () => {
+            set({ duration: audio.duration });
+          });
 
-          if (state.metadataParsingController) {
-            state.metadataParsingController.abort();
-          }
+          audioManager.attachEventListener("play", () => {
+            set({ isPlaying: true });
+          });
 
-          set((prev) => ({ ...prev, metadataParsingController: controller }));
+          audioManager.attachEventListener("pause", () => {
+            set({ isPlaying: false });
+          });
 
-          const tags = await parseAudioMetadata(url, signal);
-          const { artist, title, picture, album } = tags as Tags;
-          let cover = "";
-          if (picture) {
-            cover = URL.createObjectURL(picture);
-          }
+          audioManager.attachEventListener("ended", () => {
+            get().handlers.nextItem("audio");
+            set({ isEnded: true, currentTime: 0 });
+          });
+
+          const tags = await parseAudioMetadata(url, controller.signal);
+          const { artist, title, picture } = tags as Tags;
+
+          const cover = picture ? URL.createObjectURL(picture) : "";
           const metadata = {
-            artist: artist || defaultState.metadata.artist,
+            artist: artist || DEFAULT_METADATA.artist,
             title: title || name,
             cover,
           };
+
           audio.src = url;
+          audio.volume = state.volume;
+          audio.muted = state.isMuted;
+          audio.loop = state.isLooping;
           audio.autoplay = true;
           audio.load();
 
-          if ("mediaSession" in navigator) {
-            navigator.mediaSession.metadata = new MediaMetadata({
-              title,
-              artist,
-              album,
-              artwork: [
-                {
-                  src: cover,
-                  type: "image/jpeg",
-                },
-              ],
-            });
-          }
-          set((prev) => ({
-            ...prev,
+          updateMediaSession(metadata);
+
+          set({
             audio,
             isPlaying: true,
             isEnded: false,
             metadata,
             currentTime: 0,
             error: "",
-          }));
+          });
         } catch (error) {
           if ((error as Error).name !== "AbortError") {
-            set((prev) => ({ ...prev, error: (error as Error).message }));
+            set({ error: (error as Error).message });
           }
-        } finally {
-          set((prev) => ({ ...prev, metadataParsingController: null }));
         }
-      }
-    },
-    seek: (value) =>
-      set((state) => {
-        const audio = state.audio;
-        if (audio instanceof HTMLAudioElement) {
+      },
+
+      seek: (value: number) => {
+        const audio = audioManager.getAudio();
+        if (audio) {
           audio.currentTime = value;
-          return { ...state, currentTime: value };
+          set({ currentTime: value });
         }
-        return state;
-      }),
-    setVolume: (value) =>
-      set((state) => {
-        const audio = state.audio;
-        if (audio instanceof HTMLAudioElement) {
-          audio.volume = value;
-          return { ...state, volume: value };
+      },
+
+      setVolume: (value: number) => {
+        const audio = audioManager.getAudio();
+        if (audio) {
+          const normalizedVolume = Math.max(0, Math.min(1, value));
+          audio.volume = normalizedVolume;
+          set({ volume: normalizedVolume });
         }
-        return state;
-      }),
-    setCurrentTime: (value) => set((state) => ({ ...state, currentTime: value })),
-    togglePlay: () =>
-      set((state) => {
-        const { audio, isPlaying } = state;
-        const shouldPlay = !isPlaying;
-        if (audio instanceof HTMLAudioElement) {
-          shouldPlay ? audio.play() : audio.pause();
-          return { ...state, isPlaying: shouldPlay };
+      },
+
+      setCurrentTime: (value: number) => set({ currentTime: value }),
+
+      repeat: () => {
+        const audio = audioManager.getAudio();
+        if (audio) {
+          audio.currentTime = 0;
+          set({ currentTime: 0 });
         }
-        return state;
-      }),
-    toggleMute: () =>
-      set((state) => {
-        const audio = state.audio;
-        if (audio instanceof HTMLAudioElement) {
+      },
+
+      togglePlay: () => {
+        const audio = audioManager.getAudio();
+        if (audio) {
+          get().isPlaying ? audio.pause() : audio.play();
+        }
+      },
+
+      toggleMute: () => {
+        const audio = audioManager.getAudio();
+        if (audio) {
           audio.muted = !audio.muted;
-          return { ...state, isMuted: audio.muted };
+          set({ isMuted: audio.muted });
         }
-        return state;
-      }),
-    toggleLooping: () =>
-      set((state) => {
-        const audio = state.audio;
-        if (audio instanceof HTMLAudioElement) {
+      },
+
+      toggleLooping: () => {
+        const audio = audioManager.getAudio();
+        if (audio) {
           audio.loop = !audio.loop;
-          return { ...state, isLooping: audio.loop };
+          set({ isLooping: audio.loop });
         }
-        return state;
-      }),
-    set: (payload) => set((state) => ({ ...state, ...payload })),
-    reset: () => set(() => ({ ...defaultState })),
-    setHandlers: (handlers) => set((state) => ({ ...state, handlers })),
-  },
-}));
+      },
+
+      set: (payload: Partial<PlayerState>) => set(payload),
+
+      reset: () => {
+        const state = get();
+        if (state.metadataController) {
+          state.metadataController.abort();
+        }
+
+        audioManager.cleanup();
+
+        set({
+          audio: null,
+          isPlaying: false,
+          duration: 0,
+          isLooping: false,
+          isMuted: false,
+          volume: 1,
+          isEnded: false,
+          currentTime: 0,
+          metadata: DEFAULT_METADATA,
+          metadataController: null,
+          error: "",
+        });
+      },
+
+      setHandlers: (handlers: AudioHandlers) => set({ handlers }),
+    },
+  };
+});
+
 export const audioActions = (state: PlayerState) => state.actions;

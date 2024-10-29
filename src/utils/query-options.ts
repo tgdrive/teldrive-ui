@@ -26,7 +26,12 @@ import toast from "react-hot-toast";
 import { useProgress } from "@/components/top-progress";
 
 import { bytesToGB, getExtension, mediaUrl } from "./common";
-import { defaultSortState, settings, sortIdsMap, sortViewMap } from "./defaults";
+import {
+  defaultSortState,
+  settings,
+  sortIdsMap,
+  sortViewMap,
+} from "./defaults";
 import { getPreviewType, preview } from "./preview-type";
 import http from "./http";
 import { queryClient } from "./query-client";
@@ -44,19 +49,24 @@ export const fileQueries = {
           : lastPage.meta.currentPage + 1,
       select: (data) =>
         data.pages.flatMap((page) =>
-          page.files ? mapFilesToFb(page.files, sessionHash as string) : [],
+          page.files ? mapFilesToFb(page.files, sessionHash as string) : []
         ),
     }),
   getFile: (id: string, enabled: boolean) =>
     queryOptions({
       queryKey: [fileQueries.all(), id],
-      queryFn: async () => (await http.get<SingleFile>(`/api/files/${id}`)).data,
-      select: ({ path, ...data }) => ({ ...data, path: path?.split("/").slice(0, -1).join("/") }),
+      queryFn: async () =>
+        (await http.get<SingleFile>(`/api/files/${id}`)).data,
+      select: ({ path, ...data }) => ({
+        ...data,
+        path: path?.split("/").slice(0, -1).join("/"),
+      }),
       enabled,
     }),
   create: (queryKey: any[]) => {
     return useMutation({
-      mutationFn: async (data: Record<string, any>) => http.post("/api/files", data),
+      mutationFn: async (data: Record<string, any>) =>
+        http.post("/api/files", data),
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey });
       },
@@ -72,17 +82,22 @@ export const fileQueries = {
         const previousFiles = queryClient.getQueryData<FileResponse>(queryKey);
 
         if (previousFiles) {
-          queryClient.setQueryData<InfiniteData<FileResponse>>(queryKey, (prev) => {
-            return <InfiniteData<FileResponse>>{
-              ...prev,
-              pages: prev?.pages.map((page) => ({
-                ...page,
-                results: page.files.map((val) =>
-                  val.id === variables.id ? { ...val, ...variables.payload } : val,
-                ),
-              })),
-            };
-          });
+          queryClient.setQueryData<InfiniteData<FileResponse>>(
+            queryKey,
+            (prev) => {
+              return <InfiniteData<FileResponse>>{
+                ...prev,
+                pages: prev?.pages.map((page) => ({
+                  ...page,
+                  results: page.files.map((val) =>
+                    val.id === variables.id
+                      ? { ...val, ...variables.payload }
+                      : val
+                  ),
+                })),
+              };
+            }
+          );
         }
         return { previousFiles };
       },
@@ -99,20 +114,26 @@ export const fileQueries = {
   delete: (queryKey: any[]) => {
     return useMutation({
       mutationFn: async (data: Record<string, any>) => {
-        return (await http.post("/api/files/delete", { files: data.files })).data;
+        return (await http.post("/api/files/delete", { files: data.files }))
+          .data;
       },
       onMutate: async (variables: { files: string[] }) => {
         await queryClient.cancelQueries({ queryKey });
         const previousFiles = queryClient.getQueryData(queryKey);
-        queryClient.setQueryData<InfiniteData<FileResponse>>(queryKey, (prev) => {
-          return <InfiniteData<FileResponse>>{
-            ...prev,
-            pages: prev?.pages.map((page) => ({
-              ...page,
-              results: page.files.filter((val) => !variables.files.includes(val.id)),
-            })),
-          };
-        });
+        queryClient.setQueryData<InfiniteData<FileResponse>>(
+          queryKey,
+          (prev) => {
+            return <InfiniteData<FileResponse>>{
+              ...prev,
+              pages: prev?.pages.map((page) => ({
+                ...page,
+                results: page.files.filter(
+                  (val) => !variables.files.includes(val.id)
+                ),
+              })),
+            };
+          }
+        );
         return { previousFiles };
       },
       onError: (_1, _2, context) => {
@@ -134,7 +155,8 @@ export const shareQueries = {
     queryOptions({
       queryKey: [shareQueries.all(), fileId],
       queryFn: async ({ signal }) =>
-        (await http.get<FileShare>(`/api/files/${fileId}/share`, { signal })).data,
+        (await http.get<FileShare>(`/api/files/${fileId}/share`, { signal }))
+          .data,
       refetchOnWindowFocus: false,
     }),
   share: (shareId: string) =>
@@ -151,7 +173,9 @@ export const shareQueries = {
           await http.get<FileResponse>(`/api/share/${params.id}/files`, {
             signal,
             params: params.path ? { path: params.path } : {},
-            headers: params.password ? { Authorization: btoa(`:${params.password}`) } : {},
+            headers: params.password
+              ? { Authorization: btoa(`:${params.password}`) }
+              : {},
           })
         ).data,
       initialPageParam: 1,
@@ -160,7 +184,9 @@ export const shareQueries = {
           ? undefined
           : lastPage.meta.currentPage + 1,
       select: (data) =>
-        data.pages.flatMap((page) => (page.files ? mapFilesToFb(page.files, "") : [])),
+        data.pages.flatMap((page) =>
+          page.files ? mapFilesToFb(page.files, "") : []
+        ),
     }),
   create: (fileId: string, queryKey: any[]) => {
     return useMutation({
@@ -210,9 +236,10 @@ export const userQueries = {
       select: (data) =>
         data.map((stat) => {
           const options = { day: "numeric", month: "short" } as const;
-          const formattedDate = new Intl.DateTimeFormat("en-US", options).format(
-            new Date(stat.uploadDate),
-          );
+          const formattedDate = new Intl.DateTimeFormat(
+            "en-US",
+            options
+          ).format(new Date(stat.uploadDate));
           return {
             totalUploaded: bytesToGB(stat.totalUploaded),
             uploadDate: formattedDate,
@@ -243,12 +270,13 @@ export const userQueries = {
     }),
   deleteSession: (queryKey = [userQueries.all(), "sessions"]) => {
     return useMutation({
-      mutationFn: async (id: string) => http.delete(`/api/users/sessions/${id}`),
+      mutationFn: async (id: string) =>
+        http.delete(`/api/users/sessions/${id}`),
       onMutate: async (variables) => {
         await queryClient.cancelQueries({ queryKey });
         const previousSessions = queryClient.getQueryData(queryKey);
         queryClient.setQueryData<UserSession[]>(queryKey, (prev) =>
-          prev!.filter((val) => val.hash !== variables),
+          prev!.filter((val) => val.hash !== variables)
         );
         return { previousSessions };
       },
@@ -263,12 +291,14 @@ export const userQueries = {
   stats: (userName: string) =>
     queryOptions({
       queryKey: [userQueries.all(), "stats", userName],
-      queryFn: async () => (await http.get<AccountStats>("/api/users/stats")).data,
+      queryFn: async () =>
+        (await http.get<AccountStats>("/api/users/stats")).data,
     }),
   channels: (userName: string) =>
     queryOptions({
       queryKey: [userQueries.all(), "channel", userName],
-      queryFn: async () => (await http.get<Channel[]>("/api/users/channels")).data,
+      queryFn: async () =>
+        (await http.get<Channel[]>("/api/users/channels")).data,
     }),
 };
 
@@ -306,7 +336,7 @@ export const usePreload = () => {
         router.navigate(nextRoute);
       }
     },
-    [queryClient],
+    [queryClient]
   );
 
   const preloadSharedFiles = useCallback(
@@ -342,7 +372,7 @@ export const usePreload = () => {
         router.navigate(nextRoute);
       }
     },
-    [queryClient],
+    [queryClient]
   );
   const preloadStorage = useCallback(async () => {
     const queryKey = [userQueries.all(), "categories"];
@@ -374,7 +404,8 @@ const fetchFiles =
     const query: Record<string, string | number | boolean> = {
       page: pageParam,
       limit: settings.pageSize || 500,
-      order: view === "my-drive" ? defaultSortState.order : sortViewMap[view].order,
+      order:
+        view === "my-drive" ? defaultSortState.order : sortViewMap[view].order,
       sort:
         view === "my-drive"
           ? sortIdsMap[defaultSortState.sortId]
@@ -407,7 +438,9 @@ const fetchFiles =
       query.shared = true;
     }
 
-    return (await http.get<FileResponse>("/api/files", { params: query, signal })).data;
+    return (
+      await http.get<FileResponse>("/api/files", { params: query, signal })
+    ).data;
   };
 
 const mapFilesToFb = (files: SingleFile[], sessionHash: string): FileData[] => {
@@ -433,7 +466,9 @@ const mapFilesToFb = (files: SingleFile[], sessionHash: string): FileData[] => {
       if (settings.resizerHost) {
         const url = mediaUrl(item.id, item.name, "", sessionHash);
         thumbnailUrl = settings.resizerHost
-          ? `${settings.resizerHost}/insecure/w:360/plain/${encodeURIComponent(url)}`
+          ? `${settings.resizerHost}/insecure/w:360/plain/${encodeURIComponent(
+              url
+            )}`
           : "";
       }
     }

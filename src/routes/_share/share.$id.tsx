@@ -8,7 +8,7 @@ export const Route = createFileRoute("/_share/share/$id")({
   validateSearch: (search: Record<string, unknown>) => search as ShareQuery,
   loaderDeps: ({ search }) => search,
   loader: async ({ context: { queryClient }, params, preload, deps }) => {
-    await queryClient.fetchQuery(shareQueries.share(params.id));
+    const res = await queryClient.fetchQuery(shareQueries.share(params.id));
     const password = JSON.parse(sessionStorage.getItem("password") || "null");
     const queryParams = {
       id: params.id,
@@ -16,6 +16,9 @@ export const Route = createFileRoute("/_share/share/$id")({
       path: deps.path || "",
     } as ShareQueryParams;
 
+    if (res.protected && !password) {
+      return;
+    }
     if (preload) {
       await queryClient.prefetchInfiniteQuery(shareQueries.list(queryParams));
     } else {

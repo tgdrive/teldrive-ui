@@ -10,15 +10,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer utilities {
-  .text-security-disc {
-    -webkit-text-security: disc;
-  }
-  .text-security-none {
-    -webkit-text-security: none;
-  }
-}
-
 .apexcharts-legend-text {
   @apply text-on-surface;
 }

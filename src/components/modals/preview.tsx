@@ -29,7 +29,9 @@ const sortOptions = {
   sensitivity: "base",
 } as const;
 
-const VideoPreview = lazy(() => import("@/components/previews/video/video-preview"));
+const VideoPreview = lazy(
+  () => import("@/components/previews/video/video-preview")
+);
 
 const EpubPreview = lazy(() => import("@/components/previews/epub-preview"));
 
@@ -39,7 +41,8 @@ const findNext = (files: FileData[], fileId: string, previewType: string) => {
 
   for (let i = 0; i < files.length; i++) {
     const matchPreview =
-      (previewType === "all" && files[i].previewType) || files[i].previewType === previewType;
+      (previewType === "all" && files[i].previewType) ||
+      files[i].previewType === previewType;
 
     if (index > -1 && matchPreview) {
       return files[i];
@@ -64,7 +67,8 @@ const findPrev = (files: FileData[], fileId: string, previewType: string) => {
   let lastPreviewIndex = -1;
   for (let i = files.length - 1; i >= 0; i--) {
     const matchPreview =
-      (previewType === "all" && files[i].previewType) || files[i].previewType === previewType;
+      (previewType === "all" && files[i].previewType) ||
+      files[i].previewType === previewType;
 
     if (index > -1 && matchPreview) {
       return files[i];
@@ -95,7 +99,11 @@ const ControlButton = ({ type, onPress }: ControlButtonProps) => {
       variant="text"
       onPress={onPress}
     >
-      {type === "next" ? <IconIcRoundNavigateNext /> : <IconIcRoundNavigateBefore />}
+      {type === "next" ? (
+        <IconIcRoundNavigateNext />
+      ) : (
+        <IconIcRoundNavigateBefore />
+      )}
     </Button>
   );
 };
@@ -117,8 +125,8 @@ export default memo(function PreviewModal({
     fileProp.toSorted((a, b) =>
       defaultSortState.order === "asc"
         ? a.name.localeCompare(b.name, undefined, sortOptions)
-        : b.name.localeCompare(a.name, undefined, sortOptions),
-    ),
+        : b.name.localeCompare(a.name, undefined, sortOptions)
+    )
   );
 
   const modalActions = useModalStore((state) => state.actions);
@@ -140,7 +148,7 @@ export default memo(function PreviewModal({
         }
       }
     },
-    [id, files],
+    [id, files]
   );
 
   const prevItem = useCallback(
@@ -152,16 +160,23 @@ export default memo(function PreviewModal({
         }
       }
     },
-    [id, files],
+    [id, files]
   );
 
-  const { data: fileData } = useQuery(fileQueries.getFile(id, view !== "my-drive" && !path));
+  const { data: fileData } = useQuery(
+    fileQueries.getFile(id, view !== "my-drive" && !path)
+  );
 
   const handleClose = useCallback(() => modalActions.setOpen(false), []);
 
   const assetUrl = shareId
     ? sharedMediaUrl(shareId, id, name)
-    : mediaUrl(id, name, view === "my-drive" ? path || "/" : fileData?.path!, session?.hash!);
+    : mediaUrl(
+        id,
+        name,
+        view === "my-drive" ? path || "/" : fileData?.path!,
+        session?.hash!
+      );
 
   const renderPreview = useCallback(() => {
     if (previewType) {
@@ -170,7 +185,7 @@ export default memo(function PreviewModal({
           return (
             <Suspense fallback={<Loader />}>
               <div className="w-full max-w-5xl overflow-hidden mx-auto">
-                <VideoPreview name={name} assetUrl={assetUrl} />
+                <VideoPreview url={assetUrl} />
               </div>
             </Suspense>
           );
@@ -210,7 +225,12 @@ export default memo(function PreviewModal({
 
         case preview.audio:
           return (
-            <AudioPreview nextItem={nextItem} prevItem={prevItem} name={name} assetUrl={assetUrl} />
+            <AudioPreview
+              nextItem={nextItem}
+              prevItem={prevItem}
+              name={name}
+              assetUrl={assetUrl}
+            />
           );
 
         default:
@@ -246,7 +266,10 @@ export default memo(function PreviewModal({
                 >
                   <IconIcRoundArrowBack className="size-6" />
                 </Button>
-                <FbIcon icon={icon} className="size-6 min-w-6 hidden sm:block" />
+                <FbIcon
+                  icon={icon}
+                  className="size-6 min-w-6 hidden sm:block"
+                />
                 <h6
                   className="truncate text-label-large font-normal text-inherit hidden sm:block"
                   title={name}

@@ -19,17 +19,27 @@ export const Route = createLazyFileRoute("/_share/share/$id")({
 function Component() {
   const { id } = Route.useParams();
 
-  const { data: file } = useSuspenseQuery(shareQueries.share(id));
+  const { data: file, isLoading } = useSuspenseQuery(shareQueries.share(id));
 
   const [unlockPassword, setUnlockPassword] = useSessionStorage("password", "");
 
-  const [unlocked, setUnlocked] = useState((file.protected && !!unlockPassword) || !file.protected);
+  const [unlocked, setUnlocked] = useState(
+    (file.protected && !!unlockPassword) || !file.protected
+  );
 
   if (!unlocked) {
-    return <ShareAccess id={id} setUnlockPassword={setUnlockPassword} setUnlocked={setUnlocked} />;
+    return (
+      <ShareAccess
+        id={id}
+        setUnlockPassword={setUnlockPassword}
+        setUnlocked={setUnlocked}
+      />
+    );
   }
 
-  return <SharedFileBrowser password={unlockPassword} />;
+  return (!file.protected || unlocked) && !isLoading ? (
+    <SharedFileBrowser password={unlockPassword} />
+  ) : null;
 }
 
 interface ShareAccessProps {
@@ -89,11 +99,15 @@ function ShareAccess({ id, setUnlocked, setUnlockPassword }: ShareAccessProps) {
             {...field}
             aria-autocomplete="none"
             autoComplete="off"
-            classNames={{
-              input: showPassword ? "text-security-none" : "text-security-disc",
-            }}
+            autoSave="off"
+            type={showPassword ? "text" : "password"}
             endContent={
-              <Button isIconOnly variant="text" onPress={togglePassword}>
+              <Button
+                isIconOnly
+                className="size-8 min-w-8"
+                variant="text"
+                onPress={togglePassword}
+              >
                 {showPassword ? <HidePasswordIcon /> : <ShowPasswordIcon />}
               </Button>
             }

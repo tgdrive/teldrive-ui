@@ -1,5 +1,4 @@
 import { memo, useCallback, useEffect, useRef, useState } from "react";
-import { FbIcon, FbIconName } from "@tw-material/file-browser";
 import { Button, Slider } from "@tw-material/react";
 import IconPauseCircle from "~icons/ic/round-pause-circle";
 import IconPlayCircle from "~icons/ic/round-play-circle";
@@ -31,19 +30,10 @@ const AudioCover = memo(() => {
   const metadata = useAudioStore((state) => state.metadata);
   return (
     <div className="relative col-span-6 md:col-span-5 grid">
-      <div
-        className={clsx(
-          "bg-neutral-400 flex justify-center items-center rounded-large aspect-[1/1] row-span-full col-span-full",
-          metadata.cover ? "-z-[1]" : "z-10",
-        )}
-      >
-        <FbIcon icon={FbIconName.music} className="size-16" />
-      </div>
       <img
         alt="Album cover"
         className={clsx(
-          "object-cover rounded-large row-span-full col-span-full transition",
-          metadata.cover ? "z-10 opacity-100" : "-z-[1] opacity-0",
+          "rounded-large row-span-full col-span-full transition  aspect-square"
         )}
         height={200}
         src={metadata.cover}
@@ -58,10 +48,16 @@ const AudioInfo = memo(() => {
   return (
     <div className="flex justify-between items-start">
       <div className="flex flex-col gap-0 min-w-0">
-        <h3 title={metadata.title} className="text-small font-semibold truncate">
+        <h3
+          title={metadata.title}
+          className="text-small font-semibold truncate"
+        >
           {metadata.title}
         </h3>
-        <h1 title={metadata.artist} className="text-large font-medium mt-2 truncate">
+        <h1
+          title={metadata.artist}
+          className="text-large font-medium mt-2 truncate"
+        >
           {metadata.artist}
         </h1>
       </div>
@@ -70,14 +66,14 @@ const AudioInfo = memo(() => {
 });
 
 const AudioDurationSlider = memo(() => {
-  const { audio, duration, currentTime, actions, isPlaying } = useAudioStore(
+  const { audio,duration, currentTime, actions, isPlaying } = useAudioStore(
     useShallow((state) => ({
       audio: state.audio,
       duration: state.duration,
       currentTime: state.currentTime,
       actions: state.actions,
       isPlaying: state.isPlaying,
-    })),
+    }))
   );
 
   const [isDragging, setIsDragging] = useState(false);
@@ -99,15 +95,22 @@ const AudioDurationSlider = memo(() => {
   const repeat = useCallback(() => {
     actions.setCurrentTime(audio?.currentTime!);
     playAnimationRef.current = requestAnimationFrame(repeat);
-  }, [audio, actions.setCurrentTime]);
+  }, [audio]);
 
   useEffect(() => {
     if (isPlaying && !isDragging) {
       playAnimationRef.current = requestAnimationFrame(repeat);
-    } else {
-      cancelAnimationFrame(playAnimationRef.current!);
+    } else if (playAnimationRef.current !== null) {
+      cancelAnimationFrame(playAnimationRef.current);
+      playAnimationRef.current = null;
     }
-  }, [isPlaying, isDragging, audio, repeat]);
+
+    return () => {
+      if (playAnimationRef.current !== null) {
+        cancelAnimationFrame(playAnimationRef.current);
+      }
+    };
+  }, [isPlaying, isDragging, repeat]);
 
   return (
     <>
@@ -124,7 +127,7 @@ const AudioDurationSlider = memo(() => {
         onChange={onPositionChange}
         classNames={{
           thumb: "size-3 after:size-3  after:bg-primary",
-          track: "data-[thumb-hidden=false]:border-x-[calc(theme(spacing.3)/2)]",
+          track:"data-[thumb-hidden=false]:border-x-[calc(theme(spacing.3)/2)]",
         }}
       />
       <div className="flex justify-between">
@@ -141,7 +144,7 @@ const VolumeSlider = memo(() => {
 
   const onVolumeChange = useCallback(
     (value: SliderValue) => actions.setVolume(value as number),
-    [],
+    []
   );
 
   return (
@@ -168,7 +171,7 @@ const TopControls = memo(() => {
       isPlaying: state.isPlaying,
       actions: state.actions,
       handlers: state.handlers,
-    })),
+    }))
   );
 
   return (
@@ -212,15 +215,25 @@ const BottomControls = memo(() => {
       volume: state.volume,
       muted: state.isMuted,
       looping: state.isLooping,
-    })),
+    }))
   );
 
   return (
     <div className="flex w-full items-center justify-center gap-3">
-      <Button isIconOnly className="text-inherit" variant="text" onPress={actions.toggleLooping}>
+      <Button
+        isIconOnly
+        className="text-inherit"
+        variant="text"
+        onPress={actions.toggleLooping}
+      >
         {looping ? <IconRepeatOneFill /> : <IconRepeat2Fill />}
       </Button>
-      <Button isIconOnly className="text-inherit" variant="text" onPress={actions.toggleMute}>
+      <Button
+        isIconOnly
+        className="text-inherit"
+        variant="text"
+        onPress={actions.toggleMute}
+      >
         {getVolumeIcon(volume, muted)}
       </Button>
       <VolumeSlider />

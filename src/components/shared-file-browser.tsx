@@ -1,5 +1,8 @@
 import { memo, useEffect, useMemo, useRef } from "react";
-import { useSuspenseInfiniteQuery, useSuspenseQuery } from "@tanstack/react-query";
+import {
+  useSuspenseInfiniteQuery,
+  useSuspenseQuery,
+} from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
 import {
   FbActions,
@@ -9,7 +12,11 @@ import {
   FileNavbar,
   FileToolbar,
 } from "@tw-material/file-browser";
-import type { StateSnapshot, VirtuosoGridHandle, VirtuosoHandle } from "react-virtuoso";
+import type {
+  StateSnapshot,
+  VirtuosoGridHandle,
+  VirtuosoHandle,
+} from "react-virtuoso";
 import useBreakpoint from "use-breakpoint";
 
 import { chainSharedLinks } from "@/utils/common";

@@ -12,6 +12,7 @@ import { TailwindIndicator } from "./components/tailwind-indicator";
 import { ThemeProvider } from "./components/theme-provider";
 import { ProgressProvider } from "./components/top-progress";
 import { routeTree } from "./route-tree.gen";
+import { StrictMode } from "react";
 
 const router = createRouter({
   routeTree,
@@ -31,6 +32,7 @@ const rootElement = document.getElementById("root")!;
 if (!rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement);
   root.render(
+    <StrictMode>
     <QueryClientProvider client={queryClient}>
       <ProgressProvider>
         <ThemeProvider>
@@ -45,6 +47,7 @@ if (!rootElement.innerHTML) {
         <TailwindIndicator />
       </ProgressProvider>
       <ReactQueryDevtools initialIsOpen={false} />
-    </QueryClientProvider>,
+    </QueryClientProvider>
+     </StrictMode>
   );
 }

@@ -11,26 +11,17 @@ interface AudioPreviewProps {
   name: string;
 }
 
-const unloadAudio = (audio: HTMLAudioElement) => {
-  audio.pause();
-  audio.src = "";
-  audio.load();
-  audio.remove();
-};
-
-const AudioPreview = ({ assetUrl, name, nextItem, prevItem }: AudioPreviewProps) => {
+const AudioPreview = ({
+  assetUrl,
+  name,
+  nextItem,
+  prevItem,
+}: AudioPreviewProps) => {
   const actions = useAudioStore(audioActions);
 
-  const audio = useAudioStore((state) => state.audio);
-
   useEffect(() => {
-    return () => {
-      if (audio) {
-        unloadAudio(audio);
-        actions.reset();
-      }
-    };
-  }, [audio]);
+    return () => actions.reset();
+  }, []);
 
   useEffect(() => {
     actions.setHandlers({
@@ -38,8 +29,12 @@ const AudioPreview = ({ assetUrl, name, nextItem, prevItem }: AudioPreviewProps)
       nextItem,
     });
     if ("mediaSession" in navigator) {
-      navigator.mediaSession.setActionHandler("nexttrack", () => nextItem("audio"));
-      navigator.mediaSession.setActionHandler("previoustrack", () => prevItem("audio"));
+      navigator.mediaSession.setActionHandler("nexttrack", () =>
+        nextItem("audio")
+      );
+      navigator.mediaSession.setActionHandler("previoustrack", () =>
+        prevItem("audio")
+      );
     }
     return () => {
       if ("mediaSession" in navigator) {

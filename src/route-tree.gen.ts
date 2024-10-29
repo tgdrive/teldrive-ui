@@ -40,11 +40,13 @@ const AuthRoute = AuthImport.update({
 } as any)
 
 const AuthedIndexRoute = AuthedIndexImport.update({
+  id: "/",
   path: "/",
   getParentRoute: () => AuthedRoute,
 } as any)
 
 const AuthedStorageRoute = AuthedStorageImport.update({
+  id: "/storage",
   path: "/storage",
   getParentRoute: () => AuthedRoute,
 } as any).lazy(() =>
@@ -52,21 +54,25 @@ const AuthedStorageRoute = AuthedStorageImport.update({
 )
 
 const AuthedSettingsRoute = AuthedSettingsImport.update({
+  id: "/settings",
   path: "/settings",
   getParentRoute: () => AuthedRoute,
 } as any)
 
 const AuthedViewRoute = AuthedViewImport.update({
+  id: "/$view",
   path: "/$view",
   getParentRoute: () => AuthedRoute,
 } as any).lazy(() => import("./routes/_authed/$view.lazy").then((d) => d.Route))
 
 const AuthLoginRoute = AuthLoginImport.update({
+  id: "/login",
   path: "/login",
   getParentRoute: () => AuthRoute,
 } as any).lazy(() => import("./routes/_auth/login.lazy").then((d) => d.Route))
 
 const ShareShareIdRoute = ShareShareIdImport.update({
+  id: "/share/$id",
   path: "/share/$id",
   getParentRoute: () => ShareRoute,
 } as any).lazy(() =>
@@ -74,6 +80,7 @@ const ShareShareIdRoute = ShareShareIdImport.update({
 )
 
 const AuthedSettingsTabIdRoute = AuthedSettingsTabIdImport.update({
+  id: "/$tabId",
   path: "/$tabId",
   getParentRoute: () => AuthedSettingsRoute,
 } as any)
