@@ -25,20 +25,20 @@ importers:
         specifier: ^3.12.3
         version: 3.12.3(react@18.3.1)
       '@tanstack/react-query':
-        specifier: ^5.59.16
-        version: 5.59.16(react@18.3.1)
+        specifier: ^5.59.20
+        version: 5.59.20(react@18.3.1)
       '@tanstack/react-router':
-        specifier: 1.77.8
-        version: 1.77.8(@tanstack/router-generator@1.77.7)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: 1.79.0
+        version: 1.79.0(@tanstack/router-generator@1.79.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@tw-material/file-browser':
-        specifier: ^1.0.30
-        version: 1.0.30(@tw-material/react@1.1.21(@types/react@18.3.12)(framer-motion@11.11.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))(tailwindcss@3.4.14))(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(@types/react-dom@18.3.1)(@types/react@18.3.12)(framer-motion@11.11.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(redux@5.0.1)(typescript@5.6.3)
+        specifier: ^1.0.32
+        version: 1.0.32(@tw-material/react@1.1.21(@types/react@18.3.12)(framer-motion@11.11.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))(tailwindcss@3.4.14))(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(@types/react-dom@18.3.1)(@types/react@18.3.12)(framer-motion@11.11.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(redux@5.0.1)(typescript@5.6.3)
       '@tw-material/framer-transitions':
         specifier: ^1.1.4
-        version: 1.1.4(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(framer-motion@11.11.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))
+        version: 1.1.4(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(framer-motion@11.11.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))
       '@tw-material/react':
         specifier: ^1.1.21
-        version: 1.1.21(@types/react@18.3.12)(framer-motion@11.11.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))(tailwindcss@3.4.14)
+        version: 1.1.21(@types/react@18.3.12)(framer-motion@11.11.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))(tailwindcss@3.4.14)
       '@tw-material/system':
         specifier: ^1.1.1
         version: 1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))
@@ -61,14 +61,14 @@ importers:
         specifier: ^10.1.6
         version: 10.1.6
       framer-motion:
-        specifier: ^11.11.10
-        version: 11.11.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: ^11.11.11
+        version: 11.11.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       immer:
         specifier: ^10.1.1
         version: 10.1.1
       libphonenumber-js:
-        specifier: ^1.11.12
-        version: 1.11.12
+        specifier: ^1.11.13
+        version: 1.11.13
       lodash.debounce:
         specifier: ^4.0.8
         version: 4.0.8
@@ -106,8 +106,8 @@ importers:
         specifier: ^2.3.1
         version: 2.3.1(react@18.3.1)
       react-use-websocket:
-        specifier: ^4.10.0
-        version: 4.10.0
+        specifier: ^4.10.1
+        version: 4.10.1
       use-breakpoint:
         specifier: ^4.0.1
         version: 4.0.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -115,15 +115,15 @@ importers:
         specifier: ^3.1.0
         version: 3.1.0(react@18.3.1)
       zustand:
-        specifier: 5.0.0
-        version: 5.0.0(@types/react@18.3.12)(immer@10.1.1)(react@18.3.1)(use-sync-external-store@1.2.2(react@18.3.1))
+        specifier: 5.0.1
+        version: 5.0.1(@types/react@18.3.12)(immer@10.1.1)(react@18.3.1)(use-sync-external-store@1.2.2(react@18.3.1))
     devDependencies:
       '@biomejs/biome':
         specifier: 1.9.4
         version: 1.9.4
       '@iconify/json':
-        specifier: ^2.2.265
-        version: 2.2.265
+        specifier: ^2.2.269
+        version: 2.2.269
       '@svgr/core':
         specifier: ^8.1.0
         version: 8.1.0(typescript@5.6.3)
@@ -131,11 +131,11 @@ importers:
         specifier: ^8.1.0
         version: 8.1.0(@svgr/core@8.1.0(typescript@5.6.3))
       '@tanstack/react-query-devtools':
-        specifier: ^5.59.16
-        version: 5.59.16(@tanstack/react-query@5.59.16(react@18.3.1))(react@18.3.1)
+        specifier: ^5.59.20
+        version: 5.59.20(@tanstack/react-query@5.59.20(react@18.3.1))(react@18.3.1)
       '@tanstack/router-vite-plugin':
-        specifier: ^1.77.7
-        version: 1.77.7(vite@5.4.10(@types/node@22.8.4)(terser@5.36.0))(webpack-sources@3.2.3)
+        specifier: ^1.79.0
+        version: 1.79.0(vite@5.4.10(@types/node@22.9.0)(terser@5.36.0))(webpack-sources@3.2.3)
       '@types/lodash.debounce':
         specifier: ^4.0.9
         version: 4.0.9
@@ -143,8 +143,8 @@ importers:
         specifier: ^2.3.5
         version: 2.3.5
       '@types/node':
-        specifier: 22.8.4
-        version: 22.8.4
+        specifier: 22.9.0
+        version: 22.9.0
       '@types/react':
         specifier: 18.3.12
         version: 18.3.12
@@ -153,7 +153,7 @@ importers:
         version: 18.3.1
       '@vitejs/plugin-react':
         specifier: ^4.3.3
-        version: 4.3.3(vite@5.4.10(@types/node@22.8.4)(terser@5.36.0))
+        version: 4.3.3(vite@5.4.10(@types/node@22.9.0)(terser@5.36.0))
       autoprefixer:
         specifier: ^10.4.20
         version: 10.4.20(postcss@8.4.47)
@@ -179,17 +179,17 @@ importers:
         specifier: ^5.6.3
         version: 5.6.3
       unplugin-icons:
-        specifier: ^0.19.3
-        version: 0.19.3(@svgr/core@8.1.0(typescript@5.6.3))(webpack-sources@3.2.3)
+        specifier: ^0.20.1
+        version: 0.20.1(@svgr/core@8.1.0(typescript@5.6.3))(webpack-sources@3.2.3)
       vite:
         specifier: ^5.4.10
-        version: 5.4.10(@types/node@22.8.4)(terser@5.36.0)
+        version: 5.4.10(@types/node@22.9.0)(terser@5.36.0)
       vite-bundle-analyzer:
-        specifier: ^0.12.1
-        version: 0.12.1
+        specifier: ^0.13.0
+        version: 0.13.0
       vite-tsconfig-paths:
-        specifier: ^5.0.1
-        version: 5.0.1(typescript@5.6.3)(vite@5.4.10(@types/node@22.8.4)(terser@5.36.0))
+        specifier: ^5.1.0
+        version: 5.1.0(typescript@5.6.3)(vite@5.4.10(@types/node@22.9.0)(terser@5.36.0))
 
 packages:
 
@@ -210,20 +210,20 @@ packages:
   '@artplayer/player@5.2.0':
     resolution: {integrity: sha512-UtNuFWUbRM05FUl8NOo4bjqR8qQaMkEwckdbeBKf64V2OA0Rr61pZQX8m8ejhrovwDIgAUrVvukgM1Z76K/OpQ==}
 
-  '@babel/code-frame@7.26.0':
-    resolution: {integrity: sha512-INCKxTtbXtcNbUZ3YXutwMpEleqttcswhAdee7dhuoVrD2cnuc3PqtERBtxkX5nziX9vnBL8WXmSGwv8CuPV6g==}
+  '@babel/code-frame@7.26.2':
+    resolution: {integrity: sha512-RJlIHRueQgwWitWgF8OdFYGZX328Ax5BCemNGlqHfplnRT9ESi8JkFlvaVYbS+UubVY6dpv87Fs2u5M29iNFVQ==}
     engines: {node: '>=6.9.0'}
 
-  '@babel/compat-data@7.26.0':
-    resolution: {integrity: sha512-qETICbZSLe7uXv9VE8T/RWOdIE5qqyTucOt4zLYMafj2MRO271VGgLd4RACJMeBO37UPWhXiKMBk7YlJ0fOzQA==}
+  '@babel/compat-data@7.26.2':
+    resolution: {integrity: sha512-Z0WgzSEa+aUcdiJuCIqgujCshpMWgUpgOxXotrYPSA53hA3qopNaqcJpyr0hVb1FeWdnqFA35/fUtXgBK8srQg==}
     engines: {node: '>=6.9.0'}
 
   '@babel/core@7.26.0':
     resolution: {integrity: sha512-i1SLeK+DzNnQ3LL/CswPCa/E5u4lh1k6IAEphON8F+cXt0t9euTshDru0q7/IqMa1PMPz5RnHuHscF8/ZJsStg==}
     engines: {node: '>=6.9.0'}
 
-  '@babel/generator@7.26.0':
-    resolution: {integrity: sha512-/AIkAmInnWwgEAJGQr9vY0c66Mj6kjkE2ZPB1PurTRaRAh3U+J45sAQMjQDJdh4WbR3l0x5xkimXBKyBXXAu2w==}
+  '@babel/generator@7.26.2':
+    resolution: {integrity: sha512-zevQbhbau95nkoxSq3f/DC/SC+EEOUZd3DYqfSkMhY2/wfSeaHV1Ew4vk8e+x8lja31IbyuUa2uQ3JONqKbysw==}
     engines: {node: '>=6.9.0'}
 
   '@babel/helper-compilation-targets@7.25.9':
@@ -260,8 +260,8 @@ packages:
     resolution: {integrity: sha512-tbhNuIxNcVb21pInl3ZSjksLCvgdZy9KwJ8brv993QtIVKJBBkYXz4q4ZbAv31GdnC+R90np23L5FbEBlthAEw==}
     engines: {node: '>=6.9.0'}
 
-  '@babel/parser@7.26.1':
-    resolution: {integrity: sha512-reoQYNiAJreZNsJzyrDNzFQ+IQ5JFiIzAHJg9bn94S3l+4++J7RsIhNMoB+lgP/9tpmiAQqspv+xfdxTSzREOw==}
+  '@babel/parser@7.26.2':
+    resolution: {integrity: sha512-DWMCZH9WA4Maitz2q21SRKHo9QXZxkDsbNZoVD62gusNtNBBqDg9i7uOhASfTfIGNzW+O+r7+jAlM8dwphcJKQ==}
     engines: {node: '>=6.0.0'}
     hasBin: true
 
@@ -640,37 +640,37 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@formatjs/ecma402-abstract@2.2.1':
-    resolution: {integrity: sha512-O4ywpkdJybrjFc9zyL8qK5aklleIAi5O4nYhBVJaOFtCkNrnU+lKFeJOFC48zpsZQmR8Aok2V79hGpHnzbmFpg==}
+  '@formatjs/ecma402-abstract@2.2.3':
+    resolution: {integrity: sha512-aElGmleuReGnk2wtYOzYFmNWYoiWWmf1pPPCYg0oiIQSJj0mjc4eUfzUXaSOJ4S8WzI/cLqnCTWjqz904FT2OQ==}
 
-  '@formatjs/fast-memoize@2.2.2':
-    resolution: {integrity: sha512-mzxZcS0g1pOzwZTslJOBTmLzDXseMLLvnh25ymRilCm8QLMObsQ7x/rj9GNrH0iUhZMlFisVOD6J1n6WQqpKPQ==}
+  '@formatjs/fast-memoize@2.2.3':
+    resolution: {integrity: sha512-3jeJ+HyOfu8osl3GNSL4vVHUuWFXR03Iz9jjgI7RwjG6ysu/Ymdr0JRCPHfF5yGbTE6JCrd63EpvX1/WybYRbA==}
 
-  '@formatjs/icu-messageformat-parser@2.9.1':
-    resolution: {integrity: sha512-7AYk4tjnLi5wBkxst2w7qFj38JLMJoqzj7BhdEl7oTlsWMlqwgx4p9oMmmvpXWTSDGNwOKBRc1SfwMh5MOHeNg==}
+  '@formatjs/icu-messageformat-parser@2.9.3':
+    resolution: {integrity: sha512-9L99QsH14XjOCIp4TmbT8wxuffJxGK8uLNO1zNhLtcZaVXvv626N0s4A2qgRCKG3dfYWx9psvGlFmvyVBa6u/w==}
 
-  '@formatjs/icu-skeleton-parser@1.8.5':
-    resolution: {integrity: sha512-zRZ/e3B5qY2+JCLs7puTzWS1Jb+t/K+8Jur/gEZpA2EjWeLDE17nsx8thyo9P48Mno7UmafnPupV2NCJXX17Dg==}
+  '@formatjs/icu-skeleton-parser@1.8.7':
+    resolution: {integrity: sha512-fI+6SmS2g7h3srfAKSWa5dwreU5zNEfon2uFo99OToiLF6yxGE+WikvFSbsvMAYkscucvVmTYNlWlaDPp0n5HA==}
 
-  '@formatjs/intl-displaynames@6.8.1':
-    resolution: {integrity: sha512-nyWfJk4BZ1+GzLq9a40BgVPSRpBkRAVzrSpql+92i0i+lX11m9eS1trSRf/h3j/XcQ+h1h+ntA4Ra4jETK7nNg==}
+  '@formatjs/intl-displaynames@6.8.4':
+    resolution: {integrity: sha512-HDVNBspDAOW0yTWluWTPHX2fk/9iBO4oST4R96f/IUaPGsFtjsHrpakwc+XDRPa3U5RniSEU2z34ZY0W78+E6Q==}
 
-  '@formatjs/intl-listformat@7.7.1':
-    resolution: {integrity: sha512-bjBxWaUhYAbJFUlFSMWZGn3r2mglXwk+BLyGRu8dY8Q83ZPsqmmVQzjQKENHE3lV6eoQGHT2oZHxUaVndJlk6Q==}
+  '@formatjs/intl-listformat@7.7.4':
+    resolution: {integrity: sha512-lipFspH2MZcoeXxR6WSR/Jy9unzJ/iT0w+gbL8vgv25Ap0S9cUtcDVAce4ECEKI1bDtAvEU3b6+9Dha27gAikA==}
 
-  '@formatjs/intl-localematcher@0.5.6':
-    resolution: {integrity: sha512-roz1+Ba5e23AHX6KUAWmLEyTRZegM5YDuxuvkHCyK3RJddf/UXB2f+s7pOMm9ktfPGla0g+mQXOn5vsuYirnaA==}
+  '@formatjs/intl-localematcher@0.5.7':
+    resolution: {integrity: sha512-GGFtfHGQVFe/niOZp24Kal5b2i36eE2bNL0xi9Sg/yd0TR8aLjcteApZdHmismP5QQax1cMnZM9yWySUUjJteA==}
 
-  '@formatjs/intl@2.10.11':
-    resolution: {integrity: sha512-FNLZjzE1QRlv1Wf0oinnM97AbvZU1zQnQMHI0Oza2F7PxzrPf6bYFRs0ugapq/O4FrvNwDt9F9nyRNwsMM118g==}
+  '@formatjs/intl@2.10.14':
+    resolution: {integrity: sha512-4CA1EO75i/mSMHdjwfpgRj3Rsdsm6WjALeu/nlzYhBmAPxGu/Ha5GIRHAet5SO05TnpmqxmEGOsskWqFm0IeoA==}
     peerDependencies:
       typescript: ^4.7 || 5
     peerDependenciesMeta:
       typescript:
         optional: true
 
-  '@iconify/json@2.2.265':
-    resolution: {integrity: sha512-pTM0S5o1DsNgqdNptL5b82DLA/ez7YM2TuS7D/t6EwTI54n5zUUxaT3hfZ86TEqwTjVBcAD7QaDcXGTWBF1m6Q==}
+  '@iconify/json@2.2.269':
+    resolution: {integrity: sha512-ouyDWNdmdtwhmIjZt1+wKj8nCq/V8PrT748exRnlXG//Hb8eLc/K4q4nKiO18gQNnwESMPQDGlrk5aTZaANoHg==}
 
   '@iconify/types@2.0.0':
     resolution: {integrity: sha512-+wluvCrRhXrhyOmRDJ3q8mux9JkKy5SJ/v8ol2tu4FVjyYvtEzkc/3pK15ET6RKg4b4w4BmTk1+gsCUhf21Ykg==}
@@ -1358,93 +1358,93 @@ packages:
       react-redux:
         optional: true
 
-  '@rollup/rollup-android-arm-eabi@4.24.3':
-    resolution: {integrity: sha512-ufb2CH2KfBWPJok95frEZZ82LtDl0A6QKTa8MoM+cWwDZvVGl5/jNb79pIhRvAalUu+7LD91VYR0nwRD799HkQ==}
+  '@rollup/rollup-android-arm-eabi@4.24.4':
+    resolution: {integrity: sha512-jfUJrFct/hTA0XDM5p/htWKoNNTbDLY0KRwEt6pyOA6k2fmk0WVwl65PdUdJZgzGEHWx+49LilkcSaumQRyNQw==}
     cpu: [arm]
     os: [android]
 
-  '@rollup/rollup-android-arm64@4.24.3':
-    resolution: {integrity: sha512-iAHpft/eQk9vkWIV5t22V77d90CRofgR2006UiCjHcHJFVI1E0oBkQIAbz+pLtthFw3hWEmVB4ilxGyBf48i2Q==}
+  '@rollup/rollup-android-arm64@4.24.4':
+    resolution: {integrity: sha512-j4nrEO6nHU1nZUuCfRKoCcvh7PIywQPUCBa2UsootTHvTHIoIu2BzueInGJhhvQO/2FTRdNYpf63xsgEqH9IhA==}
     cpu: [arm64]
     os: [android]
 
-  '@rollup/rollup-darwin-arm64@4.24.3':
-    resolution: {integrity: sha512-QPW2YmkWLlvqmOa2OwrfqLJqkHm7kJCIMq9kOz40Zo9Ipi40kf9ONG5Sz76zszrmIZZ4hgRIkez69YnTHgEz1w==}
+  '@rollup/rollup-darwin-arm64@4.24.4':
+    resolution: {integrity: sha512-GmU/QgGtBTeraKyldC7cDVVvAJEOr3dFLKneez/n7BvX57UdhOqDsVwzU7UOnYA7AAOt+Xb26lk79PldDHgMIQ==}
     cpu: [arm64]
     os: [darwin]
 
-  '@rollup/rollup-darwin-x64@4.24.3':
-    resolution: {integrity: sha512-KO0pN5x3+uZm1ZXeIfDqwcvnQ9UEGN8JX5ufhmgH5Lz4ujjZMAnxQygZAVGemFWn+ZZC0FQopruV4lqmGMshow==}
+  '@rollup/rollup-darwin-x64@4.24.4':
+    resolution: {integrity: sha512-N6oDBiZCBKlwYcsEPXGDE4g9RoxZLK6vT98M8111cW7VsVJFpNEqvJeIPfsCzbf0XEakPslh72X0gnlMi4Ddgg==}
     cpu: [x64]
     os: [darwin]
 
-  '@rollup/rollup-freebsd-arm64@4.24.3':
-    resolution: {integrity: sha512-CsC+ZdIiZCZbBI+aRlWpYJMSWvVssPuWqrDy/zi9YfnatKKSLFCe6fjna1grHuo/nVaHG+kiglpRhyBQYRTK4A==}
+  '@rollup/rollup-freebsd-arm64@4.24.4':
+    resolution: {integrity: sha512-py5oNShCCjCyjWXCZNrRGRpjWsF0ic8f4ieBNra5buQz0O/U6mMXCpC1LvrHuhJsNPgRt36tSYMidGzZiJF6mw==}
     cpu: [arm64]
     os: [freebsd]
 
-  '@rollup/rollup-freebsd-x64@4.24.3':
-    resolution: {integrity: sha512-F0nqiLThcfKvRQhZEzMIXOQG4EeX61im61VYL1jo4eBxv4aZRmpin6crnBJQ/nWnCsjH5F6J3W6Stdm0mBNqBg==}
+  '@rollup/rollup-freebsd-x64@4.24.4':
+    resolution: {integrity: sha512-L7VVVW9FCnTTp4i7KrmHeDsDvjB4++KOBENYtNYAiYl96jeBThFfhP6HVxL74v4SiZEVDH/1ILscR5U9S4ms4g==}
     cpu: [x64]
     os: [freebsd]
 
-  '@rollup/rollup-linux-arm-gnueabihf@4.24.3':
-    resolution: {integrity: sha512-KRSFHyE/RdxQ1CSeOIBVIAxStFC/hnBgVcaiCkQaVC+EYDtTe4X7z5tBkFyRoBgUGtB6Xg6t9t2kulnX6wJc6A==}
+  '@rollup/rollup-linux-arm-gnueabihf@4.24.4':
+    resolution: {integrity: sha512-10ICosOwYChROdQoQo589N5idQIisxjaFE/PAnX2i0Zr84mY0k9zul1ArH0rnJ/fpgiqfu13TFZR5A5YJLOYZA==}
     cpu: [arm]
     os: [linux]
 
-  '@rollup/rollup-linux-arm-musleabihf@4.24.3':
-    resolution: {integrity: sha512-h6Q8MT+e05zP5BxEKz0vi0DhthLdrNEnspdLzkoFqGwnmOzakEHSlXfVyA4HJ322QtFy7biUAVFPvIDEDQa6rw==}
+  '@rollup/rollup-linux-arm-musleabihf@4.24.4':
+    resolution: {integrity: sha512-ySAfWs69LYC7QhRDZNKqNhz2UKN8LDfbKSMAEtoEI0jitwfAG2iZwVqGACJT+kfYvvz3/JgsLlcBP+WWoKCLcw==}
     cpu: [arm]
     os: [linux]
 
-  '@rollup/rollup-linux-arm64-gnu@4.24.3':
-    resolution: {integrity: sha512-fKElSyXhXIJ9pqiYRqisfirIo2Z5pTTve5K438URf08fsypXrEkVmShkSfM8GJ1aUyvjakT+fn2W7Czlpd/0FQ==}
+  '@rollup/rollup-linux-arm64-gnu@4.24.4':
+    resolution: {integrity: sha512-uHYJ0HNOI6pGEeZ/5mgm5arNVTI0nLlmrbdph+pGXpC9tFHFDQmDMOEqkmUObRfosJqpU8RliYoGz06qSdtcjg==}
     cpu: [arm64]
     os: [linux]
 
-  '@rollup/rollup-linux-arm64-musl@4.24.3':
-    resolution: {integrity: sha512-YlddZSUk8G0px9/+V9PVilVDC6ydMz7WquxozToozSnfFK6wa6ne1ATUjUvjin09jp34p84milxlY5ikueoenw==}
+  '@rollup/rollup-linux-arm64-musl@4.24.4':
+    resolution: {integrity: sha512-38yiWLemQf7aLHDgTg85fh3hW9stJ0Muk7+s6tIkSUOMmi4Xbv5pH/5Bofnsb6spIwD5FJiR+jg71f0CH5OzoA==}
     cpu: [arm64]
     os: [linux]
 
-  '@rollup/rollup-linux-powerpc64le-gnu@4.24.3':
-    resolution: {integrity: sha512-yNaWw+GAO8JjVx3s3cMeG5Esz1cKVzz8PkTJSfYzE5u7A+NvGmbVFEHP+BikTIyYWuz0+DX9kaA3pH9Sqxp69g==}
+  '@rollup/rollup-linux-powerpc64le-gnu@4.24.4':
+    resolution: {integrity: sha512-q73XUPnkwt9ZNF2xRS4fvneSuaHw2BXuV5rI4cw0fWYVIWIBeDZX7c7FWhFQPNTnE24172K30I+dViWRVD9TwA==}
     cpu: [ppc64]
     os: [linux]
 
-  '@rollup/rollup-linux-riscv64-gnu@4.24.3':
-    resolution: {integrity: sha512-lWKNQfsbpv14ZCtM/HkjCTm4oWTKTfxPmr7iPfp3AHSqyoTz5AgLemYkWLwOBWc+XxBbrU9SCokZP0WlBZM9lA==}
+  '@rollup/rollup-linux-riscv64-gnu@4.24.4':
+    resolution: {integrity: sha512-Aie/TbmQi6UXokJqDZdmTJuZBCU3QBDA8oTKRGtd4ABi/nHgXICulfg1KI6n9/koDsiDbvHAiQO3YAUNa/7BCw==}
     cpu: [riscv64]
     os: [linux]
 
-  '@rollup/rollup-linux-s390x-gnu@4.24.3':
-    resolution: {integrity: sha512-HoojGXTC2CgCcq0Woc/dn12wQUlkNyfH0I1ABK4Ni9YXyFQa86Fkt2Q0nqgLfbhkyfQ6003i3qQk9pLh/SpAYw==}
+  '@rollup/rollup-linux-s390x-gnu@4.24.4':
+    resolution: {integrity: sha512-P8MPErVO/y8ohWSP9JY7lLQ8+YMHfTI4bAdtCi3pC2hTeqFJco2jYspzOzTUB8hwUWIIu1xwOrJE11nP+0JFAQ==}
     cpu: [s390x]
     os: [linux]
 
-  '@rollup/rollup-linux-x64-gnu@4.24.3':
-    resolution: {integrity: sha512-mnEOh4iE4USSccBOtcrjF5nj+5/zm6NcNhbSEfR3Ot0pxBwvEn5QVUXcuOwwPkapDtGZ6pT02xLoPaNv06w7KQ==}
+  '@rollup/rollup-linux-x64-gnu@4.24.4':
+    resolution: {integrity: sha512-K03TljaaoPK5FOyNMZAAEmhlyO49LaE4qCsr0lYHUKyb6QacTNF9pnfPpXnFlFD3TXuFbFbz7tJ51FujUXkXYA==}
     cpu: [x64]
     os: [linux]
 
-  '@rollup/rollup-linux-x64-musl@4.24.3':
-    resolution: {integrity: sha512-rMTzawBPimBQkG9NKpNHvquIUTQPzrnPxPbCY1Xt+mFkW7pshvyIS5kYgcf74goxXOQk0CP3EoOC1zcEezKXhw==}
+  '@rollup/rollup-linux-x64-musl@4.24.4':
+    resolution: {integrity: sha512-VJYl4xSl/wqG2D5xTYncVWW+26ICV4wubwN9Gs5NrqhJtayikwCXzPL8GDsLnaLU3WwhQ8W02IinYSFJfyo34Q==}
     cpu: [x64]
     os: [linux]
 
-  '@rollup/rollup-win32-arm64-msvc@4.24.3':
-    resolution: {integrity: sha512-2lg1CE305xNvnH3SyiKwPVsTVLCg4TmNCF1z7PSHX2uZY2VbUpdkgAllVoISD7JO7zu+YynpWNSKAtOrX3AiuA==}
+  '@rollup/rollup-win32-arm64-msvc@4.24.4':
+    resolution: {integrity: sha512-ku2GvtPwQfCqoPFIJCqZ8o7bJcj+Y54cZSr43hHca6jLwAiCbZdBUOrqE6y29QFajNAzzpIOwsckaTFmN6/8TA==}
     cpu: [arm64]
     os: [win32]
 
-  '@rollup/rollup-win32-ia32-msvc@4.24.3':
-    resolution: {integrity: sha512-9SjYp1sPyxJsPWuhOCX6F4jUMXGbVVd5obVpoVEi8ClZqo52ViZewA6eFz85y8ezuOA+uJMP5A5zo6Oz4S5rVQ==}
+  '@rollup/rollup-win32-ia32-msvc@4.24.4':
+    resolution: {integrity: sha512-V3nCe+eTt/W6UYNr/wGvO1fLpHUrnlirlypZfKCT1fG6hWfqhPgQV/K/mRBXBpxc0eKLIF18pIOFVPh0mqHjlg==}
     cpu: [ia32]
     os: [win32]
 
-  '@rollup/rollup-win32-x64-msvc@4.24.3':
-    resolution: {integrity: sha512-HGZgRFFYrMrP3TJlq58nR1xy8zHKId25vhmm5S9jETEfDf6xybPxsavFTJaufe2zgOGYJBskGlj49CwtEuFhWQ==}
+  '@rollup/rollup-win32-x64-msvc@4.24.4':
+    resolution: {integrity: sha512-LTw1Dfd0mBIEqUVCxbvTE/LLo+9ZxVC9k99v1v4ahg9Aak6FpqOfNu5kRkeTAn0wphoC4JU7No1/rL+bBCEwhg==}
     cpu: [x64]
     os: [win32]
 
@@ -1548,28 +1548,28 @@ packages:
     resolution: {integrity: sha512-2CqERleeqO3hkhJmyJm37tiL3LYgeOpmo8szqdjgtnnG0z7ZpvzkZz6HkfOr9Ca/ha7mhAiouSvLYuLkM37AMg==}
     engines: {node: '>=12'}
 
-  '@tanstack/query-core@5.59.16':
-    resolution: {integrity: sha512-crHn+G3ltqb5JG0oUv6q+PMz1m1YkjpASrXTU+sYWW9pLk0t2GybUHNRqYPZWhxgjPaVGC4yp92gSFEJgYEsPw==}
+  '@tanstack/query-core@5.59.20':
+    resolution: {integrity: sha512-e8vw0lf7KwfGe1if4uPFhvZRWULqHjFcz3K8AebtieXvnMOz5FSzlZe3mTLlPuUBcydCnBRqYs2YJ5ys68wwLg==}
 
-  '@tanstack/query-devtools@5.58.0':
-    resolution: {integrity: sha512-iFdQEFXaYYxqgrv63ots+65FGI+tNp5ZS5PdMU1DWisxk3fez5HG3FyVlbUva+RdYS5hSLbxZ9aw3yEs97GNTw==}
+  '@tanstack/query-devtools@5.59.20':
+    resolution: {integrity: sha512-vxhuQ+8VV4YWQSFxQLsuM+dnEKRY7VeRzpNabFXdhEwsBYLrjXlF1pM38A8WyKNLqZy8JjyRO8oP4Wd/oKHwuQ==}
 
-  '@tanstack/react-query-devtools@5.59.16':
-    resolution: {integrity: sha512-Dejo39QBXmDqXZ3vdrk7vHDvs7TvL573/AX2NveMBmRAufAPYuE3oWSKP/gGqkDfEqyr4CmldOj+v9cKskUchQ==}
+  '@tanstack/react-query-devtools@5.59.20':
+    resolution: {integrity: sha512-AL/eQS1NFZhwwzq2Bq9Gd8wTTH+XhPNOJlDFpzPMu9NC5CQVgA0J8lWrte/sXpdWNo5KA4hgHnEdImZsF4h6Lw==}
     peerDependencies:
-      '@tanstack/react-query': ^5.59.16
+      '@tanstack/react-query': ^5.59.20
       react: ^18.3.1
 
-  '@tanstack/react-query@5.59.16':
-    resolution: {integrity: sha512-MuyWheG47h6ERd4PKQ6V8gDyBu3ThNG22e1fRVwvq6ap3EqsFhyuxCAwhNP/03m/mLg+DAb0upgbPaX6VB+CkQ==}
+  '@tanstack/react-query@5.59.20':
+    resolution: {integrity: sha512-Zly0egsK0tFdfSbh5/mapSa+Zfc3Et0Zkar7Wo5sQkFzWyB3p3uZWOHR2wrlAEEV2L953eLuDBtbgFvMYiLvUw==}
     peerDependencies:
       react: ^18.3.1
 
-  '@tanstack/react-router@1.77.8':
-    resolution: {integrity: sha512-xZrrbXmwE8q3NKGz5PIomGM59BVGwsfI5nQLVjyA2ae5tkcOitEPXBx209jl5ihtXFp2r+pN+u8gZOZkGyc9GA==}
+  '@tanstack/react-router@1.79.0':
+    resolution: {integrity: sha512-v+0+Y3mCsd6waphnG0dloU9cDtSbB5k/LwbkhqXd2uGhwZyI1/nvvOcSOnuTB8CDEvC6WFNBt+fKOPVqNZ3ezw==}
     engines: {node: '>=12'}
     peerDependencies:
-      '@tanstack/router-generator': 1.77.7
+      '@tanstack/router-generator': 1.79.0
       react: ^18.3.1
       react-dom: ^18.3.1
     peerDependenciesMeta:
@@ -1582,12 +1582,12 @@ packages:
       react: ^18.3.1
       react-dom: ^18.3.1
 
-  '@tanstack/router-generator@1.77.7':
-    resolution: {integrity: sha512-uQZWWsm6qLVAXHi6SprCsgFqr6davBmkTdVfK+/5L0nYJFAxpau2O4nD/fX/N1BlCmoQBlySiwmqm1csKXX/gA==}
+  '@tanstack/router-generator@1.79.0':
+    resolution: {integrity: sha512-HJxmYs7GAA1AJQzyfy4Hiygmg93qCCDiAxQ//zCRMbzVntwpqtZ96o9UGOPjT3Lw0SxbyzbKgpo3zqCdwlv8Ew==}
     engines: {node: '>=12'}
 
-  '@tanstack/router-plugin@1.77.7':
-    resolution: {integrity: sha512-1y4esLGbkErfdLjRadEWN0u4+cagUIfIiwK8OIoqcaC5MUViOGUcQWDRQ4FORTDMUUG37HbO2PrBEf9e5RV0xg==}
+  '@tanstack/router-plugin@1.79.0':
+    resolution: {integrity: sha512-dY81YyKxON9KhZQlrkkuxsl688pGpZ4HAF5w40ZkJa+nwmEJdg0b2td+MPXWbtmSd1t1cbYlFvc68k+PUSHN/A==}
     engines: {node: '>=12'}
     peerDependencies:
       '@rsbuild/core': '>=1.0.2'
@@ -1601,8 +1601,8 @@ packages:
       webpack:
         optional: true
 
-  '@tanstack/router-vite-plugin@1.77.7':
-    resolution: {integrity: sha512-0BQyUTb0W+lYRPuySUYbro3ACxBQb0WqxLp+kGMHlUa4zKRburrJkwoWoEkYQ1A7mE2W8MR4QcaD6sdvFcW13A==}
+  '@tanstack/router-vite-plugin@1.79.0':
+    resolution: {integrity: sha512-mgFmBrfujYe5Vv7uslDh4P41DRZfY2jcP7v7GD3PdOR+2zNMwOwSfLODWI9PVshvnQ0PbO2ycxsKqMpizhOtpA==}
     engines: {node: '>=12'}
 
   '@tanstack/store@0.5.5':
@@ -1691,8 +1691,8 @@ packages:
       react: ^18.3.1
       react-dom: ^18.3.1
 
-  '@tw-material/file-browser@1.0.30':
-    resolution: {integrity: sha512-OlcdPXRc5yRFvNH57WDTDqomL1Jj2Lc+pdknXGDBwAmsEYj9ON+NZQ0eO3O3JdGgeU4clwjAEZtGqkg51HkuNw==}
+  '@tw-material/file-browser@1.0.32':
+    resolution: {integrity: sha512-+07V82S94TF08ujM8eJz11hoNJPAagN8psdRpclAujZwv0mUEXCANgsQLoj7sh+1x1spp5va7/K7yHw776Y1wg==}
     engines: {node: '>=18'}
     peerDependencies:
       '@tw-material/react': '>=1'
@@ -1887,14 +1887,14 @@ packages:
   '@types/lodash.debounce@4.0.9':
     resolution: {integrity: sha512-Ma5JcgTREwpLRwMM+XwBR7DaWe96nC38uCBDFKZWbNKD+osjVzdpnUSwBcqCptrp16sSOLBAUb50Car5I0TCsQ==}
 
-  '@types/lodash@4.17.12':
-    resolution: {integrity: sha512-sviUmCE8AYdaF/KIHLDJBQgeYzPBI0vf/17NaYehBJfYD1j6/L95Slh07NlyK2iNyBNaEkb3En2jRt+a8y3xZQ==}
+  '@types/lodash@4.17.13':
+    resolution: {integrity: sha512-lfx+dftrEZcdBPczf9d0Qv0x+j/rfNCMuC6OcfXmO8gkfeNAY88PgKUbvG56whcN23gc27yenwF6oJZXGFpYxg==}
 
   '@types/md5@2.3.5':
     resolution: {integrity: sha512-/i42wjYNgE6wf0j2bcTX6kuowmdL/6PE4IVitMpm2eYKBUuYCprdcWVK+xEF0gcV6ufMCRhtxmReGfc6hIK7Jw==}
 
-  '@types/node@22.8.4':
-    resolution: {integrity: sha512-SpNNxkftTJOPk0oN+y2bIqurEXHTA2AOZ3EJDDKeJ5VzkvvORSvmQXGQarcOzWV1ac7DCaPBEdMDxBsM+d8jWw==}
+  '@types/node@22.9.0':
+    resolution: {integrity: sha512-vuyHg81vvWA1Z1ELfvLko2c8f34gyA0zaic0+Rllc5lbCnbSyuvb2Oxpm6TAUAC/2xZN3QGqxBNggD1nNR2AfQ==}
 
   '@types/prop-types@15.7.13':
     resolution: {integrity: sha512-hCZTSvwbzWGvhqxp/RqVqwU999pBf2vp7hzIjiYOsl8wqOmUxkQ6ddw1cV3l8811+kdUFus/q4d1Y3E3SyEifA==}
@@ -2007,8 +2007,8 @@ packages:
     resolution: {integrity: sha512-Gmy6FhYlCY7uOElZUSbxo2UCDH8owEk996gkbrpsgGtrJLM3J7jGxl9Ic7Qwwj4ivOE5AWZWRMecDdF7hqGjFA==}
     engines: {node: '>=10'}
 
-  caniuse-lite@1.0.30001674:
-    resolution: {integrity: sha512-jOsKlZVRnzfhLojb+Ykb+gyUSp9Xb57So+fAiFlLzzTKpqg8xxSav0e40c8/4F/v9N8QSvrRRaLeVzQbLqomYw==}
+  caniuse-lite@1.0.30001679:
+    resolution: {integrity: sha512-j2YqID/YwpLnKzCmBOS4tlZdWprXm3ZmQLBH9ZBXFOhoxLA46fwyBvx6toCBWBmnuwUY/qB3kEU6gFx8qgCroA==}
 
   charenc@0.0.2:
     resolution: {integrity: sha512-yrLQ/yVUFXkzg7EDQsPieE/53+0RlaWTs+wBrvW36cyilJ2SaDWfl4Yj7MtLTXleV9uEKefbAGUPv2/iWSooRA==}
@@ -2044,8 +2044,8 @@ packages:
   convert-source-map@2.0.0:
     resolution: {integrity: sha512-Kvp459HrV2FEJ1CAsi1Ku+MY3kasH19TFykTz2xWmMeq6bk2NU3XXvfJ+Q61m0xktWwt+1HSYf3JZsTms3aRJg==}
 
-  core-js@3.38.1:
-    resolution: {integrity: sha512-OP35aUorbU3Zvlx7pjsFdu1rGNnD4pgw/CWoYzRY3t2EzoVT7shKHY1dlAy3f41cGIO7ZDPQimhGFTlEYkG/Hw==}
+  core-js@3.39.0:
+    resolution: {integrity: sha512-raM0ew0/jJUqkJ0E6e8UDtl+y/7ktFivgWvqw8dNSQeNWoSDLvQ1H/RN3aPXB9tBd4/FhyR4RDPGhsNIMsAn7g==}
 
   core-util-is@1.0.3:
     resolution: {integrity: sha512-ZQBvi1DcpJ4GDqanjucZ2Hj3wEO5pZDS89BWbkcrvdxksJorwUDDZamX9ldFkp9aw2lmBDLgkObEA4DWNJ9FYQ==}
@@ -2059,8 +2059,8 @@ packages:
       typescript:
         optional: true
 
-  cross-spawn@7.0.3:
-    resolution: {integrity: sha512-iRDPJKUPVEND7dHPO8rkbOnPpyDygcDFtWjpeWNCgy8WP2rXcxXL8TskReQl6OrB2G7+UJrags1q15Fudc7G6w==}
+  cross-spawn@7.0.5:
+    resolution: {integrity: sha512-ZVJrKKYunU38/76t0RMOulHOnUcbU9GbpWKAOZ0mhjr7CX6FVrH+4FrAapSOekrgFQ3f/8gwMEuIft0aKq6Hug==}
     engines: {node: '>= 8'}
 
   crypt@0.0.2:
@@ -2106,8 +2106,8 @@ packages:
   eastasianwidth@0.2.0:
     resolution: {integrity: sha512-I88TYZWc9XiYHRQ4/3c5rjjfgkjhLyW2luGIheGERbNQ6OY7yTybanSpDXZa8y7VUP9YmDcYa+eyq4ca7iLqWA==}
 
-  electron-to-chromium@1.5.49:
-    resolution: {integrity: sha512-ZXfs1Of8fDb6z7WEYZjXpgIRF6MEu8JdeGA0A40aZq6OQbS+eJpnnV49epZRna2DU/YsEjSQuGtQPPtvt6J65A==}
+  electron-to-chromium@1.5.55:
+    resolution: {integrity: sha512-6maZ2ASDOTBtjt9FhqYPRnbvKU5tjG0IN9SztUOWYw2AzNDNpKJYLJmlK0/En4Hs/aiWnB+JZ+gW19PIGszgKg==}
 
   emoji-regex@8.0.0:
     resolution: {integrity: sha512-MSjYzcWNOA0ewAHpz0MxpYFvwg6yjy1NG3xteoqz644VCo/RPgnr1/GGt+ic3iJTzQ8Eu3TdM14SawnVUmGE6A==}
@@ -2191,8 +2191,8 @@ packages:
   fraction.js@4.3.7:
     resolution: {integrity: sha512-ZsDfxO51wGAXREY55a7la9LScWpwv9RxIrYABrlvOFBlH/ShPnrtsXeuUIfXKKOVicNxQ+o8JTbJvjS4M89yew==}
 
-  framer-motion@11.11.10:
-    resolution: {integrity: sha512-061Bt1jL/vIm+diYIiA4dP/Yld7vD47ROextS7ESBW5hr4wQFhxB5D5T5zAc3c/5me3cOa+iO5LqhA38WDln/A==}
+  framer-motion@11.11.11:
+    resolution: {integrity: sha512-tuDH23ptJAKUHGydJQII9PhABNJBpB+z0P1bmgKK9QFIssHGlfPd6kxMq00LSKwE27WFsb2z0ovY0bpUyMvfRw==}
     peerDependencies:
       '@emotion/is-prop-valid': '*'
       react: ^18.3.1
@@ -2274,8 +2274,8 @@ packages:
   inherits@2.0.4:
     resolution: {integrity: sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==}
 
-  intl-messageformat@10.7.3:
-    resolution: {integrity: sha512-AAo/3oyh7ROfPhDuh7DxTTydh97OC+lv7h1Eq5LuHWuLsUMKOhtzTYuyXlUReuwZ9vANDHo4CS1bGRrn7TZRtg==}
+  intl-messageformat@10.7.6:
+    resolution: {integrity: sha512-IsMU/hqyy3FJwNJ0hxDfY2heJ7MteSuFvcnCebxRp67di4Fhx1gKKE+qS0bBwUF8yXkX9SsPUhLeX/B6h5SKUA==}
 
   invariant@2.2.4:
     resolution: {integrity: sha512-phJfQVBuaJM5raOpJjSfkiD6BpbCE4Ns//LaXl6wGYtUBY83nWS6Rf9tXm2e8VaK60JEjYldbPif/A2B1C2gNA==}
@@ -2353,8 +2353,8 @@ packages:
   kolorist@1.8.0:
     resolution: {integrity: sha512-Y+60/zizpJ3HRH8DCss+q95yr6145JXZo46OTpFvDZWLfRCE4qChOyk1b26nMaNpfHHgxagk9dXT5OP0Tfe+dQ==}
 
-  libphonenumber-js@1.11.12:
-    resolution: {integrity: sha512-QkJn9/D7zZ1ucvT++TQSvZuSA2xAWeUytU+DiEQwbPKLyrDpvbul2AFs1CGbRAPpSCCk47aRAb5DX5mmcayp4g==}
+  libphonenumber-js@1.11.13:
+    resolution: {integrity: sha512-LIJmXxgs7o1njVZPcX5fkbtcFgDnXXPvJQQBH5Ho/8+r6BFlJaEbJ+bAiaUGaChWUhFtvawwdmXIOz4wZBANCg==}
 
   lie@3.1.1:
     resolution: {integrity: sha512-RiNhHysUjhrDQntfYSfY4MU24coXXdEOgw9WGcKHNeEwffDYbF//u87M1EWaMGzuFoSbqW0C9C6lEEhDOAswfw==}
@@ -2633,8 +2633,8 @@ packages:
       react: ^18.3.1
       react-dom: ^18.3.1
 
-  react-intl@6.8.4:
-    resolution: {integrity: sha512-UKYrCIztyvSiZCpvHjDwAHlXT735fDioABVP+uhRAOhDSBS9NQ2vVbxiUikvVEBdr2b0cTe1tUfOfvhbmSPi/A==}
+  react-intl@6.8.7:
+    resolution: {integrity: sha512-Ocv8Tg6fXqBdVdkkYohQ79T9rJls3G1lmDSjhqHdK9873BdQFLSeITGgwuGWTRBd6Mg5FL33TBen4FtujCTP0g==}
     peerDependencies:
       react: ^18.3.1
       typescript: ^4.7 || 5
@@ -2694,8 +2694,8 @@ packages:
       '@types/react':
         optional: true
 
-  react-swipeable@7.0.1:
-    resolution: {integrity: sha512-RKB17JdQzvECfnVj9yDZsiYn3vH0eyva/ZbrCZXZR0qp66PBRhtg4F9yJcJTWYT5Adadi+x4NoG53BxKHwIYLQ==}
+  react-swipeable@7.0.2:
+    resolution: {integrity: sha512-v1Qx1l+aC2fdxKa9aKJiaU/ZxmJ5o98RMoFwUqAAzVWUcxgfHFXDDruCKXhw6zIYXm6V64JiHgP9f6mlME5l8w==}
     peerDependencies:
       react: ^18.3.1
 
@@ -2711,8 +2711,8 @@ packages:
     peerDependencies:
       react: ^18.3.1
 
-  react-use-websocket@4.10.0:
-    resolution: {integrity: sha512-QJTbUjqkVj8Le5a/QpsXg7UMOLThdNKwGgc+SnHHh68RTbWcJ3tYC6ZpZnFDUOVsKXzeUSUUtqTXdT1IZOeWcA==}
+  react-use-websocket@4.10.1:
+    resolution: {integrity: sha512-PrZbKj3BSy9kRU9otKEoMi0FOcEVh1abyYxJDzB/oL7kMBDBs+ZXhnWWed/sc679nPHAWMOn1gotoV04j5gJUw==}
 
   react-virtuoso@4.12.0:
     resolution: {integrity: sha512-oHrKlU7xHsrnBQ89ecZoMPAK0tHnI9s1hsFW3KKg5ZGeZ5SWvbGhg/QFJFY4XETAzoCUeu+Xaxn1OUb/PGtPlA==}
@@ -2767,8 +2767,8 @@ packages:
     resolution: {integrity: sha512-U9nH88a3fc/ekCF1l0/UP1IosiuIjyTh7hBvXVMHYgVcfGvt897Xguj2UOLDeI5BG2m7/uwyaLVT6fbtCwTyzw==}
     engines: {iojs: '>=1.0.0', node: '>=0.10.0'}
 
-  rollup@4.24.3:
-    resolution: {integrity: sha512-HBW896xR5HGmoksbi3JBDtmVzWiPAYqp7wip50hjQ67JbDz61nyoMPdqu1DvVW9asYb2M65Z20ZHsyJCMqMyDg==}
+  rollup@4.24.4:
+    resolution: {integrity: sha512-vGorVWIsWfX3xbcyAS+I047kFKapHYivmkaT63Smj77XwvLSJos6M1xGqZnBPFQFBRZDOcG1QnYEIxAvTr/HjA==}
     engines: {node: '>=18.0.0', npm: '>=8.0.0'}
     hasBin: true
 
@@ -2907,8 +2907,8 @@ packages:
   tsdef@0.0.14:
     resolution: {integrity: sha512-UjMD4XKRWWFlFBfwKVQmGFT5YzW/ZaF8x6KpCDf92u9wgKeha/go3FU0e5WqDjXsCOdfiavCkfwfVHNDxRDGMA==}
 
-  tslib@2.8.0:
-    resolution: {integrity: sha512-jWVzBLplnCmoaTr13V9dYbiQ99wvZRd0vNWaDRg+aVYRcjDF3nDksxFDE/+fkXnKhpnUUkmx5pK/v8mCtLVqZA==}
+  tslib@2.8.1:
+    resolution: {integrity: sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==}
 
   tsx@4.19.2:
     resolution: {integrity: sha512-pOUl6Vo2LUq/bSa8S5q7b91cgNSjctn9ugq/+Mvow99qW6x/UZYwzxy/3NmqoT66eHYfCVvFvACC58UBPFf28g==}
@@ -2929,12 +2929,13 @@ packages:
   undici-types@6.19.8:
     resolution: {integrity: sha512-ve2KP6f/JnbPBFyobGHuerC9g1FYGn/F8n1LWTwNxCEzd6IfqTwUQcNXgEtmmQ6DlRrC1hrSrBnCZPokRrDHjw==}
 
-  unplugin-icons@0.19.3:
-    resolution: {integrity: sha512-EUegRmsAI6+rrYr0vXjFlIP+lg4fSC4zb62zAZKx8FGXlWAGgEGBCa3JDe27aRAXhistObLPbBPhwa/0jYLFkQ==}
+  unplugin-icons@0.20.1:
+    resolution: {integrity: sha512-0z5sYGx07Q69ZrJB4kjmx7a5LYLNSWwyq95Ox9OuSG2y/sbhJaHUapRPOJcKmKhOAyToDVRdy9P7gxJ05lYipw==}
     peerDependencies:
       '@svgr/core': '>=7.0.0'
       '@svgx/core': ^1.0.1
       '@vue/compiler-sfc': ^3.0.2 || ^2.7.0
+      svelte: ^3.0.0 || ^4.0.0 || ^5.0.0
       vue-template-compiler: ^2.6.12
       vue-template-es2015-compiler: ^1.9.0
     peerDependenciesMeta:
@@ -2943,6 +2944,8 @@ packages:
       '@svgx/core':
         optional: true
       '@vue/compiler-sfc':
+        optional: true
+      svelte:
         optional: true
       vue-template-compiler:
         optional: true
@@ -3027,17 +3030,17 @@ packages:
   util-deprecate@1.0.2:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
 
-  vaul@0.9.9:
-    resolution: {integrity: sha512-7afKg48srluhZwIkaU+lgGtFCUsYBSGOl8vcc8N/M3YQlZFlynHD15AE+pwrYdc826o7nrIND4lL9Y6b9WWZZQ==}
+  vaul@1.1.1:
+    resolution: {integrity: sha512-+ejzF6ffQKPcfgS7uOrGn017g39F8SO4yLPXbBhpC7a0H+oPqPna8f1BUfXaz8eU4+pxbQcmjxW+jWBSbxjaFg==}
     peerDependencies:
       react: ^18.3.1
       react-dom: ^18.3.1
 
-  vite-bundle-analyzer@0.12.1:
-    resolution: {integrity: sha512-mIYwsDvTYCqXAUtOZIL3f7NdwWUeL/MlNFhOJzlTdcZE4pye6h06IEnOvWhnc/e+HM4oVVNxuRHZt0Rz6VO7EA==}
+  vite-bundle-analyzer@0.13.0:
+    resolution: {integrity: sha512-59ScOf+dCf6EmPpBiQawHf2vGVm8+kaiEwDQkMoMWMNweD4VWtxpU+voPe78z74YrIuP19RCaNCAfjP+0NOJ+A==}
 
-  vite-tsconfig-paths@5.0.1:
-    resolution: {integrity: sha512-yqwv+LstU7NwPeNqajZzLEBVpUFU6Dugtb2P84FXuvaoYA+/70l9MHE+GYfYAycVyPSDYZ7mjOFuYBRqlEpTig==}
+  vite-tsconfig-paths@5.1.0:
+    resolution: {integrity: sha512-Y1PLGHCJfAq1Zf4YIGEsmuU/NCX1epoZx9zwSr32Gjn3aalwQHRKr5aUmbo6r0JHeHkqmWpmDg7WOynhYXw1og==}
     peerDependencies:
       vite: '*'
     peerDependenciesMeta:
@@ -3110,8 +3113,8 @@ packages:
   zod@3.23.8:
     resolution: {integrity: sha512-XBx9AXhXktjUqnepgTiE5flcKIYWi/rme0Eaj+5Y0lftuGBq+jyRu/md4WnuxqgP1ubdpNCsYEYPxrzVHD8d6g==}
 
-  zustand@5.0.0:
-    resolution: {integrity: sha512-LE+VcmbartOPM+auOjCCLQOsQ05zUTp8RkgwRzefUk+2jISdMMFnxvyTjA4YNWr5ZGXYbVsEMZosttuxUBkojQ==}
+  zustand@5.0.1:
+    resolution: {integrity: sha512-pRET7Lao2z+n5R/HduXMio35TncTlSW68WsYBq2Lg1ASspsNGjpwLAsij3RpouyV6+kHMwwwzP0bZPD70/Jx/w==}
     engines: {node: '>=12.20.0'}
     peerDependencies:
       '@types/react': '>=18.0.0'
@@ -3146,23 +3149,23 @@ snapshots:
 
   '@artplayer/player@5.2.0': {}
 
-  '@babel/code-frame@7.26.0':
+  '@babel/code-frame@7.26.2':
     dependencies:
       '@babel/helper-validator-identifier': 7.25.9
       js-tokens: 4.0.0
       picocolors: 1.1.1
 
-  '@babel/compat-data@7.26.0': {}
+  '@babel/compat-data@7.26.2': {}
 
   '@babel/core@7.26.0':
     dependencies:
       '@ampproject/remapping': 2.3.0
-      '@babel/code-frame': 7.26.0
-      '@babel/generator': 7.26.0
+      '@babel/code-frame': 7.26.2
+      '@babel/generator': 7.26.2
       '@babel/helper-compilation-targets': 7.25.9
       '@babel/helper-module-transforms': 7.26.0(@babel/core@7.26.0)
       '@babel/helpers': 7.26.0
-      '@babel/parser': 7.26.1
+      '@babel/parser': 7.26.2
       '@babel/template': 7.25.9
       '@babel/traverse': 7.25.9
       '@babel/types': 7.26.0
@@ -3174,9 +3177,9 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@babel/generator@7.26.0':
+  '@babel/generator@7.26.2':
     dependencies:
-      '@babel/parser': 7.26.1
+      '@babel/parser': 7.26.2
       '@babel/types': 7.26.0
       '@jridgewell/gen-mapping': 0.3.5
       '@jridgewell/trace-mapping': 0.3.25
@@ -3184,7 +3187,7 @@ snapshots:
 
   '@babel/helper-compilation-targets@7.25.9':
     dependencies:
-      '@babel/compat-data': 7.26.0
+      '@babel/compat-data': 7.26.2
       '@babel/helper-validator-option': 7.25.9
       browserslist: 4.24.2
       lru-cache: 5.1.1
@@ -3219,7 +3222,7 @@ snapshots:
       '@babel/template': 7.25.9
       '@babel/types': 7.26.0
 
-  '@babel/parser@7.26.1':
+  '@babel/parser@7.26.2':
     dependencies:
       '@babel/types': 7.26.0
 
@@ -3249,15 +3252,15 @@ snapshots:
 
   '@babel/template@7.25.9':
     dependencies:
-      '@babel/code-frame': 7.26.0
-      '@babel/parser': 7.26.1
+      '@babel/code-frame': 7.26.2
+      '@babel/parser': 7.26.2
       '@babel/types': 7.26.0
 
   '@babel/traverse@7.25.9':
     dependencies:
-      '@babel/code-frame': 7.26.0
-      '@babel/generator': 7.26.0
-      '@babel/parser': 7.26.1
+      '@babel/code-frame': 7.26.2
+      '@babel/generator': 7.26.2
+      '@babel/parser': 7.26.2
       '@babel/template': 7.25.9
       '@babel/types': 7.26.0
       debug: 4.3.7
@@ -3446,56 +3449,56 @@ snapshots:
   '@esbuild/win32-x64@0.23.1':
     optional: true
 
-  '@formatjs/ecma402-abstract@2.2.1':
+  '@formatjs/ecma402-abstract@2.2.3':
     dependencies:
-      '@formatjs/fast-memoize': 2.2.2
-      '@formatjs/intl-localematcher': 0.5.6
-      tslib: 2.8.0
+      '@formatjs/fast-memoize': 2.2.3
+      '@formatjs/intl-localematcher': 0.5.7
+      tslib: 2.8.1
 
-  '@formatjs/fast-memoize@2.2.2':
+  '@formatjs/fast-memoize@2.2.3':
     dependencies:
-      tslib: 2.8.0
+      tslib: 2.8.1
 
-  '@formatjs/icu-messageformat-parser@2.9.1':
+  '@formatjs/icu-messageformat-parser@2.9.3':
     dependencies:
-      '@formatjs/ecma402-abstract': 2.2.1
-      '@formatjs/icu-skeleton-parser': 1.8.5
-      tslib: 2.8.0
+      '@formatjs/ecma402-abstract': 2.2.3
+      '@formatjs/icu-skeleton-parser': 1.8.7
+      tslib: 2.8.1
 
-  '@formatjs/icu-skeleton-parser@1.8.5':
+  '@formatjs/icu-skeleton-parser@1.8.7':
     dependencies:
-      '@formatjs/ecma402-abstract': 2.2.1
-      tslib: 2.8.0
+      '@formatjs/ecma402-abstract': 2.2.3
+      tslib: 2.8.1
 
-  '@formatjs/intl-displaynames@6.8.1':
+  '@formatjs/intl-displaynames@6.8.4':
     dependencies:
-      '@formatjs/ecma402-abstract': 2.2.1
-      '@formatjs/intl-localematcher': 0.5.6
-      tslib: 2.8.0
+      '@formatjs/ecma402-abstract': 2.2.3
+      '@formatjs/intl-localematcher': 0.5.7
+      tslib: 2.8.1
 
-  '@formatjs/intl-listformat@7.7.1':
+  '@formatjs/intl-listformat@7.7.4':
     dependencies:
-      '@formatjs/ecma402-abstract': 2.2.1
-      '@formatjs/intl-localematcher': 0.5.6
-      tslib: 2.8.0
+      '@formatjs/ecma402-abstract': 2.2.3
+      '@formatjs/intl-localematcher': 0.5.7
+      tslib: 2.8.1
 
-  '@formatjs/intl-localematcher@0.5.6':
+  '@formatjs/intl-localematcher@0.5.7':
     dependencies:
-      tslib: 2.8.0
+      tslib: 2.8.1
 
-  '@formatjs/intl@2.10.11(typescript@5.6.3)':
+  '@formatjs/intl@2.10.14(typescript@5.6.3)':
     dependencies:
-      '@formatjs/ecma402-abstract': 2.2.1
-      '@formatjs/fast-memoize': 2.2.2
-      '@formatjs/icu-messageformat-parser': 2.9.1
-      '@formatjs/intl-displaynames': 6.8.1
-      '@formatjs/intl-listformat': 7.7.1
-      intl-messageformat: 10.7.3
-      tslib: 2.8.0
+      '@formatjs/ecma402-abstract': 2.2.3
+      '@formatjs/fast-memoize': 2.2.3
+      '@formatjs/icu-messageformat-parser': 2.9.3
+      '@formatjs/intl-displaynames': 6.8.4
+      '@formatjs/intl-listformat': 7.7.4
+      intl-messageformat: 10.7.6
+      tslib: 2.8.1
     optionalDependencies:
       typescript: 5.6.3
 
-  '@iconify/json@2.2.265':
+  '@iconify/json@2.2.269':
     dependencies:
       '@iconify/types': 2.0.0
       pathe: 1.1.2
@@ -3521,7 +3524,7 @@ snapshots:
   '@internationalized/message@3.1.5':
     dependencies:
       '@swc/helpers': 0.5.13
-      intl-messageformat: 10.7.3
+      intl-messageformat: 10.7.6
 
   '@internationalized/number@3.5.4':
     dependencies:
@@ -4435,58 +4438,58 @@ snapshots:
       react: 18.3.1
       react-redux: 9.1.2(@types/react@18.3.12)(react@18.3.1)(redux@5.0.1)
 
-  '@rollup/rollup-android-arm-eabi@4.24.3':
+  '@rollup/rollup-android-arm-eabi@4.24.4':
     optional: true
 
-  '@rollup/rollup-android-arm64@4.24.3':
+  '@rollup/rollup-android-arm64@4.24.4':
     optional: true
 
-  '@rollup/rollup-darwin-arm64@4.24.3':
+  '@rollup/rollup-darwin-arm64@4.24.4':
     optional: true
 
-  '@rollup/rollup-darwin-x64@4.24.3':
+  '@rollup/rollup-darwin-x64@4.24.4':
     optional: true
 
-  '@rollup/rollup-freebsd-arm64@4.24.3':
+  '@rollup/rollup-freebsd-arm64@4.24.4':
     optional: true
 
-  '@rollup/rollup-freebsd-x64@4.24.3':
+  '@rollup/rollup-freebsd-x64@4.24.4':
     optional: true
 
-  '@rollup/rollup-linux-arm-gnueabihf@4.24.3':
+  '@rollup/rollup-linux-arm-gnueabihf@4.24.4':
     optional: true
 
-  '@rollup/rollup-linux-arm-musleabihf@4.24.3':
+  '@rollup/rollup-linux-arm-musleabihf@4.24.4':
     optional: true
 
-  '@rollup/rollup-linux-arm64-gnu@4.24.3':
+  '@rollup/rollup-linux-arm64-gnu@4.24.4':
     optional: true
 
-  '@rollup/rollup-linux-arm64-musl@4.24.3':
+  '@rollup/rollup-linux-arm64-musl@4.24.4':
     optional: true
 
-  '@rollup/rollup-linux-powerpc64le-gnu@4.24.3':
+  '@rollup/rollup-linux-powerpc64le-gnu@4.24.4':
     optional: true
 
-  '@rollup/rollup-linux-riscv64-gnu@4.24.3':
+  '@rollup/rollup-linux-riscv64-gnu@4.24.4':
     optional: true
 
-  '@rollup/rollup-linux-s390x-gnu@4.24.3':
+  '@rollup/rollup-linux-s390x-gnu@4.24.4':
     optional: true
 
-  '@rollup/rollup-linux-x64-gnu@4.24.3':
+  '@rollup/rollup-linux-x64-gnu@4.24.4':
     optional: true
 
-  '@rollup/rollup-linux-x64-musl@4.24.3':
+  '@rollup/rollup-linux-x64-musl@4.24.4':
     optional: true
 
-  '@rollup/rollup-win32-arm64-msvc@4.24.3':
+  '@rollup/rollup-win32-arm64-msvc@4.24.4':
     optional: true
 
-  '@rollup/rollup-win32-ia32-msvc@4.24.3':
+  '@rollup/rollup-win32-ia32-msvc@4.24.4':
     optional: true
 
-  '@rollup/rollup-win32-x64-msvc@4.24.3':
+  '@rollup/rollup-win32-x64-msvc@4.24.4':
     optional: true
 
   '@svgdotjs/svg.draggable.js@3.0.4(@svgdotjs/svg.js@3.2.4)':
@@ -4580,26 +4583,26 @@ snapshots:
 
   '@swc/helpers@0.5.13':
     dependencies:
-      tslib: 2.8.0
+      tslib: 2.8.1
 
   '@tanstack/history@1.61.1': {}
 
-  '@tanstack/query-core@5.59.16': {}
+  '@tanstack/query-core@5.59.20': {}
 
-  '@tanstack/query-devtools@5.58.0': {}
+  '@tanstack/query-devtools@5.59.20': {}
 
-  '@tanstack/react-query-devtools@5.59.16(@tanstack/react-query@5.59.16(react@18.3.1))(react@18.3.1)':
+  '@tanstack/react-query-devtools@5.59.20(@tanstack/react-query@5.59.20(react@18.3.1))(react@18.3.1)':
     dependencies:
-      '@tanstack/query-devtools': 5.58.0
-      '@tanstack/react-query': 5.59.16(react@18.3.1)
+      '@tanstack/query-devtools': 5.59.20
+      '@tanstack/react-query': 5.59.20(react@18.3.1)
       react: 18.3.1
 
-  '@tanstack/react-query@5.59.16(react@18.3.1)':
+  '@tanstack/react-query@5.59.20(react@18.3.1)':
     dependencies:
-      '@tanstack/query-core': 5.59.16
+      '@tanstack/query-core': 5.59.20
       react: 18.3.1
 
-  '@tanstack/react-router@1.77.8(@tanstack/router-generator@1.77.7)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@tanstack/react-router@1.79.0(@tanstack/router-generator@1.79.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@tanstack/history': 1.61.1
       '@tanstack/react-store': 0.5.6(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -4608,7 +4611,7 @@ snapshots:
       tiny-invariant: 1.3.3
       tiny-warning: 1.0.3
     optionalDependencies:
-      '@tanstack/router-generator': 1.77.7
+      '@tanstack/router-generator': 1.79.0
 
   '@tanstack/react-store@0.5.6(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
@@ -4617,24 +4620,24 @@ snapshots:
       react-dom: 18.3.1(react@18.3.1)
       use-sync-external-store: 1.2.2(react@18.3.1)
 
-  '@tanstack/router-generator@1.77.7':
+  '@tanstack/router-generator@1.79.0':
     dependencies:
       '@tanstack/virtual-file-routes': 1.64.0
       prettier: 3.3.3
       tsx: 4.19.2
       zod: 3.23.8
 
-  '@tanstack/router-plugin@1.77.7(vite@5.4.10(@types/node@22.8.4)(terser@5.36.0))(webpack-sources@3.2.3)':
+  '@tanstack/router-plugin@1.79.0(vite@5.4.10(@types/node@22.9.0)(terser@5.36.0))(webpack-sources@3.2.3)':
     dependencies:
       '@babel/core': 7.26.0
-      '@babel/generator': 7.26.0
-      '@babel/parser': 7.26.1
+      '@babel/generator': 7.26.2
+      '@babel/parser': 7.26.2
       '@babel/plugin-syntax-jsx': 7.25.9(@babel/core@7.26.0)
       '@babel/plugin-syntax-typescript': 7.25.9(@babel/core@7.26.0)
       '@babel/template': 7.25.9
       '@babel/traverse': 7.25.9
       '@babel/types': 7.26.0
-      '@tanstack/router-generator': 1.77.7
+      '@tanstack/router-generator': 1.79.0
       '@tanstack/virtual-file-routes': 1.64.0
       '@types/babel__core': 7.20.5
       '@types/babel__generator': 7.6.8
@@ -4645,14 +4648,14 @@ snapshots:
       unplugin: 1.15.0(webpack-sources@3.2.3)
       zod: 3.23.8
     optionalDependencies:
-      vite: 5.4.10(@types/node@22.8.4)(terser@5.36.0)
+      vite: 5.4.10(@types/node@22.9.0)(terser@5.36.0)
     transitivePeerDependencies:
       - supports-color
       - webpack-sources
 
-  '@tanstack/router-vite-plugin@1.77.7(vite@5.4.10(@types/node@22.8.4)(terser@5.36.0))(webpack-sources@3.2.3)':
+  '@tanstack/router-vite-plugin@1.79.0(vite@5.4.10(@types/node@22.9.0)(terser@5.36.0))(webpack-sources@3.2.3)':
     dependencies:
-      '@tanstack/router-plugin': 1.77.7(vite@5.4.10(@types/node@22.8.4)(terser@5.36.0))(webpack-sources@3.2.3)
+      '@tanstack/router-plugin': 1.79.0(vite@5.4.10(@types/node@22.9.0)(terser@5.36.0))(webpack-sources@3.2.3)
     transitivePeerDependencies:
       - '@rsbuild/core'
       - supports-color
@@ -4679,7 +4682,7 @@ snapshots:
       - '@tw-material/theme'
       - tailwind-variants
 
-  '@tw-material/autocomplete@1.0.6(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(@types/react@18.3.12)(framer-motion@11.11.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))(tailwindcss@3.4.14)':
+  '@tw-material/autocomplete@1.0.6(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(@types/react@18.3.12)(framer-motion@11.11.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))(tailwindcss@3.4.14)':
     dependencies:
       '@nextui-org/shared-icons': 2.0.9(react@18.3.1)
       '@nextui-org/use-aria-button': 2.0.10(react@18.3.1)
@@ -4693,10 +4696,10 @@ snapshots:
       '@react-types/combobox': 3.13.0(react@18.3.1)
       '@react-types/shared': 3.25.0(react@18.3.1)
       '@tw-material/aria-utils': 1.1.3(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))
-      '@tw-material/button': 1.1.15(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(framer-motion@11.11.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))(tailwindcss@3.4.14)
+      '@tw-material/button': 1.1.15(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(framer-motion@11.11.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))(tailwindcss@3.4.14)
       '@tw-material/input': 1.0.5(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@tw-material/listbox': 1.0.5(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))
-      '@tw-material/popover': 1.1.15(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(@types/react@18.3.12)(framer-motion@11.11.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))(tailwindcss@3.4.14)
+      '@tw-material/popover': 1.1.15(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(@types/react@18.3.12)(framer-motion@11.11.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))(tailwindcss@3.4.14)
       '@tw-material/react-utils': 1.1.3(react@18.3.1)
       '@tw-material/scroll-shadow': 1.0.2(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@tw-material/shared-utils': 1.1.2(react@18.3.1)
@@ -4704,7 +4707,7 @@ snapshots:
       '@tw-material/system': 1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))
       '@tw-material/theme': 1.1.12(tailwindcss@3.4.14)
       clsx: 2.1.1
-      framer-motion: 11.11.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      framer-motion: 11.11.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
     transitivePeerDependencies:
@@ -4736,7 +4739,7 @@ snapshots:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
 
-  '@tw-material/breadcrumbs@1.1.4(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(framer-motion@11.11.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@tw-material/breadcrumbs@1.1.4(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(framer-motion@11.11.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@nextui-org/shared-icons': 2.0.9(react@18.3.1)
       '@react-aria/breadcrumbs': 3.5.18(react@18.3.1)
@@ -4751,11 +4754,11 @@ snapshots:
       '@tw-material/system': 1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))
       '@tw-material/theme': 1.1.12(tailwindcss@3.4.14)
       clsx: 2.1.1
-      framer-motion: 11.11.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      framer-motion: 11.11.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
 
-  '@tw-material/button@1.1.15(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(framer-motion@11.11.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))(tailwindcss@3.4.14)':
+  '@tw-material/button@1.1.15(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(framer-motion@11.11.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))(tailwindcss@3.4.14)':
     dependencies:
       '@nextui-org/use-aria-button': 2.0.10(react@18.3.1)
       '@react-aria/focus': 3.18.4(react@18.3.1)
@@ -4764,13 +4767,13 @@ snapshots:
       '@react-types/button': 3.10.0(react@18.3.1)
       '@react-types/shared': 3.25.0(react@18.3.1)
       '@tw-material/react-utils': 1.1.3(react@18.3.1)
-      '@tw-material/ripple': 1.1.6(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(framer-motion@11.11.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@tw-material/ripple': 1.1.6(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(framer-motion@11.11.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@tw-material/shared-utils': 1.1.2(react@18.3.1)
       '@tw-material/spinner': 1.0.3(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))
       '@tw-material/system': 1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))
       '@tw-material/theme': 1.1.12(tailwindcss@3.4.14)
       clsx: 2.1.1
-      framer-motion: 11.11.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      framer-motion: 11.11.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
     transitivePeerDependencies:
@@ -4825,7 +4828,7 @@ snapshots:
     transitivePeerDependencies:
       - tailwind-variants
 
-  '@tw-material/dropdown@1.1.17(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(@types/react@18.3.12)(framer-motion@11.11.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))(tailwindcss@3.4.14)':
+  '@tw-material/dropdown@1.1.17(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(@types/react@18.3.12)(framer-motion@11.11.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))(tailwindcss@3.4.14)':
     dependencies:
       '@nextui-org/shared-icons': 2.0.9(react@18.3.1)
       '@react-aria/focus': 3.18.4(react@18.3.1)
@@ -4837,14 +4840,14 @@ snapshots:
       '@react-types/button': 3.10.0(react@18.3.1)
       '@react-types/menu': 3.9.12(react@18.3.1)
       '@react-types/shared': 3.25.0(react@18.3.1)
-      '@tw-material/menu': 1.1.16(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(framer-motion@11.11.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))(tailwindcss@3.4.14)
-      '@tw-material/popover': 1.1.15(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(@types/react@18.3.12)(framer-motion@11.11.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))(tailwindcss@3.4.14)
+      '@tw-material/menu': 1.1.16(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(framer-motion@11.11.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))(tailwindcss@3.4.14)
+      '@tw-material/popover': 1.1.15(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(@types/react@18.3.12)(framer-motion@11.11.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))(tailwindcss@3.4.14)
       '@tw-material/react-utils': 1.1.3(react@18.3.1)
       '@tw-material/shared-utils': 1.1.2(react@18.3.1)
       '@tw-material/system': 1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))
       '@tw-material/theme': 1.1.12(tailwindcss@3.4.14)
       clsx: 2.1.1
-      framer-motion: 11.11.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      framer-motion: 11.11.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
     transitivePeerDependencies:
@@ -4852,7 +4855,7 @@ snapshots:
       - tailwind-variants
       - tailwindcss
 
-  '@tw-material/file-browser@1.0.30(@tw-material/react@1.1.21(@types/react@18.3.12)(framer-motion@11.11.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))(tailwindcss@3.4.14))(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(@types/react-dom@18.3.1)(@types/react@18.3.12)(framer-motion@11.11.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(redux@5.0.1)(typescript@5.6.3)':
+  '@tw-material/file-browser@1.0.32(@tw-material/react@1.1.21(@types/react@18.3.12)(framer-motion@11.11.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))(tailwindcss@3.4.14))(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(@types/react-dom@18.3.1)(@types/react@18.3.12)(framer-motion@11.11.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(redux@5.0.1)(typescript@5.6.3)':
     dependencies:
       '@nextui-org/use-safe-layout-effect': 2.0.6(react@18.3.1)
       '@react-aria/focus': 3.18.4(react@18.3.1)
@@ -4860,7 +4863,7 @@ snapshots:
       '@react-aria/utils': 3.25.3(react@18.3.1)
       '@react-hook/media-query': 1.1.1(react@18.3.1)
       '@reduxjs/toolkit': 2.3.0(react-redux@9.1.2(@types/react@18.3.12)(react@18.3.1)(redux@5.0.1))(react@18.3.1)
-      '@tw-material/react': 1.1.21(@types/react@18.3.12)(framer-motion@11.11.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))(tailwindcss@3.4.14)
+      '@tw-material/react': 1.1.21(@types/react@18.3.12)(framer-motion@11.11.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))(tailwindcss@3.4.14)
       '@tw-material/react-utils': 1.1.3(react@18.3.1)
       '@tw-material/shared-utils': 1.1.2(react@18.3.1)
       '@tw-material/system': 1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))
@@ -4872,32 +4875,33 @@ snapshots:
       exact-trie: 1.0.13
       fast-sort: 3.4.1
       filesize: 10.1.6
-      framer-motion: 11.11.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      framer-motion: 11.11.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       fuzzy-search: 3.2.1
       hotkeys-js: 3.13.7
       immer: 10.1.1
+      lodash.debounce: 4.0.8
       react: 18.3.1
       react-click-away-listener: 2.2.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-dom: 18.3.1(react@18.3.1)
-      react-intl: 6.8.4(react@18.3.1)(typescript@5.6.3)
+      react-intl: 6.8.7(react@18.3.1)(typescript@5.6.3)
       react-redux: 9.1.2(@types/react@18.3.12)(react@18.3.1)(redux@5.0.1)
       react-virtuoso: 4.12.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       redux-watch: 1.2.0
       shortid: 2.2.16
       tailwind-merge: 2.5.4
       tsdef: 0.0.14
-      vaul: 0.9.9(@types/react-dom@18.3.1)(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      vaul: 1.1.1(@types/react-dom@18.3.1)(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
     transitivePeerDependencies:
       - '@types/react'
       - '@types/react-dom'
       - redux
       - typescript
 
-  '@tw-material/framer-transitions@1.1.4(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(framer-motion@11.11.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))':
+  '@tw-material/framer-transitions@1.1.4(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(framer-motion@11.11.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))':
     dependencies:
       '@tw-material/shared-utils': 1.1.2(react@18.3.1)
       '@tw-material/system': 1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))
-      framer-motion: 11.11.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      framer-motion: 11.11.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
     transitivePeerDependencies:
@@ -4948,7 +4952,7 @@ snapshots:
     transitivePeerDependencies:
       - tailwind-variants
 
-  '@tw-material/menu@1.1.16(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(framer-motion@11.11.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))(tailwindcss@3.4.14)':
+  '@tw-material/menu@1.1.16(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(framer-motion@11.11.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))(tailwindcss@3.4.14)':
     dependencies:
       '@nextui-org/use-aria-menu': 2.0.7(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@nextui-org/use-is-mobile': 2.0.9(react@18.3.1)
@@ -4966,22 +4970,22 @@ snapshots:
       '@react-types/overlays': 3.8.10(react@18.3.1)
       '@react-types/shared': 3.25.0(react@18.3.1)
       '@tw-material/aria-utils': 1.1.3(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))
-      '@tw-material/button': 1.1.15(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(framer-motion@11.11.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))(tailwindcss@3.4.14)
+      '@tw-material/button': 1.1.15(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(framer-motion@11.11.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))(tailwindcss@3.4.14)
       '@tw-material/divider': 1.0.3(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))
-      '@tw-material/framer-transitions': 1.1.4(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(framer-motion@11.11.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))
+      '@tw-material/framer-transitions': 1.1.4(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(framer-motion@11.11.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))
       '@tw-material/react-utils': 1.1.3(react@18.3.1)
       '@tw-material/shared-utils': 1.1.2(react@18.3.1)
       '@tw-material/system': 1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))
       '@tw-material/theme': 1.1.12(tailwindcss@3.4.14)
       clsx: 2.1.1
-      framer-motion: 11.11.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      framer-motion: 11.11.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
     transitivePeerDependencies:
       - tailwind-variants
       - tailwindcss
 
-  '@tw-material/modal@1.1.9(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(framer-motion@11.11.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))':
+  '@tw-material/modal@1.1.9(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(framer-motion@11.11.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))':
     dependencies:
       '@nextui-org/shared-icons': 2.0.9(react@18.3.1)
       '@nextui-org/use-aria-button': 2.0.10(react@18.3.1)
@@ -4998,19 +5002,19 @@ snapshots:
       '@react-types/overlays': 3.8.10(react@18.3.1)
       '@react-types/shared': 3.25.0(react@18.3.1)
       '@tw-material/aria-utils': 1.1.3(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))
-      '@tw-material/framer-transitions': 1.1.4(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(framer-motion@11.11.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))
+      '@tw-material/framer-transitions': 1.1.4(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(framer-motion@11.11.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))
       '@tw-material/react-utils': 1.1.3(react@18.3.1)
       '@tw-material/shared-utils': 1.1.2(react@18.3.1)
       '@tw-material/system': 1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))
       '@tw-material/theme': 1.1.12(tailwindcss@3.4.14)
       clsx: 2.1.1
-      framer-motion: 11.11.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      framer-motion: 11.11.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
     transitivePeerDependencies:
       - tailwind-variants
 
-  '@tw-material/popover@1.1.15(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(@types/react@18.3.12)(framer-motion@11.11.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))(tailwindcss@3.4.14)':
+  '@tw-material/popover@1.1.15(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(@types/react@18.3.12)(framer-motion@11.11.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))(tailwindcss@3.4.14)':
     dependencies:
       '@nextui-org/use-aria-button': 2.0.10(react@18.3.1)
       '@nextui-org/use-safe-layout-effect': 2.0.6(react@18.3.1)
@@ -5024,14 +5028,14 @@ snapshots:
       '@react-types/overlays': 3.8.10(react@18.3.1)
       '@react-types/shared': 3.25.0(react@18.3.1)
       '@tw-material/aria-utils': 1.1.3(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))
-      '@tw-material/button': 1.1.15(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(framer-motion@11.11.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))(tailwindcss@3.4.14)
-      '@tw-material/framer-transitions': 1.1.4(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(framer-motion@11.11.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))
+      '@tw-material/button': 1.1.15(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(framer-motion@11.11.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))(tailwindcss@3.4.14)
+      '@tw-material/framer-transitions': 1.1.4(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(framer-motion@11.11.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))
       '@tw-material/react-utils': 1.1.3(react@18.3.1)
       '@tw-material/shared-utils': 1.1.2(react@18.3.1)
       '@tw-material/system': 1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))
       '@tw-material/theme': 1.1.12(tailwindcss@3.4.14)
       clsx: 2.1.1
-      framer-motion: 11.11.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      framer-motion: 11.11.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
       react-remove-scroll: 2.6.0(@types/react@18.3.12)(react@18.3.1)
@@ -5063,33 +5067,33 @@ snapshots:
       '@tw-material/shared-utils': 1.1.2(react@18.3.1)
       react: 18.3.1
 
-  '@tw-material/react@1.1.21(@types/react@18.3.12)(framer-motion@11.11.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))(tailwindcss@3.4.14)':
+  '@tw-material/react@1.1.21(@types/react@18.3.12)(framer-motion@11.11.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))(tailwindcss@3.4.14)':
     dependencies:
       '@react-aria/visually-hidden': 3.8.17(react@18.3.1)
-      '@tw-material/autocomplete': 1.0.6(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(@types/react@18.3.12)(framer-motion@11.11.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))(tailwindcss@3.4.14)
+      '@tw-material/autocomplete': 1.0.6(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(@types/react@18.3.12)(framer-motion@11.11.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))(tailwindcss@3.4.14)
       '@tw-material/avatar': 1.0.3(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@tw-material/box': 1.1.3(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@tw-material/breadcrumbs': 1.1.4(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(framer-motion@11.11.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@tw-material/button': 1.1.15(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(framer-motion@11.11.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))(tailwindcss@3.4.14)
+      '@tw-material/breadcrumbs': 1.1.4(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(framer-motion@11.11.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@tw-material/button': 1.1.15(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(framer-motion@11.11.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))(tailwindcss@3.4.14)
       '@tw-material/checkbox': 1.0.2(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@tw-material/chip': 1.0.1(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@tw-material/divider': 1.0.3(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))
-      '@tw-material/dropdown': 1.1.17(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(@types/react@18.3.12)(framer-motion@11.11.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))(tailwindcss@3.4.14)
+      '@tw-material/dropdown': 1.1.17(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(@types/react@18.3.12)(framer-motion@11.11.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))(tailwindcss@3.4.14)
       '@tw-material/input': 1.0.5(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@tw-material/listbox': 1.0.5(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))
-      '@tw-material/menu': 1.1.16(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(framer-motion@11.11.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))(tailwindcss@3.4.14)
-      '@tw-material/modal': 1.1.9(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(framer-motion@11.11.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))
-      '@tw-material/popover': 1.1.15(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(@types/react@18.3.12)(framer-motion@11.11.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))(tailwindcss@3.4.14)
+      '@tw-material/menu': 1.1.16(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(framer-motion@11.11.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))(tailwindcss@3.4.14)
+      '@tw-material/modal': 1.1.9(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(framer-motion@11.11.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))
+      '@tw-material/popover': 1.1.15(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(@types/react@18.3.12)(framer-motion@11.11.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))(tailwindcss@3.4.14)
       '@tw-material/radio': 1.0.0(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@tw-material/ripple': 1.1.6(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(framer-motion@11.11.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@tw-material/select': 1.0.13(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(@types/react@18.3.12)(framer-motion@11.11.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))(tailwindcss@3.4.14)
-      '@tw-material/slider': 1.0.13(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(framer-motion@11.11.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))
+      '@tw-material/ripple': 1.1.6(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(framer-motion@11.11.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@tw-material/select': 1.0.13(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(@types/react@18.3.12)(framer-motion@11.11.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))(tailwindcss@3.4.14)
+      '@tw-material/slider': 1.0.13(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(framer-motion@11.11.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))
       '@tw-material/spinner': 1.0.3(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))
       '@tw-material/switch': 1.0.2(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@tw-material/system': 1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))
       '@tw-material/theme': 1.1.12(tailwindcss@3.4.14)
-      '@tw-material/tooltip': 1.0.12(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(framer-motion@11.11.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))
-      framer-motion: 11.11.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@tw-material/tooltip': 1.0.12(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(framer-motion@11.11.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))
+      framer-motion: 11.11.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
     transitivePeerDependencies:
@@ -5097,13 +5101,13 @@ snapshots:
       - tailwind-variants
       - tailwindcss
 
-  '@tw-material/ripple@1.1.6(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(framer-motion@11.11.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@tw-material/ripple@1.1.6(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(framer-motion@11.11.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@tw-material/react-utils': 1.1.3(react@18.3.1)
       '@tw-material/shared-utils': 1.1.2(react@18.3.1)
       '@tw-material/system': 1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))
       '@tw-material/theme': 1.1.12(tailwindcss@3.4.14)
-      framer-motion: 11.11.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      framer-motion: 11.11.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
 
@@ -5117,7 +5121,7 @@ snapshots:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
 
-  '@tw-material/select@1.0.13(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(@types/react@18.3.12)(framer-motion@11.11.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))(tailwindcss@3.4.14)':
+  '@tw-material/select@1.0.13(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(@types/react@18.3.12)(framer-motion@11.11.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))(tailwindcss@3.4.14)':
     dependencies:
       '@nextui-org/use-aria-button': 2.0.10(react@18.3.1)
       '@nextui-org/use-is-mobile': 2.0.9(react@18.3.1)
@@ -5132,7 +5136,7 @@ snapshots:
       '@react-types/shared': 3.25.0(react@18.3.1)
       '@tw-material/aria-utils': 1.1.3(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))
       '@tw-material/listbox': 1.0.5(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))
-      '@tw-material/popover': 1.1.15(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(@types/react@18.3.12)(framer-motion@11.11.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))(tailwindcss@3.4.14)
+      '@tw-material/popover': 1.1.15(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(@types/react@18.3.12)(framer-motion@11.11.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))(tailwindcss@3.4.14)
       '@tw-material/react-utils': 1.1.3(react@18.3.1)
       '@tw-material/scroll-shadow': 1.0.2(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@tw-material/shared-utils': 1.1.2(react@18.3.1)
@@ -5141,7 +5145,7 @@ snapshots:
       '@tw-material/theme': 1.1.12(tailwindcss@3.4.14)
       '@tw-material/use-multiselect': 1.0.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       clsx: 2.1.1
-      framer-motion: 11.11.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      framer-motion: 11.11.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
     transitivePeerDependencies:
@@ -5153,7 +5157,7 @@ snapshots:
     dependencies:
       react: 18.3.1
 
-  '@tw-material/slider@1.0.13(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(framer-motion@11.11.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))':
+  '@tw-material/slider@1.0.13(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(framer-motion@11.11.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))':
     dependencies:
       '@react-aria/focus': 3.18.4(react@18.3.1)
       '@react-aria/i18n': 3.12.3(react@18.3.1)
@@ -5165,11 +5169,11 @@ snapshots:
       '@react-types/button': 3.10.0(react@18.3.1)
       '@react-types/shared': 3.25.0(react@18.3.1)
       '@tw-material/react-utils': 1.1.3(react@18.3.1)
-      '@tw-material/ripple': 1.1.6(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(framer-motion@11.11.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@tw-material/ripple': 1.1.6(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(framer-motion@11.11.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@tw-material/shared-utils': 1.1.2(react@18.3.1)
       '@tw-material/system': 1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))
       '@tw-material/theme': 1.1.12(tailwindcss@3.4.14)
-      '@tw-material/tooltip': 1.0.12(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(framer-motion@11.11.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))
+      '@tw-material/tooltip': 1.0.12(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(framer-motion@11.11.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))
       clsx: 2.1.1
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
@@ -5222,7 +5226,7 @@ snapshots:
       tailwind-variants: 0.2.1(tailwindcss@3.4.14)
       tailwindcss: 3.4.14
 
-  '@tw-material/tooltip@1.0.12(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(framer-motion@11.11.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))':
+  '@tw-material/tooltip@1.0.12(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(framer-motion@11.11.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))':
     dependencies:
       '@nextui-org/use-safe-layout-effect': 2.0.6(react@18.3.1)
       '@react-aria/focus': 3.18.4(react@18.3.1)
@@ -5234,9 +5238,9 @@ snapshots:
       '@react-types/button': 3.10.0(react@18.3.1)
       '@react-types/shared': 3.25.0(react@18.3.1)
       '@tw-material/aria-utils': 1.1.3(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))
-      '@tw-material/framer-transitions': 1.1.4(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(framer-motion@11.11.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))
+      '@tw-material/framer-transitions': 1.1.4(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(framer-motion@11.11.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))
       '@tw-material/react-utils': 1.1.3(react@18.3.1)
-      '@tw-material/ripple': 1.1.6(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(framer-motion@11.11.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@tw-material/ripple': 1.1.6(@tw-material/system@1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14)))(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(framer-motion@11.11.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@tw-material/shared-utils': 1.1.2(react@18.3.1)
       '@tw-material/system': 1.1.1(@tw-material/theme@1.1.12(tailwindcss@3.4.14))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.14))
       '@tw-material/theme': 1.1.12(tailwindcss@3.4.14)
@@ -5283,7 +5287,7 @@ snapshots:
 
   '@types/babel__core@7.20.5':
     dependencies:
-      '@babel/parser': 7.26.1
+      '@babel/parser': 7.26.2
       '@babel/types': 7.26.0
       '@types/babel__generator': 7.6.8
       '@types/babel__template': 7.4.4
@@ -5295,7 +5299,7 @@ snapshots:
 
   '@types/babel__template@7.4.4':
     dependencies:
-      '@babel/parser': 7.26.1
+      '@babel/parser': 7.26.2
       '@babel/types': 7.26.0
 
   '@types/babel__traverse@7.20.6':
@@ -5315,13 +5319,13 @@ snapshots:
 
   '@types/lodash.debounce@4.0.9':
     dependencies:
-      '@types/lodash': 4.17.12
+      '@types/lodash': 4.17.13
 
-  '@types/lodash@4.17.12': {}
+  '@types/lodash@4.17.13': {}
 
   '@types/md5@2.3.5': {}
 
-  '@types/node@22.8.4':
+  '@types/node@22.9.0':
     dependencies:
       undici-types: 6.19.8
 
@@ -5338,14 +5342,14 @@ snapshots:
 
   '@types/use-sync-external-store@0.0.3': {}
 
-  '@vitejs/plugin-react@4.3.3(vite@5.4.10(@types/node@22.8.4)(terser@5.36.0))':
+  '@vitejs/plugin-react@4.3.3(vite@5.4.10(@types/node@22.9.0)(terser@5.36.0))':
     dependencies:
       '@babel/core': 7.26.0
       '@babel/plugin-transform-react-jsx-self': 7.25.9(@babel/core@7.26.0)
       '@babel/plugin-transform-react-jsx-source': 7.25.9(@babel/core@7.26.0)
       '@types/babel__core': 7.20.5
       react-refresh: 0.14.2
-      vite: 5.4.10(@types/node@22.8.4)(terser@5.36.0)
+      vite: 5.4.10(@types/node@22.9.0)(terser@5.36.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -5387,12 +5391,12 @@ snapshots:
 
   aria-hidden@1.2.4:
     dependencies:
-      tslib: 2.8.0
+      tslib: 2.8.1
 
   autoprefixer@10.4.20(postcss@8.4.47):
     dependencies:
       browserslist: 4.24.2
-      caniuse-lite: 1.0.30001674
+      caniuse-lite: 1.0.30001679
       fraction.js: 4.3.7
       normalize-range: 0.1.2
       picocolors: 1.1.1
@@ -5402,7 +5406,7 @@ snapshots:
   babel-dead-code-elimination@1.0.6:
     dependencies:
       '@babel/core': 7.26.0
-      '@babel/parser': 7.26.1
+      '@babel/parser': 7.26.2
       '@babel/traverse': 7.25.9
       '@babel/types': 7.26.0
     transitivePeerDependencies:
@@ -5422,8 +5426,8 @@ snapshots:
 
   browserslist@4.24.2:
     dependencies:
-      caniuse-lite: 1.0.30001674
-      electron-to-chromium: 1.5.49
+      caniuse-lite: 1.0.30001679
+      electron-to-chromium: 1.5.55
       node-releases: 2.0.18
       update-browserslist-db: 1.1.1(browserslist@4.24.2)
 
@@ -5435,7 +5439,7 @@ snapshots:
 
   camelcase@6.3.0: {}
 
-  caniuse-lite@1.0.30001674: {}
+  caniuse-lite@1.0.30001679: {}
 
   charenc@0.0.2: {}
 
@@ -5469,7 +5473,7 @@ snapshots:
 
   convert-source-map@2.0.0: {}
 
-  core-js@3.38.1: {}
+  core-js@3.39.0: {}
 
   core-util-is@1.0.3: {}
 
@@ -5482,7 +5486,7 @@ snapshots:
     optionalDependencies:
       typescript: 5.6.3
 
-  cross-spawn@7.0.3:
+  cross-spawn@7.0.5:
     dependencies:
       path-key: 3.1.1
       shebang-command: 2.0.0
@@ -5514,11 +5518,11 @@ snapshots:
   dot-case@3.0.4:
     dependencies:
       no-case: 3.0.4
-      tslib: 2.8.0
+      tslib: 2.8.1
 
   eastasianwidth@0.2.0: {}
 
-  electron-to-chromium@1.5.49: {}
+  electron-to-chromium@1.5.55: {}
 
   emoji-regex@8.0.0: {}
 
@@ -5530,7 +5534,7 @@ snapshots:
     dependencies:
       '@types/localforage': 0.0.34
       '@xmldom/xmldom': 0.7.13
-      core-js: 3.38.1
+      core-js: 3.39.0
       event-emitter: 0.3.5
       jszip: 3.10.1
       localforage: 1.10.0
@@ -5659,14 +5663,14 @@ snapshots:
 
   foreground-child@3.3.0:
     dependencies:
-      cross-spawn: 7.0.3
+      cross-spawn: 7.0.5
       signal-exit: 4.1.0
 
   fraction.js@4.3.7: {}
 
-  framer-motion@11.11.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  framer-motion@11.11.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
-      tslib: 2.8.0
+      tslib: 2.8.1
     optionalDependencies:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
@@ -5732,12 +5736,12 @@ snapshots:
 
   inherits@2.0.4: {}
 
-  intl-messageformat@10.7.3:
+  intl-messageformat@10.7.6:
     dependencies:
-      '@formatjs/ecma402-abstract': 2.2.1
-      '@formatjs/fast-memoize': 2.2.2
-      '@formatjs/icu-messageformat-parser': 2.9.1
-      tslib: 2.8.0
+      '@formatjs/ecma402-abstract': 2.2.3
+      '@formatjs/fast-memoize': 2.2.3
+      '@formatjs/icu-messageformat-parser': 2.9.3
+      tslib: 2.8.1
 
   invariant@2.2.4:
     dependencies:
@@ -5800,7 +5804,7 @@ snapshots:
 
   kolorist@1.8.0: {}
 
-  libphonenumber-js@1.11.12: {}
+  libphonenumber-js@1.11.13: {}
 
   lie@3.1.1:
     dependencies:
@@ -5835,7 +5839,7 @@ snapshots:
 
   lower-case@2.0.2:
     dependencies:
-      tslib: 2.8.0
+      tslib: 2.8.1
 
   lru-cache@10.4.3: {}
 
@@ -5890,7 +5894,7 @@ snapshots:
   no-case@3.0.4:
     dependencies:
       lower-case: 2.0.2
-      tslib: 2.8.0
+      tslib: 2.8.1
 
   node-releases@2.0.18: {}
 
@@ -5920,7 +5924,7 @@ snapshots:
 
   parse-json@5.2.0:
     dependencies:
-      '@babel/code-frame': 7.26.0
+      '@babel/code-frame': 7.26.2
       error-ex: 1.3.2
       json-parse-even-better-errors: 2.3.1
       lines-and-columns: 1.2.4
@@ -6048,19 +6052,19 @@ snapshots:
     transitivePeerDependencies:
       - csstype
 
-  react-intl@6.8.4(react@18.3.1)(typescript@5.6.3):
+  react-intl@6.8.7(react@18.3.1)(typescript@5.6.3):
     dependencies:
-      '@formatjs/ecma402-abstract': 2.2.1
-      '@formatjs/icu-messageformat-parser': 2.9.1
-      '@formatjs/intl': 2.10.11(typescript@5.6.3)
-      '@formatjs/intl-displaynames': 6.8.1
-      '@formatjs/intl-listformat': 7.7.1
+      '@formatjs/ecma402-abstract': 2.2.3
+      '@formatjs/icu-messageformat-parser': 2.9.3
+      '@formatjs/intl': 2.10.14(typescript@5.6.3)
+      '@formatjs/intl-displaynames': 6.8.4
+      '@formatjs/intl-listformat': 7.7.4
       '@types/hoist-non-react-statics': 3.3.5
       '@types/react': 18.3.12
       hoist-non-react-statics: 3.3.2
-      intl-messageformat: 10.7.3
+      intl-messageformat: 10.7.6
       react: 18.3.1
-      tslib: 2.8.0
+      tslib: 2.8.1
     optionalDependencies:
       typescript: 5.6.3
 
@@ -6069,7 +6073,7 @@ snapshots:
   react-reader@2.0.11(react@18.3.1):
     dependencies:
       epubjs: 0.3.93
-      react-swipeable: 7.0.1(react@18.3.1)
+      react-swipeable: 7.0.2(react@18.3.1)
     transitivePeerDependencies:
       - react
 
@@ -6088,7 +6092,7 @@ snapshots:
     dependencies:
       react: 18.3.1
       react-style-singleton: 2.2.1(@types/react@18.3.12)(react@18.3.1)
-      tslib: 2.8.0
+      tslib: 2.8.1
     optionalDependencies:
       '@types/react': 18.3.12
 
@@ -6097,7 +6101,7 @@ snapshots:
       react: 18.3.1
       react-remove-scroll-bar: 2.3.6(@types/react@18.3.12)(react@18.3.1)
       react-style-singleton: 2.2.1(@types/react@18.3.12)(react@18.3.1)
-      tslib: 2.8.0
+      tslib: 2.8.1
       use-callback-ref: 1.3.2(@types/react@18.3.12)(react@18.3.1)
       use-sidecar: 1.1.2(@types/react@18.3.12)(react@18.3.1)
     optionalDependencies:
@@ -6108,11 +6112,11 @@ snapshots:
       get-nonce: 1.0.1
       invariant: 2.2.4
       react: 18.3.1
-      tslib: 2.8.0
+      tslib: 2.8.1
     optionalDependencies:
       '@types/react': 18.3.12
 
-  react-swipeable@7.0.1(react@18.3.1):
+  react-swipeable@7.0.2(react@18.3.1):
     dependencies:
       react: 18.3.1
 
@@ -6129,7 +6133,7 @@ snapshots:
     dependencies:
       react: 18.3.1
 
-  react-use-websocket@4.10.0: {}
+  react-use-websocket@4.10.1: {}
 
   react-virtuoso@4.12.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
@@ -6184,28 +6188,28 @@ snapshots:
 
   reusify@1.0.4: {}
 
-  rollup@4.24.3:
+  rollup@4.24.4:
     dependencies:
       '@types/estree': 1.0.6
     optionalDependencies:
-      '@rollup/rollup-android-arm-eabi': 4.24.3
-      '@rollup/rollup-android-arm64': 4.24.3
-      '@rollup/rollup-darwin-arm64': 4.24.3
-      '@rollup/rollup-darwin-x64': 4.24.3
-      '@rollup/rollup-freebsd-arm64': 4.24.3
-      '@rollup/rollup-freebsd-x64': 4.24.3
-      '@rollup/rollup-linux-arm-gnueabihf': 4.24.3
-      '@rollup/rollup-linux-arm-musleabihf': 4.24.3
-      '@rollup/rollup-linux-arm64-gnu': 4.24.3
-      '@rollup/rollup-linux-arm64-musl': 4.24.3
-      '@rollup/rollup-linux-powerpc64le-gnu': 4.24.3
-      '@rollup/rollup-linux-riscv64-gnu': 4.24.3
-      '@rollup/rollup-linux-s390x-gnu': 4.24.3
-      '@rollup/rollup-linux-x64-gnu': 4.24.3
-      '@rollup/rollup-linux-x64-musl': 4.24.3
-      '@rollup/rollup-win32-arm64-msvc': 4.24.3
-      '@rollup/rollup-win32-ia32-msvc': 4.24.3
-      '@rollup/rollup-win32-x64-msvc': 4.24.3
+      '@rollup/rollup-android-arm-eabi': 4.24.4
+      '@rollup/rollup-android-arm64': 4.24.4
+      '@rollup/rollup-darwin-arm64': 4.24.4
+      '@rollup/rollup-darwin-x64': 4.24.4
+      '@rollup/rollup-freebsd-arm64': 4.24.4
+      '@rollup/rollup-freebsd-x64': 4.24.4
+      '@rollup/rollup-linux-arm-gnueabihf': 4.24.4
+      '@rollup/rollup-linux-arm-musleabihf': 4.24.4
+      '@rollup/rollup-linux-arm64-gnu': 4.24.4
+      '@rollup/rollup-linux-arm64-musl': 4.24.4
+      '@rollup/rollup-linux-powerpc64le-gnu': 4.24.4
+      '@rollup/rollup-linux-riscv64-gnu': 4.24.4
+      '@rollup/rollup-linux-s390x-gnu': 4.24.4
+      '@rollup/rollup-linux-x64-gnu': 4.24.4
+      '@rollup/rollup-linux-x64-musl': 4.24.4
+      '@rollup/rollup-win32-arm64-msvc': 4.24.4
+      '@rollup/rollup-win32-ia32-msvc': 4.24.4
+      '@rollup/rollup-win32-x64-msvc': 4.24.4
       fsevents: 2.3.3
 
   run-parallel@1.2.0:
@@ -6237,7 +6241,7 @@ snapshots:
   snake-case@3.0.4:
     dependencies:
       dot-case: 3.0.4
-      tslib: 2.8.0
+      tslib: 2.8.1
 
   source-map-js@1.2.1: {}
 
@@ -6355,7 +6359,7 @@ snapshots:
 
   tsdef@0.0.14: {}
 
-  tslib@2.8.0: {}
+  tslib@2.8.1: {}
 
   tsx@4.19.2:
     dependencies:
@@ -6372,7 +6376,7 @@ snapshots:
 
   undici-types@6.19.8: {}
 
-  unplugin-icons@0.19.3(@svgr/core@8.1.0(typescript@5.6.3))(webpack-sources@3.2.3):
+  unplugin-icons@0.20.1(@svgr/core@8.1.0(typescript@5.6.3))(webpack-sources@3.2.3):
     dependencies:
       '@antfu/install-pkg': 0.4.1
       '@antfu/utils': 0.7.10
@@ -6408,7 +6412,7 @@ snapshots:
   use-callback-ref@1.3.2(@types/react@18.3.12)(react@18.3.1):
     dependencies:
       react: 18.3.1
-      tslib: 2.8.0
+      tslib: 2.8.1
     optionalDependencies:
       '@types/react': 18.3.12
 
@@ -6433,7 +6437,7 @@ snapshots:
     dependencies:
       detect-node-es: 1.1.0
       react: 18.3.1
-      tslib: 2.8.0
+      tslib: 2.8.1
     optionalDependencies:
       '@types/react': 18.3.12
 
@@ -6448,7 +6452,7 @@ snapshots:
 
   util-deprecate@1.0.2: {}
 
-  vaul@0.9.9(@types/react-dom@18.3.1)(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  vaul@1.1.1(@types/react-dom@18.3.1)(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:
       '@radix-ui/react-dialog': 1.1.2(@types/react-dom@18.3.1)(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react: 18.3.1
@@ -6457,26 +6461,26 @@ snapshots:
       - '@types/react'
       - '@types/react-dom'
 
-  vite-bundle-analyzer@0.12.1: {}
+  vite-bundle-analyzer@0.13.0: {}
 
-  vite-tsconfig-paths@5.0.1(typescript@5.6.3)(vite@5.4.10(@types/node@22.8.4)(terser@5.36.0)):
+  vite-tsconfig-paths@5.1.0(typescript@5.6.3)(vite@5.4.10(@types/node@22.9.0)(terser@5.36.0)):
     dependencies:
       debug: 4.3.7
       globrex: 0.1.2
       tsconfck: 3.1.4(typescript@5.6.3)
     optionalDependencies:
-      vite: 5.4.10(@types/node@22.8.4)(terser@5.36.0)
+      vite: 5.4.10(@types/node@22.9.0)(terser@5.36.0)
     transitivePeerDependencies:
       - supports-color
       - typescript
 
-  vite@5.4.10(@types/node@22.8.4)(terser@5.36.0):
+  vite@5.4.10(@types/node@22.9.0)(terser@5.36.0):
     dependencies:
       esbuild: 0.21.5
       postcss: 8.4.47
-      rollup: 4.24.3
+      rollup: 4.24.4
     optionalDependencies:
-      '@types/node': 22.8.4
+      '@types/node': 22.9.0
       fsevents: 2.3.3
       terser: 5.36.0
 
@@ -6509,7 +6513,7 @@ snapshots:
 
   zod@3.23.8: {}
 
-  zustand@5.0.0(@types/react@18.3.12)(immer@10.1.1)(react@18.3.1)(use-sync-external-store@1.2.2(react@18.3.1)):
+  zustand@5.0.1(@types/react@18.3.12)(immer@10.1.1)(react@18.3.1)(use-sync-external-store@1.2.2(react@18.3.1)):
     optionalDependencies:
       '@types/react': 18.3.12
       immer: 10.1.1

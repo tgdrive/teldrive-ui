@@ -23,15 +23,14 @@ import clsx from "clsx";
 import { center } from "@/utils/classes";
 import { fileQueries } from "@/utils/query-options";
 import { useQuery } from "@tanstack/react-query";
+import { useShallow } from "zustand/react/shallow";
 
 const sortOptions = {
   numeric: true,
   sensitivity: "base",
 } as const;
 
-const VideoPreview = lazy(
-  () => import("@/components/previews/video/video-preview")
-);
+const VideoPreview = lazy(() => import("@/components/previews/video/video-preview"));
 
 const EpubPreview = lazy(() => import("@/components/previews/epub-preview"));
 
@@ -41,8 +40,7 @@ const findNext = (files: FileData[], fileId: string, previewType: string) => {
 
   for (let i = 0; i < files.length; i++) {
     const matchPreview =
-      (previewType === "all" && files[i].previewType) ||
-      files[i].previewType === previewType;
+      (previewType === "all" && files[i].previewType) || files[i].previewType === previewType;
 
     if (index > -1 && matchPreview) {
       return files[i];
@@ -67,8 +65,7 @@ const findPrev = (files: FileData[], fileId: string, previewType: string) => {
   let lastPreviewIndex = -1;
   for (let i = files.length - 1; i >= 0; i--) {
     const matchPreview =
-      (previewType === "all" && files[i].previewType) ||
-      files[i].previewType === previewType;
+      (previewType === "all" && files[i].previewType) || files[i].previewType === previewType;
 
     if (index > -1 && matchPreview) {
       return files[i];
@@ -99,11 +96,7 @@ const ControlButton = ({ type, onPress }: ControlButtonProps) => {
       variant="text"
       onPress={onPress}
     >
-      {type === "next" ? (
-        <IconIcRoundNavigateNext />
-      ) : (
-        <IconIcRoundNavigateBefore />
-      )}
+      {type === "next" ? <IconIcRoundNavigateNext /> : <IconIcRoundNavigateBefore />}
     </Button>
   );
 };
@@ -125,17 +118,19 @@ export default memo(function PreviewModal({
     fileProp.toSorted((a, b) =>
       defaultSortState.order === "asc"
         ? a.name.localeCompare(b.name, undefined, sortOptions)
-        : b.name.localeCompare(a.name, undefined, sortOptions)
-    )
+        : b.name.localeCompare(a.name, undefined, sortOptions),
+    ),
   );
 
-  const modalActions = useModalStore((state) => state.actions);
+  const { actions, open, currentFile } = useModalStore(
+    useShallow((state) => ({
+      actions: state.actions,
+      currentFile: state.currentFile,
+      open: state.open,
+    })),
+  );
 
-  const previewFile = useModalStore((state) => state.currentFile);
-
-  const modalOpen = useModalStore((state) => state.open);
-
-  const { id, name, previewType } = previewFile;
+  const { id, name, previewType } = currentFile;
 
   const { icon } = useIconData({ id, name, isDir: false });
 
@@ -144,11 +139,11 @@ export default memo(function PreviewModal({
       if (files) {
         const nextItem = findNext(files, id, previewType);
         if (nextItem) {
-          modalActions.setCurrentFile(nextItem);
+          actions.setCurrentFile(nextItem);
         }
       }
     },
-    [id, files]
+    [id, files],
   );
 
   const prevItem = useCallback(
@@ -156,27 +151,22 @@ export default memo(function PreviewModal({
       if (files) {
         const prevItem = findPrev(files, id, previewType);
         if (prevItem) {
-          modalActions.setCurrentFile(prevItem);
+          actions.setCurrentFile(prevItem);
         }
       }
     },
-    [id, files]
+    [id, files],
   );
 
   const { data: fileData } = useQuery(
-    fileQueries.getFile(id, view !== "my-drive" && !path)
+    fileQueries.getFile(id, view !== "my-drive" && view !== "shared" && !path),
   );
 
-  const handleClose = useCallback(() => modalActions.setOpen(false), []);
+  const handleClose = useCallback(() => actions.setOpen(false), []);
 
   const assetUrl = shareId
     ? sharedMediaUrl(shareId, id, name)
-    : mediaUrl(
-        id,
-        name,
-        view === "my-drive" ? path || "/" : fileData?.path!,
-        session?.hash!
-      );
+    : mediaUrl(id, name, view === "my-drive" ? path || "/" : fileData?.path!, session?.hash!);
 
   const renderPreview = useCallback(() => {
     if (previewType) {
@@ -225,12 +215,7 @@ export default memo(function PreviewModal({
 
         case preview.audio:
           return (
-            <AudioPreview
-              nextItem={nextItem}
-              prevItem={prevItem}
-              name={name}
-              assetUrl={assetUrl}
-            />
+            <AudioPreview nextItem={nextItem} prevItem={prevItem} name={name} assetUrl={assetUrl} />
           );
 
         default:
@@ -243,7 +228,7 @@ export default memo(function PreviewModal({
   return (
     <Modal
       aria-labelledby="preview-modal"
-      isOpen={modalOpen}
+      isOpen={open}
       size="5xl"
       classNames={{
         wrapper: "overflow-hidden",
@@ -266,10 +251,7 @@ export default memo(function PreviewModal({
                 >
                   <IconIcRoundArrowBack className="size-6" />
                 </Button>
-                <FbIcon
-                  icon={icon}
-                  className="size-6 min-w-6 hidden sm:block"
-                />
+                <FbIcon icon={icon} className="size-6 min-w-6 hidden sm:block" />
                 <h6
                   className="truncate text-label-large font-normal text-inherit hidden sm:block"
                   title={name}
