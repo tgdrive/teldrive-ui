@@ -7,7 +7,7 @@ import { ErrorView } from "@/components/error-view";
 export const Route = createFileRoute("/_share/share/$id")({
   validateSearch: (search: Record<string, unknown>) => search as ShareQuery,
   loaderDeps: ({ search }) => search,
-  loader: async ({ context: { queryClient }, params, preload, deps }) => {
+  loader: async ({ context: { queryClient }, params, deps }) => {
     const res = await queryClient.fetchQuery(shareQueries.share(params.id));
     const password = JSON.parse(sessionStorage.getItem("password") || "null");
     const queryParams = {
@@ -19,11 +19,7 @@ export const Route = createFileRoute("/_share/share/$id")({
     if (res.protected && !password) {
       return;
     }
-    if (preload) {
-      await queryClient.prefetchInfiniteQuery(shareQueries.list(queryParams));
-    } else {
-      queryClient.fetchInfiniteQuery(shareQueries.list(queryParams));
-    }
+    await queryClient.ensureInfiniteQueryData(shareQueries.list(queryParams));
   },
   wrapInSuspense: true,
   errorComponent: ({ error }) => {

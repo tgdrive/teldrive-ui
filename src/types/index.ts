@@ -133,6 +133,7 @@ export type FilterQuery = {
   updatedAt?: string;
   deepSearch?: boolean;
   parentId?: string;
+  searchType?: string;
 };
 
 export type ShareQuery = {

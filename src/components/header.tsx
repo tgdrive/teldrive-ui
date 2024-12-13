@@ -1,14 +1,12 @@
 import { type ChangeEvent, memo, useCallback, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { Button, Input } from "@tw-material/react";
 import IconBiSearch from "~icons/bi/search";
 import MdiFilterOutline from "~icons/mdi/filter-outline";
 import PhTelegramLogoFill from "~icons/ph/telegram-logo-fill";
 import clsx from "clsx";
 import debounce from "lodash.debounce";
-
-import { usePreload } from "@/utils/query-options";
 
 import { ProfileDropDown } from "./menus/profile";
 import { SearchMenu } from "./menus/search/search";
@@ -25,24 +23,25 @@ const SearchBar = memo(({ className }: SearchBarProps) => {
 
   const [isOpen, setIsOpen] = useState(false);
 
-  const { preloadFiles } = usePreload();
-
   const triggerRef = useRef<HTMLButtonElement | null>(null);
 
   const queryClient = useQueryClient();
 
+  const navigate = useNavigate();
+
   const debouncedSearch = useCallback(
     debounce(
       (newValue: string) =>
-        preloadFiles(
-          {
-            view: "search",
-            search: {
-              query: newValue,
-            },
+        navigate({
+          to: "/$view",
+          search: {
+            query: newValue,
           },
-          false,
-        ),
+          params: {
+            view: "search",
+          },
+          replace: true,
+        }),
       1000,
     ),
     [],

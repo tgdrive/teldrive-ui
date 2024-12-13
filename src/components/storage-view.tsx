@@ -7,7 +7,7 @@ import { filesize } from "filesize";
 
 import { grow } from "@/utils/classes";
 
-import { userQueries, usePreload } from "@/utils/query-options";
+import { userQueries } from "@/utils/query-options";
 
 import { UploadStatsChart } from "./charts/upload-stats";
 
@@ -27,26 +27,12 @@ const CategoryStorageCard = memo(({ category, totalSize, totalFiles }: CategoryS
 
   useEffect(() => setIsMounted(true), []);
 
-  const { preloadFiles } = usePreload();
-
-  const handleClick = useCallback((e: MouseEvent) => {
-    e.preventDefault();
-    preloadFiles({
-      view: "browse",
-      search: {
-        category,
-      },
-    });
-  }, []);
-
   return (
     <Link
       to="/$view"
       params={{ view: "browse" }}
       search={{ category }}
       className="min-h-40 bg-surface rounded-xl"
-      preload={false}
-      onClick={handleClick}
     >
       <div
         data-mounted={isMounted}

@@ -10,7 +10,6 @@ import useWebSocket from "react-use-websocket";
 
 import QrCode from "@/components/qr-code";
 import { TelegramIcon } from "@/components/telegram-icon";
-import { useProgress } from "@/components/top-progress";
 import http from "@/utils/http";
 
 import { PhoneNoPicker } from "./menus/phone-picker";
@@ -98,16 +97,12 @@ export const Login = memo(() => {
     {},
   );
 
-  const { startProgress, stopProgress } = useProgress();
-
   const postLogin = useCallback(
     async function postLogin(payload: Record<string, any>) {
-      startProgress();
       const res = await http.post("/api/auth/login", payload);
       if (res.status === 200) {
         window.location.pathname = redirect || "/";
       }
-      stopProgress();
     },
     [redirect],
   );

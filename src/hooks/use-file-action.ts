@@ -17,9 +17,9 @@ import toast from "react-hot-toast";
 import { mediaUrl, navigateToExternalUrl, sharedMediaUrl } from "@/utils/common";
 import { getSortState, SortOrder } from "@/utils/defaults";
 import http from "@/utils/http";
-import { usePreload } from "@/utils/query-options";
 import { useFileUploadStore, useModalStore } from "@/utils/stores";
 import Share from "~icons/fluent/share-24-regular";
+import { useNavigate } from "@tanstack/react-router";
 
 export const CustomActions = {
   OpenInVLCPlayer: defineFileAction({
@@ -71,13 +71,12 @@ type FbActionFullUnion = (typeof CustomActions)[keyof typeof CustomActions] | Fb
 export const useFileAction = ({ view, search }: QueryParams, session: Session) => {
   const queryClient = useQueryClient();
 
-  const { preloadFiles } = usePreload();
-
   const actions = useModalStore((state) => state.actions);
 
   const fileDialogOpen = useFileUploadStore((state) => state.actions.setFileDialogOpen);
 
   const uploadOpen = useFileUploadStore((state) => state.actions.setUploadOpen);
+  const navigate = useNavigate();
 
   return useCallback(() => {
     return async (data: MapFileActionsToData<FbActionFullUnion>) => {
@@ -106,7 +105,7 @@ export const useFileAction = ({ view, search }: QueryParams, session: Session) =
                 search: { parentId: fileToOpen.id },
               };
             }
-            preloadFiles(qparams);
+            navigate({ to: "/$view", params: { view: qparams.view }, search: qparams.search });
           } else if (fileToOpen && FileHelper.isOpenable(fileToOpen)) {
             actions.set({
               open: true,
@@ -232,10 +231,8 @@ export const useFileAction = ({ view, search }: QueryParams, session: Session) =
 };
 
 export const useShareFileAction = (params: ShareQueryParams) => {
-  const { preloadSharedFiles } = usePreload();
-
   const actions = useModalStore((state) => state.actions);
-
+  const navigate = useNavigate();
   return useCallback(() => {
     return async (data: MapFileActionsToData<FbActionFullUnion>) => {
       switch (data.id) {
@@ -246,11 +243,16 @@ export const useShareFileAction = (params: ShareQueryParams) => {
 
           if (fileToOpen && FileHelper.isDirectory(fileToOpen)) {
             const basePath = params?.path ?? "/";
-            preloadSharedFiles({
-              ...params,
-              path: fileToOpen.chain
-                ? fileToOpen.path
-                : `${basePath === "/" ? "" : basePath}/${fileToOpen.name}`,
+            navigate({
+              to: "/share/$id",
+              params: {
+                id: params.id,
+              },
+              search: {
+                path: fileToOpen.chain
+                  ? fileToOpen.path
+                  : `${basePath === "/" ? "" : basePath}/${fileToOpen.name}`,
+              },
             });
           } else if (fileToOpen && FileHelper.isOpenable(fileToOpen)) {
             actions.set({

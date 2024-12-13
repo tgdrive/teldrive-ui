@@ -15,13 +15,9 @@ export const Route = createFileRoute("/_authed/$view")({
   },
   validateSearch: (search: Record<string, unknown>) => search as FilterQuery,
   loaderDeps: ({ search }) => search,
-  loader: async ({ context: { queryClient }, preload, deps, params }) => {
+  loader: async ({ context: { queryClient }, deps, params }) => {
     const queryParams: QueryParams = { view: params.view as BrowseView, search: deps };
-    if (preload) {
-      await queryClient.prefetchInfiniteQuery(fileQueries.list(queryParams));
-    } else {
-      queryClient.fetchInfiniteQuery(fileQueries.list(queryParams));
-    }
+    await queryClient.ensureInfiniteQueryData(fileQueries.list(queryParams));
   },
   wrapInSuspense: true,
   errorComponent: ({ error }) => {

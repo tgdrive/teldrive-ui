@@ -11,9 +11,12 @@ export const navigateToExternalUrl = (url: string, shouldOpenNewTab = true) => {
 };
 
 export const chainLinks = (path: string) => {
-  const paths = path?.split("/").slice(1);
   let pathsoFar = "/";
   const chains = [["My Drive", pathsoFar]] as Array<[string, string]>;
+  if (!path || path === "/") {
+    return chains;
+  }
+  const paths = path?.split("/").slice(1);
   for (const path of paths) {
     const decodedPath = decodeURIComponent(path);
     chains.push([decodedPath, pathsoFar + decodedPath]);

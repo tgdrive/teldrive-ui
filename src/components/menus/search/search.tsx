@@ -42,6 +42,8 @@ const categories = [
   { value: "other", icon: IconFaSolidFile },
 ];
 
+const searchTypes = ["text", "regex"];
+
 const locations = ["current", "custom"];
 
 const modifiedDateValues = [
@@ -66,6 +68,7 @@ const defaultFilters = {
   toDate: "",
   path: "",
   deepSearch: false,
+  searchType: "text",
 };
 
 export const SearchMenu = memo(({ isOpen, setIsOpen, triggerRef }: SearchMenuProps) => {
@@ -120,6 +123,8 @@ export const SearchMenu = memo(({ isOpen, setIsOpen, triggerRef }: SearchMenuPro
           filterQuery.path = data.path;
           filterQuery.deepSearch = data.deepSearch;
         } else if (key === "query" && value) {
+          filterQuery[key] = value;
+        } else if (key === "searchType" && value) {
           filterQuery[key] = value;
         }
       }
@@ -196,26 +201,55 @@ export const SearchMenu = memo(({ isOpen, setIsOpen, triggerRef }: SearchMenuPro
             </CheckboxGroup>
           )}
         />
-        <Controller
-          name="query"
-          control={control}
-          render={({ field, fieldState: { error } }) => (
-            <Input
-              size="md"
-              labelPlacement="outside"
-              label="Search Query"
-              placeholder="Search..."
-              autoComplete="off"
-              isClearable
-              onClear={() => field.onChange("")}
-              className="max-w-xs"
-              variant="bordered"
-              isInvalid={!!error}
-              errorMessage={error?.message}
-              {...field}
-            />
-          )}
-        />
+        <div className="flex flex-col gap-4">
+          <Controller
+            name="query"
+            control={control}
+            render={({ field, fieldState: { error } }) => (
+              <Input
+                size="md"
+                labelPlacement="outside"
+                label="Search"
+                placeholder="search query or regex"
+                autoComplete="off"
+                isClearable
+                onClear={() => field.onChange("")}
+                className="max-w-xs"
+                variant="bordered"
+                isInvalid={!!error}
+                errorMessage={error?.message}
+                {...field}
+              />
+            )}
+          />
+          <Controller
+            control={control}
+            name="searchType"
+            render={({ field }) => (
+              <RadioGroup
+                classNames={{
+                  wrapper: "gap-4",
+                  label: "text-md text-inherit select-none",
+                }}
+                orientation="horizontal"
+                {...field}
+              >
+                {searchTypes.map((type) => (
+                  <Radio
+                    value={type}
+                    key={type}
+                    classNames={{
+                      label: "capitalize text-md",
+                    }}
+                  >
+                    {type}
+                  </Radio>
+                ))}
+              </RadioGroup>
+            )}
+          />
+        </div>
+
         <div className="flex items-end gap-4">
           <Controller
             control={control}

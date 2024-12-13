@@ -1,31 +1,31 @@
-import * as React from "react";
+import { useIsFetching } from "@tanstack/react-query";
+import { useRouterState } from "@tanstack/react-router";
+import { memo, useEffect, useRef } from "react";
 import LoadingBar, { type LoadingBarRef } from "react-top-loading-bar";
 
-interface InitContextProps {
-  ref: React.RefObject<LoadingBarRef>;
-  startProgress: () => void;
-  stopProgress: () => void;
-}
+export const TopLoader = memo(() => {
+  const ref = useRef<LoadingBarRef>(null);
+  const completed = useRef(true);
 
-const ProgressContext = React.createContext({} as InitContextProps);
+  const [status, pathname] = useRouterState({ select: (s) => [s.status, s.location.pathname] });
 
-export function ProgressProvider({ children }: { children: React.ReactNode }) {
-  const ref = React.useRef<LoadingBarRef>(null);
+  const loadingQueriesCount = useIsFetching({
+    predicate: (query) => !query.state.dataUpdatedAt,
+    fetchStatus: "fetching",
+  });
 
-  const startProgress = () => ref?.current?.continuousStart();
+  useEffect(() => {
+    if (pathname.includes("/search")) return;
 
-  const stopProgress = () => ref?.current?.complete();
+    if (status === "pending" && loadingQueriesCount > 0 && completed.current) {
+      ref?.current?.continuousStart();
+      completed.current = false;
+    }
+    if (status === "idle" && !completed.current) {
+      ref?.current?.complete();
+      completed.current = true;
+    }
+  }, [loadingQueriesCount, status, pathname]);
 
-  const value = React.useMemo(
-    () => ({ ref, startProgress, stopProgress }),
-    [ref, startProgress, stopProgress],
-  );
-  return (
-    <ProgressContext.Provider value={value}>
-      {children}
-      <LoadingBar className="!bg-primary" shadow={false} ref={ref} waitingTime={200} />
-    </ProgressContext.Provider>
-  );
-}
-
-export const useProgress = () => React.useContext(ProgressContext);
+  return <LoadingBar shadow={false} className="!bg-primary" ref={ref} waitingTime={200} />;
+});

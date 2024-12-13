@@ -5,6 +5,7 @@ import clsx from "clsx";
 import Header from "@/components/header";
 import { SideNav } from "@/components/navs/side-nav";
 import { scrollbarClasses } from "@/utils/classes";
+import { TopLoader } from "@/components/top-progress";
 
 export const AuthLayout = memo(() => {
   return (
@@ -18,6 +19,7 @@ export const AuthLayout = memo(() => {
             scrollbarClasses,
           )}
         >
+          <TopLoader />
           <Outlet />
         </main>
       </div>

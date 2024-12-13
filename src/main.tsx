@@ -10,7 +10,6 @@ import { queryClient } from "@/utils/query-client";
 
 import { TailwindIndicator } from "./components/tailwind-indicator";
 import { ThemeProvider } from "./components/theme-provider";
-import { ProgressProvider } from "./components/top-progress";
 import { routeTree } from "./route-tree.gen";
 import { StrictMode } from "react";
 
@@ -33,8 +32,7 @@ if (!rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement);
   root.render(
     <StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <ProgressProvider>
+      <QueryClientProvider client={queryClient}>
         <ThemeProvider>
           <Toaster
             toastOptions={{
@@ -45,9 +43,8 @@ if (!rootElement.innerHTML) {
           <RouterProvider router={router} />
         </ThemeProvider>
         <TailwindIndicator />
-      </ProgressProvider>
-      <ReactQueryDevtools initialIsOpen={false} />
-    </QueryClientProvider>
-     </StrictMode>
+        <ReactQueryDevtools initialIsOpen={false} />
+      </QueryClientProvider>
+    </StrictMode>,
   );
 }
