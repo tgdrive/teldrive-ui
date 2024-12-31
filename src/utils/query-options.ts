@@ -1,24 +1,30 @@
 import type { FileListParams, ShareListParams } from "@/types";
-import { infiniteQueryOptions } from "@tanstack/react-query";
+import { infiniteQueryOptions, queryOptions, useQuery } from "@tanstack/react-query";
 import type { FileData } from "@tw-material/file-browser";
 
 import { getExtension, mediaUrl } from "./common";
 import { defaultSortState, settings, sortIdsMap, sortViewMap } from "./defaults";
 import { getPreviewType, preview } from "./preview-type";
-import { $api, fetchClient } from "./api";
+import { fetchClient } from "./api";
 import type { components } from "@/lib/api";
 
+export const sessionOptions = queryOptions({
+  queryKey: ["session"],
+  queryFn: async ({ signal }) => {
+    const res = await fetchClient.GET("/auth/session", {
+      signal,
+    });
+    if (res.response.status === 204) {
+      return null;
+    }
+    return res.data;
+  },
+});
+
 export const useSession = () => {
-  const { data, isLoading, refetch } = $api.useQuery(
-    "get",
-    "/auth/session",
-    {},
-    {
-      initialData: null as any,
-    },
-  );
+  const { data, isLoading, refetch } = useQuery(sessionOptions);
   const status = isLoading ? "loading" : data?.userId ? "success" : "unauthenticated";
-  return [data ? { ...data } : null, status, refetch] as const;
+  return [data ?? null, status, refetch] as const;
 };
 
 export const fileQueries = {

@@ -4,8 +4,6 @@ import { Avatar, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@
 import IconBaselineLogout from "~icons/ic/baseline-logout";
 import IconOutlineSettings from "~icons/ic/outline-settings";
 
-import { profileName, profileUrl } from "@/utils/common";
-
 import { useSession } from "@/utils/query-options";
 import { $api } from "@/utils/api";
 
@@ -50,7 +48,7 @@ export function ProfileDropDown() {
         }}
       >
         <DropdownItem key="profile" className="pointer-events-none">
-          <p className="font-semibold">{session?.name}</p>
+          <p className="font-semibold">{session?.userName}</p>
         </DropdownItem>
 
         <DropdownItem

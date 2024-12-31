@@ -2,13 +2,13 @@ import type { QueryClient } from "@tanstack/react-query";
 import { createFileRoute, type ParsedLocation, redirect } from "@tanstack/react-router";
 
 import { AuthLayout } from "@/layouts/auth-layout";
-import { $api } from "@/utils/api";
+import { sessionOptions } from "@/utils/query-options";
 
 const checkAuth = async (queryClient: QueryClient, location: ParsedLocation, preload: boolean) => {
   if (preload) {
     return;
   }
-  const session = await queryClient.ensureQueryData($api.queryOptions("get", "/auth/session"));
+  const session = await queryClient.ensureQueryData(sessionOptions);
   if (!session) {
     redirect({
       to: "/login",
