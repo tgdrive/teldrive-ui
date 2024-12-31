@@ -1,3 +1,4 @@
+import type { operations } from "@/lib/api";
 import type { Dispatch, SetStateAction } from "react";
 
 export type FileResponse = {
@@ -66,12 +67,14 @@ export type UserSession = {
   current: boolean;
 };
 
-export type QueryParams = {
+export type BrowseView = "my-drive" | "search" | "recent" | "browse" | "shared";
+
+export type FileListParams = {
   view: BrowseView;
-  search?: FilterQuery;
+  params: Exclude<operations["Files_list"]["parameters"]["query"], undefined>;
 };
 
-export type ShareQueryParams = {
+export type ShareListParams = {
   id: string;
   path?: string;
   password?: string;
@@ -123,19 +126,4 @@ export type PreviewFile = {
   name: string;
   mimeType: string;
   previewType: string;
-};
-export type BrowseView = "my-drive" | "search" | "recent" | "browse" | "shared";
-
-export type FilterQuery = {
-  category?: string;
-  path?: string;
-  query?: string;
-  updatedAt?: string;
-  deepSearch?: boolean;
-  parentId?: string;
-  searchType?: string;
-};
-
-export type ShareQuery = {
-  path?: string;
 };

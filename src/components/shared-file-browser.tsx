@@ -1,8 +1,5 @@
 import { memo, useEffect, useMemo, useRef } from "react";
-import {
-  useSuspenseInfiniteQuery,
-  useSuspenseQuery,
-} from "@tanstack/react-query";
+import { useSuspenseInfiniteQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
 import {
   FbActions,
@@ -12,11 +9,7 @@ import {
   FileNavbar,
   FileToolbar,
 } from "@tw-material/file-browser";
-import type {
-  StateSnapshot,
-  VirtuosoGridHandle,
-  VirtuosoHandle,
-} from "react-virtuoso";
+import type { StateSnapshot, VirtuosoGridHandle, VirtuosoHandle } from "react-virtuoso";
 import useBreakpoint from "use-breakpoint";
 
 import { chainSharedLinks } from "@/utils/common";
@@ -25,6 +18,7 @@ import { shareQueries } from "@/utils/query-options";
 import { sharefileActions, useShareFileAction } from "@/hooks/use-file-action";
 import { useModalStore } from "@/utils/stores";
 import PreviewModal from "./modals/preview";
+import { $api } from "@/utils/api";
 
 let firstRender = true;
 
@@ -63,7 +57,13 @@ export const SharedFileBrowser = memo(({ password }: { password: string }) => {
 
   const {
     data: { name, type },
-  } = useSuspenseQuery(shareQueries.share(id));
+  } = $api.useSuspenseQuery("get", "/shares/{id}", {
+    params: {
+      path: {
+        id,
+      },
+    },
+  });
 
   const {
     data: files,

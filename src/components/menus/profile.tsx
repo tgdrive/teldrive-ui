@@ -1,28 +1,29 @@
-import { useCallback } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { Avatar, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@tw-material/react";
 import IconBaselineLogout from "~icons/ic/baseline-logout";
 import IconOutlineSettings from "~icons/ic/outline-settings";
 
 import { profileName, profileUrl } from "@/utils/common";
-import http from "@/utils/http";
-import { userQueries } from "@/utils/query-options";
+
+import { useSession } from "@/utils/query-options";
+import { $api } from "@/utils/api";
 
 export function ProfileDropDown() {
-  const { data: session, refetch } = useQuery(userQueries.session());
+  const [session, _, refetch] = useSession();
+
   const navigate = useNavigate();
 
   const queryClient = useQueryClient();
 
-  const signOut = useCallback(async () => {
-    const res = await http.post("/api/auth/logout");
-    refetch();
-    if (res.status === 200) {
-      queryClient.removeQueries();
-      navigate({ to: "/login", replace: true });
-    }
-  }, []);
+  const signOut = $api.useMutation("post", "/auth/logout", {
+    onSuccess: () => {
+      refetch().then(() => {
+        queryClient.removeQueries();
+        navigate({ to: "/login", replace: true });
+      });
+    },
+  });
 
   return (
     <Dropdown
@@ -36,7 +37,7 @@ export function ProfileDropDown() {
           size="sm"
           showFallback
           className="outline-none shrink-0"
-          src={profileUrl(session!)}
+          src={"/api/users/profile/profile.jpeg"}
         />
       </DropdownTrigger>
       <DropdownMenu
@@ -49,7 +50,7 @@ export function ProfileDropDown() {
         }}
       >
         <DropdownItem key="profile" className="pointer-events-none">
-          <p className="font-semibold">{profileName(session!)}</p>
+          <p className="font-semibold">{session?.name}</p>
         </DropdownItem>
 
         <DropdownItem
@@ -65,7 +66,7 @@ export function ProfileDropDown() {
         <DropdownItem
           key="logout"
           endContent={<IconBaselineLogout className="size-6" />}
-          onPress={signOut}
+          onPress={() => signOut.mutateAsync({})}
         >
           Logout
         </DropdownItem>

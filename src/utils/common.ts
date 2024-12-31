@@ -113,19 +113,23 @@ export const mediaUrl = (
   if (settings.rcloneProxy && path) {
     return `${settings.rcloneProxy}${path === "/" ? "" : path}/${encodeURIComponent(name)}`;
   }
-  return `${window.location.origin}/api/files/${id}/${download ? "download" : "stream"}/${encodeURIComponent(
-    name,
-  )}?hash=${sessionHash}`;
+  const url = new URL(window.location.origin);
+  url.pathname = `/api/files/${id}/${name}`;
+  url.searchParams.set("hash", sessionHash);
+  if (download) {
+    url.searchParams.set("download", "1");
+  }
+  return url.toString();
 };
 
 export const sharedMediaUrl = (shareId: string, fileId: string, name: string, download = false) => {
-  const host = window.location.origin;
-  return `${host}/api/share/${shareId}/files/${fileId}/${download ? "download" : "stream"}/${encodeURIComponent(name)}`;
+  const url = new URL(window.location.origin);
+  url.pathname = `/api/shares/${shareId}/files/${fileId}/${name}`;
+  if (download) {
+    url.searchParams.set("download", "1");
+  }
+  return url.toString();
 };
-
-export const profileUrl = (session: Session) => `/api/users/profile?photo=1&hash=${session.hash}`;
-
-export const profileName = (session: Session) => session.userName;
 
 export function bytesToGB(bytes: number) {
   const gb = bytes / 1024 ** 3;
@@ -184,10 +188,9 @@ export function getNextDate(): string {
 
 export function getCountryCode(): string | null {
   const language: string = navigator.language || (navigator as any).userLanguage;
-
   if (language.includes("-")) {
     const parts: string[] = language.split("-");
-    return parts[1].toUpperCase();
+    return parts[1] ? parts[1].toUpperCase() : "US";
   }
 
   return "US";

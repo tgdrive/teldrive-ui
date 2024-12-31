@@ -1,15 +1,15 @@
-import { memo, type MouseEvent, useCallback, useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import type { CategoryStorage } from "@/types";
-import { useSuspenseQueries } from "@tanstack/react-query";
+import { queryOptions, useSuspenseQueries } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import clsx from "clsx";
 import { filesize } from "filesize";
 
 import { grow } from "@/utils/classes";
 
-import { userQueries } from "@/utils/query-options";
-
 import { UploadStatsChart } from "./charts/upload-stats";
+import { $api } from "@/utils/api";
+import { bytesToGB } from "@/utils/common";
 
 function getTotalStats(data: CategoryStorage[]) {
   return data.reduce(
@@ -31,7 +31,7 @@ const CategoryStorageCard = memo(({ category, totalSize, totalFiles }: CategoryS
     <Link
       to="/$view"
       params={{ view: "browse" }}
-      search={{ category }}
+      search={{ category: category as any }}
       className="min-h-40 bg-surface rounded-xl"
     >
       <div
@@ -48,34 +48,56 @@ const CategoryStorageCard = memo(({ category, totalSize, totalFiles }: CategoryS
 
 export const StorageView = memo(() => {
   const [days, setDays] = useState(7);
-
-  const [uploadStats, categoryStorageData] = useSuspenseQueries({
-    queries: [userQueries.uploadStats(days), userQueries.categories()],
+  const [{ data: uploadStats }, { data: categories }] = useSuspenseQueries({
+    queries: [
+      queryOptions({
+        ...$api.queryOptions("get", "/uploads/stats", {
+          params: {
+            query: {
+              days,
+            },
+          },
+        }),
+        select: (data) =>
+          data.map((stat) => {
+            const options = { day: "numeric", month: "short" } as const;
+            const formattedDate = new Intl.DateTimeFormat("en-US", options).format(
+              new Date(stat.uploadDate),
+            );
+            return {
+              totalUploaded: bytesToGB(stat.totalUploaded),
+              uploadDate: formattedDate,
+            };
+          }),
+      }),
+      queryOptions({
+        ...$api.queryOptions("get", "/files/categories"),
+        select: (data) => ({ data, totalStats: getTotalStats(data) }),
+      }),
+    ],
   });
-
-  const totalStats = getTotalStats(categoryStorageData.data);
 
   return (
     <>
       <div className="grid grid-cols-[repeat(auto-fill,minmax(220px,1fr))] pb-4 gap-2">
-        {categoryStorageData.data.map((category) => (
+        {categories.data.map((category) => (
           <CategoryStorageCard key={category.category} {...category} />
         ))}
       </div>
       <div className="mt-4 grid grid-cols-12 gap-4 md:mt-6 md:gap-6 2xl:mt-7.5 2xl:gap-7.5">
-        <UploadStatsChart days={days} setDays={setDays} stats={uploadStats.data} />
+        <UploadStatsChart days={days} setDays={setDays} stats={uploadStats} />
         <div className="col-span-12 rounded-lg bg-surface text-on-surface p-4 lg:col-span-4 max-h-56">
           <h2 className="text-2xl font-medium">Storage</h2>
           <div className="grid grid-cols-2 gap-4 mt-4">
             <div>
               <h3 className="text-lg font-semibold">Total Size</h3>
               <p className="text-3xl font-semibold">
-                {filesize(totalStats.totalSize, { standard: "jedec" })}
+                {filesize(categories.totalStats.totalSize, { standard: "jedec" })}
               </p>
             </div>
             <div>
               <h3 className="text-lg font-semibold">Total Files</h3>
-              <p className="text-3xl font-semibold">{totalStats.totalFiles}</p>
+              <p className="text-3xl font-semibold">{categories.totalStats.totalFiles}</p>
             </div>
           </div>
         </div>

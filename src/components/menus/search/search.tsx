@@ -1,5 +1,4 @@
 import { memo, useCallback, useEffect, useRef, useState } from "react";
-import type { FilterQuery } from "@/types";
 import { type NavigateOptions, useRouter, useRouterState } from "@tanstack/react-router";
 import {
   Button,
@@ -23,6 +22,7 @@ import { Controller, useForm, useWatch } from "react-hook-form";
 import { scrollbarClasses } from "@/utils/classes";
 
 import { FilterChip } from "./filter-chip";
+import type { FileListParams } from "@/types";
 
 const getCurrentDateFormatted = () => {
   const today = new Date();
@@ -94,7 +94,7 @@ export const SearchMenu = memo(({ isOpen, setIsOpen, triggerRef }: SearchMenuPro
 
   const onSubmit = useCallback(
     (data: typeof defaultFilters) => {
-      const filterQuery = {} as FilterQuery;
+      const filterQuery = {} as FileListParams["params"];
       for (const key in data) {
         const value = data[key];
 

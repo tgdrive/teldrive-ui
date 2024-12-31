@@ -1,13 +1,11 @@
 import type { SetValue } from "@/types";
 import { createLazyFileRoute } from "@tanstack/react-router";
-import { shareQueries } from "@/utils/query-options";
 import { Button, Input } from "@tw-material/react";
 import PasswordIcon from "~icons/carbon/password";
 import ShowPasswordIcon from "~icons/mdi/eye-outline";
 import HidePasswordIcon from "~icons/mdi/eye-off-outline";
 import { useCallback, useState } from "react";
-import { useSuspenseQuery } from "@tanstack/react-query";
-import http from "@/utils/http";
+import { $api } from "@/utils/api";
 import { Controller, useForm } from "react-hook-form";
 import { useSessionStorage } from "usehooks-ts";
 import { SharedFileBrowser } from "@/components/shared-file-browser";
@@ -18,28 +16,23 @@ export const Route = createLazyFileRoute("/_share/share/$id")({
 
 function Component() {
   const { id } = Route.useParams();
-
-  const { data: file, isLoading } = useSuspenseQuery(shareQueries.share(id));
+  const { data: file } = $api.useSuspenseQuery("get", "/shares/{id}", {
+    params: {
+      path: {
+        id,
+      },
+    },
+  });
 
   const [unlockPassword, setUnlockPassword] = useSessionStorage("password", "");
 
-  const [unlocked, setUnlocked] = useState(
-    (file.protected && !!unlockPassword) || !file.protected
-  );
+  const [unlocked, setUnlocked] = useState((file.protected && !!unlockPassword) || !file.protected);
 
   if (!unlocked) {
-    return (
-      <ShareAccess
-        id={id}
-        setUnlockPassword={setUnlockPassword}
-        setUnlocked={setUnlocked}
-      />
-    );
+    return <ShareAccess id={id} setUnlockPassword={setUnlockPassword} setUnlocked={setUnlocked} />;
   }
 
-  return (!file.protected || unlocked) && !isLoading ? (
-    <SharedFileBrowser password={unlockPassword} />
-  ) : null;
+  return !file.protected || unlocked ? <SharedFileBrowser password={unlockPassword} /> : null;
 }
 
 interface ShareAccessProps {
@@ -51,8 +44,6 @@ interface ShareAccessProps {
 function ShareAccess({ id, setUnlocked, setUnlockPassword }: ShareAccessProps) {
   const [showPassword, setShowPassword] = useState(false);
 
-  const [loading, setLoading] = useState(false);
-
   const { control, handleSubmit, setError } = useForm({
     defaultValues: {
       password: "",
@@ -61,17 +52,19 @@ function ShareAccess({ id, setUnlocked, setUnlockPassword }: ShareAccessProps) {
 
   const togglePassword = () => setShowPassword((prev) => !prev);
 
-  const onSubmit = useCallback(async ({ password }: { password: string }) => {
-    try {
-      setLoading(true);
-      await http.post(`/api/share/${id}/unlock`, { password });
+  const unLockMutation = $api.useMutation("post", "/shares/{id}/unlock", {
+    onSuccess: () => {
       setUnlocked(true);
-      setUnlockPassword(password);
-    } catch {
+    },
+    onError: () => {
       setError("password", { message: "Invalid password" });
-    } finally {
-      setLoading(false);
-    }
+    },
+  });
+
+  const onSubmit = useCallback(async ({ password }: { password: string }) => {
+    unLockMutation
+      .mutateAsync({ params: { path: { id } }, body: { password } })
+      .then(() => setUnlockPassword(password));
   }, []);
 
   return (
@@ -102,12 +95,7 @@ function ShareAccess({ id, setUnlocked, setUnlockPassword }: ShareAccessProps) {
             autoSave="off"
             type={showPassword ? "text" : "password"}
             endContent={
-              <Button
-                isIconOnly
-                className="size-8 min-w-8"
-                variant="text"
-                onPress={togglePassword}
-              >
+              <Button isIconOnly className="size-8 min-w-8" variant="text" onPress={togglePassword}>
                 {showPassword ? <HidePasswordIcon /> : <ShowPasswordIcon />}
               </Button>
             }
@@ -115,7 +103,7 @@ function ShareAccess({ id, setUnlocked, setUnlockPassword }: ShareAccessProps) {
         )}
       />
       <Button
-        isLoading={loading}
+        isLoading={unLockMutation.isPending}
         fullWidth
         type="submit"
         variant="filledTonal"

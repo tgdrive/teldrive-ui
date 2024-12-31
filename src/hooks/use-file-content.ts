@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import http from "@/utils/http";
+import fetch from "@/utils/fetch-throw";
 
 export default function useFileContent(url: string) {
   const [response, setResponse] = useState("");
@@ -7,11 +7,9 @@ export default function useFileContent(url: string) {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    http
-      .get(url)
-      .then((res) => {
-        setResponse(res.data);
-      })
+    fetch(url)
+      .then((res) => res.text())
+      .then(setResponse)
       .catch((e) => setError(e.message))
       .finally(() => setValidating(false));
   }, [url]);

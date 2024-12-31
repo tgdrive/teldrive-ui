@@ -10,10 +10,10 @@ import useWebSocket from "react-use-websocket";
 
 import QrCode from "@/components/qr-code";
 import { TelegramIcon } from "@/components/telegram-icon";
-import http from "@/utils/http";
 
 import { PhoneNoPicker } from "./menus/phone-picker";
 import { getCountryCode } from "@/utils/common";
+import { $api } from "@/utils/api";
 
 const getKeys = Object.keys as <T>(object: T) => (keyof T)[];
 
@@ -97,15 +97,11 @@ export const Login = memo(() => {
     {},
   );
 
-  const postLogin = useCallback(
-    async function postLogin(payload: Record<string, any>) {
-      const res = await http.post("/api/auth/login", payload);
-      if (res.status === 200) {
-        window.location.pathname = redirect || "/";
-      }
+  const postLogin = $api.useMutation("post", "/auth/login", {
+    onSuccess: () => {
+      window.location.pathname = redirect || "/";
     },
-    [redirect],
-  );
+  });
 
   const onSubmit = useCallback(
     ({ phoneNumber, otpCode, password, phoneCode }: FormState) => {
@@ -158,7 +154,9 @@ export const Login = memo(() => {
   useEffect(() => {
     if (lastJsonMessage !== null) {
       if (lastJsonMessage?.message === "success") {
-        postLogin(lastJsonMessage.payload);
+        postLogin.mutateAsync({
+          body: lastJsonMessage.payload as any,
+        });
         setState((prev) => ({
           ...prev,
           isLoading: false,

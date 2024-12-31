@@ -1,5 +1,5 @@
 import { memo, useEffect, useMemo, useRef } from "react";
-import { useQuery, useSuspenseInfiniteQuery } from "@tanstack/react-query";
+import { useSuspenseInfiniteQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
 import {
   FbActions,
@@ -15,13 +15,13 @@ import useBreakpoint from "use-breakpoint";
 import { CustomActions, fileActions, useFileAction } from "@/hooks/use-file-action";
 import { chainLinks } from "@/utils/common";
 import { BREAKPOINTS, defaultSortState, defaultViewId, sortViewMap } from "@/utils/defaults";
-import { fileQueries, userQueries } from "@/utils/query-options";
+import { fileQueries, useSession } from "@/utils/query-options";
 import { useFileUploadStore, useModalStore } from "@/utils/stores";
 
 import { FileOperationModal } from "./modals/file-operation";
 import PreviewModal from "./modals/preview";
 import { Upload } from "./upload";
-import type { BrowseView, QueryParams } from "@/types";
+import type { BrowseView, FileListParams } from "@/types";
 
 let firstRender = true;
 
@@ -47,13 +47,13 @@ export const DriveFileBrowser = memo(() => {
 
   const listRef = useRef<VirtuosoHandle | VirtuosoGridHandle>(null);
 
-  const { data: session } = useQuery(userQueries.session());
+  const [session] = useSession();
 
-  const queryParams: QueryParams = {
+  const queryParams: FileListParams = {
     view: view as BrowseView,
-    search,
+    params: search,
   };
-  const queryOptions = fileQueries.list(queryParams, session?.hash!);
+  const queryOptions = fileQueries.list(queryParams, session?.hash);
 
   const modalOpen = useModalStore((state) => state.open);
 
@@ -84,7 +84,7 @@ export const DriveFileBrowser = memo(() => {
     }
 
     return [];
-  }, [search.path, view]);
+  }, [search?.path, view]);
 
   useEffect(() => {
     if (firstRender) {
@@ -94,17 +94,17 @@ export const DriveFileBrowser = memo(() => {
 
     setTimeout(() => {
       listRef.current?.scrollTo({
-        top: positions.get(view + search.path || "")?.scrollTop ?? 0,
+        top: positions.get(view + search?.path || "")?.scrollTop ?? 0,
         left: 0,
       });
     }, 0);
 
     return () => {
       if (listRef.current && isVirtuosoList(listRef.current)) {
-        listRef.current?.getState((state) => positions.set(view + search.path || "", state));
+        listRef.current?.getState((state) => positions.set(view + search?.path || "", state));
       }
     };
-  }, [search.path, view]);
+  }, [search?.path, view]);
 
   return (
     <div className="size-full m-auto">
@@ -139,7 +139,7 @@ export const DriveFileBrowser = memo(() => {
         <PreviewModal
           session={session!}
           files={files}
-          path={search.path || ""}
+          path={search?.path || ""}
           view={view as BrowseView}
         />
       )}

@@ -1,12 +1,21 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 
 import { NonAuthLayout } from "@/layouts/non-auth-layout";
-import { userQueries } from "@/utils/query-options";
+import { $api } from "@/utils/api";
 
 export const Route = createFileRoute("/_auth")({
   component: NonAuthLayout,
   beforeLoad: async ({ context: { queryClient } }) => {
-    const session = await queryClient.ensureQueryData(userQueries.session());
+    const session = await queryClient.ensureQueryData(
+      $api.queryOptions(
+        "get",
+        "/auth/session",
+        {},
+        {
+          initialData: null as any,
+        },
+      ),
+    );
     if (session) {
       redirect({
         to: "/$view",

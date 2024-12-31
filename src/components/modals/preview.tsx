@@ -21,9 +21,9 @@ import { useModalStore } from "@/utils/stores";
 import CodePreview from "../previews/code-preview";
 import clsx from "clsx";
 import { center } from "@/utils/classes";
-import { fileQueries } from "@/utils/query-options";
 import { useQuery } from "@tanstack/react-query";
 import { useShallow } from "zustand/react/shallow";
+import { $api } from "@/utils/api";
 
 const sortOptions = {
   numeric: true,
@@ -157,10 +157,25 @@ export default memo(function PreviewModal({
     },
     [id, files],
   );
-
-  const { data: fileData } = useQuery(
-    fileQueries.getFile(id, view !== "my-drive" && view !== "shared" && !path),
-  );
+  const { data: fileData } = useQuery({
+    ...$api.queryOptions(
+      "get",
+      "/files/{id}",
+      {
+        params: {
+          path: {
+            id,
+          },
+        },
+      },
+      {},
+    ),
+    enabled: view !== "my-drive" && view !== "shared" && !path,
+    select: ({ path, ...data }) => ({
+      ...data,
+      path: path?.split("/").slice(0, -1).join("/"),
+    }),
+  });
 
   const handleClose = useCallback(() => actions.setOpen(false), []);
 

@@ -1,20 +1,32 @@
-import type { ShareQuery, ShareQueryParams } from "@/types";
+import type { ShareListParams } from "@/types";
 import { createFileRoute } from "@tanstack/react-router";
 import { shareQueries } from "@/utils/query-options";
 import { AxiosError } from "feaxios";
 import { ErrorView } from "@/components/error-view";
+import { $api } from "@/utils/api";
 
 export const Route = createFileRoute("/_share/share/$id")({
-  validateSearch: (search: Record<string, unknown>) => search as ShareQuery,
+  validateSearch: (search: Record<string, unknown>) =>
+    search as {
+      path?: string;
+    },
   loaderDeps: ({ search }) => search,
-  loader: async ({ context: { queryClient }, params, deps }) => {
-    const res = await queryClient.fetchQuery(shareQueries.share(params.id));
+  loader: async ({ context: { queryClient }, params: { id }, deps }) => {
+    const res = await queryClient.ensureQueryData(
+      $api.queryOptions("get", "/shares/{id}", {
+        params: {
+          path: {
+            id,
+          },
+        },
+      }),
+    );
     const password = JSON.parse(sessionStorage.getItem("password") || "null");
     const queryParams = {
-      id: params.id,
+      id,
       password: password || "",
       path: deps.path || "",
-    } as ShareQueryParams;
+    } as ShareListParams;
 
     if (res.protected && !password) {
       return;
@@ -23,12 +35,6 @@ export const Route = createFileRoute("/_share/share/$id")({
   },
   wrapInSuspense: true,
   errorComponent: ({ error }) => {
-    let errorMessage = "server error";
-    if (error instanceof AxiosError) {
-      errorMessage = error.response?.data?.message || errorMessage;
-    } else {
-      errorMessage = error.message || errorMessage;
-    }
-    return <ErrorView message={errorMessage} />;
+    return <ErrorView message={error.message} />;
   },
 });

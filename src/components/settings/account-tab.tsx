@@ -1,19 +1,20 @@
-import { memo, useCallback, useState } from "react";
-import type { AccountStats, Channel, Message, UserSession } from "@/types";
-import { useQueries, useQuery, useQueryClient } from "@tanstack/react-query";
+import { memo, useCallback } from "react";
+import type { UserSession } from "@/types";
+import { useMutation, useQueryClient, useSuspenseQueries } from "@tanstack/react-query";
 import { Button, scrollbarClasses, Select, SelectItem, Textarea } from "@tw-material/react";
 import IcRoundCancel from "~icons/ic/round-cancel";
 import IcRoundCheckCircle from "~icons/ic/round-check-circle";
 import IcRoundContentCopy from "~icons/ic/round-content-copy";
 import IcRoundRemoveCircleOutline from "~icons/ic/round-remove-circle-outline";
 import clsx from "clsx";
-import type { AxiosError } from "feaxios";
+
 import { Controller, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 
 import { chunkArray, copyDataToClipboard } from "@/utils/common";
-import http from "@/utils/http";
-import { userQueries } from "@/utils/query-options";
+import { $api, fetchClient } from "@/utils/api";
+
+import type { components } from "@/lib/api";
 
 const validateBots = (value?: string) => {
   if (value) {
@@ -23,14 +24,8 @@ const validateBots = (value?: string) => {
   return false;
 };
 
-async function updateChannel(channel: Channel) {
-  return http.patch("/api/users/channels", { ...channel }).then(() => {
-    toast.success("Channel updated");
-  });
-}
-
 const Session = memo(({ appName, location, createdAt, valid, hash, current }: UserSession) => {
-  const deleteSession = userQueries.deleteSession();
+  const deleteSession = $api.useMutation("delete", "/users/sessions/{id}");
 
   return (
     <div
@@ -45,7 +40,7 @@ const Session = memo(({ appName, location, createdAt, valid, hash, current }: Us
           variant="text"
           size="sm"
           className="absolute top-1 right-1"
-          onPress={() => deleteSession.mutateAsync(hash)}
+          onPress={() => deleteSession.mutateAsync({ params: { path: { id: hash } } })}
         >
           <IcRoundCancel />
         </Button>
@@ -72,77 +67,68 @@ export const AccountTab = memo(() => {
     defaultValues: { tokens: "" },
   });
 
-  const { data: session } = useQuery(userQueries.session());
-
-  const [
-    { data, refetch, isSuccess },
-    { data: sessions, isSuccess: sessionsLoaded },
-    { data: channelData, isLoading: channelLoading },
-  ] = useQueries({
+  const [{ data: userConfig }, { data: sessions }] = useSuspenseQueries({
     queries: [
-      userQueries.stats(session?.userName!),
-      userQueries.sessions(),
-      userQueries.channels(session?.userName!),
+      $api.queryOptions("get", "/users/config"),
+      $api.queryOptions("get", "/users/sessions"),
     ],
   });
 
-  const [isRemoving, setIsRemoving] = useState<boolean>(false);
+  const { data: channelData, isLoading: channelLoading } = $api.useQuery("get", "/users/channels");
 
-  const [isSaving, setIsSaving] = useState<boolean>(false);
+  const removeBots = $api.useMutation("delete", "/users/bots");
 
   const queryClient = useQueryClient();
 
-  const removeBots = useCallback(() => {
-    setIsRemoving(true);
-    http
-      .delete("/api/users/bots")
-      .then(() => {
-        toast.success("bots removed");
-      })
-      .finally(() => {
-        refetch().finally(() => {
-          setIsRemoving(false);
-        });
-      });
-  }, []);
-
   const copyTokens = useCallback(() => {
-    if (data && data.bots.length > 0) {
-      copyDataToClipboard(data.bots).then(() => {
+    if (userConfig && userConfig.bots.length > 0) {
+      copyDataToClipboard(userConfig.bots).then(() => {
         toast.success("Tokens Copied");
       });
     }
-  }, [data?.bots]);
+  }, [userConfig?.bots]);
 
-  const onSubmit = useCallback(async ({ tokens }: { tokens: string }) => {
-    const tokensList = tokens.trim().split("\n");
-    if (tokensList?.length! > 0) {
-      setIsSaving(true);
-      try {
-        const tokenPromies = chunkArray(tokensList, 8).map((tokens) =>
-          http.post<Message>("/api/users/bots", tokens),
-        );
-        await Promise.all(tokenPromies);
-        toast.success("bots added");
-        queryClient.invalidateQueries({ queryKey: ["stats"] });
-      } catch (err) {
-        const error = err as AxiosError<Message>;
-        if (error.response) {
-          toast.error(error.response.data.message?.split(":").slice(-1)[0]);
-        }
-      } finally {
-        setIsSaving(false);
+  const botAddition = useMutation({
+    mutationFn: async (tokens: string) => {
+      const tokensList = tokens.trim().split("\n");
+      if (tokensList.length === 0) {
+        throw new Error("No tokens provided");
       }
-    }
-  }, []);
+      const tokenPromises = chunkArray(tokensList, 8).map((tokens) =>
+        fetchClient.POST("/users/bots", {
+          body: {
+            bots: tokens,
+          },
+        }),
+      );
+      return Promise.all(tokenPromises);
+    },
+    onSuccess: () => {
+      toast.success("bots added");
+      queryClient.invalidateQueries({ queryKey: ["get", "/users/config"] });
+    },
+    onError: (error: components["schemas"]["Error"]) => {
+      if (error.message) {
+        toast.error(error.message.split(":").slice(-1)[0]!);
+      }
+    },
+  });
+  const updateChannel = $api.useMutation("patch", "/users/channels");
+
+  const onSubmit = useCallback(
+    async ({ tokens }: { tokens: string }) => {
+      botAddition.mutate(tokens);
+    },
+    [botAddition],
+  );
 
   const handleSelectionChange = useCallback(
     (value: any) => {
       const channelId = Number.parseInt([...value][0]);
       const channelName = channelData?.find((c) => c.channelId === channelId)?.channelName;
-
-      updateChannel({ channelId, channelName }).then(() => {
-        queryClient.invalidateQueries({ queryKey: ["stats"] });
+      updateChannel.mutateAsync({ body: { channelId, channelName } }).then(() => {
+        toast.success("Channel updated");
+        queryClient.invalidateQueries({ queryKey: ["get", "/users/config"] });
       });
     },
     [channelData],
@@ -158,7 +144,7 @@ export const AccountTab = memo(() => {
           </p>
         </div>
         <div className="col-span-6 xs:col-span-3 flex flex-col gap-2">
-          <p className="text-lg font-medium">{`Current Bots: ${data?.bots.length || 0}`}</p>
+          <p className="text-lg font-medium">{`Current Bots: ${userConfig?.bots.length || 0}`}</p>
           <div className="inline-flex gap-4">
             <Button
               title="Copy Tokens to Clipboard"
@@ -174,8 +160,8 @@ export const AccountTab = memo(() => {
               variant="text"
               title="Remove Bots"
               className="text-inherit"
-              onPress={removeBots}
-              isLoading={isRemoving}
+              onPress={() => removeBots.mutate({})}
+              isLoading={removeBots.isPending}
               isIconOnly
             >
               <IcRoundRemoveCircleOutline />
@@ -203,7 +189,7 @@ export const AccountTab = memo(() => {
               />
             )}
           />
-          <Button isLoading={isSaving} type="submit" variant="filledTonal">
+          <Button isLoading={botAddition.isPending} type="submit" variant="filledTonal">
             Add Bots
           </Button>
         </form>
@@ -215,30 +201,28 @@ export const AccountTab = memo(() => {
         </p>
       </div>
       <div className="col-span-6 xs:col-span-3">
-        {isSuccess && (
-          <Select
-            aria-label="Select Channel"
-            size="lg"
-            isLoading={channelLoading}
-            className="col-span-6 xs:col-span-3"
-            scrollShadowProps={{
-              isEnabled: false,
-            }}
-            classNames={{
-              popoverContent: "rounded-lg shadow-1",
-            }}
-            variant="bordered"
-            items={channelData || []}
-            defaultSelectedKeys={[data?.channelId ? data.channelId.toString() : ""]}
-            onSelectionChange={handleSelectionChange}
-          >
-            {(channel) => (
-              <SelectItem key={channel.channelId} value={channel.channelId}>
-                {channel.channelName}
-              </SelectItem>
-            )}
-          </Select>
-        )}
+        <Select
+          aria-label="Select Channel"
+          size="lg"
+          isLoading={channelLoading}
+          className="col-span-6 xs:col-span-3"
+          scrollShadowProps={{
+            isEnabled: false,
+          }}
+          classNames={{
+            popoverContent: "rounded-lg shadow-1",
+          }}
+          variant="bordered"
+          items={channelData || []}
+          defaultSelectedKeys={[userConfig.channelId ? userConfig.channelId.toString() : ""]}
+          onSelectionChange={handleSelectionChange}
+        >
+          {(channel) => (
+            <SelectItem key={channel.channelId} value={channel.channelId}>
+              {channel.channelName}
+            </SelectItem>
+          )}
+        </Select>
       </div>
       <div className="col-span-6">
         <p className="text-lg font-medium">Sessions</p>
@@ -246,8 +230,9 @@ export const AccountTab = memo(() => {
           Active sessions for your account
         </p>
         <div className="flex pt-2 flex-wrap gap-2">
-          {sessionsLoaded &&
-            sessions?.map((session) => <Session key={session.hash} {...session} />)}
+          {sessions?.map((session) => (
+            <Session key={session.hash} {...session} />
+          ))}
         </div>
       </div>
     </div>

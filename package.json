@@ -17,7 +17,6 @@
     "apexcharts": "^4.2.0",
     "clsx": "^2.1.1",
     "epubjs": "^0.3.93",
-    "feaxios": "^0.0.23",
     "filesize": "^10.1.6",
     "framer-motion": "^11.14.3",
     "immer": "^10.1.1",
@@ -25,6 +24,7 @@
     "lodash.debounce": "^4.0.8",
     "md5": "^2.3.0",
     "monaco-editor": "^0.52.2",
+    "openapi-fetch": "^0.13.3",
     "p-limit": "^6.1.0",
     "qr-code-styling": "1.8.4",
     "react-apexcharts": "^1.7.0",
@@ -53,6 +53,8 @@
     "@types/react-dom": "18.3.1",
     "@vitejs/plugin-react": "^4.3.4",
     "autoprefixer": "^10.4.20",
+    "openapi-typescript": "^7.4.4",
+    "openapi-typescript-helpers": "^0.0.15",
     "postcss": "^8.4.49",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -72,13 +74,12 @@
     "preview": "vite preview ",
     "lint": "biome lint --write ./src",
     "format": "biome format --write ./src",
-    "update": "pnpm up --latest"
+    "gen:api-client": "openapi-typescript \"https://raw.githubusercontent.com/tgdrive/teldrive-docs/refs/heads/main/openapi/openapi.yaml\" -o ./src/lib/api.d.ts"
   },
   "pnpm": {
     "overrides": {
       "react": "^18.3.1",
       "react-dom": "^18.3.1"
     }
-  },
-  "packageManager": "pnpm@9.12.3"
+  }
 }

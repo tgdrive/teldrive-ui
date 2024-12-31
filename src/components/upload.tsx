@@ -1,7 +1,6 @@
 import type React from "react";
 import { memo, useCallback, useEffect, useMemo, useRef } from "react";
-import type { FileResponse, QueryParams, UploadPart } from "@/types";
-import { useQuery } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { ColorsLight, FbIcon, useIconData } from "@tw-material/file-browser";
 import { Button, Listbox, ListboxItem } from "@tw-material/react";
 import IcOutlineCheckCircle from "~icons/ic/outline-check-circle";
@@ -20,9 +19,11 @@ import { useShallow } from "zustand/react/shallow";
 import useSettings from "@/hooks/use-settings";
 import { scrollbarClasses } from "@/utils/classes";
 import { filesize, formatTime, zeroPad } from "@/utils/common";
-import http from "@/utils/http";
-import { userQueries, fileQueries } from "@/utils/query-options";
+import { $api, fetchClient } from "@/utils/api";
+import { useSession } from "@/utils/query-options";
 import { FileUploadStatus, useFileUploadStore } from "@/utils/stores";
+import type { components } from "@/lib/api";
+import { useSearch } from "@tanstack/react-router";
 
 type UploadParams = Record<string, string | number | boolean | undefined>;
 
@@ -80,12 +81,14 @@ const uploadFile = async (
   const fileName = file.name;
 
   const res = (
-    await http.get<FileResponse>("/api/files", {
-      params: { path, name: fileName, op: "find" },
+    await fetchClient.GET("/files", {
+      params: {
+        query: { path, name: fileName, operation: "find" },
+      },
     })
   ).data;
 
-  if (res.files.length > 0) {
+  if (res && res.items.length > 0) {
     throw new Error("File already exists");
   }
 
@@ -99,7 +102,15 @@ const uploadFile = async (
 
   const url = `${window.location.origin}/api/uploads/${uploadId}`;
 
-  const uploadedParts = (await http.get<{ parts: UploadPart[] }>(url)).data.parts;
+  const uploadedParts = (
+    await fetchClient.GET("/uploads/{id}", {
+      params: {
+        path: {
+          id: uploadId,
+        },
+      },
+    })
+  ).data!;
 
   let channelId = 0;
 
@@ -107,12 +118,12 @@ const uploadFile = async (
     channelId = uploadedParts[0].channelId;
   }
 
-  const partUploadPromises: Promise<UploadPart>[] = [];
+  const partUploadPromises: Promise<components["schemas"]["UploadPart"]>[] = [];
 
   const partProgress: number[] = [];
 
   for (let partIndex = 0; partIndex < totalParts; partIndex++) {
-    if (uploadedParts.findIndex((item) => item.partNo === partIndex + 1) > -1) {
+    if (uploadedParts?.findIndex((item) => item.partNo === partIndex + 1) > -1) {
       partProgress[partIndex] = 100;
       continue;
     }
@@ -137,9 +148,15 @@ const uploadFile = async (
             channelId,
           } as const;
 
-          const asset = await uploadChunk<UploadPart>(url, fileBlob, params, signal, (progress) => {
-            partProgress[partIndex] = progress;
-          });
+          const asset = await uploadChunk<components["schemas"]["UploadPart"]>(
+            url,
+            fileBlob,
+            params,
+            signal,
+            (progress) => {
+              partProgress[partIndex] = progress;
+            },
+          );
           return asset;
         })(),
       ),
@@ -175,7 +192,13 @@ const uploadFile = async (
   } as const;
 
   await onCreate(payload);
-  await http.delete(url);
+  await fetchClient.DELETE("/uploads/{id}", {
+    params: {
+      path: {
+        id: uploadId,
+      },
+    },
+  });
   clearInterval(timer);
 };
 
@@ -272,7 +295,7 @@ export const Upload = ({ queryKey }: { queryKey: any[] }) => {
 
   const { settings } = useSettings();
 
-  const { data: session } = useQuery(userQueries.session());
+  const [session] = useSession();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -297,14 +320,22 @@ export const Upload = ({ queryKey }: { queryKey: any[] }) => {
       actions.addFiles(files);
     }
   }, []);
-  const createMutation = fileQueries.create(queryKey);
+
+  const queryClient = useQueryClient();
+
+  const creatFile = $api.useMutation("post", "/files", {
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey });
+    },
+  });
+  const { path } = useSearch({ from: "/_authed/$view" });
 
   useEffect(() => {
     if (currentFile?.id && currentFile?.status === FileUploadStatus.NOT_STARTED) {
       actions.setFileUploadStatus(currentFile.id, FileUploadStatus.UPLOADING);
       uploadFile(
         currentFile.file,
-        (queryKey[1] as QueryParams).search?.path || "",
+        path || "/",
         Number(settings.splitFileSize),
         session?.userId as number,
         Number(settings.uploadConcurrency),
@@ -312,8 +343,8 @@ export const Upload = ({ queryKey }: { queryKey: any[] }) => {
         currentFile.controller.signal,
         (progress) => actions.setProgress(currentFile.id, progress),
         async (payload) => {
-          await createMutation.mutateAsync(payload);
-          if (createMutation.isSuccess) {
+          await creatFile.mutateAsync(payload);
+          if (creatFile.isSuccess) {
             actions.setFileUploadStatus(currentFile.id, FileUploadStatus.UPLOADED);
           }
         },

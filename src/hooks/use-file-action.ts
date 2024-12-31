@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import type { QueryParams, Session, ShareQueryParams } from "@/types";
+import type { FileListParams, Session, ShareListParams } from "@/types";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   defineFileAction,
@@ -16,10 +16,10 @@ import toast from "react-hot-toast";
 
 import { mediaUrl, navigateToExternalUrl, sharedMediaUrl } from "@/utils/common";
 import { getSortState, SortOrder } from "@/utils/defaults";
-import http from "@/utils/http";
 import { useFileUploadStore, useModalStore } from "@/utils/stores";
 import Share from "~icons/fluent/share-24-regular";
 import { useNavigate } from "@tanstack/react-router";
+import { $api } from "@/utils/api";
 
 export const CustomActions = {
   OpenInVLCPlayer: defineFileAction({
@@ -68,7 +68,7 @@ export const CustomActions = {
 
 type FbActionFullUnion = (typeof CustomActions)[keyof typeof CustomActions] | FbActionUnion;
 
-export const useFileAction = ({ view, search }: QueryParams, session: Session) => {
+export const useFileAction = ({ view, params: search }: FileListParams, session: Session) => {
   const queryClient = useQueryClient();
 
   const actions = useModalStore((state) => state.actions);
@@ -76,7 +76,10 @@ export const useFileAction = ({ view, search }: QueryParams, session: Session) =
   const fileDialogOpen = useFileUploadStore((state) => state.actions.setFileDialogOpen);
 
   const uploadOpen = useFileUploadStore((state) => state.actions.setUploadOpen);
+
   const navigate = useNavigate();
+
+  const moveFiles = $api.useMutation("post", "/files/move");
 
   return useCallback(() => {
     return async (data: MapFileActionsToData<FbActionFullUnion>) => {
@@ -87,13 +90,13 @@ export const useFileAction = ({ view, search }: QueryParams, session: Session) =
           const fileToOpen = targetFile ?? files[0];
 
           if (fileToOpen && FileHelper.isDirectory(fileToOpen)) {
-            let qparams: QueryParams;
+            let qparams: FileListParams;
 
             if (view === "my-drive") {
               const basePath = search?.path ?? "/";
               qparams = {
                 view,
-                search: {
+                params: {
                   path: fileToOpen.chain
                     ? fileToOpen.path
                     : `${basePath === "/" ? "" : basePath}/${fileToOpen.name}`,
@@ -102,10 +105,10 @@ export const useFileAction = ({ view, search }: QueryParams, session: Session) =
             } else {
               qparams = {
                 view: "browse",
-                search: { parentId: fileToOpen.id },
+                params: { parentId: fileToOpen.id },
               };
             }
-            navigate({ to: "/$view", params: { view: qparams.view }, search: qparams.search });
+            navigate({ to: "/$view", params: { view: qparams.view }, search: qparams.params });
           } else if (fileToOpen && FileHelper.isOpenable(fileToOpen)) {
             actions.set({
               open: true,
@@ -130,7 +133,7 @@ export const useFileAction = ({ view, search }: QueryParams, session: Session) =
         case CustomActions.OpenInVLCPlayer.id: {
           const { selectedFiles } = data.state;
           const fileToOpen = selectedFiles[0];
-          const { id, name } = fileToOpen;
+          const { id, name } = fileToOpen!;
           const url = `vlc://${mediaUrl(id, name, search?.path || "", session.hash)}`;
           navigateToExternalUrl(url, false);
           break;
@@ -138,7 +141,7 @@ export const useFileAction = ({ view, search }: QueryParams, session: Session) =
         case CustomActions.OpenInPotPlayer.id: {
           const { selectedFiles } = data.state;
           const fileToOpen = selectedFiles[0];
-          const { id, name } = fileToOpen;
+          const { id, name } = fileToOpen!;
           const url = `potplayer://${mediaUrl(id, name, search?.path || "", session.hash)}`;
           navigateToExternalUrl(url, false);
           break;
@@ -188,16 +191,20 @@ export const useFileAction = ({ view, search }: QueryParams, session: Session) =
         }
         case FbActions.MoveFiles.id: {
           const { files, target } = data.payload;
-          const res = await http.post("/api/files/move", {
-            files: files.map((file) => file?.id),
-            destination: target.path || "/",
-          });
-          if (res.status === 200) {
-            toast.success(`${files.length} files moved successfully`);
-            queryClient.invalidateQueries({
-              queryKey: ["files"],
+          moveFiles
+            .mutateAsync({
+              body: {
+                ids: files.map((file) => file?.id!),
+                destination: target.path || "/",
+              },
+            })
+            .then(() => {
+              toast.success(`${files.length} files moved successfully`);
+              queryClient.invalidateQueries({
+                queryKey: ["Files_list", "my-drive"],
+              });
             });
-          }
+
           break;
         }
 
@@ -230,7 +237,7 @@ export const useFileAction = ({ view, search }: QueryParams, session: Session) =
   }, [view, search?.path]);
 };
 
-export const useShareFileAction = (params: ShareQueryParams) => {
+export const useShareFileAction = (params: ShareListParams) => {
   const actions = useModalStore((state) => state.actions);
   const navigate = useNavigate();
   return useCallback(() => {
@@ -278,7 +285,7 @@ export const useShareFileAction = (params: ShareQueryParams) => {
         case CustomActions.OpenInVLCPlayer.id: {
           const { selectedFiles } = data.state;
           const fileToOpen = selectedFiles[0];
-          const { id, name } = fileToOpen;
+          const { id, name } = fileToOpen!;
           const url = `vlc://${sharedMediaUrl(params.id, id, name)}`;
           navigateToExternalUrl(url, false);
           break;
@@ -286,7 +293,7 @@ export const useShareFileAction = (params: ShareQueryParams) => {
         case CustomActions.OpenInPotPlayer.id: {
           const { selectedFiles } = data.state;
           const fileToOpen = selectedFiles[0];
-          const { id, name } = fileToOpen;
+          const { id, name } = fileToOpen!;
           const url = `potplayer://${sharedMediaUrl(params.id, id, name)}`;
           navigateToExternalUrl(url, false);
           break;

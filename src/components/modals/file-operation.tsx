@@ -1,5 +1,4 @@
 import { memo, useCallback, useEffect, useState } from "react";
-import type { QueryParams } from "@/types";
 import { FbActions } from "@tw-material/file-browser";
 import {
   Button,
@@ -14,29 +13,35 @@ import {
 } from "@tw-material/react";
 import { useShallow } from "zustand/react/shallow";
 
-import { shareQueries, fileQueries } from "@/utils/query-options";
 import { useModalStore } from "@/utils/stores";
 import { Controller, useForm } from "react-hook-form";
 import { CustomActions } from "@/hooks/use-file-action";
 import { CopyButton } from "@/components/copy-button";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import IcRoundClose from "~icons/ic/round-close";
 import { getNextDate } from "@/utils/common";
 import ShowPasswordIcon from "~icons/mdi/eye-outline";
 import HidePasswordIcon from "~icons/mdi/eye-off-outline";
 import MdiProtectedOutline from "~icons/mdi/protected-outline";
+import { $api } from "@/utils/api";
+import { useSearch } from "@tanstack/react-router";
 
 type FileModalProps = {
-  queryKey: any[];
+  queryKey: any;
 };
 
 interface RenameDialogProps {
-  queryKey: any[];
+  queryKey: any;
   handleClose: () => void;
 }
 
 const RenameDialog = memo(({ queryKey, handleClose }: RenameDialogProps) => {
-  const updateMutation = fileQueries.update(queryKey);
+  const queryClient = useQueryClient();
+  const updateFiles = $api.useMutation("patch", "/files/{id}", {
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey });
+    },
+  });
   const { currentFile, actions } = useModalStore(
     useShallow((state) => ({
       currentFile: state.currentFile,
@@ -47,12 +52,15 @@ const RenameDialog = memo(({ queryKey, handleClose }: RenameDialogProps) => {
   const onRename = useCallback(
     (e: React.FormEvent<HTMLDivElement>) => {
       e.preventDefault();
-      updateMutation
+      updateFiles
         .mutateAsync({
-          id: currentFile?.id,
-          payload: {
+          params: {
+            path: {
+              id: currentFile.id,
+            },
+          },
+          body: {
             name: currentFile?.name,
-            type: currentFile?.type,
           },
         })
         .then(handleClose);
@@ -84,8 +92,8 @@ const RenameDialog = memo(({ queryKey, handleClose }: RenameDialogProps) => {
           className="font-normal"
           variant="filledTonal"
           form="rename-form"
-          isDisabled={updateMutation.isPending || !currentFile.name}
-          isLoading={updateMutation.isPending}
+          isDisabled={updateFiles.isPending || !currentFile.name}
+          isLoading={updateFiles.isPending}
         >
           Rename
         </Button>
@@ -95,13 +103,20 @@ const RenameDialog = memo(({ queryKey, handleClose }: RenameDialogProps) => {
 });
 
 interface FolderCreateDialogProps {
-  queryKey: any[];
+  queryKey: any;
   handleClose: () => void;
 }
 
 const FolderCreateDialog = memo(({ queryKey, handleClose }: FolderCreateDialogProps) => {
-  const createMutation = fileQueries.create(queryKey);
+  const queryClient = useQueryClient();
 
+  const { path } = useSearch({ from: "/_authed/$view" });
+
+  const createFolder = $api.useMutation("post", "/files/mkdir", {
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey });
+    },
+  });
   const { currentFile, actions } = useModalStore(
     useShallow((state) => ({
       currentFile: state.currentFile,
@@ -112,11 +127,13 @@ const FolderCreateDialog = memo(({ queryKey, handleClose }: FolderCreateDialogPr
   const onCreate = useCallback(
     (e: React.FormEvent<HTMLDivElement>) => {
       e.preventDefault();
-      createMutation
+      createFolder
         .mutateAsync({
-          name: currentFile.name,
-          type: "folder",
-          path: (queryKey[1] as QueryParams).search?.path || "/",
+          body: {
+            path: currentFile.name.startsWith("/")
+              ? currentFile.name
+              : `${path}/${currentFile.name}`,
+          },
         })
         .then(() => handleClose());
     },
@@ -133,6 +150,7 @@ const FolderCreateDialog = memo(({ queryKey, handleClose }: FolderCreateDialogPr
           classNames={{
             inputWrapper: "border-primary border-large",
           }}
+          placeholder="Folder Name or Path"
           autoFocus
           value={currentFile?.name}
           onValueChange={(value) => actions.setCurrentFile({ ...currentFile, name: value })}
@@ -147,10 +165,10 @@ const FolderCreateDialog = memo(({ queryKey, handleClose }: FolderCreateDialogPr
           form="create-folder-form"
           className="font-normal"
           variant="filledTonal"
-          isDisabled={createMutation.isPending || !currentFile.name}
-          isLoading={createMutation.isPending}
+          isDisabled={createFolder.isPending || !currentFile.name}
+          isLoading={createFolder.isPending}
         >
-          {createMutation.isPending ? "Creating" : "Create"}
+          {createFolder.isPending ? "Creating" : "Create"}
         </Button>
       </ModalFooter>
     </>
@@ -158,19 +176,25 @@ const FolderCreateDialog = memo(({ queryKey, handleClose }: FolderCreateDialogPr
 });
 
 interface DeleteDialogProps {
-  queryKey: any[];
+  queryKey: any;
   handleClose: () => void;
 }
 
 const DeleteDialog = memo(({ handleClose, queryKey }: DeleteDialogProps) => {
-  const deleteMutation = fileQueries.delete(queryKey);
+  const queryClient = useQueryClient();
+
+  const deleteFiles = $api.useMutation("post", "/files/delete", {
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey });
+    },
+  });
 
   const selectedFiles = useModalStore((state) => state.selectedFiles) as string[];
 
   const onDelete = useCallback(() => {
-    deleteMutation.mutate({ files: selectedFiles });
+    deleteFiles.mutateAsync({ body: { ids: selectedFiles } });
     handleClose();
-  }, []);
+  }, [selectedFiles]);
 
   return (
     <>
@@ -212,17 +236,34 @@ const defaultShareOptions = {
 const ShareFileDialog = memo(({ handleClose }: ShareFileDialogProps) => {
   const file = useModalStore((state) => state.currentFile);
 
-  const shareQueryOptions = shareQueries.shareByFileId(file?.id);
-
-  const { data, isLoading } = useQuery(shareQueryOptions);
+  const queryClient = useQueryClient();
 
   const { control, handleSubmit } = useForm({
     defaultValues: defaultShareOptions,
   });
 
-  const createShare = shareQueries.create(file.id, shareQueryOptions.queryKey);
+  const shareQueryOptions = $api.queryOptions("get", "/files/{id}/share", {
+    params: {
+      path: {
+        id: file.id,
+      },
+    },
+  });
 
-  const deleteShare = shareQueries.delete(file.id, shareQueryOptions.queryKey);
+  const { data, isLoading } = useQuery(shareQueryOptions);
+
+  const createShare = $api.useMutation("post", "/files/{id}/share", {
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: shareQueryOptions.queryKey });
+      queryClient.invalidateQueries({ queryKey: ["Files_list", "shared"] });
+    },
+  });
+
+  const deleteShare = $api.useMutation("delete", "/files/{id}/share", {
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["Files_list", "shared"] });
+    },
+  });
 
   const [sharingOn, setSharingOn] = useState(false);
 
@@ -241,11 +282,24 @@ const ShareFileDialog = memo(({ handleClose }: ShareFileDialogProps) => {
           if (data.password) {
             payload.password = data.password;
           }
-          createShare.mutateAsync(payload);
+          createShare.mutateAsync({
+            params: {
+              path: {
+                id: file.id,
+              },
+            },
+            body: payload,
+          });
         })();
       }
       if (prev) {
-        deleteShare.mutateAsync();
+        deleteShare.mutateAsync({
+          params: {
+            path: {
+              id: file.id,
+            },
+          },
+        });
         setShareLink("");
       }
       return !prev;

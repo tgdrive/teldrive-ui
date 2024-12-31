@@ -1,4 +1,4 @@
-import http from "@/utils/http";
+import fetch from "@/utils/fetch-throw";
 
 function getBytes(buffer: ArrayBuffer, offset: number, count: number) {
   return new Uint8Array(buffer, offset, count);
@@ -36,12 +36,11 @@ function decode(bytes: Uint8Array, encoding = "utf-8") {
 }
 
 async function getBuffer(url: string, size?: number, signal?: AbortSignal): Promise<ArrayBuffer> {
-  const response = await http.get(url, {
+  const response = await fetch(url, {
     headers: { Range: `bytes=${0}-${size}` },
-    responseType: "arrayBuffer",
     signal,
   });
-  return response.data;
+  return response.arrayBuffer();
 }
 
 export { getBytes, sliceBytes, unpackBytes, decode, getBuffer };
