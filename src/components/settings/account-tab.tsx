@@ -15,6 +15,7 @@ import { chunkArray, copyDataToClipboard } from "@/utils/common";
 import { $api, fetchClient } from "@/utils/api";
 
 import type { components } from "@/lib/api";
+import { NetworkError } from "@/utils/fetch-throw";
 
 const validateBots = (value?: string) => {
   if (value) {
@@ -25,7 +26,12 @@ const validateBots = (value?: string) => {
 };
 
 const Session = memo(({ appName, location, createdAt, valid, hash, current }: UserSession) => {
-  const deleteSession = $api.useMutation("delete", "/users/sessions/{id}");
+  const deleteSession = $api.useMutation("delete", "/users/sessions/{id}", {
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["get", "/users/sessions"] });
+    },
+  });
+  const queryClient = useQueryClient();
 
   return (
     <div
@@ -107,9 +113,10 @@ export const AccountTab = memo(() => {
       toast.success("bots added");
       queryClient.invalidateQueries({ queryKey: ["get", "/users/config"] });
     },
-    onError: (error: components["schemas"]["Error"]) => {
-      if (error.message) {
-        toast.error(error.message.split(":").slice(-1)[0]!);
+    onError: async (error) => {
+      if (error instanceof NetworkError) {
+        const errorData = (await error.data?.json()) as components["schemas"]["Error"];
+        toast.error(errorData.message.split(":").slice(-1)[0]!.trim());
       }
     },
   });
@@ -117,7 +124,7 @@ export const AccountTab = memo(() => {
 
   const onSubmit = useCallback(
     async ({ tokens }: { tokens: string }) => {
-      botAddition.mutate(tokens);
+      botAddition.mutateAsync(tokens);
     },
     [botAddition],
   );

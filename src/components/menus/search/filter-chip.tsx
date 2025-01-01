@@ -43,7 +43,11 @@ export const FilterChip = ({ startIcon, ...props }: FilterChipProps) => {
           content: styles.content(),
         }}
         startContent={
-          isSelected ? <MingcuteCheck2Line className="size-5" /> : startIcon ? startIcon : null
+          isSelected ? (
+            <MingcuteCheck2Line className="size-5 max-h-none" />
+          ) : startIcon ? (
+            startIcon
+          ) : null
         }
         {...getLabelProps()}
       >

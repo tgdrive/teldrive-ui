@@ -72,7 +72,7 @@ const getWebSocketUrl = () => {
   return `${url.protocol === "http:" ? "ws" : "wss"}://${url.host}/api/auth/ws`;
 };
 
-const initailState = {
+const initialState = {
   loginType: "phone" as LoginType,
   qrCode: "",
   step: 1,
@@ -86,22 +86,67 @@ const initailState = {
 export const Login = memo(() => {
   const { redirect } = useSearch({ from: "/_auth/login" });
 
-  const [state, setState] = useState(initailState);
+  const [state, setState] = useState(initialState);
 
-  const { control, handleSubmit, getValues } = useForm({
-    defaultValues: initailState.form,
+  const { control, handleSubmit, getValues, setError } = useForm({
+    defaultValues: initialState.form,
   });
 
-  const { sendJsonMessage, lastJsonMessage } = useWebSocket<AuthMessage>(
-    `${getWebSocketUrl()}`,
-    {},
+  const { sendJsonMessage } = useWebSocket<AuthMessage>(
+    getWebSocketUrl(),
+    {
+      onMessage: (event) => {
+        const message: AuthMessage = JSON.parse(event.data);
+        handleWebSocketMessage(message);
+      },
+    },
+    true,
   );
 
-  const postLogin = $api.useMutation("post", "/auth/login", {
-    onSuccess: () => {
-      window.location.pathname = redirect || "/";
-    },
-  });
+  const postLogin = $api.useMutation("post", "/auth/login", {});
+
+  const handleWebSocketMessage = (message: AuthMessage) => {
+    if (message.message === "success") {
+      postLogin.mutateAsync({ body: message.payload as any }).finally(() => {
+        window.location.replace(new URL(redirect || "/", window.location.origin));
+      });
+    } else if (message.payload?.phoneCodeHash) {
+      const otpCodeHash = message.payload.phoneCodeHash as string;
+      setState((prev) => ({
+        ...prev,
+        isLoading: false,
+        step: 2,
+        form: { ...prev.form, otpCodeHash },
+      }));
+    } else if (message.payload?.token) {
+      setState((prev) => ({
+        ...prev,
+        qrCode: message.payload.token as string,
+      }));
+    } else if (message.message === "2FA required") {
+      setState((prev) => ({
+        ...prev,
+        isLoading: false,
+        step: 3,
+      }));
+    } else if (message.message === "PHONE_CODE_INVALID") {
+      setState((prev) => ({
+        ...prev,
+        isLoading: false,
+      }));
+      setError("otpCode", { message: "Invalid OTP Code" });
+    } else if (message.type === "error") {
+      toast.error(message.message);
+    }
+  };
+  const firstCall = useRef(false);
+
+  useEffect(() => {
+    if (state.loginType === "qr" && !firstCall.current) {
+      sendJsonMessage({ authType: state.loginType });
+      firstCall.current = true;
+    }
+  }, [state.loginType]);
 
   const onSubmit = useCallback(
     ({ phoneNumber, otpCode, password, phoneCode }: FormState) => {
@@ -139,52 +184,8 @@ export const Login = memo(() => {
         });
       }
     },
-    [state.form.otpCodeHash, state.loginType, state.step],
+    [state.form.otpCodeHash, state.loginType, state.step, sendJsonMessage],
   );
-
-  const firstCall = useRef(false);
-
-  useEffect(() => {
-    if (state.loginType === "qr" && !firstCall.current) {
-      sendJsonMessage({ authType: state.loginType });
-      firstCall.current = true;
-    }
-  }, [state.loginType]);
-
-  useEffect(() => {
-    if (lastJsonMessage !== null) {
-      if (lastJsonMessage?.message === "success") {
-        postLogin.mutateAsync({
-          body: lastJsonMessage.payload as any,
-        });
-        setState((prev) => ({
-          ...prev,
-          isLoading: false,
-        }));
-      } else if (lastJsonMessage?.payload?.phoneCodeHash) {
-        const otpCodeHash = lastJsonMessage.payload.phoneCodeHash as string;
-        setState((prev) => ({
-          ...prev,
-          isLoading: false,
-          step: 2,
-          form: { ...prev.form, otpCodeHash },
-        }));
-      } else if (lastJsonMessage?.payload?.token) {
-        setState((prev) => ({
-          ...prev,
-          qrCode: lastJsonMessage.payload.token as string,
-        }));
-      } else if (lastJsonMessage?.message === "2FA required") {
-        setState((prev) => ({
-          ...prev,
-          isLoading: false,
-          step: 3,
-        }));
-      } else if (lastJsonMessage.type === "error") {
-        toast.error(lastJsonMessage.message);
-      }
-    }
-  }, [lastJsonMessage]);
 
   const onInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const value = getTypedNumber(e.target.value, getValues("phoneCode"));
@@ -242,6 +243,7 @@ export const Login = memo(() => {
                     isRequired
                     size="lg"
                     label="OTP Code"
+                    labelPlacement="outside"
                     className="max-w-xs"
                     variant="bordered"
                     isInvalid={!!error}

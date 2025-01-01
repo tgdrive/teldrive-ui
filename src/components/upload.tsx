@@ -343,7 +343,9 @@ export const Upload = ({ queryKey }: { queryKey: any[] }) => {
         currentFile.controller.signal,
         (progress) => actions.setProgress(currentFile.id, progress),
         async (payload) => {
-          await creatFile.mutateAsync(payload);
+          await creatFile.mutateAsync({
+            body: payload,
+          });
           if (creatFile.isSuccess) {
             actions.setFileUploadStatus(currentFile.id, FileUploadStatus.UPLOADED);
           }

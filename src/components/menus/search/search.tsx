@@ -191,7 +191,7 @@ export const SearchMenu = memo(({ isOpen, setIsOpen, triggerRef }: SearchMenuPro
             >
               {categories.map((category) => (
                 <FilterChip
-                  startIcon={<category.icon className="size-5" />}
+                  startIcon={<category.icon className="size-5 max-h-none" />}
                   value={category.value}
                   key={category.value}
                 >

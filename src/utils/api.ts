@@ -8,6 +8,9 @@ export const fetchClient = createFetchClient<paths>({
   requestInitExt: {
     signal: AbortSignal.timeout(180 * 1000),
   },
+  headers: {
+    "Content-Type": "application/json",
+  },
   fetch,
 });
 

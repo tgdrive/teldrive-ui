@@ -1,27 +1,22 @@
-import { useQueryClient } from "@tanstack/react-query";
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { Avatar, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@tw-material/react";
 import IconBaselineLogout from "~icons/ic/baseline-logout";
 import IconOutlineSettings from "~icons/ic/outline-settings";
 
 import { useSession } from "@/utils/query-options";
 import { $api } from "@/utils/api";
+import { useCallback } from "react";
 
 export function ProfileDropDown() {
-  const [session, _, refetch] = useSession();
+  const [session] = useSession();
 
-  const navigate = useNavigate();
+  const signOut = $api.useMutation("post", "/auth/logout");
 
-  const queryClient = useQueryClient();
-
-  const signOut = $api.useMutation("post", "/auth/logout", {
-    onSuccess: () => {
-      refetch().then(() => {
-        queryClient.removeQueries();
-        navigate({ to: "/login", replace: true });
-      });
-    },
-  });
+  const onSignOut = useCallback(() => {
+    signOut.mutateAsync({}).then(() => {
+      window.location.replace(new URL("/login", window.location.origin));
+    });
+  }, [signOut]);
 
   return (
     <Dropdown
@@ -64,7 +59,7 @@ export function ProfileDropDown() {
         <DropdownItem
           key="logout"
           endContent={<IconBaselineLogout className="size-6" />}
-          onPress={() => signOut.mutateAsync({})}
+          onPress={onSignOut}
         >
           Logout
         </DropdownItem>

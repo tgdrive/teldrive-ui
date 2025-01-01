@@ -132,7 +132,7 @@ const FolderCreateDialog = memo(({ queryKey, handleClose }: FolderCreateDialogPr
           body: {
             path: currentFile.name.startsWith("/")
               ? currentFile.name
-              : `${path}/${currentFile.name}`,
+              : `${path?.replace(/\/+$/, "")}/${currentFile.name}`,
           },
         })
         .then(() => handleClose());
