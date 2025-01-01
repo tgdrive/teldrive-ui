@@ -53,6 +53,7 @@ export const shareQueries = {
           await fetchClient.GET("/shares/{id}/files", {
             params: {
               path: { id: params.id },
+              query: params.path ? { path: params.path } : {},
             },
             signal,
             headers: params.password ? { Authorization: btoa(`:${params.password}`) } : {},
