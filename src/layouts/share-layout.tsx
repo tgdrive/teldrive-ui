@@ -4,6 +4,7 @@ import { Outlet } from "@tanstack/react-router";
 import Header from "@/components/header";
 import { scrollbarClasses } from "@/utils/classes";
 import clsx from "clsx";
+import { TopLoader } from "@/components/top-progress";
 
 export const ShareLayout = memo(() => {
   return (
@@ -16,6 +17,7 @@ export const ShareLayout = memo(() => {
             scrollbarClasses,
           )}
         >
+          <TopLoader />
           <Outlet />
         </main>
       </div>
