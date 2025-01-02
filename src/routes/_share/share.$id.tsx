@@ -1,7 +1,6 @@
 import type { ShareListParams } from "@/types";
 import { createFileRoute } from "@tanstack/react-router";
 import { shareQueries } from "@/utils/query-options";
-import { AxiosError } from "feaxios";
 import { ErrorView } from "@/components/error-view";
 import { $api } from "@/utils/api";
 

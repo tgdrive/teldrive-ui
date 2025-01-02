@@ -8,7 +8,7 @@ export const Route = createFileRoute("/_authed/settings/$tabId")({
   wrapInSuspense: true,
   loader: async ({ context: { queryClient }, params }) => {
     if (params.tabId === "account") {
-      await Promise.allSettled([
+      await Promise.all([
         queryClient.ensureQueryData($api.queryOptions("get", "/users/sessions")),
         queryClient.ensureQueryData($api.queryOptions("get", "/users/config")),
       ]);
