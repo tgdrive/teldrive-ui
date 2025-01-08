@@ -46,6 +46,7 @@ const uploadChunk = <T extends {}>(
     signal.addEventListener("abort", () => xhr.abort());
 
     xhr.open("POST", uploadUrl.href, true);
+    xhr.setRequestHeader("Content-Type", "application/octet-stream");
 
     xhr.responseType = "json";
 
