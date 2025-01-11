@@ -1,4 +1,4 @@
-name: Teldrive UI
+name: Build and Release
 
 on:
   push:
@@ -18,7 +18,7 @@ jobs:
 
       - uses: pnpm/action-setup@v3
         with:
-          version: 8
+          version: 9
 
       - name: Install dependencies
         run: pnpm install
@@ -32,6 +32,5 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v1
+          tag_name: latest
           files: teldrive-ui.zip
-          prerelease: true
