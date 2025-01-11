@@ -404,7 +404,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/users/profile": {
+    "/users/profile/{name}": {
         parameters: {
             query?: never;
             header?: never;
@@ -455,6 +455,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/version": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get API version */
+        get: operations["Version_version"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -462,6 +479,33 @@ export interface components {
         AddBots: {
             /** @description List of bot tokens */
             bots: string[];
+        };
+        ApiVersion: {
+            /**
+             * @description API version
+             * @example 1.0.0
+             */
+            version: string;
+            /**
+             * @description Git commit SHA
+             * @example a1b2c3d4e5f6g7h8i9j0
+             */
+            commitSHA: string;
+            /**
+             * @description Go version
+             * @example go1.17.1
+             */
+            goVersion: string;
+            /**
+             * @description Operating system
+             * @example linux
+             */
+            os: string;
+            /**
+             * @description Architecture
+             * @example amd64
+             */
+            arch: string;
         };
         /**
          * @description Supported file categories
@@ -610,6 +654,11 @@ export interface components {
             newName?: string;
             /** @description Destination path for the copied file */
             destination: string;
+            /**
+             * Format: date-time
+             * @description Last update time
+             */
+            updatedAt?: string;
         };
         /**
          * @description Delete operation request
@@ -621,9 +670,7 @@ export interface components {
          */
         FileDelete: {
             /** @description Array of file or folders ids to be deleted */
-            ids?: string[];
-            /** @description Source file path to be deleted */
-            source?: string;
+            ids: string[];
         };
         /** @description Paginated file listing response with metadata */
         FileList: {
@@ -653,14 +700,22 @@ export interface components {
          */
         FileMove: {
             /** @description Array of file or folders ids to be moved */
-            ids?: string[];
-            /** @description Source path to move files from */
-            source?: string;
+            ids: string[];
             /** @description Destination path where files will be moved to */
             destination: string;
         };
         /** @description File parts update request */
         FilePartsUpdate: {
+            /**
+             * @description File name
+             * @example document.pdf
+             */
+            name?: string;
+            /**
+             * @description Parent folder ID
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            parentId?: string;
             /**
              * Format: int64
              * @description Channel ID
@@ -999,7 +1054,7 @@ export interface components {
         /** @description Show shared files */
         "FileQuery.shared": boolean;
         /** @description Sort field */
-        "FileQuery.sort": "name" | "updatedAt" | "size";
+        "FileQuery.sort": "name" | "updatedAt" | "size" | "id";
         /** @description File Status */
         "FileQuery.status": "active" | "pending_deletion";
         /** @description File type */
@@ -1015,7 +1070,7 @@ export interface components {
         /** @description Folder path */
         "ShareQuery.path": string;
         /** @description Sort field */
-        "ShareQuery.sort": "name" | "updatedAt" | "size";
+        "ShareQuery.sort": "name" | "updatedAt" | "size" | "id";
         /** @description Optional channel identifier for upload */
         "UploadQuery.channelId": number;
         /** @description Whether the upload content is encrypted */
@@ -1409,7 +1464,9 @@ export interface operations {
     };
     Files_update: {
         parameters: {
-            query?: never;
+            query?: {
+                skiputs?: "0" | "1";
+            };
             header?: never;
             path: {
                 id: string;
@@ -1968,7 +2025,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/octet-stream": string;
+                "*/*": string;
             };
         };
         responses: {
@@ -2172,7 +2229,9 @@ export interface operations {
         parameters: {
             query?: never;
             header?: never;
-            path?: never;
+            path: {
+                name: string;
+            };
             cookie?: never;
         };
         requestBody?: never;
@@ -2180,6 +2239,7 @@ export interface operations {
             /** @description The request has succeeded. */
             200: {
                 headers: {
+                    Etag: string;
                     "Cache-Control": string;
                     "Content-Length": number;
                     "Content-Disposition": string;
@@ -2246,6 +2306,35 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description An unexpected error response. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    Version_version: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The request has succeeded. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiVersion"];
+                };
             };
             /** @description An unexpected error response. */
             default: {
