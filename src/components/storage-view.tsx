@@ -54,12 +54,12 @@ export const StorageView = memo(() => {
         ...$api.queryOptions("get", "/uploads/stats", {
           params: {
             query: {
-              days,
+              days: 60,
             },
           },
         }),
         select: (data) =>
-          data.map((stat) => {
+          data.slice(0, days).map((stat) => {
             const options = { day: "numeric", month: "short" } as const;
             const formattedDate = new Intl.DateTimeFormat("en-US", options).format(
               new Date(stat.uploadDate),

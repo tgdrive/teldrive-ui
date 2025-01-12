@@ -16,6 +16,7 @@ import { $api, fetchClient } from "@/utils/api";
 
 import type { components } from "@/lib/api";
 import { NetworkError } from "@/utils/fetch-throw";
+import SyncIcon from "~icons/material-symbols/sync";
 
 const validateBots = (value?: string) => {
   if (value) {
@@ -73,16 +74,22 @@ export const AccountTab = memo(() => {
     defaultValues: { tokens: "" },
   });
 
-  const [{ data: userConfig }, { data: sessions }] = useSuspenseQueries({
+  const [{ data: userConfig }, { data: sessions }, { data: channelData }] = useSuspenseQueries({
     queries: [
       $api.queryOptions("get", "/users/config"),
       $api.queryOptions("get", "/users/sessions"),
+      $api.queryOptions("get", "/users/channels"),
     ],
   });
 
-  const { data: channelData, isLoading: channelLoading } = $api.useQuery("get", "/users/channels");
-
   const removeBots = $api.useMutation("delete", "/users/bots");
+
+  const syncChannels = $api.useMutation("patch", "/users/channels/sync", {
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["get", "/users/channels"] });
+      toast.success("Channels Synced");
+    },
+  });
 
   const queryClient = useQueryClient();
 
@@ -207,11 +214,10 @@ export const AccountTab = memo(() => {
           Select the default telegram channel
         </p>
       </div>
-      <div className="col-span-6 xs:col-span-3">
+      <div className="col-span-6 xs:col-span-3 flex gap-2">
         <Select
           aria-label="Select Channel"
           size="lg"
-          isLoading={channelLoading}
           className="col-span-6 xs:col-span-3"
           scrollShadowProps={{
             isEnabled: false,
@@ -230,6 +236,15 @@ export const AccountTab = memo(() => {
             </SelectItem>
           )}
         </Select>
+        <Button
+          isIconOnly
+          variant="text"
+          title="Sync Channels"
+          className={clsx(syncChannels.isPending && "pointer-events-none")}
+          onPress={() => syncChannels.mutate({})}
+        >
+          <SyncIcon className={clsx(syncChannels.isPending && "animate-spin")} />
+        </Button>
       </div>
       <div className="col-span-6">
         <p className="text-lg font-medium">Sessions</p>

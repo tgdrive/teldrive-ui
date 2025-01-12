@@ -387,6 +387,23 @@ export interface paths {
         patch: operations["Users_updateChannel"];
         trace?: never;
     };
+    "/users/channels/sync": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Sync user channels */
+        patch: operations["Users_syncChannels"];
+        trace?: never;
+    };
     "/users/config": {
         parameters: {
             query?: never;
@@ -2177,6 +2194,33 @@ export interface operations {
                 "application/json": components["schemas"]["ChannelUpdate"];
             };
         };
+        responses: {
+            /** @description There is no content to send for this request, but the headers may be useful. */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description An unexpected error response. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    Users_syncChannels: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
         responses: {
             /** @description There is no content to send for this request, but the headers may be useful. */
             204: {

@@ -10,7 +10,7 @@ export const Route = createFileRoute("/_authed/storage")({
         $api.queryOptions("get", "/uploads/stats", {
           params: {
             query: {
-              days: 7,
+              days: 60,
             },
           },
         }),

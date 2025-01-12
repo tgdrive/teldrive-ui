@@ -148,14 +148,7 @@ export const UploadStatsChart = memo(({ stats, days, setDays }: UploadStatsChart
               }}
             >
               {allowedDays.map((day) => (
-                <DropdownItem
-                  key={day}
-                  onPress={() =>
-                    startTransition(() => {
-                      setDays(day);
-                    })
-                  }
-                >{`${day} Days`}</DropdownItem>
+                <DropdownItem key={day} onPress={() => setDays(day)}>{`${day} Days`}</DropdownItem>
               ))}
             </DropdownMenu>
           </Dropdown>

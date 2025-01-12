@@ -15,7 +15,7 @@ export const TopLoader = memo(() => {
   });
 
   useEffect(() => {
-    if (pathname?.includes("/search")) return;
+    if (pathname?.startsWith("/search") || pathname?.startsWith("/settings")) return;
 
     if (status === "pending" && loadingQueriesCount > 0 && completed.current) {
       ref?.current?.continuousStart();
