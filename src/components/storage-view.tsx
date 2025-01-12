@@ -59,7 +59,7 @@ export const StorageView = memo(() => {
           },
         }),
         select: (data) =>
-          data.slice(0, days).map((stat) => {
+          data.slice(data.length - days, data.length).map((stat) => {
             const options = { day: "numeric", month: "short" } as const;
             const formattedDate = new Intl.DateTimeFormat("en-US", options).format(
               new Date(stat.uploadDate),
