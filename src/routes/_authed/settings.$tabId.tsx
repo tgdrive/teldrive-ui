@@ -3,15 +3,12 @@ import { createFileRoute } from "@tanstack/react-router";
 import { SettingsTabView } from "@/components/settings/settings-tab-view";
 import { $api } from "@/utils/api";
 import { Spinner } from "@tw-material/react";
+import { center } from "@/utils/classes";
 
 export const Route = createFileRoute("/_authed/settings/$tabId")({
   component: SettingsTabView,
   wrapInSuspense: true,
-  pendingComponent: () => (
-    <div className="flex justify-center items-center size-full">
-      <Spinner />
-    </div>
-  ),
+  pendingComponent: () => <Spinner className={center} />,
   loader: async ({ context: { queryClient }, params }) => {
     if (params.tabId === "account") {
       await Promise.all([
