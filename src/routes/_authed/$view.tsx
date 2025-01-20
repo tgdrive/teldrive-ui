@@ -4,7 +4,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { fileQueries } from "@/utils/query-options";
 import { ErrorView } from "@/components/error-view";
 
-const allowedTypes = ["my-drive", "recent", "search", "storage", "browse", "shared"];
+const allowedTypes = ["my-drive", "recent", "search", "storage", "browse"];
 
 export const Route = createFileRoute("/_authed/$view")({
   beforeLoad: ({ params }) => {

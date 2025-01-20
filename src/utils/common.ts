@@ -1,6 +1,5 @@
-import type { Session } from "@/types";
 import { partial } from "filesize";
-import { settings } from "./defaults";
+import { getSettings } from "./stores/settings";
 
 export const navigateToExternalUrl = (url: string, shouldOpenNewTab = true) => {
   if (shouldOpenNewTab) {
@@ -103,28 +102,13 @@ export function encode(str: string) {
   });
 }
 
-export const mediaUrl = (
-  id: string,
-  name: string,
-  path: string,
-  sessionHash: string,
-  download = false,
-) => {
+export const mediaUrl = (id: string, name: string, path: string, download = false) => {
+  const settings = getSettings();
   if (settings.rcloneProxy && path) {
     return `${settings.rcloneProxy}${path === "/" ? "" : path}/${encodeURIComponent(name)}`;
   }
   const url = new URL(window.location.origin);
   url.pathname = `/api/files/${id}/${name}`;
-  url.searchParams.set("hash", sessionHash);
-  if (download) {
-    url.searchParams.set("download", "1");
-  }
-  return url.toString();
-};
-
-export const sharedMediaUrl = (shareId: string, fileId: string, name: string, download = false) => {
-  const url = new URL(window.location.origin);
-  url.pathname = `/api/shares/${shareId}/files/${fileId}/${name}`;
   if (download) {
     url.searchParams.set("download", "1");
   }

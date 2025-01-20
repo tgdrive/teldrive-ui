@@ -1,0 +1,1386 @@
+openapi: 3.0.0
+info:
+  title: Gitdrive
+  version: 0.0.0
+tags:
+  - name: Auth
+  - name: Files
+  - name: Uploads
+  - name: Releases
+paths:
+  /auth/callback:
+    get:
+      operationId: Auth_callback
+      summary: Oauth Callback
+      parameters:
+        - name: code
+          in: query
+          required: true
+          schema:
+            type: string
+          explode: false
+        - name: state
+          in: query
+          required: true
+          schema:
+            type: string
+          explode: false
+        - name: drive.redirect
+          in: cookie
+          required: false
+          schema:
+            type: string
+          explode: false
+        - name: drive.state
+          in: cookie
+          required: false
+          schema:
+            type: string
+          explode: false
+      responses:
+        '307':
+          description: Redirection
+          headers:
+            Set-Cookie:
+              required: true
+              schema:
+                type: array
+                items:
+                  type: string
+            Location:
+              required: true
+              schema:
+                type: string
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+        - Auth
+  /auth/login:
+    get:
+      operationId: Auth_login
+      summary: Login
+      parameters:
+        - name: redirect
+          in: query
+          required: false
+          schema:
+            type: string
+          explode: false
+      responses:
+        '200':
+          description: The request has succeeded.
+          headers:
+            Set-Cookie:
+              required: true
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Session'
+        '307':
+          description: Redirection
+          headers:
+            Set-Cookie:
+              required: true
+              schema:
+                type: array
+                items:
+                  type: string
+            Location:
+              required: true
+              schema:
+                type: string
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+        - Auth
+  /auth/logout:
+    post:
+      operationId: Auth_logout
+      summary: Logout
+      parameters: []
+      responses:
+        '204':
+          description: 'There is no content to send for this request, but the headers may be useful. '
+          headers:
+            Set-Cookie:
+              required: true
+              schema:
+                type: string
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+        - Auth
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+  /auth/session:
+    get:
+      operationId: Auth_session
+      summary: Get session information
+      parameters:
+        - name: drive.access_token
+          in: cookie
+          required: false
+          schema:
+            type: string
+          explode: false
+      responses:
+        '200':
+          description: The request has succeeded.
+          headers:
+            Set-Cookie:
+              required: true
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Session'
+        '204':
+          description: There is no content to send for this request, but the headers may be useful.
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+        - Auth
+  /files:
+    get:
+      operationId: Files_list
+      summary: List all files
+      parameters:
+        - $ref: '#/components/parameters/FileQuery.name'
+        - $ref: '#/components/parameters/FileQuery.query'
+        - $ref: '#/components/parameters/FileQuery.searchType'
+        - $ref: '#/components/parameters/FileQuery.type'
+        - $ref: '#/components/parameters/FileQuery.path'
+        - $ref: '#/components/parameters/FileQuery.operation'
+        - $ref: '#/components/parameters/FileQuery.status'
+        - $ref: '#/components/parameters/FileQuery.deepSearch'
+        - $ref: '#/components/parameters/FileQuery.parentId'
+        - $ref: '#/components/parameters/FileQuery.category'
+        - $ref: '#/components/parameters/FileQuery.updatedAt'
+        - $ref: '#/components/parameters/FileQuery.sort'
+        - $ref: '#/components/parameters/FileQuery.order'
+        - $ref: '#/components/parameters/FileQuery.limit'
+        - $ref: '#/components/parameters/FileQuery.page'
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FileList'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+        - Files
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+    post:
+      operationId: Files_create
+      summary: Create a new file
+      parameters: []
+      responses:
+        '201':
+          description: The request has succeeded and a new resource has been created as a result.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/File'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+        - Files
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/File'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+  /files/assets/{id}:
+    get:
+      operationId: Files_releaseAssets
+      summary: Get Release Assets Ids
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ReleaseAsset'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+        - Files
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+  /files/categories:
+    get:
+      operationId: Files_categoryStats
+      summary: Get category stats
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CategoryStats'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+        - Files
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+  /files/delete:
+    post:
+      operationId: Files_delete
+      summary: Delete files
+      parameters: []
+      responses:
+        '204':
+          description: There is no content to send for this request, but the headers may be useful.
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+        - Files
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FileDelete'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+  /files/mkdir:
+    post:
+      operationId: Files_mkdir
+      summary: Create Folders
+      parameters: []
+      responses:
+        '204':
+          description: There is no content to send for this request, but the headers may be useful.
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+        - Files
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FileMkDir'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+  /files/move:
+    post:
+      operationId: Files_move
+      summary: Move files
+      parameters: []
+      responses:
+        '204':
+          description: There is no content to send for this request, but the headers may be useful.
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+        - Files
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FileMove'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+  /files/{id}:
+    get:
+      operationId: Files_getById
+      summary: Get file by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/File'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+        - Files
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+    patch:
+      operationId: Files_update
+      summary: Update file
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: skiputs
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - '0'
+              - '1'
+            default: '0'
+          explode: false
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/File'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+        - Files
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FileUpdate'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+  /files/{id}/parts:
+    put:
+      operationId: Files_updateParts
+      summary: Update file parts
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: There is no content to send for this request, but the headers may be useful.
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+        - Files
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FilePartsUpdate'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+  /files/{id}/{name}:
+    get:
+      operationId: Files_stream
+      summary: Stream or Download file
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: download
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - '0'
+              - '1'
+            default: '0'
+          explode: false
+        - name: Range
+          in: header
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: File streaming response
+          headers:
+            Accept-Ranges:
+              required: true
+              description: Indicates server supports range requests
+              schema:
+                type: string
+                enum:
+                  - bytes
+            Content-Length:
+              required: true
+              description: Size of the response body in bytes
+              schema:
+                type: string
+            Content-Disposition:
+              required: true
+              description: File attachment information
+              schema:
+                type: string
+            Content-Range:
+              required: false
+              description: Range of bytes being sent
+              schema:
+                type: string
+            Etag:
+              required: true
+              description: Entity tag for cache validation
+              schema:
+                type: string
+            Last-Modified:
+              required: true
+              description: Last modification timestamp
+              schema:
+                type: string
+                format: date-time
+          content:
+            '*/*':
+              schema:
+                type: string
+                format: binary
+        '206':
+          description: File streaming response
+          headers:
+            Accept-Ranges:
+              required: true
+              description: Indicates server supports range requests
+              schema:
+                type: string
+                enum:
+                  - bytes
+            Content-Length:
+              required: true
+              description: Size of the response body in bytes
+              schema:
+                type: string
+            Content-Disposition:
+              required: true
+              description: File attachment information
+              schema:
+                type: string
+            Content-Range:
+              required: false
+              description: Range of bytes being sent
+              schema:
+                type: string
+            Etag:
+              required: true
+              description: Entity tag for cache validation
+              schema:
+                type: string
+            Last-Modified:
+              required: true
+              description: Last modification timestamp
+              schema:
+                type: string
+                format: date-time
+          content:
+            '*/*':
+              schema:
+                type: string
+                format: binary
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+        - Files
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+  /releases:
+    get:
+      operationId: Releases_list
+      summary: Get releases
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Release'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+        - Releases
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+  /releases/onboard:
+    post:
+      operationId: Releases_onboard
+      summary: OnBoard User
+      parameters: []
+      responses:
+        '204':
+          description: There is no content to send for this request, but the headers may be useful.
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+        - Releases
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Onboard'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+  /uploads/stats:
+    get:
+      operationId: Uploads_stats
+      summary: Get upload stats
+      parameters:
+        - name: days
+          in: query
+          required: true
+          schema:
+            type: integer
+          explode: false
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UploadStats'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+        - Uploads
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+  /uploads/url:
+    get:
+      operationId: Uploads_uploadUrl
+      summary: Get Upload Url
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadToken'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+        - Uploads
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+  /uploads/{id}:
+    post:
+      operationId: Uploads_add
+      summary: Add file Part
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: There is no content to send for this request, but the headers may be useful.
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+        - Uploads
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UploadPart'
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+    get:
+      operationId: Uploads_byId
+      summary: Get uploaded parts by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UploadPart'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+        - Uploads
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+    delete:
+      operationId: Uploads_delete
+      summary: Delete uploaded file
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: There is no content to send for this request, but the headers may be useful.
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      tags:
+        - Uploads
+      security:
+        - BearerAuth: []
+        - ApiKeyAuth: []
+  /version:
+    get:
+      operationId: Version_version
+      summary: Get API version
+      parameters: []
+      responses:
+        '200':
+          description: The request has succeeded.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiVersion'
+        default:
+          description: An unexpected error response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  parameters:
+    FileQuery.category:
+      name: category
+      in: query
+      required: false
+      description: File category
+      schema:
+        type: array
+        items:
+          $ref: '#/components/schemas/Category'
+      explode: false
+    FileQuery.deepSearch:
+      name: deepSearch
+      in: query
+      required: false
+      description: Enable deep search
+      schema:
+        type: boolean
+        default: false
+      explode: false
+    FileQuery.limit:
+      name: limit
+      in: query
+      required: false
+      description: Items per page
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 1000
+        default: 500
+      explode: false
+    FileQuery.name:
+      name: name
+      in: query
+      required: false
+      description: File name filter
+      schema:
+        type: string
+      explode: false
+    FileQuery.operation:
+      name: operation
+      in: query
+      required: false
+      description: Operation
+      schema:
+        type: string
+        enum:
+          - list
+          - find
+        default: list
+      explode: false
+    FileQuery.order:
+      name: order
+      in: query
+      required: false
+      description: Sort order
+      schema:
+        type: string
+        enum:
+          - asc
+          - desc
+        default: asc
+      explode: false
+    FileQuery.page:
+      name: page
+      in: query
+      required: false
+      description: Page number
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+      explode: false
+    FileQuery.parentId:
+      name: parentId
+      in: query
+      required: false
+      description: Parent folder ID
+      schema:
+        type: string
+      explode: false
+    FileQuery.path:
+      name: path
+      in: query
+      required: false
+      description: File path
+      schema:
+        type: string
+      explode: false
+    FileQuery.query:
+      name: query
+      in: query
+      required: false
+      description: Search query
+      schema:
+        type: string
+      explode: false
+    FileQuery.searchType:
+      name: searchType
+      in: query
+      required: false
+      description: Search type
+      schema:
+        type: string
+        enum:
+          - text
+          - regex
+        default: text
+      explode: false
+    FileQuery.sort:
+      name: sort
+      in: query
+      required: false
+      description: Sort field
+      schema:
+        type: string
+        enum:
+          - name
+          - updatedAt
+          - size
+          - id
+        default: name
+      explode: false
+    FileQuery.status:
+      name: status
+      in: query
+      required: false
+      description: File Status
+      schema:
+        type: string
+        enum:
+          - active
+          - pending_deletion
+        default: active
+      explode: false
+    FileQuery.type:
+      name: type
+      in: query
+      required: false
+      description: File type
+      schema:
+        type: string
+        enum:
+          - folder
+          - file
+      explode: false
+    FileQuery.updatedAt:
+      name: updatedAt
+      in: query
+      required: false
+      description: UpdatedAt Filter supports operator eq, gt, lt, gte, lte
+      schema:
+        type: string
+      explode: false
+  schemas:
+    ApiVersion:
+      type: object
+      required:
+        - version
+        - commitSHA
+        - os
+        - arch
+      properties:
+        version:
+          type: string
+          description: API version
+          example: 1.0.0
+        commitSHA:
+          type: string
+          description: Git commit SHA
+          example: a1b2c3d4e5f6g7h8i9j0
+        os:
+          type: string
+          description: Operating system
+          example: linux
+        arch:
+          type: string
+          description: Architecture
+          example: amd64
+    Category:
+      type: string
+      enum:
+        - archive
+        - audio
+        - document
+        - image
+        - other
+        - video
+      description: Supported file categories
+    CategoryStats:
+      type: object
+      required:
+        - totalFiles
+        - totalSize
+        - category
+      properties:
+        totalFiles:
+          type: integer
+          format: int64
+          description: Total number of files
+        totalSize:
+          type: integer
+          format: int64
+          description: Total size of files in bytes
+        category:
+          allOf:
+            - $ref: '#/components/schemas/Category'
+          description: Category name
+      description: Statistics for files by category
+      example:
+        totalFiles: 1250
+        totalSize: 104857600
+        category: document
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          description: Error code
+          example: 500
+        message:
+          type: string
+          description: Error message
+          example: Internal server error occurred
+      description: Standard error response
+    File:
+      type: object
+      required:
+        - name
+        - type
+      properties:
+        id:
+          type: string
+          description: File ID
+          example: 123e4567-e89b-12d3-a456-426614174000
+          readOnly: true
+        name:
+          type: string
+          description: File name
+          example: document.pdf
+        type:
+          type: string
+          enum:
+            - folder
+            - file
+          description: File type
+          example: file
+        parts:
+          type: array
+          items:
+            $ref: '#/components/schemas/Part'
+          description: File parts
+        mimeType:
+          type: string
+          description: MIME type
+          example: application/pdf
+        category:
+          allOf:
+            - $ref: '#/components/schemas/Category'
+          description: File category
+          example: document
+          readOnly: true
+        releaselId:
+          type: integer
+          format: int64
+          description: Releasel ID
+          example: 123456789
+        tag:
+          type: string
+        repo:
+          type: string
+        path:
+          type: string
+          description: File or Folder path
+          example: /documents/2023/
+        parentId:
+          type: string
+          description: Parent folder ID
+          example: 123e4567-e89b-12d3-a456-426614174000
+        size:
+          type: integer
+          format: int64
+          description: File size in bytes
+          example: 1048576
+        encrypted:
+          type: boolean
+          description: Encryption status
+          example: false
+        updatedAt:
+          type: string
+          format: date-time
+          description: Last update time
+          readOnly: true
+      description: File metadata
+    FileDelete:
+      type: object
+      required:
+        - ids
+      properties:
+        ids:
+          type: array
+          items:
+            type: string
+          minItems: 1
+          description: Array of file or folders ids to be deleted
+      description: Delete operation request
+      example:
+        ids:
+          - 123e4567-e89b-12d3-a456-426614174000
+    FileList:
+      type: object
+      required:
+        - items
+        - meta
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/File'
+          minItems: 0
+          maxItems: 1000
+          description: Array of file entries in the current page
+        meta:
+          allOf:
+            - $ref: '#/components/schemas/Meta'
+          description: Pagination metadata and total count information
+      description: Paginated file listing response with metadata
+    FileMkDir:
+      type: object
+      required:
+        - path
+      properties:
+        path:
+          type: string
+          description: Directory path to be created
+      description: Request to create directories
+      example:
+        path: /Documents/2023/
+    FileMove:
+      type: object
+      required:
+        - ids
+        - destination
+      properties:
+        ids:
+          type: array
+          items:
+            type: string
+          minItems: 1
+          description: Array of file or folders ids to be moved
+        destination:
+          type: string
+          description: Destination path where files will be moved to
+      description: Move multiple files by ids or path
+      example:
+        ids:
+          - 123e4567-e89b-12d3-a456-426614174000
+        destination: /Documents/2023/
+    FilePartsUpdate:
+      type: object
+      required:
+        - size
+        - updatedAt
+      properties:
+        name:
+          type: string
+          description: File name
+          example: document.pdf
+        parentId:
+          type: string
+          description: Parent folder ID
+          example: 123e4567-e89b-12d3-a456-426614174000
+        releaselId:
+          type: integer
+          format: int64
+          description: Release Id
+          example: 123456
+        uploadId:
+          type: string
+          description: Upload ID
+        parts:
+          type: array
+          items:
+            $ref: '#/components/schemas/Part'
+          description: File parts
+        size:
+          type: integer
+          format: int64
+          description: File size in bytes
+          example: 1048576
+        updatedAt:
+          type: string
+          format: date-time
+          description: Last update time
+      description: File parts update request
+    FileUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+          description: File name
+          example: document.pdf
+        parts:
+          type: array
+          items:
+            $ref: '#/components/schemas/Part'
+          description: File parts
+        size:
+          type: integer
+          format: int64
+          description: File size in bytes
+          example: 1048576
+        updatedAt:
+          type: string
+          format: date-time
+          description: Last update time
+      description: File update request
+    Meta:
+      type: object
+      required:
+        - count
+        - totalPages
+        - currentPage
+      properties:
+        count:
+          type: integer
+          minimum: 0
+          description: Total number of items matching the query
+          example: 1250
+        totalPages:
+          type: integer
+          minimum: 1
+          description: Total number of available pages based on limit
+          example: 25
+        currentPage:
+          type: integer
+          minimum: 1
+          description: Current page number in the pagination
+          example: 1
+      description: Pagination metadata containing count, page information
+    Onboard:
+      type: object
+      required:
+        - userName
+        - token
+      properties:
+        userName:
+          type: string
+        token:
+          type: string
+    Part:
+      type: object
+      required:
+        - id
+        - name
+        - size
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Part ID
+          example: 1
+        name:
+          type: string
+        size:
+          type: integer
+          format: int64
+        salt:
+          type: string
+          description: Encryption salt
+          example: abc123
+      description: File part information
+    Release:
+      type: object
+      required:
+        - id
+        - tag
+        - repo
+      properties:
+        id:
+          type: integer
+          format: int64
+        tag:
+          type: string
+        repo:
+          type: string
+    ReleaseAsset:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Part ID
+          example: 1
+        name:
+          type: string
+    Session:
+      type: object
+      required:
+        - user
+        - expires
+      properties:
+        user:
+          type: object
+          properties:
+            name:
+              type: string
+            image:
+              type: string
+          required:
+            - name
+            - image
+        expires:
+          type: string
+      description: User session information containing authentication and profile details
+    UploadPart:
+      type: object
+      required:
+        - name
+        - id
+        - partNo
+        - releaseId
+        - size
+        - encrypted
+        - repo
+      properties:
+        name:
+          type: string
+          description: Name identifier of the part
+        id:
+          type: integer
+          format: int64
+          description: Part ID
+        partNo:
+          type: integer
+          description: Sequential number of the part
+        releaseId:
+          type: integer
+          format: int64
+          description: Release Id
+        size:
+          type: integer
+          format: int64
+          description: Size of the part in bytes
+        encrypted:
+          type: boolean
+          description: Indicates if the part is encrypted
+        salt:
+          type: string
+          description: Salt value used for encryption, required if encrypted is true
+        repo:
+          type: string
+      description: Details of an uploaded part
+    UploadStats:
+      type: object
+      required:
+        - uploadDate
+        - totalUploaded
+      properties:
+        uploadDate:
+          type: string
+          format: date-time
+          description: Date and time when the upload occurred
+        totalUploaded:
+          type: integer
+          format: int64
+          description: Total number of bytes uploaded
+      description: Statistics about the upload
+    UploadToken:
+      type: object
+      required:
+        - url
+        - token
+      properties:
+        url:
+          type: string
+        token:
+          type: string
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+    ApiKeyAuth:
+      type: apiKey
+      in: cookie
+      name: drive.access_token
+servers:
+  - url: '{url}/api'
+    description: Gitdrive Server URL
+    variables:
+      url:
+        default: ''

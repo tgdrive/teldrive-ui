@@ -2,7 +2,7 @@ name: Build and Release
 
 on:
   push:
-    branches: ["main"]
+    branches: ["drive"]
 
   workflow_dispatch:
 
@@ -24,13 +24,15 @@ jobs:
         run: pnpm install
 
       - name: Build
-        run: pnpm run build
+        run: |
+         pnpm run gen:api-client
+         pnpm run build
 
       - name: Zip release
-        run: cd dist; zip -r ../teldrive-ui.zip *
+        run: cd dist; zip -r ../ui.zip *
 
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: latest
-          files: teldrive-ui.zip
+          tag_name: drive
+          files: ui.zip

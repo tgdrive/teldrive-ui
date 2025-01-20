@@ -12,16 +12,15 @@ import {
 import type { StateSnapshot, VirtuosoGridHandle, VirtuosoHandle } from "react-virtuoso";
 import useBreakpoint from "use-breakpoint";
 
-import { CustomActions, fileActions, useFileAction } from "@/hooks/use-file-action";
+import { fileActions, useFileAction } from "@/hooks/use-file-action";
 import { chainLinks } from "@/utils/common";
 import { BREAKPOINTS, defaultSortState, defaultViewId, sortViewMap } from "@/utils/defaults";
-import { fileQueries, useSession } from "@/utils/query-options";
-import { useFileUploadStore, useModalStore } from "@/utils/stores";
+import { fileQueries } from "@/utils/query-options";
 
 import { FileOperationModal } from "./modals/file-operation";
 import PreviewModal from "./modals/preview";
-import { Upload } from "./upload";
 import type { BrowseView, FileListParams } from "@/types";
+import { useModalStore } from "@/utils/stores/modal";
 
 let firstRender = true;
 
@@ -33,7 +32,6 @@ const modalFileActions = [
   FbActions.RenameFile.id,
   FbActions.CreateFolder.id,
   FbActions.DeleteFiles.id,
-  CustomActions.ShareFiles.id,
 ];
 
 const fileRoute = getRouteApi("/_authed/$view");
@@ -47,19 +45,15 @@ export const DriveFileBrowser = memo(() => {
 
   const listRef = useRef<VirtuosoHandle | VirtuosoGridHandle>(null);
 
-  const [session] = useSession();
-
   const queryParams: FileListParams = {
     view: view as BrowseView,
     params: search,
   };
-  const queryOptions = fileQueries.list(queryParams, session?.hash);
+  const queryOptions = fileQueries.list(queryParams);
 
   const modalOpen = useModalStore((state) => state.open);
 
   const modalOperation = useModalStore((state) => state.operation);
-
-  const openUpload = useFileUploadStore((state) => state.uploadOpen);
 
   const { breakpoint } = useBreakpoint(BREAKPOINTS);
 
@@ -70,7 +64,7 @@ export const DriveFileBrowser = memo(() => {
     isFetchingNextPage,
   } = useSuspenseInfiniteQuery(queryOptions);
 
-  const actionHandler = useFileAction(queryParams, session!);
+  const actionHandler = useFileAction(queryParams);
 
   const folderChain = useMemo(() => {
     if (view === "my-drive") {
@@ -136,14 +130,8 @@ export const DriveFileBrowser = memo(() => {
       )}
 
       {modalOperation === FbActions.OpenFiles.id && modalOpen && (
-        <PreviewModal
-          session={session!}
-          files={files}
-          path={search?.path || ""}
-          view={view as BrowseView}
-        />
+        <PreviewModal files={files} path={search?.path || ""} view={view as BrowseView} />
       )}
-      {openUpload && <Upload queryKey={queryOptions.queryKey} />}
     </div>
   );
 });

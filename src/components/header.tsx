@@ -4,7 +4,7 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { Button, Input } from "@tw-material/react";
 import IconBiSearch from "~icons/bi/search";
 import MdiFilterOutline from "~icons/mdi/filter-outline";
-import PhTelegramLogoFill from "~icons/ph/telegram-logo-fill";
+import DriveIcon from "~icons/mingcute/drive-fill";
 import clsx from "clsx";
 import debounce from "lodash.debounce";
 
@@ -102,8 +102,8 @@ export default memo(function Header({ auth }: { auth?: boolean }) {
           search={{ path: "/" }}
           className="flex gap-2 items-center cursor-pointer"
         >
-          <PhTelegramLogoFill className="size-6 text-inherit" />
-          <p className="text-headline-small hidden sm:block">Teldrive</p>
+          <DriveIcon className="size-6 text-inherit" />
+          <p className="text-headline-small hidden sm:block">Drive</p>
         </Link>
       </div>
       <div className="flex-1 flex justify-end items-center gap-4">

@@ -1,7 +1,6 @@
 import { memo } from "react";
 import { getRouteApi, Outlet } from "@tanstack/react-router";
 import { Button } from "@tw-material/react";
-import CodiconAccount from "~icons/codicon/account";
 import CodiconSettings from "~icons/codicon/settings";
 import FluentDarkTheme20Filled from "~icons/fluent/dark-theme-20-filled";
 import IcOutlineInfo from "~icons/ic/outline-info";
@@ -18,10 +17,6 @@ const Tabs = [
   {
     id: "appearance",
     icon: FluentDarkTheme20Filled,
-  },
-  {
-    id: "account",
-    icon: CodiconAccount,
   },
   {
     id: "info",

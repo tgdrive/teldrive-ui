@@ -30,7 +30,7 @@ export function ProfileDropDown() {
           size="sm"
           showFallback
           className="outline-none shrink-0"
-          src={"/api/users/profile/profile.jpeg"}
+          src={session?.image}
         />
       </DropdownTrigger>
       <DropdownMenu
@@ -43,7 +43,7 @@ export function ProfileDropDown() {
         }}
       >
         <DropdownItem key="profile" className="pointer-events-none">
-          <p className="font-semibold">{session?.userName}</p>
+          <p className="font-semibold">{session?.name}</p>
         </DropdownItem>
 
         <DropdownItem

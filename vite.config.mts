@@ -30,7 +30,7 @@ export default defineConfig(({ mode: _ }) => {
     server: {
       proxy: {
         "/api": {
-          target: "http://localhost:5000",
+          target: "http://localhost:8080",
           ws: true,
         },
       },

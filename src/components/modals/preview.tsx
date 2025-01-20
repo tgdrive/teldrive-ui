@@ -1,5 +1,5 @@
 import { lazy, memo, Suspense, useCallback, useState } from "react";
-import type { BrowseView, Session } from "@/types";
+import type { BrowseView } from "@/types";
 import { FbIcon, type FileData, useIconData } from "@tw-material/file-browser";
 import { Button, Modal, ModalContent } from "@tw-material/react";
 import IconIcRoundArrowBack from "~icons/ic/round-arrow-back";
@@ -13,7 +13,7 @@ import DocPreview from "@/components/previews/doc-preview";
 import ImagePreview from "@/components/previews/image-preview";
 import PDFPreview from "@/components/previews/pdf-preview";
 import { WideScreen } from "@/components/previews/wide-screen";
-import { mediaUrl, sharedMediaUrl } from "@/utils/common";
+import { mediaUrl } from "@/utils/common";
 import { defaultSortState } from "@/utils/defaults";
 import { preview } from "@/utils/preview-type";
 import { useModalStore } from "@/utils/stores";
@@ -103,15 +103,11 @@ const ControlButton = ({ type, onPress }: ControlButtonProps) => {
 
 export default memo(function PreviewModal({
   files: fileProp,
-  session,
-  shareId,
   path,
   view,
 }: {
   files: FileData[];
   path: string;
-  session?: Session;
-  shareId?: string;
   view: BrowseView;
 }) {
   const [files] = useState(
@@ -170,7 +166,7 @@ export default memo(function PreviewModal({
       },
       {},
     ),
-    enabled: view !== "my-drive" && view !== "shared" && !path,
+    enabled: view !== "my-drive" && !path,
     select: ({ path, ...data }) => ({
       ...data,
       path: path?.split("/").slice(0, -1).join("/"),
@@ -179,9 +175,7 @@ export default memo(function PreviewModal({
 
   const handleClose = useCallback(() => actions.setOpen(false), []);
 
-  const assetUrl = shareId
-    ? sharedMediaUrl(shareId, id, name)
-    : mediaUrl(id, name, view === "my-drive" ? path || "/" : fileData?.path!, session?.hash!);
+  const assetUrl = mediaUrl(id, name, view === "my-drive" ? path || "/" : fileData?.path!);
 
   const renderPreview = useCallback(() => {
     if (previewType) {

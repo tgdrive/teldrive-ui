@@ -28,3 +28,5 @@ yarn-error.log*
 
 #other
 tsconfig.tsbuildinfo
+/src/lib/
+route-tree.gen.ts

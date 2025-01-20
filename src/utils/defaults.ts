@@ -1,5 +1,3 @@
-import type { Settings } from "@/hooks/use-settings";
-
 export enum SortOrder {
   ASC = "asc",
   DESC = "desc",
@@ -17,8 +15,7 @@ export const sortViewMap = {
   search: { sortId: "sort_files_by_name", order: SortOrder.ASC },
   recent: { sortId: "sort_files_by_date", order: SortOrder.DESC },
   category: { sortId: "sort_files_by_name", order: SortOrder.ASC },
-  shared: { sortId: "sort_files_by_date", order: SortOrder.DESC },
-};
+} as const;
 
 export type SortState = typeof sortViewMap;
 
@@ -35,7 +32,5 @@ export const sortIdsMap = {
   sort_files_by_date: "updatedAt",
   sort_files_by_size: "size",
 } as const;
-
-export const settings = JSON.parse(localStorage.getItem("settings") || "{}") as Settings;
 
 export const BREAKPOINTS = { xs: 0, sm: 476, md: 576, lg: 992 };

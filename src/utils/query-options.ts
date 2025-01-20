@@ -1,12 +1,13 @@
-import type { FileListParams, ShareListParams } from "@/types";
+import type { FileListParams } from "@/types";
 import { infiniteQueryOptions, queryOptions, useQuery } from "@tanstack/react-query";
 import type { FileData } from "@tw-material/file-browser";
 
 import { getExtension, mediaUrl } from "./common";
-import { defaultSortState, settings, sortIdsMap, sortViewMap } from "./defaults";
+import { defaultSortState, sortIdsMap, sortViewMap } from "./defaults";
 import { getPreviewType, preview } from "./preview-type";
 import { fetchClient } from "./api";
 import type { components } from "@/lib/api";
+import { getSettings } from "./stores/settings";
 
 export const sessionOptions = queryOptions({
   queryKey: ["session"],
@@ -23,12 +24,12 @@ export const sessionOptions = queryOptions({
 
 export const useSession = () => {
   const { data, isLoading, refetch } = useQuery(sessionOptions);
-  const status = isLoading ? "loading" : data?.userId ? "success" : "unauthenticated";
-  return [data ?? null, status, refetch] as const;
+  const status = isLoading ? "loading" : data?.user ? "success" : "unauthenticated";
+  return [data?.user ?? null, status, refetch] as const;
 };
 
 export const fileQueries = {
-  list: (params: FileListParams, sessionHash?: string) =>
+  list: (params: FileListParams) =>
     infiniteQueryOptions({
       queryKey: ["Files_list", params.view, params.params],
       queryFn: fetchFiles(params),
@@ -38,34 +39,7 @@ export const fileQueries = {
           ? undefined
           : lastPage?.meta.currentPage! + 1,
       select: (data) =>
-        data.pages.flatMap((page) =>
-          page?.items ? mapFilesToFb(page?.items!, sessionHash as string) : [],
-        ),
-    }),
-};
-
-export const shareQueries = {
-  list: (params: ShareListParams) =>
-    infiniteQueryOptions({
-      queryKey: ["Shares_listFiles", params],
-      queryFn: async ({ signal }) =>
-        (
-          await fetchClient.GET("/shares/{id}/files", {
-            params: {
-              path: { id: params.id },
-              query: params.path ? { path: params.path } : {},
-            },
-            signal,
-            headers: params.password ? { Authorization: btoa(`:${params.password}`) } : {},
-          })
-        ).data,
-      initialPageParam: 1,
-      getNextPageParam: (lastPage, _) =>
-        lastPage?.meta.currentPage! + 1 > lastPage?.meta.totalPages!
-          ? undefined
-          : lastPage?.meta.currentPage! + 1,
-      select: (data) =>
-        data.pages.flatMap((page) => (page?.items ? mapFilesToFb(page?.items, "") : [])),
+        data.pages.flatMap((page) => (page?.items ? mapFilesToFb(page?.items!) : [])),
     }),
 };
 
@@ -101,9 +75,6 @@ const fetchFiles =
         query.type = "file";
         query.category = params?.category;
       }
-    } else if (view === "shared") {
-      query.operation = "find";
-      query.shared = true;
     }
 
     return (
@@ -116,7 +87,8 @@ const fetchFiles =
     ).data;
   };
 
-const mapFilesToFb = (files: components["schemas"]["FileList"]["items"], sessionHash: string) => {
+const mapFilesToFb = (files: components["schemas"]["FileList"]["items"]) => {
+  const settings = getSettings();
   return files.map((item): FileData => {
     if (item.mimeType === "drive/folder") {
       return {
@@ -137,7 +109,7 @@ const mapFilesToFb = (files: components["schemas"]["FileList"]["items"], session
     let thumbnailUrl = "";
     if (previewType === "image") {
       if (settings.resizerHost) {
-        const url = mediaUrl(item.id!, item.name, "", sessionHash);
+        const url = mediaUrl(item.id!, item.name, "");
         thumbnailUrl = settings.resizerHost
           ? `${settings.resizerHost}/insecure/w:360/plain/${encodeURIComponent(url)}`
           : "";

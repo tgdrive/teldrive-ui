@@ -74,12 +74,13 @@
     "preview": "vite preview ",
     "lint": "biome lint --write ./src",
     "format": "biome format --write ./src",
-    "gen:api-client": "openapi-typescript \"https://raw.githubusercontent.com/tgdrive/teldrive-docs/refs/heads/main/openapi/openapi.yaml\" -o ./src/lib/api.d.ts"
+    "gen:api-client": "openapi-typescript openapi.yaml -o ./src/lib/api.d.ts"
   },
   "pnpm": {
     "overrides": {
       "react": "^18.3.1",
       "react-dom": "^18.3.1"
     }
-  }
+  },
+  "packageManager": "pnpm@9.15.1+sha512.1acb565e6193efbebda772702950469150cf12bcc764262e7587e71d19dc98a423dff9536e57ea44c49bdf790ff694e83c27be5faa23d67e0c033b583be4bfcf"
 }
