@@ -5,15 +5,15 @@ using TypeSpec.Http;
 using TypeSpec.OpenAPI;
 @server(
   "{url}/api",
-  "Gitdrive Server URL",
+  "Drive Server URL",
   {
     url: string,
   }
 )
 @service({
-  title: "Gitdrive",
+  title: "Drive",
 })
-namespace Gitdrive;
+namespace Drive;
 
 alias ApiAuth = BearerAuth | ApiKeyAuth<ApiKeyLocation.cookie, "drive.access_token">;
 
@@ -284,9 +284,10 @@ model File {
 
   @doc("Releasel ID")
   @example(123456789)
-  releaselId?: int64;
+  releaseId?: int64;
 
   tag?: string;
+  
   repo?: string;
 
   @doc("File or Folder path")
@@ -348,6 +349,17 @@ model FileUpdate {
   @doc("File parts")
   parts?: Part[];
 
+  @doc("Parent folder ID")
+  @example("123e4567-e89b-12d3-a456-426614174000")
+  parentId?: string;
+
+  @doc("Release Id")
+  @example(123456)
+  releaseId?: int64;
+
+  @doc("Upload ID")
+  uploadId?: string;
+
   @doc("File size in bytes")
   @example(1048576)
   size?: int64;
@@ -356,33 +368,7 @@ model FileUpdate {
   updatedAt?: utcDateTime;
 }
 
-@doc("File parts update request")
-model FilePartsUpdate {
-  @doc("File name")
-  @example("document.pdf")
-  name?: string;
 
-  @doc("Parent folder ID")
-  @example("123e4567-e89b-12d3-a456-426614174000")
-  parentId?: string;
-
-  @doc("Release Id")
-  @example(123456)
-  releaselId?: int64;
-
-  @doc("Upload ID")
-  uploadId?: string;
-
-  @doc("File parts")
-  parts?: Part[];
-
-  @doc("File size in bytes")
-  @example(1048576)
-  size: int64;
-
-  @doc("Last update time")
-  updatedAt: utcDateTime;
-}
 
 @doc("Move multiple files by ids or path")
 @example(#{
@@ -469,14 +455,6 @@ interface Files {
     @query skiputs?: "0" | "1" = "0",
   ): File | Error;
 
-  @route("/{id}/parts")
-  @put
-  @summary("Update file parts")
-  updateParts(
-    @path id: string,
-    @body body: FilePartsUpdate,
-  ): NoContentResponse | Error;
-
   @route("/{id}/{name}")
   @get
   @summary("Stream or Download file")
@@ -535,8 +513,6 @@ model UploadPart {
 
   @doc("Salt value used for encryption, required if encrypted is true")
   salt?: string;
-
-  repo: string;
 }
 
 @doc("Statistics about the upload")
@@ -549,6 +525,7 @@ model UploadStats {
 }
 
 model UploadToken {
+  releaseId: int64;
   url: string;
   token: string;
 }
@@ -577,10 +554,10 @@ interface Uploads {
   @summary("Get upload stats")
   stats(@query days: integer): UploadStats[] | Error;
 
-  @route("/url")
+  @route("/token")
   @get
-  @summary("Get Upload Url")
-  uploadUrl(): UploadToken | Error;
+  @summary("Get Upload Token")
+  uploadToken(@query releaseId?:int64): UploadToken | Error;
 }
 
 model Release {

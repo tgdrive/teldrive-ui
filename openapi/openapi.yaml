@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  title: Gitdrive
+  title: Drive
   version: 0.0.0
 tags:
   - name: Auth
@@ -427,36 +427,6 @@ paths:
       security:
         - BearerAuth: []
         - ApiKeyAuth: []
-  /files/{id}/parts:
-    put:
-      operationId: Files_updateParts
-      summary: Update file parts
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '204':
-          description: There is no content to send for this request, but the headers may be useful.
-        default:
-          description: An unexpected error response.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-      tags:
-        - Files
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/FilePartsUpdate'
-      security:
-        - BearerAuth: []
-        - ApiKeyAuth: []
   /files/{id}/{name}:
     get:
       operationId: Files_stream
@@ -662,11 +632,18 @@ paths:
       security:
         - BearerAuth: []
         - ApiKeyAuth: []
-  /uploads/url:
+  /uploads/token:
     get:
-      operationId: Uploads_uploadUrl
-      summary: Get Upload Url
-      parameters: []
+      operationId: Uploads_uploadToken
+      summary: Get Upload Token
+      parameters:
+        - name: releaseId
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int64
+          explode: false
       responses:
         '200':
           description: The request has succeeded.
@@ -1051,7 +1028,7 @@ components:
           description: File category
           example: document
           readOnly: true
-        releaselId:
+        releaseId:
           type: integer
           format: int64
           description: Releasel ID
@@ -1147,43 +1124,6 @@ components:
         ids:
           - 123e4567-e89b-12d3-a456-426614174000
         destination: /Documents/2023/
-    FilePartsUpdate:
-      type: object
-      required:
-        - size
-        - updatedAt
-      properties:
-        name:
-          type: string
-          description: File name
-          example: document.pdf
-        parentId:
-          type: string
-          description: Parent folder ID
-          example: 123e4567-e89b-12d3-a456-426614174000
-        releaselId:
-          type: integer
-          format: int64
-          description: Release Id
-          example: 123456
-        uploadId:
-          type: string
-          description: Upload ID
-        parts:
-          type: array
-          items:
-            $ref: '#/components/schemas/Part'
-          description: File parts
-        size:
-          type: integer
-          format: int64
-          description: File size in bytes
-          example: 1048576
-        updatedAt:
-          type: string
-          format: date-time
-          description: Last update time
-      description: File parts update request
     FileUpdate:
       type: object
       properties:
@@ -1196,6 +1136,18 @@ components:
           items:
             $ref: '#/components/schemas/Part'
           description: File parts
+        parentId:
+          type: string
+          description: Parent folder ID
+          example: 123e4567-e89b-12d3-a456-426614174000
+        releaseId:
+          type: integer
+          format: int64
+          description: Release Id
+          example: 123456
+        uploadId:
+          type: string
+          description: Upload ID
         size:
           type: integer
           format: int64
@@ -1316,7 +1268,6 @@ components:
         - releaseId
         - size
         - encrypted
-        - repo
       properties:
         name:
           type: string
@@ -1342,8 +1293,6 @@ components:
         salt:
           type: string
           description: Salt value used for encryption, required if encrypted is true
-        repo:
-          type: string
       description: Details of an uploaded part
     UploadStats:
       type: object
@@ -1363,9 +1312,13 @@ components:
     UploadToken:
       type: object
       required:
+        - releaseId
         - url
         - token
       properties:
+        releaseId:
+          type: integer
+          format: int64
         url:
           type: string
         token:
@@ -1380,7 +1333,7 @@ components:
       name: drive.access_token
 servers:
   - url: '{url}/api'
-    description: Gitdrive Server URL
+    description: Drive Server URL
     variables:
       url:
         default: ''
