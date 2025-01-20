@@ -7,8 +7,8 @@
     "@monaco-editor/react": "^4.6.0",
     "@nextui-org/use-clipboard": "^2.1.1",
     "@react-aria/i18n": "^3.12.4",
-    "@tanstack/react-query": "^5.62.7",
-    "@tanstack/react-router": "1.87.12",
+    "@tanstack/react-query": "^5.64.2",
+    "@tanstack/react-router": "1.97.3",
     "@tw-material/file-browser": "^1.0.32",
     "@tw-material/framer-transitions": "^1.1.4",
     "@tw-material/react": "^1.1.21",
@@ -65,7 +65,11 @@
     "unplugin-icons": "^0.21.0",
     "vite": "^6.0.3",
     "vite-bundle-analyzer": "^0.15.2",
-    "vite-tsconfig-paths": "^5.1.4"
+    "vite-tsconfig-paths": "^5.1.4",
+    "@typespec/compiler": "^0.64.0",
+    "@typespec/http": "^0.64.0",
+    "@typespec/openapi": "^0.64.0",
+    "@typespec/openapi3": "^0.64.0"
   },
   "scripts": {
     "dev": "vite dev",
@@ -74,13 +78,13 @@
     "preview": "vite preview ",
     "lint": "biome lint --write ./src",
     "format": "biome format --write ./src",
-    "gen:api-client": "openapi-typescript openapi.yaml -o ./src/lib/api.d.ts"
+    "gen:api-client": "openapi-typescript openapi/openapi.yaml -o ./src/lib/api.d.ts",
+    "tsp:generate": "tsp compile ./openapi/openapi.tsp"
   },
   "pnpm": {
     "overrides": {
       "react": "^18.3.1",
       "react-dom": "^18.3.1"
     }
-  },
-  "packageManager": "pnpm@9.15.1+sha512.1acb565e6193efbebda772702950469150cf12bcc764262e7587e71d19dc98a423dff9536e57ea44c49bdf790ff694e83c27be5faa23d67e0c033b583be4bfcf"
+  }
 }
