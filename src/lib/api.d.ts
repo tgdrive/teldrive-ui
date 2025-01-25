@@ -712,14 +712,16 @@ export interface components {
          *       "ids": [
          *         "123e4567-e89b-12d3-a456-426614174000"
          *       ],
-         *       "destination": "/Documents/2023/"
+         *       "destinationParent": "/Documents/2023/"
          *     }
          */
         FileMove: {
             /** @description Array of file or folders ids to be moved */
             ids: string[];
-            /** @description Destination path where files will be moved to */
-            destination: string;
+            /** @description Destination parent path or ID where files will be moved to */
+            destinationParent: string;
+            /** @description Destination file or folder name */
+            destinationName?: string;
         };
         /** @description File parts update request */
         FilePartsUpdate: {
@@ -1481,9 +1483,7 @@ export interface operations {
     };
     Files_update: {
         parameters: {
-            query?: {
-                skiputs?: "0" | "1";
-            };
+            query?: never;
             header?: never;
             path: {
                 id: string;
