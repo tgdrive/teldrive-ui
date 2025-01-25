@@ -172,7 +172,7 @@ export const useFileAction = ({ view, params: search }: FileListParams) => {
             .mutateAsync({
               body: {
                 ids: files.map((file) => file?.id!),
-                destination: target.path || "/",
+                destinationParent: target.path || "/",
               },
             })
             .then(() => {

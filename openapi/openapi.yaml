@@ -393,16 +393,6 @@ paths:
           required: true
           schema:
             type: string
-        - name: skiputs
-          in: query
-          required: false
-          schema:
-            type: string
-            enum:
-              - '0'
-              - '1'
-            default: '0'
-          explode: false
       responses:
         '200':
           description: The request has succeeded.
@@ -1108,7 +1098,7 @@ components:
       type: object
       required:
         - ids
-        - destination
+        - destinationParent
       properties:
         ids:
           type: array
@@ -1116,14 +1106,17 @@ components:
             type: string
           minItems: 1
           description: Array of file or folders ids to be moved
-        destination:
+        destinationParent:
           type: string
-          description: Destination path where files will be moved to
+          description: Destination parent path or ID where files will be moved to
+        destinationName:
+          type: string
+          description: Destination file or folder name
       description: Move multiple files by ids or path
       example:
         ids:
           - 123e4567-e89b-12d3-a456-426614174000
-        destination: /Documents/2023/
+        destinationParent: /Documents/2023/
     FileUpdate:
       type: object
       properties:
