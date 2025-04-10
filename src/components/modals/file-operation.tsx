@@ -112,7 +112,7 @@ const FolderCreateDialog = memo(({ queryKey, handleClose }: FolderCreateDialogPr
 
   const { path } = useSearch({ from: "/_authed/$view" });
 
-  const createFolder = $api.useMutation("post", "/files/mkdir", {
+  const createFolder = $api.useMutation("post", "/files", {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey });
     },
@@ -130,9 +130,9 @@ const FolderCreateDialog = memo(({ queryKey, handleClose }: FolderCreateDialogPr
       createFolder
         .mutateAsync({
           body: {
-            path: currentFile.name.startsWith("/")
-              ? currentFile.name
-              : `${path?.replace(/\/+$/, "")}/${currentFile.name}`,
+            name: currentFile.name,
+            type: "folder",
+            path:path ? path : "/",
           },
         })
         .then(() => handleClose());

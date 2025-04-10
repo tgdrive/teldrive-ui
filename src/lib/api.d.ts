@@ -72,6 +72,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/events": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get events
+         * @description Get events
+         */
+        get: operations["Events_getEvents"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/files": {
         parameters: {
             query?: never;
@@ -596,6 +616,26 @@ export interface components {
              */
             message: string;
         };
+        /** @description Event information */
+        Event: {
+            /**
+             * @description Event ID
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            id: string;
+            /**
+             * @description Event type
+             * @example file_update
+             */
+            type: string;
+            /**
+             * Format: date-time
+             * @description Event timestamp
+             */
+            createdAt: string;
+            /** @description Event Source */
+            Source: components["schemas"]["Source"];
+        };
         /** @description File metadata */
         File: {
             /**
@@ -959,6 +999,34 @@ export interface components {
              */
             password: string;
         };
+        Source: {
+            /**
+             * @description File ID
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            id: string;
+            /**
+             * @description File name
+             * @example document.pdf
+             */
+            name: string;
+            /**
+             * @description File type
+             * @example file
+             * @enum {string}
+             */
+            type: "folder" | "file";
+            /**
+             * @description Parent ID
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            parentId: string;
+            /**
+             * @description Destination Parent ID
+             * @example 123e4567-e89b-12d3-a456-426614174000
+             */
+            destParentId?: string;
+        };
         /** @description Details of an uploaded part */
         UploadPart: {
             /** @description Name identifier of the part */
@@ -1221,6 +1289,35 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description An unexpected error response. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    Events_getEvents: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The request has succeeded. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Event"][];
+                };
             };
             /** @description An unexpected error response. */
             default: {
