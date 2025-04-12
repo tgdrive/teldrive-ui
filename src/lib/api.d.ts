@@ -634,7 +634,7 @@ export interface components {
              */
             createdAt: string;
             /** @description Event Source */
-            Source: components["schemas"]["Source"];
+            source: components["schemas"]["Source"];
         };
         /** @description File metadata */
         File: {
