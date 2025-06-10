@@ -30,7 +30,7 @@ jobs:
         run: cd dist; zip -r ../teldrive-ui.zip *
 
       - name: Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v2.2.2
         with:
           tag_name: latest
           files: teldrive-ui.zip
