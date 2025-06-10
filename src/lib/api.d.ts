@@ -399,7 +399,8 @@ export interface paths {
         /** List user channels */
         get: operations["Users_listChannels"];
         put?: never;
-        post?: never;
+        /** Create user channel */
+        post: operations["Users_createChannel"];
         delete?: never;
         options?: never;
         head?: never;
@@ -422,6 +423,23 @@ export interface paths {
         head?: never;
         /** Sync user channels */
         patch: operations["Users_syncChannels"];
+        trace?: never;
+    };
+    "/users/channels/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete user channel */
+        delete: operations["Users_deleteChannel"];
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/users/config": {
@@ -585,7 +603,7 @@ export interface components {
              * Format: int64
              * @description Unique numeric identifier of the channel
              */
-            channelId: number;
+            channelId?: number;
         };
         /**
          * @description Telegram channel information
@@ -2279,6 +2297,37 @@ export interface operations {
             };
         };
     };
+    Users_createChannel: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Channel"];
+            };
+        };
+        responses: {
+            /** @description The request has succeeded and a new resource has been created as a result. */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description An unexpected error response. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
     Users_updateChannel: {
         parameters: {
             query?: never;
@@ -2315,6 +2364,35 @@ export interface operations {
             query?: never;
             header?: never;
             path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description There is no content to send for this request, but the headers may be useful. */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description An unexpected error response. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    Users_deleteChannel: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
             cookie?: never;
         };
         requestBody?: never;

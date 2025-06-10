@@ -132,7 +132,7 @@ const FolderCreateDialog = memo(({ queryKey, handleClose }: FolderCreateDialogPr
           body: {
             name: currentFile.name,
             type: "folder",
-            path:path ? path : "/",
+            path: path ? path : "/",
           },
         })
         .then(() => handleClose());

@@ -74,7 +74,7 @@
     "preview": "vite preview ",
     "lint": "biome lint --write ./src",
     "format": "biome format --write ./src",
-    "gen:api-client": "openapi-typescript \"https://codeberg.org/teldrive/teldrive-docs/raw/branch/main/openapi/openapi.yaml\" -o ./src/lib/api.d.ts"
+    "gen:api-client": "openapi-typescript \"https://raw.githubusercontent.com/tgdrive/teldrive-docs/main/openapi/openapi.yaml\" -o ./src/lib/api.d.ts"
   },
   "pnpm": {
     "overrides": {

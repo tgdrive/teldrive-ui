@@ -1,13 +1,14 @@
 import { TanStackRouterVite } from "@tanstack/router-vite-plugin";
 import react from "@vitejs/plugin-react";
 import Icons from "unplugin-icons/vite";
-import { defineConfig } from "vite";
+import { defineConfig, loadEnv } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 import cp from "node:child_process";
 
 const commitHash = cp.execSync("git rev-parse --short HEAD").toString().replace("\n", "");
 
-export default defineConfig(({ mode: _ }) => {
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), "");
   return {
     plugins: [
       TanStackRouterVite({
@@ -32,6 +33,9 @@ export default defineConfig(({ mode: _ }) => {
         "/api": {
           target: "http://localhost:5000",
           ws: true,
+          headers: {
+            Cookie: env.VITE_API_COOKIE || "",
+          },
         },
       },
     },

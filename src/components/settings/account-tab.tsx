@@ -1,7 +1,19 @@
-import { memo, useCallback } from "react";
+import { memo, useCallback, useState } from "react";
 import type { UserSession } from "@/types";
 import { useMutation, useQueryClient, useSuspenseQueries } from "@tanstack/react-query";
-import { Button, scrollbarClasses, Select, SelectItem, Textarea } from "@tw-material/react";
+import {
+  Button,
+  scrollbarClasses,
+  Textarea,
+  RadioGroup,
+  Radio,
+  Input,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Modal,
+  ModalContent,
+} from "@tw-material/react";
 import IcRoundCancel from "~icons/ic/round-cancel";
 import IcRoundCheckCircle from "~icons/ic/round-check-circle";
 import IcRoundContentCopy from "~icons/ic/round-content-copy";
@@ -17,6 +29,8 @@ import { $api, fetchClient } from "@/utils/api";
 import type { components } from "@/lib/api";
 import { NetworkError } from "@/utils/fetch-throw";
 import SyncIcon from "~icons/material-symbols/sync";
+import DeleteIcon from "~icons/material-symbols/delete";
+import AddIcon from "~icons/material-symbols/add-circle";
 
 const validateBots = (value?: string) => {
   if (value) {
@@ -29,7 +43,7 @@ const validateBots = (value?: string) => {
 const Session = memo(({ appName, location, createdAt, valid, hash, current }: UserSession) => {
   const deleteSession = $api.useMutation("delete", "/users/sessions/{id}", {
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["get", "/users/sessions"] });
+      queryClient.invalidateQueries({ queryKey: $api.queryKey("get", "/users/sessions") });
     },
   });
   const queryClient = useQueryClient();
@@ -69,6 +83,109 @@ const Session = memo(({ appName, location, createdAt, valid, hash, current }: Us
   );
 });
 
+const DeletChannel = memo(({ id }: { id: string }) => {
+  const queryClient = useQueryClient();
+  const deleteChannel = $api.useMutation("delete", "/users/channels/{id}", {
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["get", "/users/channels"] });
+      toast.success("Channel Deleted");
+    },
+  });
+  return (
+    <Button
+      isIconOnly
+      variant="text"
+      title="Delete Channel"
+      isLoading={deleteChannel.isPending}
+      className={clsx(deleteChannel.isPending && "pointer-events-none", "flex-shrink-0")}
+      onPress={() =>
+        deleteChannel.mutate({
+          params: {
+            path: {
+              id,
+            },
+          },
+        })
+      }
+    >
+      <DeleteIcon />
+    </Button>
+  );
+});
+
+const ChannelCreateDialog = memo(
+  ({ open, handleClose }: { open: boolean; handleClose: () => void }) => {
+    const queryClient = useQueryClient();
+    const createChannel = $api.useMutation("post", "/users/channels", {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["get", "/users/channels"] });
+        toast.success("Channel Added");
+      },
+    });
+
+    const [channel, setChannel] = useState("");
+
+    const onCreate = useCallback(
+      (e: React.FormEvent<HTMLDivElement>) => {
+        e.preventDefault();
+        createChannel
+          .mutateAsync({
+            body: {
+              channelName: channel,
+            },
+          })
+          .then(() => handleClose());
+      },
+      [channel],
+    );
+
+    return (
+      <Modal
+        isOpen={open}
+        size="md"
+        classNames={{
+          wrapper: "overflow-hidden",
+          base: "bg-surface w-full shadow-none",
+        }}
+        placement="center"
+        onClose={handleClose}
+        hideCloseButton
+      >
+        <ModalContent as="form" onSubmit={onCreate}>
+          <ModalHeader className="flex flex-col gap-1">Create Channel</ModalHeader>
+          <ModalBody>
+            <Input
+              size="lg"
+              variant="bordered"
+              classNames={{
+                inputWrapper: "border-primary border-large",
+              }}
+              placeholder="Channel Name"
+              autoFocus
+              value={channel}
+              onValueChange={setChannel}
+            />
+          </ModalBody>
+          <ModalFooter>
+            <Button className="font-normal" variant="text" onPress={handleClose}>
+              Close
+            </Button>
+            <Button
+              type="submit"
+              className="font-normal"
+              variant="filledTonal"
+              isDisabled={createChannel.isPending || !channel}
+              isLoading={createChannel.isPending}
+            >
+              {createChannel.isPending ? "Creating" : "Create"}
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+    );
+  },
+);
+
 export const AccountTab = memo(() => {
   const { control, handleSubmit } = useForm<{ tokens: string }>({
     defaultValues: { tokens: "" },
@@ -88,6 +205,14 @@ export const AccountTab = memo(() => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["get", "/users/channels"] });
       toast.success("Channels Synced");
+    },
+    onError: async (error) => {
+      if (error instanceof NetworkError) {
+        const errorData = (await error.data?.json()) as components["schemas"]["Error"];
+        toast.error(`Sync failed: ${errorData.message.split(":").slice(-1)[0]!.trim()}`);
+      } else {
+        toast.error("Sync failed: An unknown error occurred.");
+      }
     },
   });
 
@@ -127,7 +252,22 @@ export const AccountTab = memo(() => {
       }
     },
   });
-  const updateChannel = $api.useMutation("patch", "/users/channels");
+  const updateChannel = $api.useMutation("patch", "/users/channels", {
+    onSuccess: () => {
+      toast.success("Default channel updated");
+      queryClient.invalidateQueries({ queryKey: ["get", "/users/config"] });
+    },
+    onError: async (error) => {
+      if (error instanceof NetworkError) {
+        const errorData = (await error.data?.json()) as components["schemas"]["Error"];
+        toast.error(
+          `Failed to update default channel: ${errorData.message.split(":").slice(-1)[0]!.trim()}`,
+        );
+      } else {
+        toast.error("Failed to update default channel: An unknown error occurred.");
+      }
+    },
+  });
 
   const onSubmit = useCallback(
     async ({ tokens }: { tokens: string }) => {
@@ -136,30 +276,59 @@ export const AccountTab = memo(() => {
     [botAddition],
   );
 
-  const handleSelectionChange = useCallback(
-    (value: any) => {
-      const channelId = Number.parseInt([...value][0]);
-      const channelName = channelData?.find((c) => c.channelId === channelId)?.channelName;
-      updateChannel.mutateAsync({ body: { channelId, channelName } }).then(() => {
-        toast.success("Channel updated");
-        queryClient.invalidateQueries({ queryKey: ["get", "/users/config"] });
-      });
+  const handleSetDefaultChannel = useCallback(
+    (channelId: number) => {
+      const channel = channelData?.find((c) => c.channelId === channelId);
+      if (channel) {
+        updateChannel.mutate({
+          body: { channelId: channel.channelId, channelName: channel.channelName },
+        });
+      }
     },
-    [channelData],
+    [channelData, updateChannel],
   );
 
+  const [open, setOpen] = useState(false);
+
   return (
-    <div className={clsx("grid grid-cols-6 gap-8 p-2 w-full overflow-y-auto", scrollbarClasses)}>
-      <div className="col-span-6 xs:col-span-3 flex flex-col justify-around">
-        <div>
-          <p className="text-lg font-medium">Add Bots</p>
-          <p className="text-sm font-normal text-on-surface-variant">
-            Add bots tokens to your account
-          </p>
-        </div>
-        <div className="col-span-6 xs:col-span-3 flex flex-col gap-2">
-          <p className="text-lg font-medium">{`Current Bots: ${userConfig?.bots.length || 0}`}</p>
-          <div className="inline-flex gap-4">
+    <div
+      className={clsx("flex flex-col gap-6 p-4 w-full h-full overflow-y-auto", scrollbarClasses)}
+    >
+      <div className="p-4 rounded-lg border border-outline-variant">
+        <h4 className="text-lg font-medium pb-2">Manage Bots</h4>
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3 mb-4">
+          <Controller
+            name="tokens"
+            control={control}
+            rules={{ required: true, validate: validateBots }}
+            render={({ field, fieldState: { error } }) => (
+              <Textarea
+                {...field}
+                disableAutosize
+                classNames={{
+                  input: "h-32 min-h-[8rem]",
+                  inputWrapper:
+                    "bg-surface-container-low data-[hover=true]:bg-surface-container group-data-[focus=true]:bg-surface-container",
+                }}
+                placeholder="Enter tokens 1 per line"
+                autoComplete="off"
+                errorMessage={error ? error.message : ""}
+                isInvalid={!!error}
+              />
+            )}
+          />
+          <Button
+            isLoading={botAddition.isPending}
+            type="submit"
+            variant="filledTonal"
+            className="self-start"
+          >
+            Add Bots
+          </Button>
+        </form>
+        <div className="flex justify-between items-center pt-2">
+          <p className="text-base font-medium">{`Current Bots: ${userConfig?.bots.length || 0}`}</p>
+          <div className="inline-flex gap-2">
             <Button
               title="Copy Tokens to Clipboard"
               variant="text"
@@ -169,10 +338,9 @@ export const AccountTab = memo(() => {
             >
               <IcRoundContentCopy />
             </Button>
-
             <Button
               variant="text"
-              title="Remove Bots"
+              title="Remove All Bots"
               className="text-inherit"
               onPress={() => removeBots.mutate({})}
               isLoading={removeBots.isPending}
@@ -183,75 +351,69 @@ export const AccountTab = memo(() => {
           </div>
         </div>
       </div>
-      <div className="col-span-6 xs:col-span-3">
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2">
-          <Controller
-            name="tokens"
-            control={control}
-            rules={{ required: true, validate: validateBots }}
-            render={({ field, fieldState: { error } }) => (
-              <Textarea
-                {...field}
-                disableAutosize
-                classNames={{
-                  input: "h-32",
-                }}
-                placeholder="Enter tokens 1 per line"
-                autoComplete="off"
-                errorMessage={error ? error.message : ""}
-                isInvalid={!!error}
-              />
-            )}
-          />
-          <Button isLoading={botAddition.isPending} type="submit" variant="filledTonal">
-            Add Bots
-          </Button>
-        </form>
-      </div>
-      <div className="col-span-6 xs:col-span-3">
-        <p className="text-lg font-medium">Select Channel</p>
-        <p className="text-sm font-normal text-on-surface-variant">
-          Select the default telegram channel
-        </p>
-      </div>
-      <div className="col-span-6 xs:col-span-3 flex gap-2">
-        <Select
-          aria-label="Select Channel"
-          size="lg"
-          className="col-span-6 xs:col-span-3"
-          scrollShadowProps={{
-            isEnabled: false,
-          }}
-          classNames={{
-            popoverContent: "rounded-lg shadow-1",
-          }}
-          variant="bordered"
-          items={channelData || []}
-          defaultSelectedKeys={[userConfig.channelId ? userConfig.channelId.toString() : ""]}
-          onSelectionChange={handleSelectionChange}
-        >
-          {(channel) => (
-            <SelectItem key={channel.channelId} value={channel.channelId}>
-              {channel.channelName}
-            </SelectItem>
+
+      <div className="p-4 rounded-lg border border-outline-variant flex flex-col gap-4">
+        <div className="flex justify-between items-start">
+          <div>
+            <h4 className="text-lg font-medium">Channels</h4>
+            <p className="text-sm font-normal text-on-surface-variant">Manage available channels</p>
+          </div>
+          <ChannelCreateDialog open={open} handleClose={() => setOpen(false)} />
+          <div className="flex gap-2">
+            <Button isIconOnly variant="text" title="Add Channel" onPress={() => setOpen(true)}>
+              <AddIcon />
+            </Button>
+            <Button
+              isIconOnly
+              variant="text"
+              title="Sync Channels"
+              isLoading={syncChannels.isPending}
+              className={clsx(syncChannels.isPending && "pointer-events-none", "flex-shrink-0")}
+              onPress={() => syncChannels.mutate({})}
+            >
+              <SyncIcon className={clsx(syncChannels.isPending && "animate-spin")} />
+            </Button>
+          </div>
+        </div>
+
+        <div>
+          {channelData && channelData.length > 0 ? (
+            <RadioGroup
+              aria-label="Select Default Channel"
+              value={userConfig.channelId?.toString() || ""}
+              onValueChange={(value) => handleSetDefaultChannel(Number(value))}
+              classNames={{ wrapper: "gap-2 max-h-60 overflow-y-auto pr-2" }}
+            >
+              {channelData.map((channel) => {
+                return (
+                  <div
+                    key={channel.channelId}
+                    className="flex justify-between items-center p-2 rounded bg-surface-container-low hover:bg-surface-container"
+                  >
+                    <Radio value={channel.channelId!.toString()} classNames={{ label: "text-sm" }}>
+                      {channel.channelName} ({channel.channelId})
+                    </Radio>
+                    <DeletChannel id={String(channel.channelId)} />
+                  </div>
+                );
+              })}
+            </RadioGroup>
+          ) : (
+            <p className="text-sm text-on-surface-variant italic px-2">
+              No channels found. Press the sync button
+              <SyncIcon className="inline-block align-middle" /> to fetch your channels from
+              Telegram.
+            </p>
           )}
-        </Select>
-        <Button
-          isIconOnly
-          variant="text"
-          title="Sync Channels"
-          className={clsx(syncChannels.isPending && "pointer-events-none")}
-          onPress={() => syncChannels.mutate({})}
-        >
-          <SyncIcon className={clsx(syncChannels.isPending && "animate-spin")} />
-        </Button>
+        </div>
       </div>
-      <div className="col-span-6">
-        <p className="text-lg font-medium">Sessions</p>
-        <p className="text-sm font-normal text-on-surface-variant">
-          Active sessions for your account
+
+      <div className="p-4 rounded-lg border border-outline-variant">
+        <p className="text-lg font-medium">Active Sessions</p>
+        <p className="text-sm font-normal text-on-surface-variant mb-2">
+          Manage active sessions for your account.
         </p>
-        <div className="flex pt-2 flex-wrap gap-2">
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-3 pt-2 justify-items-start">
           {sessions?.map((session) => (
             <Session key={session.hash} {...session} />
           ))}

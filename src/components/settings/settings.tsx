@@ -35,45 +35,51 @@ export const Settings = memo(() => {
   const params = fileRoute.useParams();
 
   return (
-    <div className="bg-surface container size-full rounded-xl flex flex-col max-w-3xl gap-4">
-      <h1 className="text-2xl font-semibold pt-2">Settings</h1>
-      <nav className="flex gap-1 rounded-full max-w-min bg-surface-container">
-        {Tabs.map((tab) => (
-          <div key={tab.id} className="relative">
-            <Button
-              as={ForwardLink}
-              variant="text"
-              to="/settings/$tabId"
-              disableRipple
-              data-selected={params.tabId === tab.id}
-              replace
-              params={{ tabId: tab.id }}
-              className={clsx(
-                "text-inherit min-h-14 min-w-16 xs:min-w-20 !px-6 z-1",
-                "data-[hover=true]:text-on-surface text-on-surface-variant",
-                "data-[selected=true]:text-on-surface data-[hover=true]:bg-transparent",
-                "[&>span>svg]:data-[hover=true]:scale-110 ",
-                "[&>span>svg]:data-[selected=true]:scale-110",
+    <div className="bg-surface container size-full rounded-xl flex flex-col md:flex-row max-w-5xl gap-6 p-4">
+      <div className="flex flex-col gap-4 w-full md:w-1/4">
+        <h1 className="text-2xl font-semibold pt-2 px-2">Settings</h1>
+        <nav className="flex flex-row md:flex-col gap-1 overflow-x-auto no-scrollbar">
+          {Tabs.map((tab) => (
+            <div key={tab.id} className="relative w-auto md:w-full flex-shrink-0">
+              <Button
+                as={ForwardLink}
+                variant="text"
+                to="/settings/$tabId"
+                disableRipple
+                data-selected={params.tabId === tab.id}
+                replace
+                params={{ tabId: tab.id }}
+                className={clsx(
+                  "text-inherit h-14 w-full !justify-center md:!justify-start !px-4 z-1",
+                  "data-[hover=true]:text-on-surface text-on-surface-variant",
+                  "data-[selected=true]:text-on-surface data-[hover=true]:bg-transparent",
+                  "[&>span>svg]:data-[hover=true]:scale-110 ",
+                  "[&>span>svg]:data-[selected=true]:scale-110",
+                  "flex-col md:flex-row items-center",
+                  "gap-1 md:gap-2",
+                )}
+                startContent={<tab.icon className="text-xl" />}
+              >
+                <span className="capitalize text-xs md:text-base">{tab.id}</span>
+              </Button>
+              {params.tabId === tab.id && (
+                <motion.span
+                  className="absolute rounded-full inset-x-1 bottom-0 h-1 md:inset-y-1 md:left-0 md:right-0 md:h-auto z-0 bg-secondary-container text-on-secondary-container"
+                  layoutId="pill"
+                  transition={{
+                    type: "spring",
+                    bounce: 0.1,
+                    duration: 0.4,
+                  }}
+                />
               )}
-              startContent={<tab.icon />}
-            >
-              <span className="capitalize hidden xs:block">{tab.id}</span>
-            </Button>
-            {params.tabId === tab.id && (
-              <motion.span
-                className="absolute rounded-full inset-0 z-0 bg-secondary-container text-on-secondary-container"
-                layoutId="pill"
-                transition={{
-                  type: "spring",
-                  bounce: 0.15,
-                  duration: 0.5,
-                }}
-              />
-            )}
-          </div>
-        ))}
-      </nav>
-      <Outlet />
+            </div>
+          ))}
+        </nav>
+      </div>
+      <div className="flex-1 overflow-hidden">
+        <Outlet />
+      </div>
     </div>
   );
 });

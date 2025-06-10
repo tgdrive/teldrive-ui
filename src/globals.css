@@ -10,6 +10,16 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
 .apexcharts-legend-text {
   @apply text-on-surface;
 }
@@ -67,7 +77,7 @@ input[type="number"] {
   }
 
   * {
-    -ms-overflow-style: none;  
+    -ms-overflow-style: none;
     scrollbar-width: none;
   }
 }

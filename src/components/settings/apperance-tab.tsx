@@ -61,35 +61,37 @@ export const ApperanceTab = memo(() => {
     setColorScheme({ cssVars, color });
 
     document.adoptedStyleSheets = [sheet];
-  }, [color, firstRender]);
+  }, [color, firstRender, colorScheme.color, setColorScheme]);
 
   const handleReset = useCallback(() => {
+    setColor(defaultColorScheme.color);
     setColorScheme({ cssVars: {}, color: defaultColorScheme.color });
     document.adoptedStyleSheets = [];
-  }, []);
+  }, [setColorScheme]);
 
   return (
-    <div className="flex flex-col gap-3">
-      <div className="grid grid-cols-6 gap-2 py-2 w-full">
-        <div className="col-span-6 xs:col-span-3">
+    <div className="flex flex-col gap-6 p-4 h-full overflow-y-auto">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+        <div>
           <p className="text-lg font-medium">Color</p>
           <p className="text-sm font-normal text-on-surface-variant">Change primary Color</p>
         </div>
-        <div className="gap-2 grid grid-cols-[repeat(auto-fill,minmax(32px,1fr))] col-span-6 xs:col-span-3">
-          {swatches.map((color) => (
+        <div className="flex flex-wrap gap-3 items-center">
+          {swatches.map((swatchColor) => (
             <div
-              key={color}
-              style={{ backgroundColor: color }}
-              onClick={() => setColor(color)}
+              key={swatchColor}
+              style={{ backgroundColor: swatchColor }}
+              onClick={() => setColor(swatchColor)}
               className={clsx(
-                "size-8 rounded-full hover:ring-4 cursor-pointer",
-                color === colorScheme.color && "ring-4 ring-primary",
+                "size-8 rounded-full hover:ring-4 cursor-pointer transition-all",
+                color === swatchColor ? "ring-4 ring-primary" : "ring-outline-variant",
               )}
+              title={swatchColor}
             />
           ))}
           <ColorPickerMenu color={color} setColor={setColor} />
           <Button
-            title="Choose Color"
+            title="Reset Color"
             variant="filled"
             isIconOnly
             className="min-w-8 size-8"
