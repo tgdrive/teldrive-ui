@@ -83,62 +83,134 @@ const Session = memo(({ appName, location, createdAt, valid, hash, current }: Us
   );
 });
 
-const DeletChannel = memo(({ id }: { id: string }) => {
+const ChannelCreateDialog = ({ handleClose }: { handleClose: () => void }) => {
   const queryClient = useQueryClient();
+  const createChannel = $api.useMutation("post", "/users/channels", {
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["get", "/users/channels"] });
+      toast.success("Channel Added");
+    },
+  });
+
+  const [channel, setChannel] = useState("");
+
+  const onCreate = useCallback(
+    (e: React.FormEvent<HTMLDivElement>) => {
+      e.preventDefault();
+      createChannel
+        .mutateAsync({
+          body: {
+            channelName: channel,
+          },
+        })
+        .then(() => handleClose());
+    },
+    [channel],
+  );
+
+  return (
+    <>
+      <ModalHeader className="flex flex-col gap-1">Create Channel</ModalHeader>
+      <ModalBody as="form" id="add-channel" onSubmit={onCreate}>
+        <Input
+          size="lg"
+          variant="bordered"
+          classNames={{
+            inputWrapper: "border-primary border-large",
+          }}
+          placeholder="Channel Name"
+          autoFocus
+          value={channel}
+          onValueChange={setChannel}
+        />
+      </ModalBody>
+      <ModalFooter>
+        <Button className="font-normal" variant="text" onPress={handleClose}>
+          Close
+        </Button>
+        <Button
+          type="submit"
+          form="add-channel"
+          className="font-normal"
+          variant="filledTonal"
+          isDisabled={createChannel.isPending || !channel}
+          isLoading={createChannel.isPending}
+        >
+          {createChannel.isPending ? "Creating" : "Create"}
+        </Button>
+      </ModalFooter>
+    </>
+  );
+};
+
+const ChannelDeleteDialog = ({
+  channelId,
+  handleClose,
+}: { channelId: number; handleClose: () => void }) => {
+  const queryClient = useQueryClient();
+
   const deleteChannel = $api.useMutation("delete", "/users/channels/{id}", {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["get", "/users/channels"] });
       toast.success("Channel Deleted");
     },
   });
-  return (
-    <Button
-      isIconOnly
-      variant="text"
-      title="Delete Channel"
-      isLoading={deleteChannel.isPending}
-      className={clsx(deleteChannel.isPending && "pointer-events-none", "flex-shrink-0")}
-      onPress={() =>
-        deleteChannel.mutate({
-          params: {
-            path: {
-              id,
-            },
+
+  const onDelete = useCallback(() => {
+    deleteChannel
+      .mutateAsync({
+        params: {
+          path: {
+            id: String(channelId),
           },
-        })
-      }
-    >
-      <DeleteIcon />
-    </Button>
+        },
+      })
+      .then(() => handleClose());
+  }, [channelId]);
+  return (
+    <>
+      <ModalHeader className="flex flex-col gap-1">Delete Channel</ModalHeader>
+      <ModalBody>
+        <h1 className="text-large font-medium mt-2">Are you sure to delete this channel</h1>
+      </ModalBody>
+      <ModalFooter>
+        <Button className="font-normal" variant="text" onPress={handleClose}>
+          No
+        </Button>
+        <Button
+          variant="filledTonal"
+          classNames={{
+            base: "font-normal",
+          }}
+          isLoading={deleteChannel.isPending}
+          onPress={onDelete}
+        >
+          Yes
+        </Button>
+      </ModalFooter>
+    </>
   );
-});
+};
 
-const ChannelCreateDialog = memo(
-  ({ open, handleClose }: { open: boolean; handleClose: () => void }) => {
-    const queryClient = useQueryClient();
-    const createChannel = $api.useMutation("post", "/users/channels", {
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["get", "/users/channels"] });
-        toast.success("Channel Added");
-      },
-    });
+interface ChannelOperationProps {
+  open: boolean;
+  handleClose: () => void;
+  operation: "add" | "delete";
+  channelId: number;
+}
 
-    const [channel, setChannel] = useState("");
-
-    const onCreate = useCallback(
-      (e: React.FormEvent<HTMLDivElement>) => {
-        e.preventDefault();
-        createChannel
-          .mutateAsync({
-            body: {
-              channelName: channel,
-            },
-          })
-          .then(() => handleClose());
-      },
-      [channel],
-    );
-
+const ChannelOperationModal = memo(
+  ({ open, handleClose, operation, channelId }: ChannelOperationProps) => {
+    const renderOperation = () => {
+      switch (operation) {
+        case "add":
+          return <ChannelCreateDialog handleClose={handleClose} />;
+        case "delete":
+          return <ChannelDeleteDialog channelId={channelId} handleClose={handleClose} />;
+        default:
+          return null;
+      }
+    };
     return (
       <Modal
         isOpen={open}
@@ -151,36 +223,7 @@ const ChannelCreateDialog = memo(
         onClose={handleClose}
         hideCloseButton
       >
-        <ModalContent as="form" onSubmit={onCreate}>
-          <ModalHeader className="flex flex-col gap-1">Create Channel</ModalHeader>
-          <ModalBody>
-            <Input
-              size="lg"
-              variant="bordered"
-              classNames={{
-                inputWrapper: "border-primary border-large",
-              }}
-              placeholder="Channel Name"
-              autoFocus
-              value={channel}
-              onValueChange={setChannel}
-            />
-          </ModalBody>
-          <ModalFooter>
-            <Button className="font-normal" variant="text" onPress={handleClose}>
-              Close
-            </Button>
-            <Button
-              type="submit"
-              className="font-normal"
-              variant="filledTonal"
-              isDisabled={createChannel.isPending || !channel}
-              isLoading={createChannel.isPending}
-            >
-              {createChannel.isPending ? "Creating" : "Create"}
-            </Button>
-          </ModalFooter>
-        </ModalContent>
+        <ModalContent>{renderOperation}</ModalContent>
       </Modal>
     );
   },
@@ -290,6 +333,10 @@ export const AccountTab = memo(() => {
 
   const [open, setOpen] = useState(false);
 
+  const [channelOperation, setChannelOperation] = useState<"add" | "delete">("add");
+
+  const [channelID, setChannelID] = useState(0);
+
   return (
     <div
       className={clsx("flex flex-col gap-6 p-4 w-full h-full overflow-y-auto", scrollbarClasses)}
@@ -358,9 +405,22 @@ export const AccountTab = memo(() => {
             <h4 className="text-lg font-medium">Channels</h4>
             <p className="text-sm font-normal text-on-surface-variant">Manage available channels</p>
           </div>
-          <ChannelCreateDialog open={open} handleClose={() => setOpen(false)} />
+          <ChannelOperationModal
+            open={open}
+            handleClose={() => setOpen(false)}
+            operation={channelOperation}
+            channelId={channelID}
+          />
           <div className="flex gap-2">
-            <Button isIconOnly variant="text" title="Add Channel" onPress={() => setOpen(true)}>
+            <Button
+              isIconOnly
+              variant="text"
+              title="Add Channel"
+              onPress={() => {
+                setChannelOperation("add");
+                setOpen(true);
+              }}
+            >
               <AddIcon />
             </Button>
             <Button
@@ -393,7 +453,18 @@ export const AccountTab = memo(() => {
                     <Radio value={channel.channelId!.toString()} classNames={{ label: "text-sm" }}>
                       {channel.channelName} ({channel.channelId})
                     </Radio>
-                    <DeletChannel id={String(channel.channelId)} />
+                    <Button
+                      isIconOnly
+                      variant="text"
+                      title="Delete Channel"
+                      onPress={() => {
+                        setChannelOperation("delete");
+                        setChannelID(channel.channelId!);
+                        setOpen(true);
+                      }}
+                    >
+                      <DeleteIcon />
+                    </Button>
                   </div>
                 );
               })}
