@@ -1,6 +1,10 @@
 import { memo, useCallback, useState } from "react";
 import type { UserSession } from "@/types";
-import { useMutation, useQueryClient, useSuspenseQueries } from "@tanstack/react-query";
+import {
+  useMutation,
+  useQueryClient,
+  useSuspenseQueries,
+} from "@tanstack/react-query";
 import {
   Button,
   scrollbarClasses,
@@ -40,48 +44,56 @@ const validateBots = (value?: string) => {
   return false;
 };
 
-const Session = memo(({ appName, location, createdAt, valid, hash, current }: UserSession) => {
-  const deleteSession = $api.useMutation("delete", "/users/sessions/{id}", {
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: $api.queryKey("get", "/users/sessions") });
-    },
-  });
-  const queryClient = useQueryClient();
+const Session = memo(
+  ({ appName, location, createdAt, valid, hash, current }: UserSession) => {
+    const deleteSession = $api.useMutation("delete", "/users/sessions/{id}", {
+      onSettled: () => {
+        queryClient.invalidateQueries({
+          queryKey: $api.queryKey("get", "/users/sessions"),
+        });
+      },
+    });
+    const queryClient = useQueryClient();
 
-  return (
-    <div
-      className={clsx(
-        "flex  flex-col justify-between p-4 rounded-lg gap-1 relative",
-        valid ? "bg-green-500/20" : "bg-red-500/20",
-      )}
-    >
-      {(!current || !valid) && (
-        <Button
-          isIconOnly
-          variant="text"
-          size="sm"
-          className="absolute top-1 right-1"
-          onPress={() => deleteSession.mutateAsync({ params: { path: { id: hash } } })}
-        >
-          <IcRoundCancel />
-        </Button>
-      )}
-
-      <div className="flex gap-1 items-center">
-        {valid ? (
-          <IcRoundCheckCircle className="text-green-500 size-4" />
-        ) : (
-          <IcRoundCancel className="text-red-500 size-4" />
+    return (
+      <div
+        className={clsx(
+          "flex  flex-col justify-between p-4 rounded-lg gap-1 relative",
+          valid ? "bg-green-500/20" : "bg-red-500/20",
         )}
-        <p className="font-medium">{appName || "Unknown"}</p>
+      >
+        {(!current || !valid) && (
+          <Button
+            isIconOnly
+            variant="text"
+            size="sm"
+            className="absolute top-1 right-1"
+            onPress={() =>
+              deleteSession.mutateAsync({ params: { path: { id: hash } } })
+            }
+          >
+            <IcRoundCancel />
+          </Button>
+        )}
+
+        <div className="flex gap-1 items-center">
+          {valid ? (
+            <IcRoundCheckCircle className="text-green-500 size-4" />
+          ) : (
+            <IcRoundCancel className="text-red-500 size-4" />
+          )}
+          <p className="font-medium">{appName || "Unknown"}</p>
+        </div>
+        <p className="text-sm font-normal">
+          Created : {new Date(createdAt).toISOString().split("T")[0]}
+        </p>
+        {location && (
+          <p className="text-sm font-normal">Location : {location}</p>
+        )}
       </div>
-      <p className="text-sm font-normal">
-        Created : {new Date(createdAt).toISOString().split("T")[0]}
-      </p>
-      {location && <p className="text-sm font-normal">Location : {location}</p>}
-    </div>
-  );
-});
+    );
+  },
+);
 
 const ChannelCreateDialog = ({ handleClose }: { handleClose: () => void }) => {
   const queryClient = useQueryClient();
@@ -146,7 +158,10 @@ const ChannelCreateDialog = ({ handleClose }: { handleClose: () => void }) => {
 const ChannelDeleteDialog = ({
   channelId,
   handleClose,
-}: { channelId: number; handleClose: () => void }) => {
+}: {
+  channelId: number;
+  handleClose: () => void;
+}) => {
   const queryClient = useQueryClient();
 
   const deleteChannel = $api.useMutation("delete", "/users/channels/{id}", {
@@ -171,7 +186,9 @@ const ChannelDeleteDialog = ({
     <>
       <ModalHeader className="flex flex-col gap-1">Delete Channel</ModalHeader>
       <ModalBody>
-        <h1 className="text-large font-medium mt-2">Are you sure to delete this channel</h1>
+        <h1 className="text-large font-medium mt-2">
+          Are you sure to delete this channel
+        </h1>
       </ModalBody>
       <ModalFooter>
         <Button className="font-normal" variant="text" onPress={handleClose}>
@@ -206,7 +223,12 @@ const ChannelOperationModal = memo(
         case "add":
           return <ChannelCreateDialog handleClose={handleClose} />;
         case "delete":
-          return <ChannelDeleteDialog channelId={channelId} handleClose={handleClose} />;
+          return (
+            <ChannelDeleteDialog
+              channelId={channelId}
+              handleClose={handleClose}
+            />
+          );
         default:
           return null;
       }
@@ -234,15 +256,20 @@ export const AccountTab = memo(() => {
     defaultValues: { tokens: "" },
   });
 
-  const [{ data: userConfig }, { data: sessions }, { data: channelData }] = useSuspenseQueries({
-    queries: [
-      $api.queryOptions("get", "/users/config"),
-      $api.queryOptions("get", "/users/sessions"),
-      $api.queryOptions("get", "/users/channels"),
-    ],
-  });
+  const [{ data: userConfig }, { data: sessions }, { data: channelData }] =
+    useSuspenseQueries({
+      queries: [
+        $api.queryOptions("get", "/users/config"),
+        $api.queryOptions("get", "/users/sessions"),
+        $api.queryOptions("get", "/users/channels"),
+      ],
+    });
 
-  const removeBots = $api.useMutation("delete", "/users/bots");
+  const removeBots = $api.useMutation("delete", "/users/bots", {
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["get", "/users/config"] });
+    },
+  });
 
   const syncChannels = $api.useMutation("patch", "/users/channels/sync", {
     onSuccess: () => {
@@ -251,8 +278,11 @@ export const AccountTab = memo(() => {
     },
     onError: async (error) => {
       if (error instanceof NetworkError) {
-        const errorData = (await error.data?.json()) as components["schemas"]["Error"];
-        toast.error(`Sync failed: ${errorData.message.split(":").slice(-1)[0]!.trim()}`);
+        const errorData =
+          (await error.data?.json()) as components["schemas"]["Error"];
+        toast.error(
+          `Sync failed: ${errorData.message.split(":").slice(-1)[0]!.trim()}`,
+        );
       } else {
         toast.error("Sync failed: An unknown error occurred.");
       }
@@ -269,32 +299,20 @@ export const AccountTab = memo(() => {
     }
   }, [userConfig?.bots]);
 
-  const botAddition = useMutation({
-    mutationFn: async (tokens: string) => {
-      const tokensList = tokens.trim().split("\n");
-      if (tokensList.length === 0) {
-        throw new Error("No tokens provided");
-      }
-      const tokenPromises = chunkArray(tokensList, 8).map((tokens) =>
-        fetchClient.POST("/users/bots", {
-          body: {
-            bots: tokens,
-          },
-        }),
-      );
-      return Promise.all(tokenPromises);
-    },
+  const botAddition = $api.useMutation("post", "/users/bots", {
     onSuccess: () => {
       toast.success("bots added");
       queryClient.invalidateQueries({ queryKey: ["get", "/users/config"] });
     },
     onError: async (error) => {
       if (error instanceof NetworkError) {
-        const errorData = (await error.data?.json()) as components["schemas"]["Error"];
+        const errorData =
+          (await error.data?.json()) as components["schemas"]["Error"];
         toast.error(errorData.message.split(":").slice(-1)[0]!.trim());
       }
     },
   });
+
   const updateChannel = $api.useMutation("patch", "/users/channels", {
     onSuccess: () => {
       toast.success("Default channel updated");
@@ -302,19 +320,26 @@ export const AccountTab = memo(() => {
     },
     onError: async (error) => {
       if (error instanceof NetworkError) {
-        const errorData = (await error.data?.json()) as components["schemas"]["Error"];
+        const errorData =
+          (await error.data?.json()) as components["schemas"]["Error"];
         toast.error(
           `Failed to update default channel: ${errorData.message.split(":").slice(-1)[0]!.trim()}`,
         );
       } else {
-        toast.error("Failed to update default channel: An unknown error occurred.");
+        toast.error(
+          "Failed to update default channel: An unknown error occurred.",
+        );
       }
     },
   });
 
   const onSubmit = useCallback(
     async ({ tokens }: { tokens: string }) => {
-      botAddition.mutateAsync(tokens);
+      botAddition.mutateAsync({
+        body: {
+          bots: tokens.trim().split("\n"),
+        },
+      });
     },
     [botAddition],
   );
@@ -324,7 +349,10 @@ export const AccountTab = memo(() => {
       const channel = channelData?.find((c) => c.channelId === channelId);
       if (channel) {
         updateChannel.mutate({
-          body: { channelId: channel.channelId, channelName: channel.channelName },
+          body: {
+            channelId: channel.channelId,
+            channelName: channel.channelName,
+          },
         });
       }
     },
@@ -333,17 +361,25 @@ export const AccountTab = memo(() => {
 
   const [open, setOpen] = useState(false);
 
-  const [channelOperation, setChannelOperation] = useState<"add" | "delete">("add");
+  const [channelOperation, setChannelOperation] = useState<"add" | "delete">(
+    "add",
+  );
 
   const [channelID, setChannelID] = useState(0);
 
   return (
     <div
-      className={clsx("flex flex-col gap-6 p-4 w-full h-full overflow-y-auto", scrollbarClasses)}
+      className={clsx(
+        "flex flex-col gap-6 p-4 w-full h-full overflow-y-auto",
+        scrollbarClasses,
+      )}
     >
       <div className="p-4 rounded-lg border border-outline-variant">
         <h4 className="text-lg font-medium pb-2">Manage Bots</h4>
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3 mb-4">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="flex flex-col gap-3 mb-4"
+        >
           <Controller
             name="tokens"
             control={control}
@@ -403,7 +439,9 @@ export const AccountTab = memo(() => {
         <div className="flex justify-between items-start">
           <div>
             <h4 className="text-lg font-medium">Channels</h4>
-            <p className="text-sm font-normal text-on-surface-variant">Manage available channels</p>
+            <p className="text-sm font-normal text-on-surface-variant">
+              Manage available channels
+            </p>
           </div>
           <ChannelOperationModal
             open={open}
@@ -428,10 +466,15 @@ export const AccountTab = memo(() => {
               variant="text"
               title="Sync Channels"
               isLoading={syncChannels.isPending}
-              className={clsx(syncChannels.isPending && "pointer-events-none", "flex-shrink-0")}
+              className={clsx(
+                syncChannels.isPending && "pointer-events-none",
+                "flex-shrink-0",
+              )}
               onPress={() => syncChannels.mutate({})}
             >
-              <SyncIcon className={clsx(syncChannels.isPending && "animate-spin")} />
+              <SyncIcon
+                className={clsx(syncChannels.isPending && "animate-spin")}
+              />
             </Button>
           </div>
         </div>
@@ -450,7 +493,10 @@ export const AccountTab = memo(() => {
                     key={channel.channelId}
                     className="flex justify-between items-center p-2 rounded bg-surface-container-low hover:bg-surface-container"
                   >
-                    <Radio value={channel.channelId!.toString()} classNames={{ label: "text-sm" }}>
+                    <Radio
+                      value={channel.channelId!.toString()}
+                      classNames={{ label: "text-sm" }}
+                    >
                       {channel.channelName} ({channel.channelId})
                     </Radio>
                     <Button
@@ -472,8 +518,8 @@ export const AccountTab = memo(() => {
           ) : (
             <p className="text-sm text-on-surface-variant italic px-2">
               No channels found. Press the sync button
-              <SyncIcon className="inline-block align-middle" /> to fetch your channels from
-              Telegram.
+              <SyncIcon className="inline-block align-middle" /> to fetch your
+              channels from Telegram.
             </p>
           )}
         </div>
