@@ -8,161 +8,214 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-// Import Routes
+import { Route as rootRouteImport } from "./routes/__root"
+import { Route as ShareRouteImport } from "./routes/_share"
+import { Route as AuthedRouteImport } from "./routes/_authed"
+import { Route as AuthRouteImport } from "./routes/_auth"
+import { Route as AuthedIndexRouteImport } from "./routes/_authed/index"
+import { Route as AuthedStorageRouteImport } from "./routes/_authed/storage"
+import { Route as AuthedSettingsRouteImport } from "./routes/_authed/settings"
+import { Route as AuthedViewRouteImport } from "./routes/_authed/$view"
+import { Route as AuthLoginRouteImport } from "./routes/_auth/login"
+import { Route as ShareShareIdRouteImport } from "./routes/_share/share.$id"
+import { Route as AuthedSettingsTabIdRouteImport } from "./routes/_authed/settings.$tabId"
 
-import { Route as rootRoute } from "./routes/__root"
-import { Route as ShareImport } from "./routes/_share"
-import { Route as AuthedImport } from "./routes/_authed"
-import { Route as AuthImport } from "./routes/_auth"
-import { Route as AuthedIndexImport } from "./routes/_authed/index"
-import { Route as AuthedStorageImport } from "./routes/_authed/storage"
-import { Route as AuthedSettingsImport } from "./routes/_authed/settings"
-import { Route as AuthedViewImport } from "./routes/_authed/$view"
-import { Route as AuthLoginImport } from "./routes/_auth/login"
-import { Route as ShareShareIdImport } from "./routes/_share/share.$id"
-import { Route as AuthedSettingsTabIdImport } from "./routes/_authed/settings.$tabId"
-
-// Create/Update Routes
-
-const ShareRoute = ShareImport.update({
+const ShareRoute = ShareRouteImport.update({
   id: "/_share",
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const AuthedRoute = AuthedImport.update({
+const AuthedRoute = AuthedRouteImport.update({
   id: "/_authed",
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const AuthRoute = AuthImport.update({
+const AuthRoute = AuthRouteImport.update({
   id: "/_auth",
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const AuthedIndexRoute = AuthedIndexImport.update({
+const AuthedIndexRoute = AuthedIndexRouteImport.update({
   id: "/",
   path: "/",
   getParentRoute: () => AuthedRoute,
 } as any)
-
-const AuthedStorageRoute = AuthedStorageImport.update({
+const AuthedStorageRoute = AuthedStorageRouteImport.update({
   id: "/storage",
   path: "/storage",
   getParentRoute: () => AuthedRoute,
 } as any).lazy(() =>
   import("./routes/_authed/storage.lazy").then((d) => d.Route),
 )
-
-const AuthedSettingsRoute = AuthedSettingsImport.update({
+const AuthedSettingsRoute = AuthedSettingsRouteImport.update({
   id: "/settings",
   path: "/settings",
   getParentRoute: () => AuthedRoute,
 } as any)
-
-const AuthedViewRoute = AuthedViewImport.update({
+const AuthedViewRoute = AuthedViewRouteImport.update({
   id: "/$view",
   path: "/$view",
   getParentRoute: () => AuthedRoute,
 } as any).lazy(() => import("./routes/_authed/$view.lazy").then((d) => d.Route))
-
-const AuthLoginRoute = AuthLoginImport.update({
+const AuthLoginRoute = AuthLoginRouteImport.update({
   id: "/login",
   path: "/login",
   getParentRoute: () => AuthRoute,
 } as any).lazy(() => import("./routes/_auth/login.lazy").then((d) => d.Route))
-
-const ShareShareIdRoute = ShareShareIdImport.update({
+const ShareShareIdRoute = ShareShareIdRouteImport.update({
   id: "/share/$id",
   path: "/share/$id",
   getParentRoute: () => ShareRoute,
 } as any).lazy(() =>
   import("./routes/_share/share.$id.lazy").then((d) => d.Route),
 )
-
-const AuthedSettingsTabIdRoute = AuthedSettingsTabIdImport.update({
+const AuthedSettingsTabIdRoute = AuthedSettingsTabIdRouteImport.update({
   id: "/$tabId",
   path: "/$tabId",
   getParentRoute: () => AuthedSettingsRoute,
 } as any)
 
-// Populate the FileRoutesByPath interface
+export interface FileRoutesByFullPath {
+  "/login": typeof AuthLoginRoute
+  "/$view": typeof AuthedViewRoute
+  "/settings": typeof AuthedSettingsRouteWithChildren
+  "/storage": typeof AuthedStorageRoute
+  "/": typeof AuthedIndexRoute
+  "/settings/$tabId": typeof AuthedSettingsTabIdRoute
+  "/share/$id": typeof ShareShareIdRoute
+}
+export interface FileRoutesByTo {
+  "/login": typeof AuthLoginRoute
+  "/$view": typeof AuthedViewRoute
+  "/settings": typeof AuthedSettingsRouteWithChildren
+  "/storage": typeof AuthedStorageRoute
+  "/": typeof AuthedIndexRoute
+  "/settings/$tabId": typeof AuthedSettingsTabIdRoute
+  "/share/$id": typeof ShareShareIdRoute
+}
+export interface FileRoutesById {
+  __root__: typeof rootRouteImport
+  "/_auth": typeof AuthRouteWithChildren
+  "/_authed": typeof AuthedRouteWithChildren
+  "/_share": typeof ShareRouteWithChildren
+  "/_auth/login": typeof AuthLoginRoute
+  "/_authed/$view": typeof AuthedViewRoute
+  "/_authed/settings": typeof AuthedSettingsRouteWithChildren
+  "/_authed/storage": typeof AuthedStorageRoute
+  "/_authed/": typeof AuthedIndexRoute
+  "/_authed/settings/$tabId": typeof AuthedSettingsTabIdRoute
+  "/_share/share/$id": typeof ShareShareIdRoute
+}
+export interface FileRouteTypes {
+  fileRoutesByFullPath: FileRoutesByFullPath
+  fullPaths:
+    | "/login"
+    | "/$view"
+    | "/settings"
+    | "/storage"
+    | "/"
+    | "/settings/$tabId"
+    | "/share/$id"
+  fileRoutesByTo: FileRoutesByTo
+  to:
+    | "/login"
+    | "/$view"
+    | "/settings"
+    | "/storage"
+    | "/"
+    | "/settings/$tabId"
+    | "/share/$id"
+  id:
+    | "__root__"
+    | "/_auth"
+    | "/_authed"
+    | "/_share"
+    | "/_auth/login"
+    | "/_authed/$view"
+    | "/_authed/settings"
+    | "/_authed/storage"
+    | "/_authed/"
+    | "/_authed/settings/$tabId"
+    | "/_share/share/$id"
+  fileRoutesById: FileRoutesById
+}
+export interface RootRouteChildren {
+  AuthRoute: typeof AuthRouteWithChildren
+  AuthedRoute: typeof AuthedRouteWithChildren
+  ShareRoute: typeof ShareRouteWithChildren
+}
 
 declare module "@tanstack/react-router" {
   interface FileRoutesByPath {
-    "/_auth": {
-      id: "/_auth"
+    "/_share": {
+      id: "/_share"
       path: ""
       fullPath: ""
-      preLoaderRoute: typeof AuthImport
-      parentRoute: typeof rootRoute
+      preLoaderRoute: typeof ShareRouteImport
+      parentRoute: typeof rootRouteImport
     }
     "/_authed": {
       id: "/_authed"
       path: ""
       fullPath: ""
-      preLoaderRoute: typeof AuthedImport
-      parentRoute: typeof rootRoute
+      preLoaderRoute: typeof AuthedRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    "/_share": {
-      id: "/_share"
+    "/_auth": {
+      id: "/_auth"
       path: ""
       fullPath: ""
-      preLoaderRoute: typeof ShareImport
-      parentRoute: typeof rootRoute
-    }
-    "/_auth/login": {
-      id: "/_auth/login"
-      path: "/login"
-      fullPath: "/login"
-      preLoaderRoute: typeof AuthLoginImport
-      parentRoute: typeof AuthImport
-    }
-    "/_authed/$view": {
-      id: "/_authed/$view"
-      path: "/$view"
-      fullPath: "/$view"
-      preLoaderRoute: typeof AuthedViewImport
-      parentRoute: typeof AuthedImport
-    }
-    "/_authed/settings": {
-      id: "/_authed/settings"
-      path: "/settings"
-      fullPath: "/settings"
-      preLoaderRoute: typeof AuthedSettingsImport
-      parentRoute: typeof AuthedImport
-    }
-    "/_authed/storage": {
-      id: "/_authed/storage"
-      path: "/storage"
-      fullPath: "/storage"
-      preLoaderRoute: typeof AuthedStorageImport
-      parentRoute: typeof AuthedImport
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
     }
     "/_authed/": {
       id: "/_authed/"
       path: "/"
       fullPath: "/"
-      preLoaderRoute: typeof AuthedIndexImport
-      parentRoute: typeof AuthedImport
+      preLoaderRoute: typeof AuthedIndexRouteImport
+      parentRoute: typeof AuthedRoute
     }
-    "/_authed/settings/$tabId": {
-      id: "/_authed/settings/$tabId"
-      path: "/$tabId"
-      fullPath: "/settings/$tabId"
-      preLoaderRoute: typeof AuthedSettingsTabIdImport
-      parentRoute: typeof AuthedSettingsImport
+    "/_authed/storage": {
+      id: "/_authed/storage"
+      path: "/storage"
+      fullPath: "/storage"
+      preLoaderRoute: typeof AuthedStorageRouteImport
+      parentRoute: typeof AuthedRoute
+    }
+    "/_authed/settings": {
+      id: "/_authed/settings"
+      path: "/settings"
+      fullPath: "/settings"
+      preLoaderRoute: typeof AuthedSettingsRouteImport
+      parentRoute: typeof AuthedRoute
+    }
+    "/_authed/$view": {
+      id: "/_authed/$view"
+      path: "/$view"
+      fullPath: "/$view"
+      preLoaderRoute: typeof AuthedViewRouteImport
+      parentRoute: typeof AuthedRoute
+    }
+    "/_auth/login": {
+      id: "/_auth/login"
+      path: "/login"
+      fullPath: "/login"
+      preLoaderRoute: typeof AuthLoginRouteImport
+      parentRoute: typeof AuthRoute
     }
     "/_share/share/$id": {
       id: "/_share/share/$id"
       path: "/share/$id"
       fullPath: "/share/$id"
-      preLoaderRoute: typeof ShareShareIdImport
-      parentRoute: typeof ShareImport
+      preLoaderRoute: typeof ShareShareIdRouteImport
+      parentRoute: typeof ShareRoute
+    }
+    "/_authed/settings/$tabId": {
+      id: "/_authed/settings/$tabId"
+      path: "/$tabId"
+      fullPath: "/settings/$tabId"
+      preLoaderRoute: typeof AuthedSettingsTabIdRouteImport
+      parentRoute: typeof AuthedSettingsRoute
     }
   }
 }
-
-// Create and export the route tree
 
 interface AuthRouteChildren {
   AuthLoginRoute: typeof AuthLoginRoute
@@ -213,157 +266,11 @@ const ShareRouteChildren: ShareRouteChildren = {
 
 const ShareRouteWithChildren = ShareRoute._addFileChildren(ShareRouteChildren)
 
-export interface FileRoutesByFullPath {
-  "": typeof ShareRouteWithChildren
-  "/login": typeof AuthLoginRoute
-  "/$view": typeof AuthedViewRoute
-  "/settings": typeof AuthedSettingsRouteWithChildren
-  "/storage": typeof AuthedStorageRoute
-  "/": typeof AuthedIndexRoute
-  "/settings/$tabId": typeof AuthedSettingsTabIdRoute
-  "/share/$id": typeof ShareShareIdRoute
-}
-
-export interface FileRoutesByTo {
-  "": typeof ShareRouteWithChildren
-  "/login": typeof AuthLoginRoute
-  "/$view": typeof AuthedViewRoute
-  "/settings": typeof AuthedSettingsRouteWithChildren
-  "/storage": typeof AuthedStorageRoute
-  "/": typeof AuthedIndexRoute
-  "/settings/$tabId": typeof AuthedSettingsTabIdRoute
-  "/share/$id": typeof ShareShareIdRoute
-}
-
-export interface FileRoutesById {
-  __root__: typeof rootRoute
-  "/_auth": typeof AuthRouteWithChildren
-  "/_authed": typeof AuthedRouteWithChildren
-  "/_share": typeof ShareRouteWithChildren
-  "/_auth/login": typeof AuthLoginRoute
-  "/_authed/$view": typeof AuthedViewRoute
-  "/_authed/settings": typeof AuthedSettingsRouteWithChildren
-  "/_authed/storage": typeof AuthedStorageRoute
-  "/_authed/": typeof AuthedIndexRoute
-  "/_authed/settings/$tabId": typeof AuthedSettingsTabIdRoute
-  "/_share/share/$id": typeof ShareShareIdRoute
-}
-
-export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | ""
-    | "/login"
-    | "/$view"
-    | "/settings"
-    | "/storage"
-    | "/"
-    | "/settings/$tabId"
-    | "/share/$id"
-  fileRoutesByTo: FileRoutesByTo
-  to:
-    | ""
-    | "/login"
-    | "/$view"
-    | "/settings"
-    | "/storage"
-    | "/"
-    | "/settings/$tabId"
-    | "/share/$id"
-  id:
-    | "__root__"
-    | "/_auth"
-    | "/_authed"
-    | "/_share"
-    | "/_auth/login"
-    | "/_authed/$view"
-    | "/_authed/settings"
-    | "/_authed/storage"
-    | "/_authed/"
-    | "/_authed/settings/$tabId"
-    | "/_share/share/$id"
-  fileRoutesById: FileRoutesById
-}
-
-export interface RootRouteChildren {
-  AuthRoute: typeof AuthRouteWithChildren
-  AuthedRoute: typeof AuthedRouteWithChildren
-  ShareRoute: typeof ShareRouteWithChildren
-}
-
 const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRouteWithChildren,
   AuthedRoute: AuthedRouteWithChildren,
   ShareRoute: ShareRouteWithChildren,
 }
-
-export const routeTree = rootRoute
+export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-/* ROUTE_MANIFEST_START
-{
-  "routes": {
-    "__root__": {
-      "filePath": "__root.tsx",
-      "children": [
-        "/_auth",
-        "/_authed",
-        "/_share"
-      ]
-    },
-    "/_auth": {
-      "filePath": "_auth.tsx",
-      "children": [
-        "/_auth/login"
-      ]
-    },
-    "/_authed": {
-      "filePath": "_authed.tsx",
-      "children": [
-        "/_authed/$view",
-        "/_authed/settings",
-        "/_authed/storage",
-        "/_authed/"
-      ]
-    },
-    "/_share": {
-      "filePath": "_share.tsx",
-      "children": [
-        "/_share/share/$id"
-      ]
-    },
-    "/_auth/login": {
-      "filePath": "_auth/login.tsx",
-      "parent": "/_auth"
-    },
-    "/_authed/$view": {
-      "filePath": "_authed/$view.tsx",
-      "parent": "/_authed"
-    },
-    "/_authed/settings": {
-      "filePath": "_authed/settings.tsx",
-      "parent": "/_authed",
-      "children": [
-        "/_authed/settings/$tabId"
-      ]
-    },
-    "/_authed/storage": {
-      "filePath": "_authed/storage.tsx",
-      "parent": "/_authed"
-    },
-    "/_authed/": {
-      "filePath": "_authed/index.tsx",
-      "parent": "/_authed"
-    },
-    "/_authed/settings/$tabId": {
-      "filePath": "_authed/settings.$tabId.tsx",
-      "parent": "/_authed/settings"
-    },
-    "/_share/share/$id": {
-      "filePath": "_share/share.$id.tsx",
-      "parent": "/_share"
-    }
-  }
-}
-ROUTE_MANIFEST_END */

@@ -3,9 +3,10 @@ import { infiniteQueryOptions, queryOptions, useQuery } from "@tanstack/react-qu
 import type { FileData } from "@tw-material/file-browser";
 
 import { getExtension, mediaUrl } from "./common";
-import { defaultSortState, settings, sortIdsMap, sortViewMap } from "./defaults";
+import { defaultSortState, sortIdsMap, sortViewMap } from "./defaults";
 import { getPreviewType, preview } from "./preview-type";
 import { fetchClient } from "./api";
+import { useSettingsStore } from "./stores/settings";
 import type { components } from "@/lib/api";
 
 export const sessionOptions = queryOptions({
@@ -133,6 +134,8 @@ const mapFilesToFb = (files: components["schemas"]["FileList"]["items"], session
     const previewType = getPreviewType(getExtension(item.name), {
       video: item.mimeType?.includes("video"),
     });
+
+    const { settings } = useSettingsStore.getState();
 
     let thumbnailUrl = "";
     if (previewType === "image") {

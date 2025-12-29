@@ -9,18 +9,32 @@ import {
   FileNavbar,
   FileToolbar,
 } from "@tw-material/file-browser";
-import type { StateSnapshot, VirtuosoGridHandle, VirtuosoHandle } from "react-virtuoso";
+import type {
+  StateSnapshot,
+  VirtuosoGridHandle,
+  VirtuosoHandle,
+} from "react-virtuoso";
 import useBreakpoint from "use-breakpoint";
 
-import { CustomActions, fileActions, useFileAction } from "@/hooks/use-file-action";
+import {
+  CustomActions,
+  fileActions,
+  useFileAction,
+} from "@/hooks/use-file-action";
 import { chainLinks } from "@/utils/common";
-import { BREAKPOINTS, defaultSortState, defaultViewId, sortViewMap } from "@/utils/defaults";
+import {
+  BREAKPOINTS,
+  defaultSortState,
+  defaultViewId,
+  sortViewMap,
+} from "@/utils/defaults";
 import { fileQueries, useSession } from "@/utils/query-options";
 import { useFileUploadStore, useModalStore } from "@/utils/stores";
 
 import { FileOperationModal } from "./modals/file-operation";
 import PreviewModal from "./modals/preview";
 import { Upload } from "./upload";
+import { UploadDropzone } from "./upload/drop-zone";
 import type { BrowseView, FileListParams } from "@/types";
 
 let firstRender = true;
@@ -101,35 +115,45 @@ export const DriveFileBrowser = memo(() => {
 
     return () => {
       if (listRef.current && isVirtuosoList(listRef.current)) {
-        listRef.current?.getState((state) => positions.set(view + search?.path || "", state));
+        listRef.current?.getState((state) =>
+          positions.set(view + search?.path || "", state),
+        );
       }
     };
   }, [search?.path, view]);
 
   return (
-    <div className="size-full m-auto">
-      <FileBrowser
-        files={files}
-        folderChain={folderChain}
-        onFileAction={actionHandler()}
-        fileActions={fileActions}
-        defaultFileViewActionId={defaultViewId}
-        defaultSortActionId={
-          view === "my-drive" ? defaultSortState.sortId : sortViewMap[view].sortId
-        }
-        defaultSortOrder={view === "my-drive" ? defaultSortState.order : sortViewMap[view].order}
-        breakpoint={breakpoint}
-      >
-        {view === "my-drive" && <FileNavbar breakpoint={breakpoint} />}
-        <FileToolbar className={view !== "my-drive" ? "pt-2" : ""} />
-        <FileList
-          hasNextPage={hasNextPage}
-          isNextPageLoading={isFetchingNextPage}
-          loadNextPage={fetchNextPage}
-          ref={listRef}
-        />
-        <FileContextMenu />
-      </FileBrowser>
+    <div className="size-full m-auto relative">
+      <UploadDropzone isDisabled={view !== "my-drive"}>
+        <FileBrowser
+          files={files}
+          folderChain={folderChain}
+          onFileAction={actionHandler()}
+          fileActions={fileActions}
+          defaultFileViewActionId={defaultViewId}
+          defaultSortActionId={
+            view === "my-drive"
+              ? defaultSortState.sortId
+              : sortViewMap[view].sortId
+          }
+          defaultSortOrder={
+            view === "my-drive"
+              ? defaultSortState.order
+              : sortViewMap[view].order
+          }
+          breakpoint={breakpoint}
+        >
+          {view === "my-drive" && <FileNavbar breakpoint={breakpoint} />}
+          <FileToolbar className={view !== "my-drive" ? "pt-2" : ""} />
+          <FileList
+            hasNextPage={hasNextPage}
+            isNextPageLoading={isFetchingNextPage}
+            loadNextPage={fetchNextPage}
+            ref={listRef}
+          />
+          <FileContextMenu />
+        </FileBrowser>
+      </UploadDropzone>
 
       {modalFileActions.find((val) => val === modalOperation) && modalOpen && (
         <FileOperationModal queryKey={queryOptions.queryKey} />

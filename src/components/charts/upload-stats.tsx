@@ -1,91 +1,69 @@
-import { memo, startTransition, useMemo } from "react";
 import type { SetValue, UploadStats } from "@/types";
-import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@tw-material/react";
+import {
+  Button,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
+} from "@tw-material/react";
 import type { ApexOptions } from "apexcharts";
+import { memo, useMemo } from "react";
 import ReactApexChart from "react-apexcharts";
 
 const options: ApexOptions = {
   legend: {
-    show: true,
-    position: "top",
-    horizontalAlign: "left",
+    show: false,
   },
-  colors: ["#3C50E0"],
+  colors: ["oklch(var(--m3-primary))"],
   chart: {
-    height: 335,
+    height: 250,
     type: "area",
-    fontFamily: "inherit",
-    dropShadow: {
-      enabled: true,
-      color: "#623CEA14",
-      top: 10,
-      blur: 4,
-      left: 0,
-      opacity: 0.1,
-    },
-
+    fontFamily: "Rubik, sans-serif",
     toolbar: {
       show: false,
     },
+    zoom: {
+      enabled: false,
+    },
+    sparkline: {
+      enabled: false,
+    },
   },
-
-  responsive: [
-    {
-      breakpoint: 1024,
-      options: {
-        chart: {
-          height: 300,
-        },
-      },
+  fill: {
+    type: "gradient",
+    gradient: {
+      shadeIntensity: 1,
+      opacityFrom: 0.45,
+      opacityTo: 0.05,
+      stops: [20, 100, 100, 100],
     },
-    {
-      breakpoint: 1366,
-      options: {
-        chart: {
-          height: 350,
-        },
-      },
-    },
-  ],
+  },
   stroke: {
-    width: [2, 2],
-    curve: "straight",
+    width: 3,
+    curve: "smooth",
   },
   grid: {
-    xaxis: {
-      lines: {
-        show: true,
-      },
-    },
-    yaxis: {
-      lines: {
-        show: true,
-      },
+    show: true,
+    borderColor: "oklch(var(--m3-outline-variant) / 0.3)",
+    strokeDashArray: 4,
+    padding: {
+      left: 20,
+      right: 20,
+      bottom: 0,
     },
   },
   dataLabels: {
     enabled: false,
   },
   markers: {
-    size: 4,
-    colors: "#fff",
-    strokeColors: ["#3056D3"],
-    strokeWidth: 3,
-    strokeOpacity: 0.9,
-    strokeDashArray: 0,
-    fillOpacity: 1,
-    discrete: [],
+    size: 5,
+    colors: ["oklch(var(--m3-primary))"],
+    strokeColors: "oklch(var(--m3-surface))",
+    strokeWidth: 2,
     hover: {
-      size: undefined,
-      sizeOffset: 5,
+      size: 7,
     },
   },
-  series: [
-    {
-      name: "Uploaded",
-      data: [],
-    },
-  ],
   xaxis: {
     type: "category",
     axisBorder: {
@@ -94,13 +72,34 @@ const options: ApexOptions = {
     axisTicks: {
       show: false,
     },
+    labels: {
+      style: {
+        colors: "oklch(var(--m3-on-surface-variant))",
+        fontSize: "12px",
+        fontWeight: 500,
+      },
+    },
   },
   yaxis: {
-    title: {
-      text: "Size (GB)",
+    labels: {
       style: {
-        cssClass: "font-bold text-small",
+        colors: "oklch(var(--m3-on-surface-variant))",
+        fontSize: "12px",
+        fontWeight: 500,
       },
+    },
+  },
+  tooltip: {
+    theme: "dark",
+    x: {
+      show: true,
+    },
+    y: {
+      formatter: (val) => `${val.toFixed(2)} GB`,
+    },
+    style: {
+      fontSize: "12px",
+      fontFamily: "Rubik, sans-serif",
     },
   },
 };
@@ -131,35 +130,47 @@ interface UploadStatsChartProps {
 
 const allowedDays = [7, 15, 30, 60];
 
-export const UploadStatsChart = memo(({ stats, days, setDays }: UploadStatsChartProps) => {
-  const chartOptions = useMemo(() => getChartData(stats), [stats]);
+export const UploadStatsChart = memo(
+  ({ stats, days, setDays }: UploadStatsChartProps) => {
+    const chartOptions = useMemo(() => getChartData(stats), [stats]);
 
-  return (
-    <div className="col-span-12 rounded-lg bg-surface text-on-surface p-4 lg:col-span-8">
-      <div className="flex flex-wrap items-start justify-between gap-3 sm:flex-nowrap">
-        <div className="flex w-full max-w-45 justify-end">
+    return (
+      <div className="w-full">
+        <div className="flex justify-end mb-2">
           <Dropdown className="min-w-32" triggerScaleOnOpen={false}>
             <DropdownTrigger>
-              <Button variant="filledTonal">{`${days} Days`}</Button>
+              <Button
+                variant="filledTonal"
+                className="rounded-xl px-4 py-2 font-medium bg-secondary-container text-on-secondary-container"
+                size="sm"
+              >{`${days} Days`}</Button>
             </DropdownTrigger>
             <DropdownMenu
               classNames={{
-                base: "rounded-lg shadow-1",
+                base: "bg-surface-container-high rounded-2xl shadow-2xl border border-outline-variant/30",
+              }}
+              itemClasses={{
+                base: "rounded-xl data-[hover=true]:bg-on-surface/10 px-4 py-2 transition-colors",
+                title: "text-sm font-medium",
               }}
             >
               {allowedDays.map((day) => (
-                <DropdownItem key={day} onPress={() => setDays(day)}>{`${day} Days`}</DropdownItem>
+                <DropdownItem key={day} onPress={() => setDays(day)}>
+                  {`${day} Days`}
+                </DropdownItem>
               ))}
             </DropdownMenu>
           </Dropdown>
         </div>
+        <div className="min-h-[250px]">
+          <ReactApexChart
+            options={chartOptions}
+            series={chartOptions.series}
+            type="area"
+            height={250}
+          />
+        </div>
       </div>
-      <ReactApexChart
-        options={chartOptions}
-        series={chartOptions.series}
-        type="area"
-        height={350}
-      />
-    </div>
-  );
-});
+    );
+  },
+);

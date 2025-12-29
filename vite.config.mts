@@ -5,7 +5,10 @@ import { defineConfig, loadEnv } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 import cp from "node:child_process";
 
-const commitHash = cp.execSync("git rev-parse --short HEAD").toString().replace("\n", "");
+const commitHash = cp
+  .execSync("git rev-parse --short HEAD")
+  .toString()
+  .replace("\n", "");
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");

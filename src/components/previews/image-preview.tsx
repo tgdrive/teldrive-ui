@@ -18,7 +18,9 @@ const ImagePreview = ({ name, assetUrl }: ImagePreviewProps) => {
 
   return (
     <div className="relative w-full h-[calc(100%-2rem)]">
-      {!isLoaded && <IconSvgSpinnerTadpole className={clsx(center, "size-8")} />}
+      {!isLoaded && (
+        <IconSvgSpinnerTadpole className={clsx(center, "size-8")} />
+      )}
       <img
         onLoad={handleImageOnLoad}
         className={clsx(

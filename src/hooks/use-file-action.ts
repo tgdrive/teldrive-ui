@@ -14,10 +14,15 @@ import IconFlatColorIconsVlc from "~icons/flat-color-icons/vlc";
 import IconPotPlayerIcon from "~icons/material-symbols/play-circle-rounded";
 import toast from "react-hot-toast";
 
-import { mediaUrl, navigateToExternalUrl, sharedMediaUrl } from "@/utils/common";
+import {
+  mediaUrl,
+  navigateToExternalUrl,
+  sharedMediaUrl,
+} from "@/utils/common";
 import { getSortState, SortOrder } from "@/utils/defaults";
 import { useFileUploadStore, useModalStore } from "@/utils/stores";
 import Share from "~icons/fluent/share-24-regular";
+import MaterialSymbolsFolder from "~icons/material-symbols/folder";
 import { useNavigate } from "@tanstack/react-router";
 import { $api } from "@/utils/api";
 
@@ -64,16 +69,38 @@ export const CustomActions = {
       icon: FbIconName.copy,
     },
   } as const),
+
+  UploadFolder: defineFileAction({
+    id: "upload_folder",
+    requiresSelection: false,
+    button: {
+      name: "Upload Folder",
+      toolbar: true,
+      icon: MaterialSymbolsFolder,
+      group: "Add",
+    },
+  } as const),
 };
 
-type FbActionFullUnion = (typeof CustomActions)[keyof typeof CustomActions] | FbActionUnion;
+type FbActionFullUnion =
+  | (typeof CustomActions)[keyof typeof CustomActions]
+  | FbActionUnion;
 
-export const useFileAction = ({ view, params: search }: FileListParams, session: Session) => {
+export const useFileAction = (
+  { view, params: search }: FileListParams,
+  session: Session,
+) => {
   const queryClient = useQueryClient();
 
   const actions = useModalStore((state) => state.actions);
 
-  const fileDialogOpen = useFileUploadStore((state) => state.actions.setFileDialogOpen);
+  const fileDialogOpen = useFileUploadStore(
+    (state) => state.actions.setFileDialogOpen,
+  );
+
+  const setFolderDialogOpen = useFileUploadStore(
+    (state) => state.actions.setFolderDialogOpen,
+  );
 
   const uploadOpen = useFileUploadStore((state) => state.actions.setUploadOpen);
 
@@ -108,7 +135,11 @@ export const useFileAction = ({ view, params: search }: FileListParams, session:
                 params: { parentId: fileToOpen.id },
               };
             }
-            navigate({ to: "/$view", params: { view: qparams.view }, search: qparams.params });
+            navigate({
+              to: "/$view",
+              params: { view: qparams.view },
+              search: qparams.params,
+            });
           } else if (fileToOpen && FileHelper.isOpenable(fileToOpen)) {
             actions.set({
               open: true,
@@ -124,7 +155,13 @@ export const useFileAction = ({ view, params: search }: FileListParams, session:
           for (const file of selectedFiles) {
             if (!FileHelper.isDirectory(file)) {
               const { id, name } = file;
-              const url = mediaUrl(id, name, search?.path || "", session.hash, true);
+              const url = mediaUrl(
+                id,
+                name,
+                search?.path || "",
+                session.hash,
+                true,
+              );
               navigateToExternalUrl(url, false);
             }
           }
@@ -184,7 +221,9 @@ export const useFileAction = ({ view, params: search }: FileListParams, session:
           const selections = data.state.selectedFilesForAction;
           const clipboardText = selections
             .filter((element) => !FileHelper.isDirectory(element))
-            .map(({ id, name }) => mediaUrl(id, name, search?.path || "", session.hash, true))
+            .map(({ id, name }) =>
+              mediaUrl(id, name, search?.path || "", session.hash, true),
+            )
             .join("\n");
           navigator.clipboard.writeText(clipboardText);
           break;
@@ -210,6 +249,14 @@ export const useFileAction = ({ view, params: search }: FileListParams, session:
 
         case FbActions.UploadFiles.id: {
           fileDialogOpen(true);
+          setFolderDialogOpen(false);
+          uploadOpen(true);
+          break;
+        }
+
+        case CustomActions.UploadFolder.id: {
+          fileDialogOpen(false);
+          setFolderDialogOpen(true);
           uploadOpen(true);
           break;
         }
@@ -225,8 +272,14 @@ export const useFileAction = ({ view, params: search }: FileListParams, session:
         case FbActions.SortFilesByDate.id: {
           if (view === "my-drive") {
             const currentSortState = getSortState();
-            const order = currentSortState.order === SortOrder.ASC ? SortOrder.DESC : SortOrder.ASC;
-            localStorage.setItem("sort", JSON.stringify({ sortId: data.id, order }));
+            const order =
+              currentSortState.order === SortOrder.ASC
+                ? SortOrder.DESC
+                : SortOrder.ASC;
+            localStorage.setItem(
+              "sort",
+              JSON.stringify({ sortId: data.id, order }),
+            );
           }
           break;
         }
@@ -322,9 +375,11 @@ export const useShareFileAction = (params: ShareListParams) => {
   }, [params.path, params.id]);
 };
 
-export const fileActions = Object.keys(CustomActions).map(
-  (t) => CustomActions[t as keyof typeof CustomActions],
-);
+export const fileActions = [
+  ...Object.keys(CustomActions).map(
+    (t) => CustomActions[t as keyof typeof CustomActions],
+  ),
+];
 
 export const sharefileActions = Object.keys(CustomActions)
   .map((t) => CustomActions[t as keyof typeof CustomActions])

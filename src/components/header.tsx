@@ -1,4 +1,4 @@
-import { type ChangeEvent, memo, useCallback, useRef, useState } from "react";
+import { type ChangeEvent, memo, useCallback, useEffect, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { Button, Input } from "@tw-material/react";
@@ -47,6 +47,18 @@ const SearchBar = memo(({ className }: SearchBarProps) => {
     [],
   );
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === "k") {
+        e.preventDefault();
+        setIsOpen((prev) => !prev);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
   const updateQuery = useCallback((event: ChangeEvent<HTMLInputElement>) => {
     setQuery(event.target.value);
     const cleanInput = cleanSearchInput(event.target.value);
@@ -62,7 +74,7 @@ const SearchBar = memo(({ className }: SearchBarProps) => {
     <>
       <Input
         variant="flat"
-        placeholder="Search..."
+        placeholder="Search... (Ctrl+K)"
         enterKeyHint="search"
         autoComplete="off"
         aria-label="search"

@@ -1,6 +1,6 @@
 import { memo, useRef } from "react";
-import type { Artplayer, Option } from "@artplayer/player";
-
+import type Artplayer from "artplayer";
+import type { Option } from "artplayer";
 import { Player } from "./art-player";
 
 interface VideoPlayerProps {
@@ -38,7 +38,14 @@ const VideoPlayer = memo(({ url, ...props }: VideoPlayerProps) => {
     },
   };
 
-  return <Player style={{ aspectRatio: "16 /9" }} ref={artInstance} option={artOptions} {...props} />;
+  return (
+    <Player
+      style={{ aspectRatio: "16 /9" }}
+      ref={artInstance}
+      option={artOptions}
+      {...props}
+    />
+  );
 });
 
 export default memo(VideoPlayer);

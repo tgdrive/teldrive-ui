@@ -1,9 +1,13 @@
-import { createContext, useContext, useEffect } from "react";
+import { createContext, useContext, useEffect, useMemo } from "react";
 import { useLocalStorage } from "usehooks-ts";
-
-import { useIsFirstRender } from "@/hooks/use-first-render";
+import { genThemeConfig } from "@tw-material/theme/config";
 
 type Theme = "dark" | "light" | "system";
+
+type ColorScheme = {
+  color: string;
+  cssVars?: Record<string, string>;
+};
 
 type ThemeProviderProps = {
   children: React.ReactNode;
@@ -29,14 +33,9 @@ const initialState: ThemeProviderState = {
   setColorScheme: () => null,
 };
 
-type ColorScheme = {
-  color: string;
-  cssVars?: Record<string, string>;
-};
+const ThemeProviderContext = createContext<ThemeProviderState>(initialState);
 
 const sheet = new CSSStyleSheet();
-
-const ThemeProviderContext = createContext<ThemeProviderState>(initialState);
 
 export function ThemeProvider({
   children,
@@ -44,8 +43,6 @@ export function ThemeProvider({
   storageKey = "theme",
   ...props
 }: ThemeProviderProps) {
-  const firstRender = useIsFirstRender();
-
   const [colorScheme, setColorScheme] = useLocalStorage<ColorScheme>(
     "colorScheme",
     defaultColorScheme,
@@ -55,14 +52,12 @@ export function ThemeProvider({
 
   useEffect(() => {
     const root = window.document.documentElement;
-
     root.classList.remove("light", "dark");
 
     if (theme === "system") {
       const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches
         ? "dark"
         : "light";
-
       root.classList.add(systemTheme);
       return;
     }
@@ -70,22 +65,56 @@ export function ThemeProvider({
     root.classList.add(theme);
   }, [theme]);
 
+  // Handle Dynamic Theme Generation & Caching
   useEffect(() => {
-    if (colorScheme.cssVars && firstRender) {
-      for (const key in colorScheme.cssVars) {
-        sheet.insertRule(`${key}{${colorScheme.cssVars[key]}}`);
+    if (!colorScheme.color) return;
+
+    // Apply cached CSS if available to avoid regeneration on every reload
+    if (colorScheme.cssVars) {
+      const rules = Object.entries(colorScheme.cssVars).map(([key, val]) => `${key}{${val}}`);
+      sheet.replaceSync(rules.join("\n"));
+      if (!document.adoptedStyleSheets.includes(sheet)) {
+        document.adoptedStyleSheets = [...document.adoptedStyleSheets, sheet];
       }
-
-      document.adoptedStyleSheets = [sheet];
+      return;
     }
-  }, [colorScheme.color, firstRender]);
 
-  const value = {
-    theme,
-    setTheme,
-    colorScheme,
-    setColorScheme,
-  };
+    // Otherwise generate new theme config
+    const config = genThemeConfig({
+      sourceColor: colorScheme.color,
+      customColors: [],
+    });
+
+    const cssVars: Record<string, string> = {};
+    const rules: string[] = [];
+    for (const key in config.utilities) {
+      const value = Object.entries(config.utilities[key]).reduce(
+        (acc, val) => `${acc}${val[0]}:${val[1]};`,
+        "",
+      );
+      cssVars[key] = value;
+      rules.push(`${key}{${value}}`);
+    }
+
+    sheet.replaceSync(rules.join("\n"));
+
+    if (!document.adoptedStyleSheets.includes(sheet)) {
+      document.adoptedStyleSheets = [...document.adoptedStyleSheets, sheet];
+    }
+
+    // Persist the generated vars so they can be reused on next reload
+    setColorScheme({ color: colorScheme.color, cssVars });
+  }, [colorScheme.color, colorScheme.cssVars, setColorScheme]);
+
+  const value = useMemo(
+    () => ({
+      theme,
+      setTheme,
+      colorScheme,
+      setColorScheme,
+    }),
+    [theme, setTheme, colorScheme, setColorScheme],
+  );
 
   return (
     <ThemeProviderContext.Provider {...props} value={value}>

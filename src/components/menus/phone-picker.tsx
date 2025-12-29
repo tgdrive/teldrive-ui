@@ -38,58 +38,79 @@ export const PhoneNoPicker = memo(({ field }: PhoneNoPickerProps) => {
   return (
     <Popover
       classNames={{
-        base: "max-w-xs rounded-lg shadow-sm",
-        content: "rounded-lg shadow-md min-w-72 p-0",
+        base: "max-w-xs",
+        content:
+          "rounded-[24px] shadow-2xl bg-surface-container-high border border-outline-variant/30 p-2",
       }}
       placement="bottom-start"
-      offset={10}
+      offset={12}
       triggerScaleOnOpen={false}
       isOpen={isOpen}
       onOpenChange={(open) => setIsOpen(open)}
     >
       <PopoverTrigger>
-        <button type="button" className="outline-none flex gap-3 items-center shrink-0">
-          <TriggerIcon width={30} height={20} />
-          <span className="text-on-surface-variant min-w-10">{isoCodeMap[field.value].value}</span>
-          <Divider className="h-8" orientation="vertical" />
+        <button
+          type="button"
+          className="outline-none flex gap-3 items-center shrink-0"
+        >
+          <TriggerIcon width={30} height={20} className="rounded-sm" />
+          <span className="text-on-surface font-medium min-w-10">
+            {isoCodeMap[field.value].value}
+          </span>
+          <Divider className="h-6" orientation="vertical" />
         </button>
       </PopoverTrigger>
       <PopoverContent>
-        <Input
-          value={value}
-          placeholder="country"
-          className="w-full p-4"
-          onValueChange={setValue}
-          isClearable
-        />
-        <Listbox
-          aria-label="Country Code"
-          items={codes}
-          className={clsx("max-h-64 overflow-y-auto rounded-lg bg-inherit", scrollbarClasses)}
-          onAction={(key) => {
-            field.onChange({ target: { value: key } });
-            setIsOpen(false);
-          }}
-          isVirtualized
-        >
-          {(item) => {
-            const Flag = flags[item.code as keyof typeof flags];
-            return (
-              <ListboxItem
-                key={item.code}
-                textValue={item.country}
-                value={item.code}
-                hideSelectedIcon
-              >
-                <div className="flex w-full items-center gap-3">
-                  <Flag className="shrink-0" width={30} height={20} />
-                  <span>{item.country}</span>
-                  <span className="ml-auto">{item.value}</span>
-                </div>
-              </ListboxItem>
-            );
-          }}
-        </Listbox>
+        <div className="flex flex-col w-full gap-2">
+          <Input
+            value={value}
+            placeholder="Search country..."
+            className="w-full px-2 pt-2"
+            onValueChange={setValue}
+            isClearable
+            variant="flat"
+            classNames={{
+              inputWrapper: "rounded-2xl bg-surface-container",
+            }}
+          />
+          <Listbox
+            aria-label="Country Code"
+            items={codes}
+            className={clsx("max-h-72 overflow-y-auto pr-1", scrollbarClasses)}
+            onAction={(key) => {
+              field.onChange({ target: { value: key } });
+              setIsOpen(false);
+            }}
+            itemClasses={{
+              base: "rounded-xl data-[hover=true]:bg-on-surface/10 px-4 py-2.5 transition-colors",
+              title: "text-base font-medium",
+            }}
+            isVirtualized
+          >
+            {(item) => {
+              const Flag = flags[item.code as keyof typeof flags];
+              return (
+                <ListboxItem
+                  key={item.code}
+                  textValue={item.country}
+                  hideSelectedIcon
+                >
+                  <div className="flex w-full items-center gap-4">
+                    <Flag
+                      className="shrink-0 rounded-sm"
+                      width={24}
+                      height={16}
+                    />
+                    <span className="flex-1 truncate">{item.country}</span>
+                    <span className="text-on-surface-variant font-mono text-sm">
+                      {item.value}
+                    </span>
+                  </div>
+                </ListboxItem>
+              );
+            }}
+          </Listbox>
+        </div>
       </PopoverContent>
     </Popover>
   );

@@ -1,15 +1,32 @@
-import { memo, useEffect, useState } from "react";
-import type { CategoryStorage } from "@/types";
+import type { CategoryStorage, UploadStats } from "@/types";
 import { queryOptions, useSuspenseQueries } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import clsx from "clsx";
 import { filesize } from "filesize";
+import { memo, useState } from "react";
 
-import { grow } from "@/utils/classes";
-
-import { UploadStatsChart } from "./charts/upload-stats";
 import { $api } from "@/utils/api";
 import { bytesToGB } from "@/utils/common";
+import { UploadStatsChart } from "./charts/upload-stats";
+
+import IcOutlineArchive from "~icons/ic/outline-archive";
+import IcOutlineAudiotrack from "~icons/ic/outline-audiotrack";
+import IcOutlineDataset from "~icons/ic/outline-dataset";
+import IcOutlineDescription from "~icons/ic/outline-description";
+import IcOutlineFolder from "~icons/ic/outline-folder";
+import IcOutlineImage from "~icons/ic/outline-image";
+import IcOutlineInsertDriveFile from "~icons/ic/outline-insert-drive-file";
+import IcOutlineStorage from "~icons/ic/outline-storage";
+import IcOutlineVideocam from "~icons/ic/outline-videocam";
+
+const categoryIcons: Record<string, React.ElementType> = {
+  video: IcOutlineVideocam,
+  audio: IcOutlineAudiotrack,
+  image: IcOutlineImage,
+  document: IcOutlineDescription,
+  folder: IcOutlineFolder,
+  archive: IcOutlineArchive,
+  other: IcOutlineInsertDriveFile,
+};
 
 function getTotalStats(data: CategoryStorage[]) {
   return data.reduce(
@@ -22,29 +39,48 @@ function getTotalStats(data: CategoryStorage[]) {
   );
 }
 
-const CategoryStorageCard = memo(({ category, totalSize, totalFiles }: CategoryStorage) => {
-  const [isMounted, setIsMounted] = useState(false);
+const CategoryStorageCard = memo(
+  ({
+    category,
+    totalSize,
+    totalFiles,
+    allTotalSize,
+  }: CategoryStorage & { allTotalSize: number }) => {
+    const Icon = categoryIcons[category] || IcOutlineInsertDriveFile;
+    const percentage = allTotalSize > 0 ? (totalSize / allTotalSize) * 100 : 0;
 
-  useEffect(() => setIsMounted(true), []);
-
-  return (
-    <Link
-      to="/$view"
-      params={{ view: "browse" }}
-      search={{ category: category as any }}
-      className="min-h-40 bg-surface rounded-xl"
-    >
-      <div
-        data-mounted={isMounted}
-        className={clsx("flex flex-col justify-center items-center h-full duration-300", grow)}
+    return (
+      <Link
+        to="/$view"
+        params={{ view: "browse" }}
+        search={{ category: category as any }}
+        className="group relative flex flex-col gap-4 p-5 bg-surface-container-low border border-outline-variant/50 rounded-[28px] hover:bg-surface-container transition-all duration-300"
       >
-        <h2 className="text-2xl font-medium capitalize">{`${category}s`}</h2>
-        <p className="text-3xl font-semibold">{filesize(totalSize, { standard: "jedec" })}</p>
-        <p className="text-sm font-semibold">{totalFiles} files</p>
-      </div>
-    </Link>
-  );
-});
+        <div className="flex justify-between items-start">
+          <div className="p-3 rounded-2xl bg-secondary-container text-on-secondary-container transition-transform group-hover:scale-110 duration-300">
+            <Icon className="size-6" />
+          </div>
+          <div className="text-right">
+            <p className="text-sm font-medium text-on-surface-variant capitalize">{category}</p>
+            <p className="text-lg font-bold text-on-surface">{totalFiles} Files</p>
+          </div>
+        </div>
+
+        <div className="mt-2">
+          <p className="text-2xl font-bold text-on-surface">
+            {filesize(totalSize, { standard: "jedec" })}
+          </p>
+          <div className="mt-3 h-2 w-full bg-surface-container-high rounded-full overflow-hidden">
+            <div
+              className="h-full bg-primary transition-all duration-1000 ease-out"
+              style={{ width: `${percentage}%` }}
+            />
+          </div>
+        </div>
+      </Link>
+    );
+  },
+);
 
 export const StorageView = memo(() => {
   const [days, setDays] = useState(7);
@@ -72,36 +108,66 @@ export const StorageView = memo(() => {
       }),
       queryOptions({
         ...$api.queryOptions("get", "/files/categories"),
-        select: (data) => ({ data, totalStats: getTotalStats(data) }),
+        select: (data) => ({
+          data: data as CategoryStorage[],
+          totalStats: getTotalStats(data as CategoryStorage[]),
+        }),
       }),
     ],
   });
 
+  const categoryData = (categories as any).data as CategoryStorage[];
+  const totalStats = (categories as any).totalStats as { totalSize: number; totalFiles: number };
+
   return (
-    <>
-      <div className="grid grid-cols-[repeat(auto-fill,minmax(220px,1fr))] pb-4 gap-2">
-        {categories.data.map((category) => (
-          <CategoryStorageCard key={category.category} {...category} />
-        ))}
-      </div>
-      <div className="mt-4 grid grid-cols-12 gap-4 md:mt-6 md:gap-6 2xl:mt-7.5 2xl:gap-7.5">
-        <UploadStatsChart days={days} setDays={setDays} stats={uploadStats} />
-        <div className="col-span-12 rounded-lg bg-surface text-on-surface p-4 lg:col-span-4 max-h-56">
-          <h2 className="text-2xl font-medium">Storage</h2>
-          <div className="grid grid-cols-2 gap-4 mt-4">
-            <div>
-              <h3 className="text-lg font-semibold">Total Size</h3>
-              <p className="text-3xl font-semibold">
-                {filesize(categories.totalStats.totalSize, { standard: "jedec" })}
-              </p>
+    <div className="flex flex-col gap-6">
+      <div className="bg-surface-container-low rounded-[32px] p-6 md:p-8 border border-outline-variant/50">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+          <div className="flex items-center gap-4">
+            <div className="p-4 rounded-[24px] bg-primary text-on-primary">
+              <IcOutlineStorage className="size-8" />
             </div>
             <div>
-              <h3 className="text-lg font-semibold">Total Files</h3>
-              <p className="text-3xl font-semibold">{categories.totalStats.totalFiles}</p>
+              <h2 className="text-2xl md:text-3xl font-bold text-on-surface">Total Storage</h2>
+              <p className="text-on-surface-variant font-medium">Overview of your drive usage</p>
+            </div>
+          </div>
+          <div className="flex gap-8 md:gap-12">
+            <div className="flex flex-col">
+              <span className="text-sm font-medium text-on-surface-variant">Used Space</span>
+              <span className="text-3xl font-bold text-primary">
+                {filesize(totalStats.totalSize, { standard: "jedec" })}
+              </span>
+            </div>
+            <div className="flex flex-col">
+              <span className="text-sm font-medium text-on-surface-variant">Total Files</span>
+              <span className="text-3xl font-bold text-primary">{totalStats.totalFiles}</span>
             </div>
           </div>
         </div>
       </div>
-    </>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {categoryData.map((category) => (
+          <CategoryStorageCard
+            key={category.category}
+            {...category}
+            allTotalSize={totalStats.totalSize}
+          />
+        ))}
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div className="lg:col-span-12 bg-surface-container-low rounded-[32px] p-6 border border-outline-variant/50">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-2 rounded-xl bg-secondary-container text-on-secondary-container">
+              <IcOutlineDataset className="size-6" />
+            </div>
+            <h3 className="text-xl font-bold text-on-surface">Upload Activity</h3>
+          </div>
+          <UploadStatsChart days={days} setDays={setDays} stats={uploadStats as any} />
+        </div>
+      </div>
+    </div>
   );
 });

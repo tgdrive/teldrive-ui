@@ -1,6 +1,6 @@
 import type { Session } from "@/types";
 import { partial } from "filesize";
-import { settings } from "./defaults";
+import { useSettingsStore } from "./stores/settings";
 
 export const navigateToExternalUrl = (url: string, shouldOpenNewTab = true) => {
   if (shouldOpenNewTab) {
@@ -44,7 +44,9 @@ export const chainSharedLinks = (root: string, path: string) => {
 };
 
 export const realPath = (parts: string[]) =>
-  parts.length > 1 ? parts.slice(1).reduce((acc: any, val: any) => `${acc}/${val}`, "") : "/";
+  parts.length > 1
+    ? parts.slice(1).reduce((acc: any, val: any) => `${acc}/${val}`, "")
+    : "/";
 
 export function getRawExtension(fileName: string | string[]) {
   return fileName.slice(((fileName.lastIndexOf(".") - 1) >>> 0) + 2);
@@ -53,7 +55,8 @@ export function getExtension(fileName: string) {
   return (getRawExtension(fileName) as string).toLowerCase();
 }
 
-export const zeroPad = (num: number | string, places: number) => String(num).padStart(places, "0");
+export const zeroPad = (num: number | string, places: number) =>
+  String(num).padStart(places, "0");
 
 export const copyDataToClipboard = (data: string[]) => {
   return new Promise((resolve, reject) => {
@@ -98,9 +101,12 @@ export function encode(str: string) {
     "%20": "+",
     "%00": "\x00",
   } as const;
-  return encodeURIComponent(str).replace(/[!'()~]|%20|%00/g, function replacer(match) {
-    return charMap[match as keyof typeof charMap];
-  });
+  return encodeURIComponent(str).replace(
+    /[!'()~]|%20|%00/g,
+    function replacer(match) {
+      return charMap[match as keyof typeof charMap];
+    },
+  );
 }
 
 export const mediaUrl = (
@@ -110,6 +116,7 @@ export const mediaUrl = (
   sessionHash: string,
   download = false,
 ) => {
+  const { settings } = useSettingsStore.getState();
   if (settings.rcloneProxy && path) {
     return `${settings.rcloneProxy}${path === "/" ? "" : path}/${encodeURIComponent(name)}`;
   }
@@ -122,7 +129,12 @@ export const mediaUrl = (
   return url.toString();
 };
 
-export const sharedMediaUrl = (shareId: string, fileId: string, name: string, download = false) => {
+export const sharedMediaUrl = (
+  shareId: string,
+  fileId: string,
+  name: string,
+  download = false,
+) => {
   const url = new URL(window.location.origin);
   url.pathname = `/api/shares/${shareId}/files/${fileId}/${name}`;
   if (download) {
@@ -137,13 +149,6 @@ export function bytesToGB(bytes: number) {
 }
 
 export const filesize = partial({ standard: "jedec" });
-
-export const splitFileSizes = [
-  { value: 100 * 1024 * 1024, label: "100MB" },
-  { value: 500 * 1024 * 1024, label: "500MB" },
-  { value: 1000 * 1024 * 1024, label: "1GB" },
-  { value: 2 * 1000 * 1024 * 1024, label: "2GB" },
-];
 
 const isMobileDevice = () => {
   const toMatch = [
@@ -187,11 +192,35 @@ export function getNextDate(): string {
 }
 
 export function getCountryCode(): string | null {
-  const language: string = navigator.language || (navigator as any).userLanguage;
+  const language: string =
+    navigator.language || (navigator as any).userLanguage;
   if (language.includes("-")) {
     const parts: string[] = language.split("-");
     return parts[1] ? parts[1].toUpperCase() : "US";
   }
 
   return "US";
+}
+
+export function formatSpeed(bytesPerSecond: number): string {
+  return `${filesize(bytesPerSecond)}/s`;
+}
+
+export function formatETA(seconds: number): string {
+  if (seconds < 60) {
+    return `${Math.round(seconds)}s left`;
+  }
+  if (seconds < 3600) {
+    const minutes = Math.floor(seconds / 60);
+    const secs = Math.round(seconds % 60);
+    return secs > 0 ? `${minutes}m ${secs}s left` : `${minutes}m left`;
+  }
+  if (seconds < 86400) {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    return minutes > 0 ? `${hours}h ${minutes}m left` : `${hours}h left`;
+  }
+  const days = Math.floor(seconds / 86400);
+  const hours = Math.floor((seconds % 86400) / 3600);
+  return hours > 0 ? `${days}d ${hours}h left` : `${days}d left`;
 }

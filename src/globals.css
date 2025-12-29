@@ -81,3 +81,13 @@ input[type="number"] {
     scrollbar-width: none;
   }
 }
+
+.art-video-player {
+  --art-theme: oklch(var(--m3-primary)) !important;
+  @apply rounded-xl;
+  overflow: hidden;
+  font-family: inherit !important;
+}
+.art-fullscreen {
+  @apply rounded-none;
+}
