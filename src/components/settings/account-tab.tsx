@@ -50,58 +50,69 @@ const formatDate = (date: string) => {
   });
 };
 
-const Session = memo(({ appName, location, createdAt, valid, hash, current }: UserSession) => {
-  const deleteSession = $api.useMutation("delete", "/users/sessions/{id}", {
-    onSettled: () => {
-      queryClient.invalidateQueries({
-        queryKey: $api.queryOptions("get", "/users/sessions").queryKey,
-      });
-    },
-  });
-  const queryClient = useQueryClient();
+const Session = memo(
+  ({ appName, location, createdAt, valid, hash, current }: UserSession) => {
+    const deleteSession = $api.useMutation("delete", "/users/sessions/{id}", {
+      onSettled: () => {
+        queryClient.invalidateQueries({
+          queryKey: $api.queryOptions("get", "/users/sessions").queryKey,
+        });
+      },
+    });
+    const queryClient = useQueryClient();
 
-  return (
-    <div className="bg-surface-container rounded-2xl p-4 border border-outline-variant/30 transition-all duration-300 relative group">
-      <div className="flex items-start justify-between mb-3">
-        <div className="flex items-center gap-2">
-          <div className={clsx("w-2 h-2 rounded-full", valid ? "bg-green-500" : "bg-red-500")} />
-          <p className="font-medium text-base">{appName || "Unknown"}</p>
-          {current && (
-            <span className="text-xs px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-medium">
-              Current
-            </span>
+    return (
+      <div className="bg-surface-container rounded-2xl p-4 border border-outline-variant/30 transition-all duration-300 relative group">
+        <div className="flex items-start justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <div
+              className={clsx(
+                "w-2 h-2 rounded-full",
+                valid ? "bg-green-500" : "bg-red-500",
+              )}
+            />
+            <p className="font-medium text-base">{appName || "Unknown"}</p>
+            {current && (
+              <span className="text-xs px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-medium">
+                Current
+              </span>
+            )}
+          </div>
+          {(!current || !valid) && (
+            <Button
+              isIconOnly
+              variant="text"
+              size="sm"
+              className="opacity-0 group-hover:opacity-100 transition-opacity data-[hover=true]:text-error"
+              onPress={() =>
+                deleteSession.mutateAsync({ params: { path: { id: hash } } })
+              }
+            >
+              <DeleteIcon className="size-5" />
+            </Button>
           )}
         </div>
-        {(!current || !valid) && (
-          <Button
-            isIconOnly
-            variant="text"
-            size="sm"
-            className="opacity-0 group-hover:opacity-100 transition-opacity data-[hover=true]:text-error"
-            onPress={() => deleteSession.mutateAsync({ params: { path: { id: hash } } })}
-          >
-            <DeleteIcon className="size-5" />
-          </Button>
-        )}
-      </div>
 
-      <div className="space-y-1.5">
-        <div className="flex items-center gap-2 text-sm text-on-surface-variant">
-          <span>Created</span>
-          <span className="font-medium text-on-surface">•</span>
-          <span className="font-medium text-on-surface">{formatDate(createdAt)}</span>
-        </div>
-        {location && (
+        <div className="space-y-1.5">
           <div className="flex items-center gap-2 text-sm text-on-surface-variant">
-            <span>Location</span>
+            <span>Created</span>
             <span className="font-medium text-on-surface">•</span>
-            <span className="font-medium text-on-surface">{location}</span>
+            <span className="font-medium text-on-surface">
+              {formatDate(createdAt)}
+            </span>
           </div>
-        )}
+          {location && (
+            <div className="flex items-center gap-2 text-sm text-on-surface-variant">
+              <span>Location</span>
+              <span className="font-medium text-on-surface">•</span>
+              <span className="font-medium text-on-surface">{location}</span>
+            </div>
+          )}
+        </div>
       </div>
-    </div>
-  );
-});
+    );
+  },
+);
 
 const ChannelCreateDialog = ({ handleClose }: { handleClose: () => void }) => {
   const queryClient = useQueryClient();
@@ -174,8 +185,12 @@ const BotRemoveDialog = ({
     <>
       <ModalHeader className="flex flex-col gap-1">Remove All Bots</ModalHeader>
       <ModalBody>
-        <p className="text-lg font-medium mt-2">Are you sure you want to remove all bots?</p>
-        <p className="text-sm text-on-surface-variant mt-1">This action cannot be undone.</p>
+        <p className="text-lg font-medium mt-2">
+          Are you sure you want to remove all bots?
+        </p>
+        <p className="text-sm text-on-surface-variant mt-1">
+          This action cannot be undone.
+        </p>
       </ModalBody>
       <ModalFooter>
         <Button className="font-normal" variant="text" onPress={handleClose}>
@@ -224,7 +239,9 @@ const ChannelDeleteDialog = ({
     <>
       <ModalHeader className="flex flex-col gap-1">Delete Channel</ModalHeader>
       <ModalBody>
-        <p className="text-lg font-medium mt-2">Are you sure you want to delete this channel?</p>
+        <p className="text-lg font-medium mt-2">
+          Are you sure you want to delete this channel?
+        </p>
       </ModalBody>
       <ModalFooter>
         <Button className="font-normal" variant="text" onPress={handleClose}>
@@ -258,25 +275,27 @@ interface BotOperationProps {
   onRemove: () => void;
 }
 
-const BotOperationModal = memo(({ open, handleClose, onRemove }: BotOperationProps) => {
-  return (
-    <Modal
-      isOpen={open}
-      size="md"
-      classNames={{
-        wrapper: "overflow-hidden",
-        base: "bg-surface w-full shadow-none",
-      }}
-      placement="center"
-      onClose={handleClose}
-      hideCloseButton
-    >
-      <ModalContent>
-        <BotRemoveDialog handleClose={handleClose} onRemove={onRemove} />
-      </ModalContent>
-    </Modal>
-  );
-});
+const BotOperationModal = memo(
+  ({ open, handleClose, onRemove }: BotOperationProps) => {
+    return (
+      <Modal
+        isOpen={open}
+        size="md"
+        classNames={{
+          wrapper: "overflow-hidden",
+          base: "bg-surface w-full shadow-none",
+        }}
+        placement="center"
+        onClose={handleClose}
+        hideCloseButton
+      >
+        <ModalContent>
+          <BotRemoveDialog handleClose={handleClose} onRemove={onRemove} />
+        </ModalContent>
+      </Modal>
+    );
+  },
+);
 
 const ChannelOperationModal = memo(
   ({ open, handleClose, operation, channelId }: ChannelOperationProps) => {
@@ -285,7 +304,12 @@ const ChannelOperationModal = memo(
         case "add":
           return <ChannelCreateDialog handleClose={handleClose} />;
         case "delete":
-          return <ChannelDeleteDialog channelId={channelId} handleClose={handleClose} />;
+          return (
+            <ChannelDeleteDialog
+              channelId={channelId}
+              handleClose={handleClose}
+            />
+          );
         default:
           return null;
       }
@@ -313,13 +337,14 @@ export const AccountTab = memo(() => {
     defaultValues: { tokens: "" },
   });
 
-  const [{ data: userConfig }, { data: sessions }, { data: channelData }] = useSuspenseQueries({
-    queries: [
-      $api.queryOptions("get", "/users/config"),
-      $api.queryOptions("get", "/users/sessions"),
-      $api.queryOptions("get", "/users/channels"),
-    ],
-  });
+  const [{ data: userConfig }, { data: sessions }, { data: channelData }] =
+    useSuspenseQueries({
+      queries: [
+        $api.queryOptions("get", "/users/config"),
+        $api.queryOptions("get", "/users/sessions"),
+        $api.queryOptions("get", "/users/channels"),
+      ],
+    });
 
   const removeBots = $api.useMutation("delete", "/users/bots", {
     onSuccess: () => {
@@ -343,8 +368,11 @@ export const AccountTab = memo(() => {
     },
     onError: async (error) => {
       if (error instanceof NetworkError) {
-        const errorData = (await error.data?.json()) as components["schemas"]["Error"];
-        toast.error(`Sync failed: ${errorData.message.split(":").slice(-1)[0]!.trim()}`);
+        const errorData =
+          (await error.data?.json()) as components["schemas"]["Error"];
+        toast.error(
+          `Sync failed: ${errorData.message.split(":").slice(-1)[0]!.trim()}`,
+        );
       } else {
         toast.error("Sync failed: An unknown error occurred.");
       }
@@ -368,7 +396,8 @@ export const AccountTab = memo(() => {
     },
     onError: async (error) => {
       if (error instanceof NetworkError) {
-        const errorData = (await error.data?.json()) as components["schemas"]["Error"];
+        const errorData =
+          (await error.data?.json()) as components["schemas"]["Error"];
         toast.error(errorData.message.split(":").slice(-1)[0]!.trim());
       }
     },
@@ -381,12 +410,15 @@ export const AccountTab = memo(() => {
     },
     onError: async (error) => {
       if (error instanceof NetworkError) {
-        const errorData = (await error.data?.json()) as components["schemas"]["Error"];
+        const errorData =
+          (await error.data?.json()) as components["schemas"]["Error"];
         toast.error(
           `Failed to update default channel: ${errorData.message.split(":").slice(-1)[0]!.trim()}`,
         );
       } else {
-        toast.error("Failed to update default channel: An unknown error occurred.");
+        toast.error(
+          "Failed to update default channel: An unknown error occurred.",
+        );
       }
     },
   });
@@ -419,12 +451,17 @@ export const AccountTab = memo(() => {
 
   const [botOpen, setBotOpen] = useState(false);
   const [channelOpen, setChannelOpen] = useState(false);
-  const [channelOperation, setChannelOperation] = useState<"add" | "delete">("add");
+  const [channelOperation, setChannelOperation] = useState<"add" | "delete">(
+    "add",
+  );
   const [channelID, setChannelID] = useState(0);
 
   return (
     <div
-      className={clsx("flex flex-col gap-6 p-4 w-full h-full overflow-y-auto", scrollbarClasses)}
+      className={clsx(
+        "flex flex-col gap-6 p-4 w-full h-full overflow-y-auto",
+        scrollbarClasses,
+      )}
     >
       <div className="bg-surface-container-low rounded-3xl p-6 border border-outline-variant/50">
         <div className="flex items-start gap-4">
@@ -439,7 +476,10 @@ export const AccountTab = memo(() => {
           </div>
         </div>
         <div className="mt-6 space-y-4">
-          <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="flex flex-col gap-4"
+          >
             <Controller
               name="tokens"
               control={control}
@@ -473,7 +513,9 @@ export const AccountTab = memo(() => {
           <div className="mt-8 pt-6 border-t border-outline-variant/30">
             <div className="flex justify-between items-center">
               <div>
-                <p className="text-sm font-medium text-on-surface-variant">Active Bots</p>
+                <p className="text-sm font-medium text-on-surface-variant">
+                  Active Bots
+                </p>
                 <p className="text-3xl font-bold mt-1 text-primary">
                   {userConfig?.bots.length || 0}
                 </p>
@@ -483,7 +525,7 @@ export const AccountTab = memo(() => {
                 handleClose={() => setBotOpen(false)}
                 onRemove={handleRemoveBots}
               />
-              <div className="flex gap-2">
+              <div className="flex flex-col sm:flex-row gap-2">
                 <Button
                   startContent={<IcRoundContentCopy className="size-4" />}
                   variant="filledTonal"
@@ -494,7 +536,9 @@ export const AccountTab = memo(() => {
                   Copy All
                 </Button>
                 <Button
-                  startContent={<IcRoundRemoveCircleOutline className="size-4" />}
+                  startContent={
+                    <IcRoundRemoveCircleOutline className="size-4" />
+                  }
                   variant="filledTonal"
                   className="text-sm font-medium bg-error-container text-on-error-container data-[hover=true]:bg-error-container/80 transition-colors"
                   onPress={() => setBotOpen(true)}
@@ -509,14 +553,16 @@ export const AccountTab = memo(() => {
       </div>
 
       <div className="bg-surface-container-low rounded-3xl p-6 border border-outline-variant/50 flex flex-col gap-6">
-        <div className="flex justify-between items-start">
-          <div className="flex gap-4">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3">
+          <div className="flex gap-4 items-start">
             <div className="p-3 rounded-2xl bg-secondary-container text-on-secondary-container">
               <MaterialSymbolsTv className="size-6" />
             </div>
-            <div>
+            <div className="flex-1 min-w-0">
               <h3 className="text-xl font-semibold mb-1">Channels</h3>
-              <p className="text-sm text-on-surface-variant">Manage destination channels.</p>
+              <p className="text-sm text-on-surface-variant">
+                Manage destination channels.
+              </p>
             </div>
           </div>
           <ChannelOperationModal
@@ -544,7 +590,12 @@ export const AccountTab = memo(() => {
               isLoading={syncChannels.isPending}
               onPress={() => syncChannels.mutate({})}
             >
-              <SyncIcon className={clsx("size-6", syncChannels.isPending && "animate-spin")} />
+              <SyncIcon
+                className={clsx(
+                  "size-6",
+                  syncChannels.isPending && "animate-spin",
+                )}
+              />
             </Button>
           </div>
         </div>
@@ -591,7 +642,8 @@ export const AccountTab = memo(() => {
           ) : (
             <div className="flex flex-col items-center justify-center py-10 text-center bg-surface-container/50 rounded-2xl border-2 border-dashed border-outline-variant/30">
               <p className="text-sm text-on-surface-variant max-w-xs">
-                No channels found. Press the sync button to fetch your channels from Telegram.
+                No channels found. Press the sync button to fetch your channels
+                from Telegram.
               </p>
             </div>
           )}

@@ -4,10 +4,10 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
 import ReactDOM from "react-dom/client";
-import { Toaster } from "react-hot-toast";
 
 import { queryClient } from "@/utils/query-client";
 
+import { Toaster } from "./components/toaster";
 import { TailwindIndicator } from "./components/tailwind-indicator";
 import { ThemeProvider } from "./components/theme-provider";
 import { routeTree } from "./route-tree.gen";
@@ -34,12 +34,7 @@ if (!rootElement.innerHTML) {
     <StrictMode>
       <QueryClientProvider client={queryClient}>
         <ThemeProvider>
-          <Toaster
-            toastOptions={{
-              className: "!bg-surface-container !text-on-surface",
-            }}
-            position="bottom-right"
-          />
+          <Toaster />
           <RouterProvider router={router} />
         </ThemeProvider>
         <TailwindIndicator />
