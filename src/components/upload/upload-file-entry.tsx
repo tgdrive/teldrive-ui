@@ -18,9 +18,8 @@ const UploadFileEntry = memo(function UploadFileEntry({
   chunkSize: number;
   fileIds: string[];
 }) {
-  const { status, progress, file, isFolder, collapsed } = useFileUploadStore(
-    (state) => state.fileMap[id],
-  );
+  const { status, progress, file, isFolder, collapsed, conflictAction, uploadName, error } =
+    useFileUploadStore((state) => state.fileMap[id]);
   const removeFile = useFileUploadStore((state) => state.actions.removeFile);
   const fileMap = useFileUploadStore((state) => state.fileMap);
   const { name } = file;
@@ -49,7 +48,12 @@ const UploadFileEntry = memo(function UploadFileEntry({
     const statuses = childFiles.map((childId) => fileMap[childId]?.status);
     if (statuses.some((s) => s === FileUploadStatus.CANCELLED)) return FileUploadStatus.CANCELLED;
     if (statuses.some((s) => s === FileUploadStatus.FAILED)) return FileUploadStatus.FAILED;
-    if (statuses.every((s) => s === FileUploadStatus.UPLOADED)) return FileUploadStatus.UPLOADED;
+    if (
+      statuses.every(
+        (s) => s === FileUploadStatus.UPLOADED || s === FileUploadStatus.SKIPPED,
+      )
+    )
+      return FileUploadStatus.UPLOADED;
     if (statuses.some((s) => s === FileUploadStatus.UPLOADING)) return FileUploadStatus.UPLOADING;
     return FileUploadStatus.NOT_STARTED;
   }, [isFolder, childFiles, fileMap, status]);
@@ -98,8 +102,26 @@ const UploadFileEntry = memo(function UploadFileEntry({
               </span>
             )}
             {status === FileUploadStatus.FAILED && (
-              <span className="text-error font-medium text-[10px] uppercase tracking-wider">
+              <span
+                className="text-error font-medium text-[10px] uppercase tracking-wider truncate"
+                title={error}
+              >
                 Failed
+              </span>
+            )}
+            {status === FileUploadStatus.SKIPPED && (
+              <span className="font-medium text-[10px] uppercase tracking-wider">
+                Skipped
+              </span>
+            )}
+            {status !== FileUploadStatus.SKIPPED && conflictAction === "replace" && (
+              <span className="font-medium text-[10px] uppercase tracking-wider">
+                Replaced
+              </span>
+            )}
+            {status !== FileUploadStatus.SKIPPED && conflictAction === "rename" && (
+              <span className="truncate" title={uploadName}>
+                Saved as {uploadName}
               </span>
             )}
           </div>

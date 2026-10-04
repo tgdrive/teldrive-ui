@@ -61,6 +61,32 @@ export const uploadChunk = <T extends {}>(
   });
 };
 
+export async function findExisting(path: string, name: string) {
+  const { data, error } = await fetchClient.GET("/files", {
+    params: {
+      query: { path, name, operation: "find" },
+    },
+  });
+  if (error) throw new Error(`failed to check for existing file: ${error.message}`);
+  return data?.items[0] ?? null;
+}
+
+// Returns the first free "name (n).ext" in the folder, like most file managers.
+export async function nextAvailableName(path: string, name: string) {
+  const dot = name.lastIndexOf(".");
+  const hasExt = dot > 0;
+  const base = hasExt ? name.slice(0, dot) : name;
+  const ext = hasExt ? name.slice(dot) : "";
+
+  for (let n = 1; n <= maxRenameAttempts; n++) {
+    const candidate = `${base} (${n})${ext}`;
+    if (!(await findExisting(path, candidate))) return candidate;
+  }
+  throw new Error("could not find a free name for the file");
+}
+
+const maxRenameAttempts = 100;
+
 export const uploadFile = async (
   file: File,
   path: string,
@@ -75,24 +101,8 @@ export const uploadFile = async (
   onProgress: (progress: number) => void,
   onChunksCompleted: (chunks: number) => void,
   onCreate: (payload: components["schemas"]["File"]) => Promise<void>,
-  skipCheck = false,
+  fileName = file.name,
 ) => {
-  const fileName = file.name;
-
-  if (!skipCheck) {
-    const res = (
-      await fetchClient.GET("/files", {
-        params: {
-          query: { path, name: fileName, operation: "find" },
-        },
-      })
-    ).data;
-
-    if (res && res.items.length > 0) {
-      throw Error("file exists");
-    }
-  }
-
   const totalParts = Math.ceil(file.size / chunkSize);
 
   const limit = pLimit(concurrency);

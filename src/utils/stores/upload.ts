@@ -10,6 +10,14 @@ export enum FileUploadStatus {
   SKIPPED = 5,
 }
 
+export type ConflictChoice = "skip" | "replace" | "rename";
+
+export interface UploadConflict {
+  fileId: string;
+  name: string;
+  isFolder: boolean;
+}
+
 export interface UploadFile {
   id: string;
   file: File;
@@ -26,6 +34,8 @@ export interface UploadFile {
   chunksCompleted?: number;
   error?: string;
   collapsed?: boolean;
+  uploadName?: string;
+  conflictAction?: ConflictChoice;
 }
 
 import { scanEntries } from "../file-scanner";
@@ -38,6 +48,8 @@ export interface UploadState {
   fileDialogOpen: boolean;
   folderDialogOpen: boolean;
   uploadOpen: boolean;
+  conflict: UploadConflict | null;
+  batchConflictChoice: ConflictChoice | null;
   actions: {
     addFiles: (files: File[]) => void;
     addFolder: (files: File[], folderName: string) => void;
@@ -60,7 +72,42 @@ export interface UploadState {
     toggleFolderCollapsed: (id: string) => void;
     startNextUpload: () => void;
     clearAll: () => void;
+    requestConflictChoice: (conflict: UploadConflict) => Promise<ConflictChoice>;
+    resolveConflict: (choice: ConflictChoice, applyToAll: boolean) => void;
+    setConflictAction: (id: string, action: ConflictChoice, uploadName?: string) => void;
+    retryFailed: () => void;
   };
+}
+
+// Resolver for the conflict dialog currently shown; kept outside the store so
+// immer never drafts it.
+let pendingConflictResolver: ((choice: ConflictChoice) => void) | null = null;
+
+function settleConflict(choice: ConflictChoice) {
+  const resolve = pendingConflictResolver;
+  pendingConflictResolver = null;
+  resolve?.(choice);
+}
+
+function nextEligibleFileId(state: UploadState) {
+  const eligibleFiles = state.filesIds.filter((id) => {
+    const file = state.fileMap[id];
+    // Skip if already processed
+    if (file.status !== FileUploadStatus.NOT_STARTED) return false;
+
+    // If file has parent folder, check if parent is uploaded/skipped
+    if (file.parentFolderId) {
+      const parent = state.fileMap[file.parentFolderId];
+      return (
+        parent &&
+        (parent.status === FileUploadStatus.UPLOADED ||
+          parent.status === FileUploadStatus.SKIPPED)
+      );
+    }
+
+    return true; // No dependencies, eligible
+  });
+  return eligibleFiles[0] || "";
 }
 
 export const useFileUploadStore = create<UploadState>()(
@@ -72,6 +119,8 @@ export const useFileUploadStore = create<UploadState>()(
     fileDialogOpen: false,
     folderDialogOpen: false,
     uploadOpen: false,
+    conflict: null,
+    batchConflictChoice: null,
     actions: {
       addFiles: (files: File[]) =>
         set((state) => {
@@ -296,6 +345,7 @@ export const useFileUploadStore = create<UploadState>()(
             state.currentFileId = "";
             state.collapse = false;
             state.uploadOpen = false;
+            state.batchConflictChoice = null;
           }
         }),
       setFolderId: (id: string, folderId: string) =>
@@ -342,6 +392,11 @@ export const useFileUploadStore = create<UploadState>()(
 
           const isCurrentFileCancelled = filesToCancel.includes(state.currentFileId);
 
+          if (state.conflict && filesToCancel.includes(state.conflict.fileId)) {
+            state.conflict = null;
+            settleConflict("skip");
+          }
+
           filesToCancel.forEach((cancelId) => {
             const file = state.fileMap[cancelId];
             if (file) {
@@ -359,20 +414,7 @@ export const useFileUploadStore = create<UploadState>()(
             state.fileDialogOpen = false;
             state.folderDialogOpen = false;
           } else if (isCurrentFileCancelled) {
-            const eligibleFiles = state.filesIds.filter((id) => {
-              const file = state.fileMap[id];
-              if (file.status !== FileUploadStatus.NOT_STARTED) return false;
-              if (file.parentFolderId) {
-                const parent = state.fileMap[file.parentFolderId];
-                return (
-                  parent &&
-                  (parent.status === FileUploadStatus.UPLOADED ||
-                    parent.status === FileUploadStatus.SKIPPED)
-                );
-              }
-              return true;
-            });
-            state.currentFileId = eligibleFiles[0] || "";
+            state.currentFileId = nextEligibleFileId(state);
           }
         }),
 
@@ -389,6 +431,9 @@ export const useFileUploadStore = create<UploadState>()(
           state.uploadOpen = false;
           state.fileDialogOpen = false;
           state.folderDialogOpen = false;
+          state.conflict = null;
+          state.batchConflictChoice = null;
+          settleConflict("skip");
         }),
       toggleCollapse: () =>
         set((state) => {
@@ -404,25 +449,55 @@ export const useFileUploadStore = create<UploadState>()(
         }),
       startNextUpload: () =>
         set((state) => {
-          const eligibleFiles = state.filesIds.filter((id) => {
-            const file = state.fileMap[id];
-            // Skip if already processed
-            if (file.status !== FileUploadStatus.NOT_STARTED) return false;
+          state.currentFileId = nextEligibleFileId(state);
+          // An "apply to all" choice only lasts for the batch it was made in
+          if (!state.currentFileId) state.batchConflictChoice = null;
+        }),
 
-            // If file has parent folder, check if parent is uploaded/skipped
-            if (file.parentFolderId) {
-              const parent = state.fileMap[file.parentFolderId];
-              return (
-                parent &&
-                (parent.status === FileUploadStatus.UPLOADED ||
-                  parent.status === FileUploadStatus.SKIPPED)
-              );
-            }
-
-            return true; // No dependencies, eligible
+      requestConflictChoice: (conflict: UploadConflict) => {
+        const { batchConflictChoice } = get();
+        if (batchConflictChoice) return Promise.resolve(batchConflictChoice);
+        settleConflict("skip");
+        return new Promise<ConflictChoice>((resolve) => {
+          pendingConflictResolver = resolve;
+          set((state) => {
+            state.conflict = conflict;
           });
+        });
+      },
 
-          state.currentFileId = eligibleFiles[0] || "";
+      resolveConflict: (choice: ConflictChoice, applyToAll: boolean) => {
+        set((state) => {
+          state.conflict = null;
+          if (applyToAll) state.batchConflictChoice = choice;
+        });
+        settleConflict(choice);
+      },
+
+      setConflictAction: (id: string, action: ConflictChoice, uploadName?: string) =>
+        set((state) => {
+          if (!state.fileMap[id]) return;
+          state.fileMap[id].conflictAction = action;
+          state.fileMap[id].uploadName = uploadName;
+        }),
+
+      retryFailed: () =>
+        set((state) => {
+          for (const id of state.filesIds) {
+            const file = state.fileMap[id];
+            if (file.status !== FileUploadStatus.FAILED) continue;
+            file.status = FileUploadStatus.NOT_STARTED;
+            file.controller = new AbortController();
+            file.progress = 0;
+            file.chunksCompleted = 0;
+            file.error = undefined;
+            file.conflictAction = undefined;
+            file.uploadName = undefined;
+          }
+          // Restart the queue unless a file is still in flight
+          const current = state.fileMap[state.currentFileId];
+          if (current?.status !== FileUploadStatus.UPLOADING)
+            state.currentFileId = nextEligibleFileId(state);
         }),
     },
   })),
