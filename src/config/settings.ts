@@ -16,6 +16,7 @@ type SettingKeys =
   | "pageSize"
   | "splitFileSize"
   | "encryptFiles"
+  | "uploadConflictPolicy"
   | "rcloneProxy";
 
 type SettingValue = string | number | boolean;
@@ -40,6 +41,13 @@ const splitFileSizes = [
   { value: 500 * 1024 * 1024, label: "500MB" },
   { value: 1000 * 1024 * 1024, label: "1GB" },
   { value: 2 * 1000 * 1024 * 1024, label: "2GB" },
+];
+
+const uploadConflictPolicies = [
+  { value: "ask", label: "Ask" },
+  { value: "skip", label: "Skip" },
+  { value: "replace", label: "Replace" },
+  { value: "rename", label: "Keep both" },
 ];
 
 export const generalSettingsConfig: SettingFieldConfig<SettingValue>[] = [
@@ -106,6 +114,15 @@ export const generalSettingsConfig: SettingFieldConfig<SettingValue>[] = [
     label: "Random Chunking",
     description: "Randomize Names of File Chunks",
     defaultValue: true,
+    category: "upload",
+  },
+  {
+    key: "uploadConflictPolicy",
+    type: "select",
+    label: "On Name Conflict",
+    description: "What to do when an uploaded file already exists",
+    options: uploadConflictPolicies,
+    defaultValue: uploadConflictPolicies[0].value,
     category: "upload",
   },
   {
